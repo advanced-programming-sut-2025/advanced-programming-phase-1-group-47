@@ -7,9 +7,4 @@ public class AvatarMenu extends AppMenu {
     public void check(String input) {
         super.check(input);
     }
-
-    @Override
-    public void start() {
-
-    }
 }

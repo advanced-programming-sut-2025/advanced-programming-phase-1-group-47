@@ -1,5 +1,6 @@
 package controllers;
 
+import models.Point;
 import models.Result;
 
 public class GameMenuController {
@@ -12,5 +13,8 @@ public class GameMenuController {
     }
     public Result showMenu() {
         return null;
+    }
+    public void walk(Point start,Point finish){
+
     }
 }

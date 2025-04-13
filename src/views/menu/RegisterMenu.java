@@ -5,8 +5,4 @@ public class RegisterMenu extends AppMenu {
         super.check(input);
     }
     
-    @Override
-    public void start() {
-        
-    }
 }

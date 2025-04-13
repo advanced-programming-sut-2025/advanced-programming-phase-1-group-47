@@ -22,10 +22,6 @@ public enum Menu {
     Menu(AppMenu menu) {
         this.menu = menu;
     }
-
-    public void start(){
-        menu.start();
-    }
     public void checkCommand(String input) {
         menu.check(input);
     }
