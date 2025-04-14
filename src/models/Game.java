@@ -1,15 +1,15 @@
 package models;
 
+import java.util.ArrayList;
 import models.enums.Weather;
 
-import java.util.ArrayList;
-
 public class Game {
-    private ArrayList<Player> players;
-    private final Map map;
+    private final ArrayList<Player> players;
+    private  Map map;
     private Time time;
     private Date date;
     private Weather weather;
+    private Weather tomarrowsWeather;
 
     public Game (Map map , ArrayList<Player> players) {
         this.map = map;

@@ -1,5 +1,6 @@
 package models.enums;
 
+import java.util.Scanner;
 import views.menu.AppMenu;
 import views.menu.AvatarMenu;
 import views.menu.GameMenu;
@@ -22,8 +23,8 @@ public enum Menu {
     Menu(AppMenu menu) {
         this.menu = menu;
     }
-    public void checkCommand(String input) {
-        menu.check(input);
+    public void checkCommand(Scanner scanner) {
+        menu.check(scanner);
     }
     
 }

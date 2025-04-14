@@ -1,4 +1,8 @@
 package models.things.products;
-import models.Thing;
-public abstract class Recipe extends Thing {
+import java.util.*;
+import models.things.Item;
+
+public abstract class Recipe extends Item {
+    private boolean isCooking;
+    private ArrayList<Item> items;
 }

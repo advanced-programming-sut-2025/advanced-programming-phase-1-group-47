@@ -1,7 +1,10 @@
 package views.menu;
-public class NPCMenu extends GameMenu {
-    // @Override
-    // public void check(String input) {
-    //     super.check(input);
-    // }
+
+import java.util.Scanner;
+
+public class NPCMenu extends AppMenu {
+     @Override
+     public void check(Scanner scanner) {
+         super.check(scanner);
+     }
 }

@@ -1,7 +1,10 @@
 package views.menu;
+
+import java.util.Scanner;
+
 public class LoginMenu extends AppMenu {
     @Override
-    public void check(String input) {
-        super.check(input);
+    public void check(Scanner scanner) {
+        super.check(scanner);
     }
 }

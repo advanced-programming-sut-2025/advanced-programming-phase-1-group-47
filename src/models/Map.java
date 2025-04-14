@@ -1,14 +1,32 @@
 package models;
 
 import java.util.ArrayList;
-import models.things.producers.Producer;
+import models.buildings.Building;
 
 public class Map {
-    private int width;
-    private int height;
-    private Tile[][] tiles = new Tile[width][height];
-    private ArrayList<Building> buildings = new ArrayList<>();
-    private ArrayList<Producer> products = new ArrayList<>();
+    public Ground ground;
+    private ArrayList<Building> buildings;
+
+    public void setBuildings(ArrayList<Building> buildings) {
+        this.buildings = buildings;
+    }
+
+    public void setGround(Ground ground) {
+        this.ground = ground;
+    }
+    public ArrayList<Building> getBuildings() {
+        return buildings;
+    }
+
+    public Ground getGround() {
+        return ground;
+    }
+
+    public Map(Ground ground) {
+    }
+
+    
+
     
 
 }

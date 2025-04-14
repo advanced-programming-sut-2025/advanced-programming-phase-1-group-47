@@ -9,6 +9,6 @@ public class AppView {
     public static void runProgram() {
         String input = scanner.nextLine();
         App app = new App();
-        app.getMenu().checkCommand(input);
+        app.getMenu().checkCommand(scanner);
     }
 }

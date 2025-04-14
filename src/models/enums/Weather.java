@@ -3,6 +3,5 @@ public enum Weather {
     Sunny,
     Snow,
     Rain,
-    Storm,
-    ;
+    Storm;
 }

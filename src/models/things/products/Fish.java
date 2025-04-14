@@ -1,5 +1,7 @@
 package models.things.products;
-import models.Thing;
-public abstract class Fish extends Thing {
-    
+
+import models.enums.FishType;
+
+public abstract class Fish extends Product {
+    FishType type;
 }
