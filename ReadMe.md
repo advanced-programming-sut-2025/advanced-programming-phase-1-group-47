@@ -1,4 +1,4 @@
-Ahmadreza Tavasoli bahabadi <i> <b> 403110517 </b></i><br> \\n
-Parsa Srasar 403106216
+Ahmadreza Tavasoli bahabadi <i> <b> 403110517 </b></i><br>
+Parsa Srasar <i> <b> 403106216 </b></i><br>
 Parsa Fatehi fard 403
 Mehrshad Salahi 403117
