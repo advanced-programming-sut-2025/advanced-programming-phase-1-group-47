@@ -1,5 +1,114 @@
 package models.enums.commands;
 
-public enum GameMenu {
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-}
+public enum GameMenu {
+    newgame(""),
+    gamemap("^\\s*game\\s+map\\s+(?<map_number>\\S+)\\s*$"),
+    loadgame("\\s*load\\s*game\\s*"),
+    exitgame("\\s*exit\\s* game\\s*"),
+    deletecurrentgame("\\s*terminate\\s*game\\s*"),
+    nextturn("\\s*next\\s*turn\\s*"),
+    showtime("time"),
+    showdate("date"),
+    showdatetime("datetime"),
+    showdayofweek("^\\s*day\\s+of\\s+the\\s+week\\s*$"),
+    cheateadvancetime("^\\s*cheat\\s+advance\\s+time\\s+(?<time>)h\\s*$"),
+    cheatadvencedate("^\\s*cheat\\s+advance\\s+date\\s+(?<date>)h\\s*$"),
+    showseason("season"),
+    cheatthor("\\s*cheat\\s*Thor\\s*-l\\s*(?<x>\\d*),(?<y>\\d*)\\s*"),
+    showweather("^\\s*weather\\s*$"),
+    weatherforecast("^\\s*weather\\s+forecast\\s*$"),
+    cheatweatherset("^\\s*cheat\\s+weather\\s+set\\s+(?<Type>\\S+)\\s*$"),
+    greenhousebuild("^\\s*greenhouse\\s+build\\s*$"),
+    walk("\\s*walk\\s*-l\\s*(?<x>\\d*),(?<y>\\d*)\\s*"),
+    printmap("\\s*print\\s*map\\s*-l\\s*(?<x>\\d*),(?<y>\\d*)\\s*-s\\s*(?<size>)\\s*"),
+    mapreadinghelper("^\\s*help\\s+reading\\s+map\\s*$"),
+    showenergy("^\\s*energy\\s+show\\s*$"),
+    cheatenergyset("^\\s*energy\\s+set\\s+-v\\s+(?<value>\\S+)\\s*$"),
+    cheatenergyunlimited("^\\s*energy\\s+unlimited\\s*$"),
+    showinventory("^\\s*inventory\\s+show\\s*$"),
+    inventorytrashtotal("^\\s*inventory\\s+trash\\s+-i\\s+<item`s\\s+name>\\s+-n\\s+(?<number>\\S+)\\s*$"),
+    inventorytrash("^\\s*inventory\\s+trash\\s+-i\\s+<item`s\\s+name>\\s*$"),
+    equiptool("^\\s*tools\\s+equip\\s+(?<tool_name>\\S+)\\s*$"),
+    currenttool("^\\s*tools\\s+show\\s+current\\s*$"),
+    availabletool("^\\s*tools\\s+show\\s+available\\s*$"),
+    upgradetool("^\\s*tools\\s+upgrade\\s+(?<tool_name>\\S+)\\s*$"),
+    tooluse("^\\s*tools\\s+use\\s+-d\\s+(?<direction>\\S+)\\s*$"),
+    craftinfo("\\s*craftinfo\\s+-n\\s+(?<craft_name>)//s*"),
+    plant("^\\s*plant\\s+-s\\s+(?<seed>\\S+)\\s+-d\\s+(?<direction>\\S+)\\s*$"),
+    showplant("\\s*showplant\\s*-l\\s*(?<x>\\d*),(?<y>\\d*)\\s*"),
+    fertilize("^\\s*fertilize\\s+-f\\s+(?<fertilizer>\\S+)\\s+-d\\s+(?<direction>\\S+)\\s*$"),
+    water("\\s*howmuch\\s+water\\s*"),
+    craftingrecipes("^\\s*crafting\\s+show\\s+recipes\\s*$"),
+    craftingcraft("^\\s*crafting\\s+craft\\s+(?<item_name>\\S+)\\s*$"),
+    placeitem("^\\s*place\\s+item\\s+-n\\s+(?<item_name>\\S+)\\s+-d\\s+(?<direction>\\S+)\\s*$"),
+    cheatadditem("^\\s*cheat\\s+add\\s+item\\s+-n\\s+(?<item_name>\\S+)\\s+-c\\s+(?<count>\\S+)\\s*$"),
+    cookingrefrigeratorput("^\\s*cooking\\s+refrigerator\\s+put\\s+(?<item>\\S+)\\s*$"),
+    cookingrefrigeratorpick("^\\s*cooking\\s+refrigerator\\s+pick\\s+(?<item>\\S+)\\s*$"),
+    cookingreciepe("^\\s*cooking\\s+show\\s+recipes\\s*$"),
+    cookingprepare("^\\s*cooking\\s+prepare\\s+(?<recipe_name>\\S+)\\s*$"),
+    eatfood("^\\s*eat\\s+(?<food_name>\\S+)\\s*$"),
+    build("\\s*build\\s+-a\\s+(?<building_name>\\S+)\\s+-l\\s+(?<x>\\d*),(?<y>\\d*)\\s*"),
+    buyanimal("^\\s*buy\\s+animal\\s+-a\\s+(?<animal>\\S+)\\s+-n\\s+(?<name>\\S+)\\s*$"),
+    pet("^\\s*pet\\s+-n\\s+(?<name>\\S+)\\s*$"),
+    cheatsetanimalfriendship("^\\s*cheat\\s+set\\s+friendship\\s+-n\\s+<animal\\s+name>\\s+-c\\s+(?<amount>\\S+)\\s*$"),
+    showanimals("\\s*animals\\s*"),
+    shepherdanimals("^\\s*shepherd\\s+animals\\s+-n\\s+<animal\\s+name>\\s+-l\\s+(?<x>\\d*),(?<y>\\d*)\\s*$"),
+    feedhay("^\\s*feed\\s+hay\\s+-n\\s+<animal\\s+name>\\s*$"),
+    produces("\\s*produces\\s*"),
+    collectproduce("^\\s*collect\\s+produce\\s+-n\\s+(?<name>\\S+)\\s*$"),
+    sellanimal("^\\s*sell\\s+animal\\s+-n\\s+(?<name>\\S+)\\s*$"),
+    fishing("^\\s*fishing\\s+-p\\s+(?<fishing\\s+pole>)\\s*$"),
+    artisanuse("^\\s*artisan\\s+use\\s(?<artisan_name>.+)\\s(?<item1_name>.+)$"),
+    artisanget("^\\s*artisan\\s+get\\s+(?<artisan_name>.+)$"),
+    showallproducts("^\\s*show\\s+all\\s+products\\s*$"),
+    showavailableproducts("^\\s*show\\s+all\\s+available\\s+products\\s*$"),
+    purchaseproduct("^\\s*purchase\\s+(?<product_name>\\S+)\\s+-n\\s+(?<count>\\S+)\\s*$"),
+    purchaseoneproduct("^\\s*purchase\\s+(?<product_name>\\S+)\\s+$"),
+    cheatadddollars("^\\s*cheat\\s+add\\s+(?<count>\\S+)\\s+dollars\\s*$"),
+    sellproduct("^\\s*sell\\s+(?<product_name>\\S+)\\s+-n\\s+(?<count>\\S+)\\s*$"),
+    friendships("friendships\\s*"),
+    talk("^\\s*talk\\s+-u\\s+(?<username>\\S+)\\s+-m\\s+(?<message>\\S+)\\s*$"),
+    talkhistory("^\\s*talk\\s+history\\s+-u\\s+(?<username>\\S+)\\s*$"),
+    gift("^\\s*gift\\s+-u\\s+(?<username>\\S+)\\s+-i\\s+(?<item>\\S+)\\s+-a\\s+(?<amount>\\S+)\\s*$"),
+    giftlist("\\s*gift\\s*list\\s*"),
+    giftrate("^\\s*gift\\s+rate\\s+-i\\s+<gift-number>\\s+-r\\s+(?<rate>\\S+)\\s*$"),
+    gifthistory("^\\s*gift\\s+history\\s+-u\\s+(?<username>\\S+)\\s*$"),
+    hug("^\\s*hug\\s+-u\\s+(?<username>\\S+)\\s*$"),
+    flower("^\\s*flower\\s+-u\\s+(?<username>\\S+)\\s*$"),
+    askmarriage("^\\s*ask\\s+marriage\\s+-u\\s+(?<username>\\S+)\\s+-r\\s+(?<ring>\\S+)\\s*$"),
+    respondmarriageaccept("^\\s*respond\\s+-accept\\s+-u\\s+(?<username>\\S+)\\s*$"),
+    respondmarriagereject("^\\s*respond\\s+-reject\\s+-u\\s+(?<username>\\S+)\\s*$"),
+    starttrade("\\s*start\\s*trade\\s*"),
+    trade(""),
+    tradelist("\\s*trade\\s*list\\s*"),
+    traderesponseaccept("^\\s*trade\\s+response\\s+-accept\\s+-i\\s+(?<id>\\S+)\\s*$"),
+    traderesponsereject("^\\s*trade\\s+response\\s+-reject\\s+-i\\s+(?<id>\\S+)\\s*$"),
+    tradehistory("\\s*trade\\s*history\\s*"),
+    meetNPC("\\s*meet\\s+NPC\\s+(?<npc_name>\\S+)\\s*"),
+    giftNPC("^\\s*gift\\s+NPC\\s+(?<npc_name>\\S+)\\s+-i\\s+(?<item>\\S+)\\s*$"),
+    friendshipNPClist("\\s*friendship\\s+NPC\\s+list\\s*"),
+    questslist("\\s*quests\\s+list\\s*"),
+    questsfinish("^\\s*quests\\s+finish\\s+-i\\s+(?<index>\\S+)\\s*$");
+
+    private final String command;
+
+    GameMenu(String command) {
+        this.command = command;
+    }
+
+    public String getCommand() {
+        return command;
+    }
+
+    public Matcher getMatcher(String input) {
+        Matcher matcher = Pattern.compile(this.command).matcher(input);
+        if (matcher.matches()) {
+            return matcher;
+        }
+        return null;
+    }
+    }
+
