@@ -7,12 +7,12 @@ public class Game {
     private final ArrayList<Player> players;
     private  Map map;
     private Time time;
-    private Date date;
     private Weather weather;
     private Weather tomarrowsWeather;
-
+    private ArrayList<NPC> npcs;
     public Game (Map map , ArrayList<Player> players) {
         this.map = map;
         this.players = players;
+        time = new Time();
     }
 }
