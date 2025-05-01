@@ -3,13 +3,21 @@ package controllers;
 import models.Result;
 
 public class MainMenuController {
-    public Result<String> exit() {
-        return null;
+
+    public Result<String> EnterMenu(String menu_name) {
+
     }
-    public Result<String> changeMenu() {
-        return null;
+
+    public Result<String> ExitMenu() {
+
     }
-    public Result<String> showMenu() {
-        return null;
+
+    public Result<String> ShowCurrentMenu() {
+
     }
+
+    public Result<String> LogOut() {
+
+    }
+
 }
