@@ -63,15 +63,15 @@ public class LoginMenuController {
         }
 
         User newUser = new User(username, password, email, nickname, Gender.valueOf(gender));
-
+        return null;
     }
 
     public Result<String> LogIn(String username, String password) {
-
+        return null;
     }
 
     public Result<String> LogInStayLoggedIn(String username, String password) {
-
+        return null;
     }
 
     public Result<String> ForgetPassword(String username) {
@@ -79,7 +79,7 @@ public class LoginMenuController {
     }
 
     public Result<String> ShowCurrentMenu() {
-
+        return null;
     }
 
     public boolean checkRegex(String string, String Regex) {
@@ -103,7 +103,7 @@ public class LoginMenuController {
             System.out.println("Warning: password doesn't have [0-9]!\n");
         }
 
-        if(!password.matches("[!#$%^&*()=+{}[]|\\/:;'\",<>?]")){
+        if(!password.matches("[!#$%^&*()=+{}]|\\/:;'\",<>?")){
             System.out.println("Warning: password doesn't have special character!\n");
         }
     }
