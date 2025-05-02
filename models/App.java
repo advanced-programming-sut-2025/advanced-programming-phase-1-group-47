@@ -4,41 +4,66 @@ import java.util.ArrayList;
 import models.enums.Menu;
 
 public class App {
-    public static final ArrayList<User> users = new ArrayList<>();
+
+    private static ArrayList<User> users = new ArrayList<>();
+
+    private static ArrayList<Game> games = new ArrayList<>();
+
+    private static User loggedInUser = null;
+
+    private static Menu currentMenu = Menu.LoginMenu;
+
+    private static Game currentGame;
 
     public static Game getCurrentGame() {
         return currentGame;
     }
 
-    public static void setCurrentGame(Game currentGame) {
-        App.currentGame = currentGame;
+    public static void setCurrentGame(Game newCurrentGame) {
+        currentGame = newCurrentGame;
     }
 
-    public static Map getCurrentMap() {
-        return currentMap;
+    public static Menu getCurrentMenu() {
+        return currentMenu;
     }
 
-    public static void setCurrentMap(Map currentMap) {
-        App.currentMap = currentMap;
-    }
-    private ArrayList<Game> games;
-    private ArrayList<User> loggedUsers;
-    private static Menu menu = Menu.LoginMenu;
-    //private static User loggedUser = null;
-    private static Game currentGame;
-    private static Map currentMap;
-    public  Menu getMenu() {
-        return menu;
-    }
-    public void changeMenu(Menu newMenu) {
-        menu = newMenu;
+
+    public static void setCurrentMenu(Menu newMenu) {
+        currentMenu = newMenu;
     }
 
-    public ArrayList<User> getLoggedUsers() {
-        return loggedUsers;
+    public static ArrayList<Game> getGames() {
+        return games;
     }
 
-    public void setLoggedUsers(ArrayList<User> loggedUsers) {
-        this.loggedUsers = loggedUsers;
+    public static void setGames(ArrayList<Game> newGames) {
+        games = newGames;
     }
+
+    public static ArrayList<User> getUsers() {
+        return users;
+    }
+
+    public static void addUser(User user) {
+        users.add(user);
+    }
+
+
+    public static User getLoggedInUser() {
+        return loggedInUser;
+    }
+
+    public static void setLoggedInUser(User loggedInUser) {
+        App.loggedInUser = loggedInUser;
+    }
+
+    public static User getUserByUsername(String username) {
+        for (User user : users) {
+            if (user.getUsername().equals(username)) {
+                return user;
+            }
+        }
+        return null;
+    }
+
 }

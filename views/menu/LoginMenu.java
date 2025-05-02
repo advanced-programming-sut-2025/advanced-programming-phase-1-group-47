@@ -16,7 +16,7 @@ public class LoginMenu extends AppMenu {
         Matcher matcher;
 
         if((matcher = LoginMenuCommands.SignUp.getMatcher(input)) != null) {
-            controller.SignUp(matcher.group("username"), matcher.group("password"), matcher.group("nickname"), matcher.group("email"), matcher.group("gender"));
+            controller.SignUp(matcher.group("username"), matcher.group("password"), matcher.group("password_confirm"), matcher.group("nickname"), matcher.group("email"), matcher.group("gender"), scanner);
         } else if ((matcher = LoginMenuCommands.LogIn.getMatcher(input)) != null) {
             controller.LogIn(matcher.group("username"), matcher.group("password"));
         } else if ((matcher = LoginMenuCommands.LogInStayLoggedIn.getMatcher(input)) != null) {

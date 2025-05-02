@@ -11,15 +11,15 @@ public class User {
     private int gamePlayed;
     private int maxGold;
     private Game currentGame;
+    public void set_game(Game game){
+        this.currentGame = game;
+    }
     public User(String username,String password,String email,String nickname,Gender gender){
         this.username = username;
         this.password = password;
         this.email = email;
         this.nickname = nickname;
         this.gender = gender;
-    } 
-    public void set_game(Game game){
-        this.currentGame = game;
     }
     public void set_username(String username) {
         this.username = username;
@@ -45,7 +45,7 @@ public class User {
     // 
 // ----------------
     // 
-    public String get_username(){
+    public String getUsername(){
         return this.username;
     }
     public String get_password(){
