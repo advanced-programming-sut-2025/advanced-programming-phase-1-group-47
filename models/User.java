@@ -66,21 +66,27 @@ public class User {
     public String getUsername(){
         return this.username;
     }
+
     public String getPassword(){
         return this.password;
     }
+
     public String getEmail(){
         return this.email;
     }
+
     public String getNickname(){
         return this.nickname;
     }
+
     public Gender getGender(){
         return this.gender;
     }
+
     public int getGamePlayed(){
         return this.gamePlayed;
     }
+
     public int getGoldMax(){
         return this.maxGold;
     }
@@ -93,4 +99,14 @@ public class User {
     public String getSecurityAnswer() {
         return this.securityAnswer;
     }
+
+    public void showInfo() {
+        System.out.println("Username: " + username);
+        System.out.println("Nickname: " + nickname);
+        System.out.println("Email: " + email);
+        System.out.println("Gender: " + gender);
+        System.out.println("Games Played: " + gamePlayed);
+        System.out.println("Max Gold: " + maxGold);
+    }
+
 }
