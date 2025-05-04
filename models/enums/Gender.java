@@ -10,9 +10,23 @@ public enum Gender {
         this.label = label;
     }
 
-    public String getLabel() {
+    public String valueOf() {
         return label;
     }
+
+    public static Gender getGenderEnum(String gender) {
+        if (gender == null) return null; // Handle null input
+
+        switch (gender.toLowerCase()) {
+            case "male":
+                return Gender.Male;
+            case "female":
+                return Gender.Female;
+            default:
+                throw new IllegalArgumentException("Invalid gender type: " + gender);
+        }
+    }
+
 
 
 }

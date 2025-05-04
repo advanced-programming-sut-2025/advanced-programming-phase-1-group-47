@@ -12,15 +12,11 @@ public class LoginMenu extends AppMenu {
 
     @Override
     public void check (Scanner scanner) {
-        System.out.println("Im here");
+        System.out.println("You are now in login menu"); // It will be deleted.
+
         String input = scanner.nextLine();
-        if (input.equals("exit")) {
-            System.out.println("got it");
-            System.out.println(new Result<>(false, "Hi").toString());
-        }
-        else{
+
             Matcher matcher;
-            System.out.println("hi");
 
             if ((matcher = LoginMenuCommands.SignUp.getMatcher(input)) != null) {
                 System.out.println(controller.SignUp(matcher.group("username"), matcher.group("password"), matcher.group("passwordConfirm"), matcher.group("nickname"), matcher.group("email"), matcher.group("gender"), scanner).toString());
@@ -33,9 +29,9 @@ public class LoginMenu extends AppMenu {
             } else if ((matcher = LoginMenuCommands.ShowMenu.getMatcher(input)) != null) {
                 System.out.println(controller.ShowCurrentMenu().toString());
             } else {
-                System.out.println("invalid command\n");
+                System.out.println("invalid command");
             }
-        }
+
 
 
     }
