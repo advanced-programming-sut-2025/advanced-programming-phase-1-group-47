@@ -11,8 +11,8 @@ public class Player extends User {
     private Energy energy;
     private int money;
 
-    public Player(String username, String password, String email, String nickname, Gender gender) {
-        super(username, password, email, nickname, gender);
+    public Player(String username, String password, String email, String nickname, Gender gender, String securityQuestion, String securityAnswer) {
+        super(username, password, email, nickname, gender, securityQuestion, securityAnswer);
         this.Coordinates = new Point(0, 0);
         this.invetory = new Invetory();
         this.skills = new Skill[0];

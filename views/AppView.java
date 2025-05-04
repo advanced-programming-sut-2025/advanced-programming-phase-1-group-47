@@ -8,8 +8,9 @@ import models.enums.Menu;
 public class AppView {
     public static Scanner scanner = new Scanner(System.in);
     public void run() {
-        Scanner scanner = new Scanner(System.in);
+        //Scanner scanner = new Scanner(System.in);
         do {
+            System.out.println(App.getCurrentMenu().toString());
             App.getCurrentMenu().checkCommand(scanner);
         } while (App.getCurrentMenu() != Menu.ExitMenu);
     }
