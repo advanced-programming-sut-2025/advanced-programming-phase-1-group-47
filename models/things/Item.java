@@ -1,14 +1,18 @@
 package models.things;
 
-public abstract class Item {
+public class Item {
     private String name;
     private int ItemID;
+    private int ParentItemID; //for wine/pickled vegtables/fruit jam /fish /plant
     private int value;
     private int amount;
 
-    public void Item(int ItemID , int value) {
+    public Item(String name ,int ItemID , int value , int ParentItemID , int amount) {
+        this.name = name;
         this.ItemID = ItemID;
         this.value = value;
+        this.ParentItemID = ParentItemID;
+        this.amount = amount;
     }
     public int getItemID() {
         return ItemID;
@@ -25,4 +29,4 @@ public abstract class Item {
     public void setValue(int value) {
         this.value = value;
     }
-}
+} 
