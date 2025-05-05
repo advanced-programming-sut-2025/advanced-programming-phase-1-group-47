@@ -1,9 +1,8 @@
 package controllers;
 import java.util.Random;
-import models.App;
-import models.Invetory;
-import models.NPC;
-import models.Result;
+import java.util.regex.Matcher;
+
+import models.*;
 import models.buildings.Building;
 import models.enums.Season;
 import models.things.Item;
@@ -50,7 +49,20 @@ public class GameMenuController {
             }
         }
         return new Result(false , "No NPC found with that name!");
-        
+
+    }
+    public Result<String> handleNewGame(Matcher matcher) {
+        String player1 = matcher.group("player1");
+        String player2 = matcher.group("player2");
+        String player3 = matcher.group("player3");
+        Player p1 = new Player(player1);
+        Player p2 = new Player(player2);
+        Player p3 = new Player(player3);
+
+        Game newGame = new Game(new Map(), p1, p2, p3);
+        App.setCurrentGame(newGame);
+
+        return new Result<>(true, "New game started with players: " + player1 + ", " + player2 + ", " + player3);
     }
     public Result<String> GiveGiftToNPC(NPC npc , Item gift) {
         return null;

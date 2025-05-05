@@ -5,15 +5,15 @@ import models.enums.Menu;
 
 public class App {
 
-    private static ArrayList<User> users = new ArrayList<>();
+    public static ArrayList<User> users = new ArrayList<>();
 
-    private static ArrayList<Game> games = new ArrayList<>();
+    public static ArrayList<Game> games = new ArrayList<>();
 
-    private static User loggedInUser = null;
+    public static User loggedInUser = null;
 
-    private static Menu currentMenu = Menu.LoginMenu;
+    public static Menu currentMenu = Menu.LoginMenu;
 
-    private static Game currentGame;
+    public static Game currentGame;
 
     public static Game getCurrentGame() {
         return currentGame;
