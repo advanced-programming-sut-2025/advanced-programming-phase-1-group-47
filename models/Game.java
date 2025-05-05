@@ -7,13 +7,13 @@ import models.enums.Weather;
 
 public class Game {
     private final ArrayList<Player> players;
-    private Map map;
-    private Time time;
-    private Weather weather;
-    private Weather tomarrowsWeather;
-    private ArrayList<NPC> npcs;
-    private Player currentPlayer;
-
+    public Map map;
+    public Time time;
+    public Weather weather;
+    public Weather tomarrowsWeather;
+    public ArrayList<NPC> npcs;
+    public Player currentPlayer;
+    public Point personPoint;
     public Game(Map map, Player... players) {
         this.map = map;
         this.players = new ArrayList<>(Arrays.asList(players));

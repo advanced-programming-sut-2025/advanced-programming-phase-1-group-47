@@ -10,6 +10,7 @@ public class Player extends User {
     private Skill[] skills;
     private Energy energy;
     private int money;
+    private int id;
 
     public Player(String username, String password, String email, String nickname, Gender gender, String securityQuestion, String securityAnswer) {
         super(username, password, email, nickname, gender, securityQuestion, securityAnswer);
@@ -18,6 +19,14 @@ public class Player extends User {
         this.skills = new Skill[0];
     }
     public void gainXP(SkillType type , int xp) {
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public int getEnergy() {

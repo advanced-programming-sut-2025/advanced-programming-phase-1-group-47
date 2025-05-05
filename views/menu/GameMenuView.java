@@ -15,9 +15,9 @@ public class GameMenuView extends AppMenu {
         String input = scanner.nextLine();
         Matcher matcher;
         if ((matcher = models.enums.commands.GameMenu.newgame.getMatcher(input)) != null) {
-            controller.handleNewGame(matcher);
+            controller.handleNewGame(matcher,scanner);
         } else if ((matcher = models.enums.commands.GameMenu.gamemap.getMatcher(input)) != null) {
-            // handleGameMap(matcher);
+             handleGameMap(matcher);
         } else if ((matcher = models.enums.commands.GameMenu.loadgame.getMatcher(input)) != null) {
             // handleLoadGame(matcher);
         } else if ((matcher = models.enums.commands.GameMenu.exitgame.getMatcher(input)) != null) {

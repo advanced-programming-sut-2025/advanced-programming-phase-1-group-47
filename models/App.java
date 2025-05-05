@@ -27,11 +27,21 @@ public class App {
         return currentMenu;
     }
 
-
     public static void setCurrentMenu(Menu newMenu) {
         currentMenu = newMenu;
     }
-
+    public static Player findPlayer(String playerName) {
+        for(Game game : games) {
+            if (game.equals(currentGame)) {
+                for (Player player : game.getPlayers()) {
+                    if (player.equals(playerName)) {
+                        return player;
+                    }
+                }
+            }
+        }
+        return null;
+    }
     public static ArrayList<Game> getGames() {
         return games;
     }
