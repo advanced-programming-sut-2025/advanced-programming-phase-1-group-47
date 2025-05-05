@@ -21,4 +21,8 @@ public class Game {
         npcs.add(Robin.getInstance().robinBuilder());
         time = new Time();
     }
+
+    public ArrayList<Player> getPlayers() {
+        return players;
+    }
 }

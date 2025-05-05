@@ -1,7 +1,6 @@
 package models.NPCs;
 
 import java.util.ArrayList;
-
 import models.NPC;
 import models.things.Item;
 import models.things.relations.Quest;

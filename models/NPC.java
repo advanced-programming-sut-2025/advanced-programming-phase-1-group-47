@@ -34,6 +34,10 @@ public class NPC {
         this.possibleGifts = possibleGifts;
         this.TimeUntilQuest3 = TimeUntilQuest3;
         friendship = new HashMap<>();
+        for (Player player : App.getCurrentGame().getPlayers()) {
+            friendship.put(player, 0);
+        }
+        
     }
 
     public void addFriendship(int amount) {
