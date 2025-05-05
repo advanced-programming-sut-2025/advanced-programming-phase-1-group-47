@@ -43,4 +43,8 @@ public class Player extends User {
     public void setMoney(int money) {
         this.money = money;
     }
+
+    public Invetory getInvetory() {
+        return invetory;
+    }
 }

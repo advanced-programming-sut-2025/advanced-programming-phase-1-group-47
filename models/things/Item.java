@@ -29,4 +29,12 @@ public class Item {
     public void setValue(int value) {
         this.value = value;
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getParentItemID() {
+        return ParentItemID;
+    }
 } 

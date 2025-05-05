@@ -52,8 +52,26 @@ public class GameMenuController {
         return new Result(false , "No NPC found with that name!");
         
     }
-    public Result<String> GiveGiftToNPC(NPC npc , Item gift) {
-        return null;
+    public Result<String> GiveGiftToNPC(String npcName , String giftName) {
+        for (NPC npc : App.getCurrentGame().getNpcs()){
+            if(npc.getName().equals(npcName)) {
+                for(Item item : App.getCurrentGame().getCurrentPlayer().getInvetory().getItems()) {
+                    if(item.getName().equals(giftName)){
+                        Invetory.removeItem(item);
+                        for(Item favitem : npc.getFavorites()) {
+                            if(favitem.getItemID() == item.getItemID() || favitem.getItemID() == item.getParentItemID()){
+                                npc.addFriendship(200, App.getCurrentGame().getCurrentPlayer());
+                                return new Result<String>(true, "Thanks! I love this Gift!");                                
+                            }
+                        }
+                        npc.addFriendship(50, App.getCurrentGame().getCurrentPlayer());
+                        return new Result<String>(true, "Thanks!");
+                    }
+                }
+                return new Result(false , "You Don't have that Item!");
+            }
+        }
+        return new Result(false , "NPC name incorrect");
     }
     public Result<String> FinishQuest(Invetory playerItems , int QuestIndex) {
         return null;
