@@ -18,8 +18,8 @@ public class TimeController {
 
     public void advanceTime(int hours) {
         int hour = time.getHour() + hours;
-        while (hour >= 24) {
-            hour -= 24;
+        while (hour >= 22) {
+            hour -= 13;
             advanceDate(1);
         }
         time.setHour(hour);
@@ -32,6 +32,9 @@ public class TimeController {
         while (day > 28) {
             day -= 28;
             int nextMonthIndex = (currentMonth.ordinal() + 1) % 12;
+            if(currentMonth.ordinal() + 1>12){
+                time.setYear(time.getYear()+1);
+            }
             currentMonth = month.values()[nextMonthIndex];
 
             if (nextMonthIndex % 3 == 1) {
