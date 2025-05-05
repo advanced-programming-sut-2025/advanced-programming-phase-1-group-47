@@ -11,21 +11,27 @@ public class ProfileMenu extends AppMenu {
 
     @Override
     public void check(Scanner scanner) {
+        System.out.println("You are now in profile menu"); // It will be deleted.
+
         String input = scanner.nextLine();
         Matcher matcher;
 
         if((matcher = ProfileMenuCommands.ChangeUsername.getMatcher(input)) != null) {
-            controller.ChangeUsername(matcher.group("username"));
+            System.out.println(controller.ChangeUsername(matcher.group("username")).toString());
         } else if((matcher = ProfileMenuCommands.ChangeNickname.getMatcher(input)) != null) {
-            controller.ChangeNickname(matcher.group("nickname"));
+            System.out.println(controller.ChangeNickname(matcher.group("nickname")).toString());
         } else if((matcher = ProfileMenuCommands.ChangePassword.getMatcher(input)) != null) {
-            controller.ChangePassword(matcher.group("new_password"), matcher.group("old_password"));
+            System.out.println(controller.ChangePassword(matcher.group("oldPassword"), matcher.group("newPassword")).toString());
         } else if((matcher = ProfileMenuCommands.ChangeEmail.getMatcher(input)) != null) {
-            controller.ChangeEmail(matcher.group("email"));
+            System.out.println(controller.ChangeEmail(matcher.group("email")).toString());
         } else if((matcher = ProfileMenuCommands.UserInfo.getMatcher(input)) != null) {
-            controller.UserInfo();
+            System.out.println(controller.UserInfo().toString());
+        } else if((matcher = ProfileMenuCommands.ShowMenu.getMatcher(input)) != null) {
+            System.out.println(controller.ShowCurrentMenu().toString());
+        } else if((matcher = ProfileMenuCommands.EnterMenu.getMatcher(input)) != null) {
+            controller.EnterMenu(matcher.group("menuName"));
         } else {
-            System.out.println("invalid command\n");
+            System.out.println("invalid command");
         }
     }
 }

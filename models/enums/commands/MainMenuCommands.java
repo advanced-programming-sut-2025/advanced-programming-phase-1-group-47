@@ -3,7 +3,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public enum MainMenuCommands {
-        EnterMenu("^\\s*menu\\s+enter\\s+(?<menu_name>\\S+)\\s*$"),
+        EnterMenu("^\\s*menu\\s+enter\\s+(?<menuName>\\S+)\\s*$"),
         ExitMenu("^\\s*menu\\s+exit\\s*$"),
         ShowMenu("show current menu"),
         LogOut("user\\s*logout");

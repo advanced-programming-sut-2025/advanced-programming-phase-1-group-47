@@ -11,12 +11,13 @@ public class MainMenu extends AppMenu {
 
     @Override
     public void check(Scanner scanner) {
+        System.out.println("You are now in main menu"); // It will be deleted.
 
         String input = scanner.nextLine();
         Matcher matcher;
 
         if((matcher = MainMenuCommands.EnterMenu.getMatcher(input)) != null) {
-            controller.EnterMenu(matcher.group("menu_name"));
+            controller.EnterMenu(matcher.group("menuName"));
         } else if ((matcher = MainMenuCommands.ExitMenu.getMatcher(input)) != null) {
             controller.ExitMenu();
         } else if ((matcher = MainMenuCommands.ShowMenu.getMatcher(input)) != null) {

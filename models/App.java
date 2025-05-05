@@ -65,5 +65,11 @@ public class App {
         }
         return null;
     }
+    //when user wants to logOut or change turn, this should be runned to reset all features like current game,
+    //current menu, loggedInUser and...
+    //fill it pls
+    public static void logOut(){
+
+    }
 
 }

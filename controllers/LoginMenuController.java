@@ -6,9 +6,13 @@ import models.User;
 import models.enums.Gender;
 import models.enums.Menu;
 import models.enums.SecurityQuestion;
+import models.enums.commands.LoginMenuCommands;
 
 import java.util.Scanner;
 import java.security.SecureRandom;
+import java.util.regex.Matcher;
+
+import static models.enums.Gender.getGenderEnum;
 
 public class LoginMenuController {
 
@@ -16,18 +20,18 @@ public class LoginMenuController {
 
         if(App.getUserByUsername(username) != null) {
 
-            System.out.println("Username already exists!\n");
+            System.out.println("Username already exists!");
 
             for(int i = 0; i < 100; i++){
                 String newUsername = username + i;
-                if(App.getUserByUsername(username) == null){
+                if(App.getUserByUsername(newUsername) == null){
                     System.out.println("You can pick this : " + newUsername + " Y/N ?");
-
                     String input = scanner.nextLine();
                     if(input.equals("Y")){
                         username = newUsername;
+                        break;
                     } else {
-                        return new Result<>(false, "username invalid!\n");
+                        return new Result<>(false, "username invalid!");
                     }
                 }
 
@@ -35,65 +39,83 @@ public class LoginMenuController {
         }
 
         if(!checkRegex(username, "^[a-zA-Z0-9-]+$")) {
-            return new Result<>(false, "username format invalid!\n");
+            return new Result<>(false, "username format invalid!");
         }
 
-        if(!checkRegex(password, "^[a-zA-Z0-9!#$%^&*()=+{}[]|\\/:;'\",<>?]+$")) {
-            return new Result<>(false, "password format invalid!\n");
+        if (!checkRegex(password, "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*])[a-zA-Z\\d!@#$%^&*]{8,}$")) {
+            return new Result<>(false, "Password must be at least 8 characters long, containing uppercase, lowercase, number, and special character.");
         }
+
 
         if(!password.equals(passwordConfirm)){
-            System.out.println("password-confirm doesn't match!\n");
-            System.out.println("Enter password again:\n");
+            System.out.println("password-confirm doesn't match!");
+            System.out.println("Enter password again: (Enter Random for random password!)");
 
             String newPassword = scanner.nextLine();
             if(newPassword.equals("Random")){
                 newPassword = generatePassword(12);
                 System.out.println("Your password is : " + newPassword + "\n");
             } else if(!newPassword.equals(password)){
-                return new Result<>(false, "password-confirm doesn't match!\n");
+                return new Result<>(false, "password-confirm doesn't match!");
             }
         }
 
-        checkPassword(password);
-        if(!checkRegex(email, "^[a-zA-Z][a-zA-Z0-9_.-]{3,7}@(?!-)[a-zA-Z][-a-zA-Z.]{1,5}[a-zA-Z](\\\\.org|\\\\.com|\\\\.net|\\\\.edu)$")){
-            return new Result<>(false, "Email format not correct!\n");
+        if (!checkRegex(email, "^[a-zA-Z][a-zA-Z0-9_.-]{1,63}@(?!-)[a-zA-Z][-a-zA-Z.]{2,63}\\.(org|com|net|edu)$")) {
+            return new Result<>(false, "Invalid email format! Please provide a valid domain!");
         }
+
 
         if(!checkRegex(gender, "^(male|female)$")){
-            return new Result<>(false, "Gender not allowed!\n");
+            return new Result<>(false, "Gender not allowed!");
         }
 
-        System.out.println("There are 5 security questions choose one:\n");
+        System.out.println("There are 5 security questions choose one:");
         for (SecurityQuestion question : SecurityQuestion.values()) {
             System.out.println(question.getQuestion());
         }
 
-        int i = scanner.nextInt();
-        String answer = scanner.nextLine();
-        String question = String.valueOf(SecurityQuestion.values()[i - 1]);
+        String input = scanner.nextLine();
+        Matcher matcher = LoginMenuCommands.Question.getMatcher(input);
+        if(matcher == null) {
+            return new Result<>(false, "Invalid command!");
+        }
 
-        User newUser = new User(username, password, email, nickname, Gender.valueOf(gender), question, answer);
+        if(!matcher.group("questionNumber").matches("^\\d+$")) {
+            System.out.println(matcher.group("questionNumber"));
+            return new Result<>(false, "invalid format of questionNumber!");
+        }
+
+        if(!matcher.group("answer").equals(matcher.group("answerConfirm")))
+            return new Result<>(false, "answerConfirm is not same as answer!");
+
+        int i = Integer.parseInt(matcher.group("questionNumber"));
+        SecurityQuestion question = SecurityQuestion.getByIndex(i - 1);
+        String answer = matcher.group("answer");
+
+
+        User newUser = new User(username, password, email, nickname, getGenderEnum(gender), question.getQuestion(), answer);
+
         App.addUser(newUser);
-        return new Result<>(true, "User added successfully!\n");
+
+        return new Result<>(true, "User added successfully!");
     }
 
     public Result<String> LogIn(String username, String password, Scanner scanner) {
 
         if(App.getUserByUsername(username) != null){
             if(!App.getUserByUsername(username).getPassword().equals(password)){
-                System.out.println("Password in incorrect! please answer to the security question:");
+                System.out.println("Password is not correct! please answer to the security question:");
                 System.out.println(App.getUserByUsername(username).getSecurityQuestion());
 
                 String securityAnswer = scanner.nextLine();
                 if(!securityAnswer.equals(App.getUserByUsername(username).getSecurityAnswer())){
-                    return new Result<>(false, "Wrong answer!\n");
+                    return new Result<>(false, "Wrong answer!");
                 }
             }
 
             App.setLoggedInUser(App.getUserByUsername(username));
             App.setCurrentMenu(Menu.MainMenu);
-            return new Result<>(true, "User logged in successfully, You are now in MainMenu!\n");
+            return new Result<>(true, "User logged in successfully, You are now in MainMenu!");
         }
 
         return new Result<>(false, "User not found");
@@ -104,8 +126,9 @@ public class LoginMenuController {
     }
 
     public Result<String> ForgetPassword(String username, Scanner scanner) {
+
         if(!(App.getUserByUsername(username) == null)){
-            System.out.println(App.getUserByUsername(username).getSecurityQuestion());
+            System.out.println(App.getUserByUsername(username).getSecurityQuestion().toString());
             String answer = scanner.nextLine();
             if(answer.equals(App.getUserByUsername(username).getSecurityAnswer())){
                 System.out.println("Your password is: " + App.getUserByUsername(username).getPassword());
@@ -115,7 +138,7 @@ public class LoginMenuController {
 
             return new Result<>(true, "");
         }
-        return new Result<>(false, "User not found!\n");
+        return new Result<>(false, "User not found!");
     }
 
     public Result<String> ShowCurrentMenu() {
@@ -125,28 +148,6 @@ public class LoginMenuController {
 
     public boolean checkRegex(String string, String Regex) {
         return string.matches(Regex);
-    }
-
-    public void checkPassword(String password){
-        if(password.length() < 8){
-            System.out.println("Warning: password is too short!\n");
-        }
-
-        if(!password.matches("[A-Z]")){
-            System.out.println("Warning: password doesn't have [A-Z]!\n");
-        }
-
-        if(!password.matches("[a-z]")){
-            System.out.println("Warning: password doesn't have [a-z]!\n");
-        }
-
-        if(!password.matches("[0-9]")){
-            System.out.println("Warning: password doesn't have [0-9]!\n");
-        }
-
-        if(!password.matches("[!#$%^&*()=+{}]|\\/:;'\",<>?")){
-            System.out.println("Warning: password doesn't have special character!\n");
-        }
     }
 
     public static String generatePassword(int length) {
