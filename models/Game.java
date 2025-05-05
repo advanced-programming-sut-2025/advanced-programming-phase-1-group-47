@@ -11,7 +11,8 @@ public class Game {
     private Weather weather;
     private Weather tomarrowsWeather;
     private ArrayList<NPC> npcs;
-    public Game (Map map , ArrayList<Player> players) {
+    private Player currentPlayer;
+    public Game (Map map , ArrayList<Player> players , Player creator) {
         this.map = map;
         this.players = players;
         npcs.add(Abigail.getInstance().abigailBuilder());
@@ -19,10 +20,26 @@ public class Game {
         npcs.add(Harvey.getInstance().harveyBuilder());
         npcs.add(Leah.getInstance().leahBuilder());
         npcs.add(Robin.getInstance().robinBuilder());
+        this.currentPlayer = creator;
         time = new Time();
     }
 
     public ArrayList<Player> getPlayers() {
         return players;
+    }
+    public ArrayList<NPC> getNpcs() {
+        return npcs;
+    }
+
+    public Weather getWeather() {
+        return weather;
+    }
+
+    public Time getTime() {
+        return time;
+    }
+
+    public Player getCurrentPlayer() {
+        return currentPlayer;
     }
 }
