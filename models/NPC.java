@@ -72,4 +72,28 @@ public class NPC {
     public ArrayList<Item> getFavorites() {
         return favorites;
     }
+
+    public Quest getQuest1() {
+        return quest1;
+    }
+
+    public void setQuest1(Quest quest1) {
+        this.quest1 = quest1;
+    }
+
+    public Quest getQuest2() {
+        return quest2;
+    }
+
+    public void setQuest2(Quest quest2) {
+        this.quest2 = quest2;
+    }
+
+    public Quest getQuest3() {
+        return quest3;
+    }
+
+    public void setQuest3(Quest quest3) {
+        this.quest3 = quest3;
+    }
 }

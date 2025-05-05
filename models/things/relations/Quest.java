@@ -9,7 +9,7 @@ import models.things.Item;
 public class Quest {
     private boolean isDone;
     private Map <Player, Boolean> isActive;
-    private int questID;
+    private final int questID;
     private Item requiermentItems;
     private Item rewards;
     private int rewardMoney;
@@ -61,5 +61,13 @@ public class Quest {
     }
     public void ActivateQuest(Player player) {
         isActive.put(player, true);
+    }
+
+    public int getQuestID() {
+        return questID;
+    }
+
+    public Map<Player, Boolean> getIsActive() {
+        return isActive;
     }
 }

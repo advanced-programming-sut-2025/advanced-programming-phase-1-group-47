@@ -6,6 +6,7 @@ import models.Result;
 import models.buildings.Building;
 import models.enums.Season;
 import models.things.Item;
+import models.things.relations.Quest;
 
 public class GameMenuController {
 
@@ -43,12 +44,12 @@ public class GameMenuController {
         if(App.getCurrentGame().getTime().getSeason().equals(Season.WINTER))
             randomNumber+=15;
         for(NPC npc : App.getCurrentGame().getNpcs()){
-            if(npc.getName().equals(npcname)){
+            if(npc.getName().equalsIgnoreCase(npcname)){
                 npc.addFriendship(20 , App.getCurrentGame().getCurrentPlayer());
-                return new Result(true , npc.getResponses().get(randomNumber));
+                return new Result<>(true , npc.getResponses().get(randomNumber));
             }
         }
-        return new Result(false , "No NPC found with that name!");
+        return new Result<>(false , "No NPC found with that name!");
         
     }
     public Result<String> GiveGiftToNPC(String npcName , String giftName) {
@@ -73,7 +74,38 @@ public class GameMenuController {
         return new Result<>(false , "NPC name incorrect");
     }
     public Result<String> FinishQuest(int QuestIndex) {
-
+        for (NPC npc : App.getCurrentGame().getNpcs()) {
+            if (npc.getQuest1().getQuestID() == QuestIndex) {
+                if(!isNPCHere())
+                    return new Result<>(false , "NPC too far away!");
+                return finishQuest2(npc.getQuest1());
+                
+            }
+            if (npc.getQuest2().getQuestID() == QuestIndex) {
+                if(!isNPCHere())
+                    return new Result<>(false , "NPC too far away!");
+                return finishQuest2(npc.getQuest2());
+            }
+            if (npc.getQuest3().getQuestID() == QuestIndex) {
+                if(!isNPCHere())
+                    return new Result<>(false , "NPC too far away!");
+                return finishQuest2(npc.getQuest3());
+            }
+            
+        }
+        return new Result<>(false , "invalid Quest index");
+    }
+    //for finishquest
+    private boolean isNPCHere() {
+        return false; //TODO
+    }
+    private Result<String> finishQuest2(Quest quest) {
+        if(quest.isIsDone())
+            return new Result<>(false , "Quest Already Done!");
+        if(!quest.getIsActive().get(App.getCurrentGame().getCurrentPlayer()))
+            return new Result<>(false , "You don't have access to that Quest yet!");
         return null;
     }
+
+    //for finishquest
 }
