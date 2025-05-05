@@ -4,27 +4,28 @@ import models.Point;
 import models.Result;
 import models.enums.backpacks;
 import models.backpackable;
+
 import java.util.ArrayList;
 
-public class Backpack extends Tool{
+public class Backpack extends Tool {
     private backpacks backpackType;
     private ArrayList<backpackable> backpackables;
-    public Result useTool(Tool tool, Point point) {
-        super.useTool(tool, point);
-        return null;
+
+    // Constructor
+    public Backpack(String name, int itemID, int value, int parentItemID, int amount, backpacks backpackType) {
+        super(name, itemID, value, parentItemID, amount);
+        this.backpackType = backpackType;
+        this.backpackables = new ArrayList<>();
     }
+
+    @Override
+    public Result useTool(Tool tool, Point point) {
+        // You can process something or just return default
+        return super.useTool(tool, point); // placeholder
+    }
+
     public void setBackpackables(ArrayList<backpackable> backpackables) {
         this.backpackables = backpackables;
-    }
-
-    @Override
-    public void setItemID(int ItemID) {
-        super.setItemID(ItemID);
-    }
-
-    @Override
-    public void setValue(int value) {
-        super.setValue(value);
     }
 
     public void setBackpackType(backpacks backpackType) {
@@ -38,16 +39,8 @@ public class Backpack extends Tool{
     public backpacks getBackpackType() {
         return backpackType;
     }
+
     public void deleteBackpack(backpackable backpackable) {
         backpackables.remove(backpackable);
-    }
-    @Override
-    public int getItemID() {
-        return super.getItemID();
-    }
-
-    @Override
-    public int getValue() {
-        return super.getValue();
     }
 }

@@ -1,9 +1,7 @@
 package models.things.machines;
 
 public class CheesePress extends Machine {
-
-    public CheesePress(int ItemID, int value) {
-
-        super.Machine(ItemID, value);
+    public CheesePress(String name, int itemID, int value, int parentItemID, int amount) {
+        super(name, itemID, value, parentItemID, amount);
     }
 }

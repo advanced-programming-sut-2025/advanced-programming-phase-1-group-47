@@ -4,8 +4,12 @@ import models.Point;
 import models.Result;
 
 public class MilkPail extends Tool {
-    public Result UseTool(Tool tool, Point point) {
-        super.useTool(tool, point);
-        return null;
+
+    public MilkPail(String name, int itemID, int value, int parentItemID, int amount) {
+        super(name, itemID, value, parentItemID, amount);
+    }
+    public Result useTool(Point point) {
+        // فرض کنیم این ابزار برای جمع‌آوری شیر از یک نقطه استفاده می‌شود
+        return new Result(true, "Milk pail used at " + point);
     }
 }

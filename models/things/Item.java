@@ -14,6 +14,31 @@ public class Item {
         this.ParentItemID = ParentItemID;
         this.amount = amount;
     }
+
+    public void setAmount(int amount) {
+        this.amount = amount;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setParentItemID(int parentItemID) {
+        ParentItemID = parentItemID;
+    }
+
+    public int getAmount() {
+        return amount;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getParentItemID() {
+        return ParentItemID;
+    }
+
     public int getItemID() {
         return ItemID;
     }

@@ -5,10 +5,12 @@ import models.Result;
 import models.things.Item;
 
 public abstract class Tool extends Item {
-    public void Item(int ItemID , int value){
-        super.Item(ItemID, value);
+
+    public Tool(String name, int itemID, int value, int parentItemID, int amount) {
+        super(name, itemID, value, parentItemID, amount);
     }
-    public Result useTool(Tool tool, Point point){
+
+    public Result useTool(Tool tool, Point point) {
         return null;
     }
 }
