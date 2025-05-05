@@ -39,19 +39,19 @@ public class Abigail {
     private Quest questBuilder1() {
         Item requieredItems = new Item("Gold Bar", 44, 250, 0, 1);
         Item rewards = new Item("Friendship Level", 201, 0, 0, 1);
-        Quest quest = new Quest(requieredItems, rewards , 0);
+        Quest quest = new Quest(requieredItems, rewards , 0 , 1 );
         return quest;
     }
     private Quest questBuilder2() {
         Item requieredItems = new Item("Pumpkin", 45, 320, 0, 1);
         Item rewards = new Item("null item", 0, 0, 0, 1);
-        Quest quest = new Quest(requieredItems, rewards , 500);
+        Quest quest = new Quest(requieredItems, rewards , 500 , 2);
         return quest;
     }
     private Quest questBuilder3() {
         Item requieredItems = new Item("Wheat", 51, 25, 0, 50);
         Item rewards = new Item("Iridium Sprinkler", 40, 1000, 0, 1);
-        Quest quest = new Quest(requieredItems, rewards , 0);
+        Quest quest = new Quest(requieredItems, rewards , 0 , 3);
         return quest;
     }
  

@@ -1,7 +1,6 @@
 package controllers;
 import java.util.Random;
 import models.App;
-import models.Invetory;
 import models.NPC;
 import models.Result;
 import models.buildings.Building;
@@ -54,26 +53,27 @@ public class GameMenuController {
     }
     public Result<String> GiveGiftToNPC(String npcName , String giftName) {
         for (NPC npc : App.getCurrentGame().getNpcs()){
-            if(npc.getName().equals(npcName)) {
+            if(npc.getName().equalsIgnoreCase(npcName)) {
                 for(Item item : App.getCurrentGame().getCurrentPlayer().getInvetory().getItems()) {
-                    if(item.getName().equals(giftName)){
-                        Invetory.removeItem(item);
+                    if(item.getName().equalsIgnoreCase(giftName)){
+                        App.getCurrentGame().getCurrentPlayer().getInvetory().removeItem(item);
                         for(Item favitem : npc.getFavorites()) {
                             if(favitem.getItemID() == item.getItemID() || favitem.getItemID() == item.getParentItemID()){
                                 npc.addFriendship(200, App.getCurrentGame().getCurrentPlayer());
-                                return new Result<String>(true, "Thanks! I love this Gift!");                                
+                                return new Result<>(true, "Thanks! I love this Gift!");                                
                             }
                         }
                         npc.addFriendship(50, App.getCurrentGame().getCurrentPlayer());
-                        return new Result<String>(true, "Thanks!");
+                        return new Result<>(true, "Thanks!");
                     }
                 }
-                return new Result(false , "You Don't have that Item!");
+                return new Result<>(false , "You Don't have that Item!");
             }
         }
-        return new Result(false , "NPC name incorrect");
+        return new Result<>(false , "NPC name incorrect");
     }
-    public Result<String> FinishQuest(Invetory playerItems , int QuestIndex) {
+    public Result<String> FinishQuest(int QuestIndex) {
+
         return null;
     }
 }

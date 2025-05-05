@@ -10,7 +10,7 @@ public class Invetory {
     private ArrayList<Item> items;
     private ArrayList<Tool> tools;
 
-    public static void removeItem(Item item) {
+    public void removeItem(Item item) {
         items.remove(item);
     }
     public void setBackpack(Backpack backpack) {
