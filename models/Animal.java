@@ -2,7 +2,6 @@ package models;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import models.enums.AnimalProductType;
 import models.enums.Animals;
 
@@ -18,7 +17,7 @@ public abstract class Animal {
     public void setProductType(AnimalProductType productType) {
         this.productType = productType;
     }
-    Animal(AnimalProductType productType, Animals animalType, Map<Player, Integer> friendship, Animals animal, Point point, String name) {
+    public Animal(AnimalProductType productType, Animals animalType, Map<Player, Integer> friendship, Animals animal, Point point, String name) {
         this.productType = productType;
         this.animalType = animalType;
         this.friendship = friendship;

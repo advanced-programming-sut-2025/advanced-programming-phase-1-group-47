@@ -3,7 +3,6 @@ package models;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import models.buildings.Building;
 import models.things.Item;
 import models.things.relations.Quest;
 
@@ -32,7 +31,6 @@ public class NPC {
         this.quest3 = quest3;
         this.favorites = favorites;
         this.responses = responses;
-        this.workPlace = workPlace;
         this.possibleGifts = possibleGifts;
         this.TimeUntilQuest3 = TimeUntilQuest3;
         friendship = new HashMap<>();

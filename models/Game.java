@@ -1,6 +1,7 @@
 package models;
 
 import java.util.ArrayList;
+import models.NPCs.*;
 import models.enums.Weather;
 
 public class Game {
@@ -13,6 +14,11 @@ public class Game {
     public Game (Map map , ArrayList<Player> players) {
         this.map = map;
         this.players = players;
+        npcs.add(Abigail.getInstance().abigailBuilder());
+        npcs.add(Sebastion.getInstance().sebastionBuilder());
+        npcs.add(Harvey.getInstance().harveyBuilder());
+        npcs.add(Leah.getInstance().leahBuilder());
+        npcs.add(Robin.getInstance().robinBuilder());
         time = new Time();
     }
 }
