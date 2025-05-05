@@ -8,12 +8,13 @@ public class Time {
     private Season season;
     private month month;
     private int day;
-
+    private int year;
     public Time() {
         this.hour = 9;
         this.day = 1;
         this.season = Season.SPRING;
         this.month = models.enums.month.January; // مقداردهی پیش‌فرض به ماه
+        this.year=0;
     }
 
     public int getHour() {
@@ -59,5 +60,13 @@ public class Time {
         this.month = month.valueOf(parts[1]);
         this.day = Integer.parseInt(parts[2]);
         this.hour = Integer.parseInt(parts[3]);
+    }
+
+    public int getYear() {
+        return year;
+    }
+
+    public void setYear(int year) {
+        this.year = year;
     }
 }
