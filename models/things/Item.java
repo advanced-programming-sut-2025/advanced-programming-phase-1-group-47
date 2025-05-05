@@ -3,7 +3,7 @@ package models.things;
 public class Item {
     private String name;
     private int ItemID;
-    private int ParentItemID; //for wine/pickled vegtables/fruit jam /fish /plant
+    private int ParentItemID; //for wine/pickled vegtables/fruit jam /fish /plant /i hate NPCs
     private int value;
     private int amount;
 

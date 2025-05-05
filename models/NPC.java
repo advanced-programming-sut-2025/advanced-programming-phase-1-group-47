@@ -8,6 +8,8 @@ import models.things.relations.Quest;
 
 public class NPC {
     private Map <Player, Integer> friendship;
+    private Map <Player, Boolean> hasBeenTalkedTo;
+    private Map <Player, Boolean> hasBeenGiftedTo;
     private String name;
     private String job;
     private Quest quest1;
@@ -37,14 +39,24 @@ public class NPC {
         for (Player player : App.getCurrentGame().getPlayers()) {
             friendship.put(player, 0);
         }
+        hasBeenGiftedTo  = new HashMap<>();
+        for (Player player : App.getCurrentGame().getPlayers())
+            hasBeenGiftedTo.put(player, false);
+        hasBeenTalkedTo  = new HashMap<>();
+        for (Player player : App.getCurrentGame().getPlayers())
+            hasBeenTalkedTo.put(player, false);
         
     }
 
-    public void addFriendship(int amount) {
-
+    public void addFriendship(int amount , Player player) {
+        
     }
     
     public void ActivateQuest(Quest quest) {
 
+    }
+
+    public ArrayList<String> getResponses() {
+        return responses;
     }
 }
