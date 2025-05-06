@@ -13,6 +13,9 @@ public class Invetory {
     public void removeItem(Item item) {
         items.remove(item);
     }
+    public void addItem(Item item) {
+        items.add(item);
+    }
     public void setBackpack(Backpack backpack) {
         this.backpack = backpack;
     }

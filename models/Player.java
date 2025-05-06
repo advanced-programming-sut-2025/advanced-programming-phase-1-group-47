@@ -47,4 +47,7 @@ public class Player extends User {
     public Invetory getInvetory() {
         return invetory;
     }
+    public void addMoney(int moneyToAdd) {
+        money+=moneyToAdd;
+    }
 }

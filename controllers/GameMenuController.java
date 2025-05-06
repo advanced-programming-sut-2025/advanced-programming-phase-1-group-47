@@ -104,7 +104,18 @@ public class GameMenuController {
             return new Result<>(false , "Quest Already Done!");
         if(!quest.getIsActive().get(App.getCurrentGame().getCurrentPlayer()))
             return new Result<>(false , "You don't have access to that Quest yet!");
-        return null;
+        for (Item item : App.getCurrentGame().getCurrentPlayer().getInvetory().getItems()) {
+            if(item.questEquals(quest.getRequiermentItems())) {
+                item.reduceAmount(quest.getRequiermentItems().getAmount());
+                if(item.getAmount() == 0)
+                    App.getCurrentGame().getCurrentPlayer().getInvetory().getItems().remove(item);
+                App.getCurrentGame().getCurrentPlayer().getInvetory().getItems().add(quest.getRewards());
+                App.getCurrentGame().getCurrentPlayer().addMoney(quest.getRewardMoney());
+                quest.setIsDone(true);
+                return new Result<>(true , "Quest completed");
+            }
+        }
+        return new Result<>(false , "You don't have the quest Item (Or Enough of it)");
     }
 
     //for finishquest
