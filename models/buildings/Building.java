@@ -1,21 +1,21 @@
 package models.buildings;
 
-import models.Ground;
-import models.Map;
+import models.*;
 
 
 public abstract class Building {
     private Ground ground;
-    private Map map;
- 
-    public void Building(Ground ground , Map map) {
+    public Building(Ground ground) {
         this.ground = ground;
-        this.map = map;
     }
-    public Ground getGround() {
+    public Ground getGround()
+    {
         return ground;
     }
-    public Map getMap() {
-        return map;
+    public int getWidth(){
+        return Math.abs(this.ground.getEndPoint().x - this.ground.getStartPoint().x);
+    }
+    public int getHeight(){
+        return Math.abs(this.ground.getEndPoint().y - this.ground.getStartPoint().y);
     }
 }

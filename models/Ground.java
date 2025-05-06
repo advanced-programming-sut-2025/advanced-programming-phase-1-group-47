@@ -1,33 +1,53 @@
 package models;
 
-import java.util.ArrayList;
 import models.enums.TileType;
 
 public class Ground {
-    private final int height;
-    private final int width;
-    private final Point startPoint;
-    private Tile[][] tiles;
-    public Ground( int width, int height, int startWidth, int startHeight , ArrayList<Tile> tiles) {
-        this.width = width;
-        this.height = height;
-        this.startPoint = new Point(startWidth, startHeight);
+    private  Point startPoint;
+    private  Point endPoint;
+    public Tile[][] tiles = new Tile[8][8];
+    public Ground(Point startPoint, Point endPoint) {
+        this.startPoint = startPoint;
+        this.endPoint = endPoint;
+        int width = Math.abs(endPoint.x - startPoint.x);
+        int height = Math.abs(endPoint.y - startPoint.y);
+        tiles = new Tile[width][height];
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                tiles[i][j] = new Tile(new Point(startPoint.x + i, startPoint.y + j), TileType.EMPTY);
+            }
+        }
     }
-
-    public int get_height() {
-        return height;
+    public Point getStartPoint() {
+        return startPoint;
     }
-
-    public int get_width() {
-        return width;
+    public Point getEndPoint() {
+        return endPoint;
     }
     public Point get_start_point() {
         return this.startPoint;
     }
-    public void set_tile(int x, int y, TileType type) {
-        if (x > width || y > height || x < 0 || y < 0) {
-            // error
+    public void set_tile_default(TileType type) {
+        int width = endPoint.x - startPoint.x;
+        int height = endPoint.y - startPoint.y;
+        tiles = new Tile[width][height];
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                tiles[i][j] = new Tile(new Point(startPoint.x + i, startPoint.y + j), type);
+            }
         }
-        tiles[x][y].ChangeTile(type);
+    }
+    public void set_tile(Point start,Point end, TileType type) {
+        if (end.x > endPoint.x  || end.y > endPoint.y || start.x < startPoint.x || start.y < startPoint.y) {
+            return;
+        }
+        int width = Math.abs(end.x - start.x);
+        int height = Math.abs(end.y - start.y);
+        tiles = new Tile[width][height];
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                tiles[i][j] = new Tile(new Point(startPoint.x + i, startPoint.y + j), TileType.EMPTY);
+            }
+        }
     }
 }

@@ -1,32 +1,38 @@
 package models;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import models.NPCs.*;
 import models.enums.Weather;
 
 public class Game {
     private final ArrayList<Player> players;
-    private  Map map;
-    private Time time;
-    private Weather weather;
-    private Weather tomarrowsWeather;
-    private ArrayList<NPC> npcs;
-    private Player currentPlayer;
-    public Game (Map map , ArrayList<Player> players , Player creator) {
+    public Map map;
+    public Time time;
+    public Weather weather;
+    public Weather tomarrowsWeather;
+    public ArrayList<NPC> npcs;
+    public Player currentPlayer;
+    public Point personPoint;
+    public Game(Map map, Player... players) {
         this.map = map;
-        this.players = players;
+        this.players = new ArrayList<>(Arrays.asList(players));
+        this.npcs = new ArrayList<>();
         npcs.add(Abigail.getInstance().abigailBuilder());
         npcs.add(Sebastion.getInstance().sebastionBuilder());
         npcs.add(Harvey.getInstance().harveyBuilder());
         npcs.add(Leah.getInstance().leahBuilder());
         npcs.add(Robin.getInstance().robinBuilder());
-        this.currentPlayer = creator;
-        time = new Time();
+        this.time = new Time();
+        if (!this.players.isEmpty()) {
+            this.currentPlayer = this.players.get(0);
+        }
     }
 
     public ArrayList<Player> getPlayers() {
         return players;
     }
+
     public ArrayList<NPC> getNpcs() {
         return npcs;
     }

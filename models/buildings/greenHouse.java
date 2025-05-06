@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import models.Ground;
 import models.Map;
 import models.Tree;
+import models.enums.TileType;
 
 public  class greenHouse  extends Building  {
     ArrayList<Tree> trees = new ArrayList<>();
-    @Override
-    public void Building(Ground ground, Map map) {
-        super.Building(ground, map);
+    boolean hasRepeare = false;
+    public greenHouse(Ground ground) {
+        super(ground);
+        ground.set_tile(ground.get_start_point(),ground.getEndPoint(), TileType.GREENHOUSE);
     }
 }

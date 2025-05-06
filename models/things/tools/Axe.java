@@ -2,13 +2,14 @@ package models.things.tools;
 
 import models.Point;
 import models.Result;
-import models.things.Item;
 
-public class Axe extends Tool{
-    @Override
-    public Result useTool(Tool tool, Point point) {
-        super.useTool(tool, point);
-        return null;
+public class Axe extends Tool {
+
+    public Axe(String name, int itemID, int value, int parentItemID, int amount) {
+        super(name, itemID, value, parentItemID, amount);
     }
- 
+
+    public Result useTool(Point point) {
+        return new Result(true, "Axe used at point " + point);
+    }
 }

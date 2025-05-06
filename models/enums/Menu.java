@@ -6,15 +6,10 @@ import views.menu.*;
 
 public enum Menu {
     LoginMenu(new LoginMenu()),
-
     MainMenu(new MainMenu()),
-
     ProfileMenu(new ProfileMenu()),
-
-    GameMenu(new GameMenu()),
-
+    GameMenu(new GameMenuView()),
     ExitMenu(new ExitMenu());
-
     private final AppMenu menu;
 
     Menu(AppMenu menu) {

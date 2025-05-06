@@ -12,5 +12,4 @@ public class AppView {
             App.getCurrentMenu().checkCommand(scanner);
         } while (App.getCurrentMenu() != Menu.ExitMenu);
     }
-
 }

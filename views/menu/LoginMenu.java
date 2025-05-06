@@ -9,7 +9,6 @@ import java.util.regex.Matcher;
 
 public class LoginMenu extends AppMenu {
     private final LoginMenuController controller = new LoginMenuController();
-
     @Override
     public void check (Scanner scanner) {
         System.out.println("You are now in login menu"); // It will be deleted.
@@ -17,7 +16,6 @@ public class LoginMenu extends AppMenu {
         String input = scanner.nextLine();
 
             Matcher matcher;
-
             if ((matcher = LoginMenuCommands.SignUp.getMatcher(input)) != null) {
                 System.out.println(controller.SignUp(matcher.group("username"), matcher.group("password"), matcher.group("passwordConfirm"), matcher.group("nickname"), matcher.group("email"), matcher.group("gender"), scanner).toString());
             } else if ((matcher = LoginMenuCommands.LogIn.getMatcher(input)) != null) {
