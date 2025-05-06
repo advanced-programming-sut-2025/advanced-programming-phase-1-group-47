@@ -4,7 +4,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public enum GameMenu {
-    newgame(""),
+    newgame("game\\s+new\\s+ -u (?<player1>\\S+) (?<player2>\\S+) (?<player3>\\S+)"),
     gamemap("^\\s*game\\s+map\\s+(?<map_number>\\S+)\\s*$"),
     loadgame("\\s*load\\s*game\\s*"),
     exitgame("\\s*exit\\s* game\\s*"),
@@ -110,5 +110,4 @@ public enum GameMenu {
         }
         return null;
     }
-    }
-
+}

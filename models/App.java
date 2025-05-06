@@ -5,15 +5,15 @@ import models.enums.Menu;
 
 public class App {
 
-    private static ArrayList<User> users = new ArrayList<>();
+    public static ArrayList<User> users = new ArrayList<>();
 
-    private static ArrayList<Game> games = new ArrayList<>();
+    public static ArrayList<Game> games = new ArrayList<>();
 
-    private static User loggedInUser = null;
+    public static User loggedInUser = null;
 
-    private static Menu currentMenu = Menu.LoginMenu;
+    public static Menu currentMenu = Menu.LoginMenu;
 
-    private static Game currentGame;
+    public static Game currentGame;
 
     public static Game getCurrentGame() {
         return currentGame;
@@ -27,11 +27,21 @@ public class App {
         return currentMenu;
     }
 
-
     public static void setCurrentMenu(Menu newMenu) {
         currentMenu = newMenu;
     }
-
+    public static Player findPlayer(String playerName) {
+        for(Game game : games) {
+            if (game.equals(currentGame)) {
+                for (Player player : game.getPlayers()) {
+                    if (player.equals(playerName)) {
+                        return player;
+                    }
+                }
+            }
+        }
+        return null;
+    }
     public static ArrayList<Game> getGames() {
         return games;
     }

@@ -3,10 +3,12 @@ package models.things.tools;
 import models.Point;
 import models.Result;
 
-public class Scythe extends Tool{
-    @Override
-    public Result useTool(Tool tool, Point point) {
-        super.useTool(tool,point);
-        return null;
+public class Scythe extends Tool {
+
+    public Scythe(String name, int itemID, int value, int parentItemID, int amount) {
+        super(name, itemID, value, parentItemID, amount);
+    }
+    public Result useTool(Point point) {
+        return new Result(true, "Scythe used at point " + point);
     }
 }

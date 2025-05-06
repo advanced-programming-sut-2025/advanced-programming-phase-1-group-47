@@ -1,42 +1,72 @@
 package models;
 
 import models.enums.Season;
-import models.enums.weekDays;
+import models.enums.month;
 
 public class Time {
     private int hour;
-    private int day;
     private Season season;
-    private weekDays weekDay;
-
+    private month month;
+    private int day;
+    private int year;
     public Time() {
         this.hour = 9;
-        this.season = Season.SPRING;
-        this.weekDay = weekDays.Monday;
         this.day = 1;
-    }
-    public void setHour(int hour) {
-        this.hour = hour;
-    }
-
-    public void setSeason(Season season) {
-        this.season = season;
-    }
-
-    public void setWeekDay(weekDays weekDay) {
-        this.weekDay = weekDay;
+        this.season = Season.SPRING;
+        this.month = models.enums.month.January; // مقداردهی پیش‌فرض به ماه
+        this.year=0;
     }
 
     public int getHour() {
         return hour;
     }
 
+    public void setHour(int hour) {
+        this.hour = hour;
+    }
 
     public Season getSeason() {
         return season;
     }
 
-    public weekDays getWeekDay() {
-        return weekDay;
+    public void setSeason(Season season) {
+        this.season = season;
+    }
+
+    public month getMonth() {
+        return month;
+    }
+
+    public void setMonth(month month) {
+        this.month = month;
+    }
+
+    public int getDay() {
+        return day;
+    }
+
+    public void setDay(int day) {
+        this.day = day;
+    }
+
+    public String save() {
+        return season + "," + month + "," + day + "," + hour;
+    }
+
+    public void load(String data) {
+        String[] parts = data.split(",");
+        if (parts.length != 4) return;
+        this.season = Season.valueOf(parts[0]);
+        this.month = month.valueOf(parts[1]);
+        this.day = Integer.parseInt(parts[2]);
+        this.hour = Integer.parseInt(parts[3]);
+    }
+
+    public int getYear() {
+        return year;
+    }
+
+    public void setYear(int year) {
+        this.year = year;
     }
 }

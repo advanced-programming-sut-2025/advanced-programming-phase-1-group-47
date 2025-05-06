@@ -2,11 +2,9 @@ package models.things.machines;
 
 import models.things.Item;
 
-
-
 public abstract class Machine extends Item {
-    
-    public void Machine(int ItemID, int value) {
-        super.Item(ItemID, value);
+
+    public Machine(String name, int itemID, int value, int parentItemID, int amount) {
+        super(name, itemID, value, parentItemID, amount);
     }
 }

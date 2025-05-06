@@ -4,9 +4,9 @@ package models.buildings;
 import models.Ground;
 import models.Map;
 
-public  class Stable extends Building  {
-    @Override
-    public void Building(Ground ground, Map map) {
-        super.Building(ground, map);
+public class Stable extends Building  {
+    public Stable(Ground ground)
+    {
+        super(ground);
     }
 }
