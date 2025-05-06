@@ -67,10 +67,7 @@ public class Item {
     public boolean questEquals(Item item) {
         if (item.getItemID() != this.ItemID)
             return false;
-        if (item.getAmount() > this.amount)
-            return false;
-        else
-            return true;
+        return item.getAmount() <= this.amount;
 
     }
 }  
