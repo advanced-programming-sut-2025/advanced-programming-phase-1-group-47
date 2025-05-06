@@ -18,7 +18,7 @@ public class Item {
         amount+=add;
     }
     public void reduceAmount(int minus) {
-        amount+=minus;
+        amount-=minus;
     }
     public int getItemID() {
         return ItemID;
