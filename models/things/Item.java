@@ -39,13 +39,6 @@ public class Item {
         return amount;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public int getParentItemID() {
-        return ParentItemID;
-    }
 
     public int getItemID() {
         return ItemID;
@@ -79,9 +72,5 @@ public class Item {
         else
             return true;
 
-    }
-
-    public int getAmount() {
-        return amount;
     }
 }  
