@@ -1,7 +1,6 @@
 package models.NPCs;
 
 import java.util.ArrayList;
-
 import models.NPC;
 import models.things.Item;
 import models.things.relations.Quest;
@@ -41,19 +40,19 @@ public class Harvey {
     private Quest questBuilder1() {
         Item requieredItems = new Item("PLANT", 49, 0, 0, 12);
         Item rewards = new Item("null item", 0, 0, 0, 1);
-        Quest quest = new Quest(requieredItems, rewards , 750);
+        Quest quest = new Quest(requieredItems, rewards , 750 ,4 );
         return quest;
     }
     private Quest questBuilder2() {
         Item requieredItems = new Item("Salmon", 151, 75, 0, 1);
         Item rewards = new Item("Friendship Level", 201, 0, 0, 1);
-        Quest quest = new Quest(requieredItems, rewards , 0);
+        Quest quest = new Quest(requieredItems, rewards , 0 , 5);
         return quest;
     }
     private Quest questBuilder3() {
         Item requieredItems = new Item("WINE", 34, 0, 0, 1);
         Item rewards = new Item("Salad", 35, 110, 0, 5);
-        Quest quest = new Quest(requieredItems, rewards , 0);
+        Quest quest = new Quest(requieredItems, rewards , 0, 6);
         return quest;
     }
  

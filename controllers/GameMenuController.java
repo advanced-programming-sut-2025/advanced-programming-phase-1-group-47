@@ -2,9 +2,11 @@ package controllers;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
+import models.App;
+import models.NPC;
+import models.Result;
 import java.util.Scanner;
 import java.util.regex.Matcher;
-
 import models.*;
 import models.NPCs.*;
 import models.buildings.Building;
@@ -12,6 +14,7 @@ import models.enums.Season;
 import models.enums.TileType;
 import models.enums.commands.GameMenu;
 import models.things.Item;
+import models.things.relations.Quest;
 
 public class GameMenuController {
 
@@ -49,12 +52,34 @@ public class GameMenuController {
         if(App.getCurrentGame().getTime().getSeason().equals(Season.WINTER))
             randomNumber+=15;
         for(NPC npc : App.getCurrentGame().getNpcs()){
-            if(npc.getName().equals(npcname)){
+            if(npc.getName().equalsIgnoreCase(npcname)){
                 npc.addFriendship(20 , App.getCurrentGame().getCurrentPlayer());
-                return new Result(true , npc.getResponses().get(randomNumber));
+                return new Result<>(true , npc.getResponses().get(randomNumber));
             }
         }
-        return new Result(false , "No NPC found with that name!");
+        return new Result<>(false , "No NPC found with that name!");
+        
+    }
+    public Result<String> GiveGiftToNPC(String npcName , String giftName) {
+        for (NPC npc : App.getCurrentGame().getNpcs()){
+            if(npc.getName().equalsIgnoreCase(npcName)) {
+                for(Item item : App.getCurrentGame().getCurrentPlayer().getInvetory().getItems()) {
+                    if(item.getName().equalsIgnoreCase(giftName)){
+                        App.getCurrentGame().getCurrentPlayer().getInvetory().removeItem(item);
+                        for(Item favitem : npc.getFavorites()) {
+                            if(favitem.getItemID() == item.getItemID() || favitem.getItemID() == item.getParentItemID()){
+                                npc.addFriendship(200, App.getCurrentGame().getCurrentPlayer());
+                                return new Result<>(true, "Thanks! I love this Gift!");                                
+                            }
+                        }
+                        npc.addFriendship(50, App.getCurrentGame().getCurrentPlayer());
+                        return new Result<>(true, "Thanks!");
+                    }
+                }
+                return new Result<>(false , "You Don't have that Item!");
+            }
+        }
+        return new Result<>(false , "NPC name incorrect");
 
     }
     public Result<String> handleNewGame(Matcher matcher, Scanner scanner) {
@@ -80,10 +105,50 @@ public class GameMenuController {
         return new Result<>(true, "New game started with players: " + player1 + ", " + player2 + ", " + player3);
     }
 
-    public Result<String> GiveGiftToNPC(NPC npc , Item gift) {
-        return null;
+    public Result<String> FinishQuest(int QuestIndex) {
+        for (NPC npc : App.getCurrentGame().getNpcs()) {
+            if (npc.getQuest1().getQuestID() == QuestIndex) {
+                if(!isNPCHere())
+                    return new Result<>(false , "NPC too far away!");
+                return finishQuest2(npc.getQuest1());
+                
+            }
+            if (npc.getQuest2().getQuestID() == QuestIndex) {
+                if(!isNPCHere())
+                    return new Result<>(false , "NPC too far away!");
+                return finishQuest2(npc.getQuest2());
+            }
+            if (npc.getQuest3().getQuestID() == QuestIndex) {
+                if(!isNPCHere())
+                    return new Result<>(false , "NPC too far away!");
+                return finishQuest2(npc.getQuest3());
+            }
+            
+        }
+        return new Result<>(false , "invalid Quest index");
     }
-    public Result<String> FinishQuest(Invetory playerItems , int QuestIndex) {
-        return null;
+    //for finishquest
+    private boolean isNPCHere() {
+        return false; //TODO
     }
+    private Result<String> finishQuest2(Quest quest) {
+        if(quest.isIsDone())
+            return new Result<>(false , "Quest Already Done!");
+        if(!quest.getIsActive().get(App.getCurrentGame().getCurrentPlayer()))
+            return new Result<>(false , "You don't have access to that Quest yet!");
+        for (Item item : App.getCurrentGame().getCurrentPlayer().getInvetory().getItems()) {
+            if(item.questEquals(quest.getRequiermentItems())) {
+                item.reduceAmount(quest.getRequiermentItems().getAmount());
+                if(item.getAmount() == 0)
+                    App.getCurrentGame().getCurrentPlayer().getInvetory().getItems().remove(item);
+                App.getCurrentGame().getCurrentPlayer().getInvetory().getItems().add(quest.getRewards());
+                App.getCurrentGame().getCurrentPlayer().addMoney(quest.getRewardMoney());
+                quest.setIsDone(true);
+                return new Result<>(true , "Quest completed");
+            }
+        }
+        return new Result<>(false , "You don't have the quest Item (Or Enough of it)");
+    }
+
+    //for finishquest
 }

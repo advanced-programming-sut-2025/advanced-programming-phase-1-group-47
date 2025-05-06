@@ -14,6 +14,14 @@ public class Item {
         this.ParentItemID = ParentItemID;
         this.amount = amount;
     }
+  
+    public void addAmount(int add) {
+        amount+=add;
+    }
+    public void reduceAmount(int minus) {
+        amount-=minus;
+    }
+
 
     public void setAmount(int amount) {
         this.amount = amount;
@@ -54,4 +62,26 @@ public class Item {
     public void setValue(int value) {
         this.value = value;
     }
-} 
+
+    public String getName() {
+        return name;
+    }
+
+    public int getParentItemID() {
+        return ParentItemID;
+    }
+
+    public boolean questEquals(Item item) {
+        if (item.getItemID() != this.ItemID)
+            return false;
+        if (item.getAmount() > this.amount)
+            return false;
+        else
+            return true;
+
+    }
+
+    public int getAmount() {
+        return amount;
+    }
+}  

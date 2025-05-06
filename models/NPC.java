@@ -49,7 +49,16 @@ public class NPC {
     }
 
     public void addFriendship(int amount , Player player) {
-        
+        if(hasBeenTalkedTo.get(player) && amount==20)
+           return;
+        if(hasBeenGiftedTo.get(player) && (amount == 50 || amount == 200 ))
+            return;
+        int friendshipamount = friendship.get(player);
+        friendshipamount+=amount;
+        if(friendshipamount>799)
+            friendshipamount=799;
+        friendship.put(player, friendshipamount);
+        hasBeenTalkedTo.put(player, true);
     }
     
     public void ActivateQuest(Quest quest) {
@@ -58,5 +67,33 @@ public class NPC {
 
     public ArrayList<String> getResponses() {
         return responses;
+    }
+
+    public ArrayList<Item> getFavorites() {
+        return favorites;
+    }
+
+    public Quest getQuest1() {
+        return quest1;
+    }
+
+    public void setQuest1(Quest quest1) {
+        this.quest1 = quest1;
+    }
+
+    public Quest getQuest2() {
+        return quest2;
+    }
+
+    public void setQuest2(Quest quest2) {
+        this.quest2 = quest2;
+    }
+
+    public Quest getQuest3() {
+        return quest3;
+    }
+
+    public void setQuest3(Quest quest3) {
+        this.quest3 = quest3;
     }
 }
