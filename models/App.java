@@ -11,12 +11,20 @@ public class App {
 
     public static User loggedInUser = null;
 
+    public static ArrayList<Player> players = new ArrayList<>();
+
+    public static Map gameMap;
+
     public static Menu currentMenu = Menu.LoginMenu;
 
     public static Game currentGame;
 
     public static Game getCurrentGame() {
         return currentGame;
+    }
+
+    public static void setGameMap(Map gameMap) {
+        App.gameMap = gameMap;
     }
 
     public static void setCurrentGame(Game newCurrentGame) {
@@ -30,14 +38,11 @@ public class App {
     public static void setCurrentMenu(Menu newMenu) {
         currentMenu = newMenu;
     }
-    public static Player findPlayer(String playerName) {
-        for(Game game : games) {
-            if (game.equals(currentGame)) {
-                for (Player player : game.getPlayers()) {
-                    if (player.equals(playerName)) {
-                        return player;
-                    }
-                }
+
+    public static User findPlayer(String playerName) {
+        for (User user : App.getUsers()) {
+            if (user.getUsername().equals(playerName)){
+                return user;
             }
         }
         return null;
@@ -78,6 +83,10 @@ public class App {
     //when user wants to logOut or change turn, this should be runned to reset all features like current game,
     //current menu, loggedInUser and...
     //fill it pls
+    @Override
+    public String toString() {
+        return "Game Number " + 2;
+    }
     public static void logOut(){
 
     }

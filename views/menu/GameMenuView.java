@@ -15,7 +15,7 @@ public class GameMenuView extends AppMenu {
         String input = scanner.nextLine();
         Matcher matcher;
         if ((matcher = models.enums.commands.GameMenu.newgame.getMatcher(input)) != null) {
-            controller.handleNewGame(matcher,scanner);
+            System.out.println(controller.handleNewGame(matcher,scanner).getData());
         } else if ((matcher = models.enums.commands.GameMenu.gamemap.getMatcher(input)) != null) {
              handleGameMap(matcher);
         } else if ((matcher = models.enums.commands.GameMenu.loadgame.getMatcher(input)) != null) {
@@ -51,9 +51,9 @@ public class GameMenuView extends AppMenu {
         } else if ((matcher = models.enums.commands.GameMenu.greenhousebuild.getMatcher(input)) != null) {
             // handleGreenhouseBuild(matcher);
         } else if ((matcher = models.enums.commands.GameMenu.walk.getMatcher(input)) != null) {
-            // handleWalk(matcher);
+//             handleWalk(matcher);
         } else if ((matcher = models.enums.commands.GameMenu.printmap.getMatcher(input)) != null) {
-            // handlePrintMap(matcher);
+            controller.printMap();
         } else if ((matcher = models.enums.commands.GameMenu.mapreadinghelper.getMatcher(input)) != null) {
             // handleMapReadingHelper(matcher);
         } else if ((matcher = models.enums.commands.GameMenu.showenergy.getMatcher(input)) != null) {

@@ -1,0 +1,28 @@
+login -u mahdi -p Mahdi1384&
+game new -u ali
+game map 2
+game map 4
+cheat add item -n Strawberry seeds -c 1
+print map -l 0,0 -s 2000
+cheat add item -n training fishingpole -c 1
+fishing -p training fishingpole -d south
+
+tools equip normal hoe
+tools use -d east
+plant -s Strawberry seeds -d east
+tools equip normal wateringcan
+tools use -d west
+cheat add item -n Deluxe Retaining Soil -c 1
+fertilize -f Deluxe Retaining Soil -d west
+cheat advance date 29d
+tools equip Scythe
+tools use -d east
+
+
+cheat add item -n pine cones -c 1
+cheat add item -n acorns -c 1
+plant -s pine cones -d east
+plant -s acorns -d west
+
+cheat add item -n Cauliflower seeds -c 1
+plant -s Cauliflower seeds -d east

@@ -26,6 +26,9 @@ public class LoginMenu extends AppMenu {
                 System.out.println(controller.ForgetPassword(matcher.group("username"), scanner).toString());
             } else if ((matcher = LoginMenuCommands.ShowMenu.getMatcher(input)) != null) {
                 System.out.println(controller.ShowCurrentMenu().toString());
+            }
+            else if ((matcher = LoginMenuCommands.goMenu.getMatcher(input)) != null) {
+                System.out.println(controller.goMenu(matcher));
             } else {
                 System.out.println("invalid command");
             }

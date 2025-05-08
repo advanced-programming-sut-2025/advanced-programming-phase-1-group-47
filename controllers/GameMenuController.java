@@ -2,11 +2,9 @@ package controllers;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
-import models.App;
-import models.NPC;
-import models.Result;
 import java.util.Scanner;
 import java.util.regex.Matcher;
+
 import models.*;
 import models.NPCs.*;
 import models.buildings.Building;
@@ -14,7 +12,6 @@ import models.enums.Season;
 import models.enums.TileType;
 import models.enums.commands.GameMenu;
 import models.things.Item;
-import models.things.relations.Quest;
 
 public class GameMenuController {
 
@@ -52,103 +49,59 @@ public class GameMenuController {
         if(App.getCurrentGame().getTime().getSeason().equals(Season.WINTER))
             randomNumber+=15;
         for(NPC npc : App.getCurrentGame().getNpcs()){
-            if(npc.getName().equalsIgnoreCase(npcname)){
+            if(npc.getName().equals(npcname)){
                 npc.addFriendship(20 , App.getCurrentGame().getCurrentPlayer());
-                return new Result<>(true , npc.getResponses().get(randomNumber));
+                return new Result(true , npc.getResponses().get(randomNumber));
             }
         }
-        return new Result<>(false , "No NPC found with that name!");
-        
-    }
-    public Result<String> GiveGiftToNPC(String npcName , String giftName) {
-        for (NPC npc : App.getCurrentGame().getNpcs()){
-            if(npc.getName().equalsIgnoreCase(npcName)) {
-                for(Item item : App.getCurrentGame().getCurrentPlayer().getInvetory().getItems()) {
-                    if(item.getName().equalsIgnoreCase(giftName)){
-                        App.getCurrentGame().getCurrentPlayer().getInvetory().removeItem(item);
-                        for(Item favitem : npc.getFavorites()) {
-                            if(favitem.getItemID() == item.getItemID() || favitem.getItemID() == item.getParentItemID()){
-                                npc.addFriendship(200, App.getCurrentGame().getCurrentPlayer());
-                                return new Result<>(true, "Thanks! I love this Gift!");                                
-                            }
-                        }
-                        npc.addFriendship(50, App.getCurrentGame().getCurrentPlayer());
-                        return new Result<>(true, "Thanks!");
-                    }
-                }
-                return new Result<>(false , "You Don't have that Item!");
-            }
-        }
-        return new Result<>(false , "NPC name incorrect");
+        return new Result(false , "No NPC found with that name!");
 
     }
     public Result<String> handleNewGame(Matcher matcher, Scanner scanner) {
+        System.out.println(matcher.group("player1") + " " + matcher.group("player2"));
         String player1 = matcher.group("player1");
         String player2 = matcher.group("player2");
         String player3 = matcher.group("player3");
 
-        Player p1 = App.findPlayer(player1);
-        Player p2 = App.findPlayer(player2);
-        Player p3 = App.findPlayer(player3);
+        User u1 = App.findPlayer(player1);
+        User u2 = App.findPlayer(player2);
+        User u3 = App.findPlayer(player3);
+        Player p1 = new Player(u1.getUsername(), u1.getPassword(), u1.getEmail(),u1.getNickname(),u1.getGender(),u1.getSecurityQuestion(),u1.getSecurityAnswer());
+        Player p2 = new Player(u2.getUsername(), u2.getPassword(), u2.getEmail(), u2.getNickname(),u2.getGender(),u2.getSecurityQuestion(),u2.getSecurityAnswer());
+        Player p3 = new Player(u3.getUsername(), u3.getPassword(), u3.getEmail(), u3.getNickname(),u3.getGender(),u3.getSecurityQuestion(),u3.getSecurityAnswer());
+
+
         String[] farmNames = new String[4];
-        for(int i = 0; i < 4; i++){
+        for(int i = 0; i < 4; i++) {
             String input = scanner.nextLine();
             if ((matcher = models.enums.commands.GameMenu.gamemap.getMatcher(input)) != null) {
-                farmNames[i] = matcher.group("map_number");
+                farmNames[i] = matcher.group("mapNumber");
             }
         }
-
-        Game newGame = new Game(new Map(farmNames), p1, p2, p3);
+        Game newGame = new Game((Player)p1, (Player)p2, (Player)p3);
         App.setCurrentGame(newGame);
+        Map newMap = new Map(farmNames);
+        App.setGameMap(newMap);
         TileType lastTileType = TileType.COTTAGE;
-        App.setCurrentGame(newGame);
         return new Result<>(true, "New game started with players: " + player1 + ", " + player2 + ", " + player3);
     }
-
-    public Result<String> FinishQuest(int QuestIndex) {
-        for (NPC npc : App.getCurrentGame().getNpcs()) {
-            if (npc.getQuest1().getQuestID() == QuestIndex) {
-                if(!isNPCHere())
-                    return new Result<>(false , "NPC too far away!");
-                return finishQuest2(npc.getQuest1());
-                
+    public void printMap() {
+        for (int i = 0; i < 160; i++) {
+            for (int j = 0; j < 120; j++) {
+                TileType type = App.gameMap.tiles[i][j].type;
+                if (i == 50 || i == 110 || j == 40 || j == 80) {
+                    System.out.print("@@");
+                    continue;
+                }
+                System.out.print(type != TileType.EMPTY ? type.getSticker() : "++");
             }
-            if (npc.getQuest2().getQuestID() == QuestIndex) {
-                if(!isNPCHere())
-                    return new Result<>(false , "NPC too far away!");
-                return finishQuest2(npc.getQuest2());
-            }
-            if (npc.getQuest3().getQuestID() == QuestIndex) {
-                if(!isNPCHere())
-                    return new Result<>(false , "NPC too far away!");
-                return finishQuest2(npc.getQuest3());
-            }
-            
+            System.out.println();
         }
-        return new Result<>(false , "invalid Quest index");
     }
-    //for finishquest
-    private boolean isNPCHere() {
-        return false; //TODO
+    public Result<String> GiveGiftToNPC(NPC npc , Item gift) {
+        return null;
     }
-    private Result<String> finishQuest2(Quest quest) {
-        if(quest.isIsDone())
-            return new Result<>(false , "Quest Already Done!");
-        if(!quest.getIsActive().get(App.getCurrentGame().getCurrentPlayer()))
-            return new Result<>(false , "You don't have access to that Quest yet!");
-        for (Item item : App.getCurrentGame().getCurrentPlayer().getInvetory().getItems()) {
-            if(item.questEquals(quest.getRequiermentItems())) {
-                item.reduceAmount(quest.getRequiermentItems().getAmount());
-                if(item.getAmount() == 0)
-                    App.getCurrentGame().getCurrentPlayer().getInvetory().getItems().remove(item);
-                App.getCurrentGame().getCurrentPlayer().getInvetory().getItems().add(quest.getRewards());
-                App.getCurrentGame().getCurrentPlayer().addMoney(quest.getRewardMoney());
-                quest.setIsDone(true);
-                return new Result<>(true , "Quest completed");
-            }
-        }
-        return new Result<>(false , "You don't have the quest Item (Or Enough of it)");
+    public Result<String> FinishQuest(Invetory playerItems , int QuestIndex) {
+        return null;
     }
-
-    //for finishquest
 }

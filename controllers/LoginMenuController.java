@@ -64,7 +64,6 @@ public class LoginMenuController {
             return new Result<>(false, "Invalid email format! Please provide a valid domain!");
         }
 
-
         if(!checkRegex(gender, "^(male|female)$")){
             return new Result<>(false, "Gender not allowed!");
         }
@@ -92,11 +91,10 @@ public class LoginMenuController {
         SecurityQuestion question = SecurityQuestion.getByIndex(i - 1);
         String answer = matcher.group("answer");
 
-
         User newUser = new User(username, password, email, nickname, getGenderEnum(gender), question.getQuestion(), answer);
 
         App.addUser(newUser);
-
+        App.setLoggedInUser(newUser);
         return new Result<>(true, "User added successfully!");
     }
 
@@ -179,5 +177,9 @@ public class LoginMenuController {
         }
 
         return new String(chars);
+    }
+    public Result<String> goMenu(Matcher matcher) {
+        App.setCurrentMenu(Menu.valueOf(matcher.group("menu")));
+        return new Result<>(true, "you are now in " +  matcher.group("menu") + "!");
     }
 }

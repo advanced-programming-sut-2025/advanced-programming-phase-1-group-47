@@ -21,8 +21,6 @@ public class Map {
                 this.tiles[i][j] = new Tile(new Point(i,j), TileType.EMPTY);
             }
         }
-
-
         for (int i = 0; i < 4; i++) {
             Farm farm;
             Tile[][] temp;
@@ -51,7 +49,7 @@ public class Map {
                     throw new IllegalArgumentException("Unknown farm type: " + types[i]);
             }
             farms[i] = farm;
-            if (App.currentGame.currentPlayer.getId() == i+1){
+            if (App.currentGame.currentPlayer.getId() == i ){
                 if(i==0)
                     setTiles(new Point(0, 0), new Point(50, 40), temp);
                 else if(i==1)
@@ -63,7 +61,6 @@ public class Map {
             }
         }
     }
-
     public void setBuildings(ArrayList<Building> buildings) {
         this.buildings = buildings;
     }

@@ -14,16 +14,15 @@ public class Game {
     public ArrayList<NPC> npcs;
     public Player currentPlayer;
     public Point personPoint;
-    public Game(Map map, Player... players) {
-        this.map = map;
+    public Game(Player... players) {
         this.players = new ArrayList<>(Arrays.asList(players));
-        this.npcs = new ArrayList<>();
-        npcs.add(Abigail.getInstance().abigailBuilder());
-        npcs.add(Sebastion.getInstance().sebastionBuilder());
-        npcs.add(Harvey.getInstance().harveyBuilder());
-        npcs.add(Leah.getInstance().leahBuilder());
-        npcs.add(Robin.getInstance().robinBuilder());
-        this.time = new Time();
+//        this.npcs = new ArrayList<>();
+//        npcs.add(Abigail.getInstance().abigailBuilder());
+//        npcs.add(Sebastion.getInstance().sebastionBuilder());
+//        npcs.add(Harvey.getInstance().harveyBuilder());
+//        npcs.add(Leah.getInstance().leahBuilder());
+//        npcs.add(Robin.getInstance().robinBuilder());
+//        this.time = new Time();
         if (!this.players.isEmpty()) {
             this.currentPlayer = this.players.get(0);
         }
