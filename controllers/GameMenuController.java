@@ -134,4 +134,36 @@ public class GameMenuController {
     public Result<String> FinishQuest(Invetory playerItems , int QuestIndex) {
         return null;
     }
+
+    public Result<String> farming() {
+        //fill here...
+
+        //this if for energy
+        App.getCurrentGame().getCurrentPlayer().skillProgress(0, 5);
+        return null;
+    }
+
+    public Result<String> fishing() {
+        //fill here...
+
+        //this is for energy
+        App.getCurrentGame().getCurrentPlayer().skillProgress(1, 5);
+        return null;
+    }
+
+    public Result<String> mining() {
+        //fill here...
+
+        //this is for energy
+        App.getCurrentGame().getCurrentPlayer().skillProgress(2, 10);
+        return null;
+    }
+
+    public Result<String> foraging() {
+        //fill here...
+
+        //this is for energy
+        App.getCurrentGame().getCurrentPlayer().skillProgress(3, 10);
+        return null;
+    }
 }
