@@ -13,4 +13,17 @@ game map 3
 game map 1
 game map 2	
 print map -l 12,34 -s 5
-
+time
+date
+season
+datetime
+day of the week
+cheat advance time -12h
+cheat advance time 12h
+cheat advance day -5d
+cheat advance day 5d
+time
+date
+season
+datetime
+day of the week

@@ -10,23 +10,17 @@ import javax.crypto.SealedObject;
 public class Time {
     public static int hour = 9;
     public static Season getSeason() {
-        return Season.values()[(hour / (24 * 30)) % 4];
+        return Season.values()[(hour / (24 * 28)) % 4];
     }
-
     public static weekDays getDayWeek(){
         return weekDays.values()[hour % 7];
     }
     public static int getDayOfMonth() {
-        return (hour / 24) % 30 + 1; // روز بین 1 تا 30
+        return (hour / 24) + 1; // روز بین 1 تا 30
     }
-    public static month getMonth(){
-        return month.values()[(hour / (24 * 30)) % 12];
-    }
-
     public static void setHour(int hour) {
         Time.hour = hour;
     }
-
     public static int getHour() {
         return hour;
     }

@@ -100,13 +100,13 @@ public class GameMenuController {
         }
     }
     public Result<String> showTime(){
-        return new Result<>(true, "Spended Hours : " + Time.getHour());
+        return new Result<>(true, "Spended Hours : " + Time.getHour()%24);
     }
     public Result<String> showDate(){
-        return new Result<>(true, "Date: " +  Time.getMonth() + " / " + Time.getDayOfMonth());
+        return new Result<>(true, "Date: " +  Time.getSeason() + " / " + Time.getDayOfMonth());
     }
     public Result<String> showDatetime(){
-        return new Result<>(true, "Date: " +  Time.getMonth() + "/" + Time.getDayOfMonth() + " ---" + Time.getHour() + ": 00");
+        return new Result<>(true, "Date: " +  Time.getSeason() + "/" + Time.getDayOfMonth() + " ---" + Time.getHour() + ": 00");
     }
     public Result<String> showDayWeek(){
         return new Result<>(true, "Day week: " + Time.getDayWeek());
@@ -116,7 +116,7 @@ public class GameMenuController {
     }
     public Result<String> cheateAdvanceTime(Matcher matcher){
         int hour = Integer.parseInt(matcher.group("time"));
-        if(hour < 0 )
+        if(hour<0)
             return new Result<>(false, "Invalid hour format (Time | Time > 0");
         Time.hour += hour;
         return new Result<>(false, "new Time: " + Time.getHour());
