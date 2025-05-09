@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 
 import models.*;
@@ -97,6 +98,35 @@ public class GameMenuController {
             }
             System.out.println();
         }
+    }
+    public Result<String> showTime(){
+        return new Result<>(true, "Spended Hours : " + Time.getHour());
+    }
+    public Result<String> showDate(){
+        return new Result<>(true, "Date: " +  Time.getMonth() + " / " + Time.getDayOfMonth());
+    }
+    public Result<String> showDatetime(){
+        return new Result<>(true, "Date: " +  Time.getMonth() + "/" + Time.getDayOfMonth() + " ---" + Time.getHour() + ": 00");
+    }
+    public Result<String> showDayWeek(){
+        return new Result<>(true, "Day week: " + Time.getDayWeek());
+    }
+    public Result<String> showSeason(){
+        return new Result<>(true, "Season: " + String.valueOf(Time.getSeason()));
+    }
+    public Result<String> cheateAdvanceTime(Matcher matcher){
+        int hour = Integer.parseInt(matcher.group("time"));
+        if(hour < 0 )
+            return new Result<>(false, "Invalid hour format (Time | Time > 0");
+        Time.hour += hour;
+        return new Result<>(false, "new Time: " + Time.getHour());
+    }
+    public Result<String> cheateAdvanceDate(Matcher matcher){
+        int day = Integer.parseInt(matcher.group("day")) * 24;
+        if(day < 0 )
+            return new Result<>(false, "Invalid Day format (Day | Day > 0");
+        Time.hour += day;
+        return new Result<>(false, "new Day: " + Time.getDayOfMonth());
     }
     public Result<String> GiveGiftToNPC(NPC npc , Item gift) {
         return null;

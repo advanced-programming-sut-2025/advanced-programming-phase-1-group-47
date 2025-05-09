@@ -27,19 +27,19 @@ public class GameMenuView extends AppMenu {
         } else if ((matcher = models.enums.commands.GameMenu.nextturn.getMatcher(input)) != null) {
             // handleNextTurn(matcher);
         } else if ((matcher = models.enums.commands.GameMenu.showtime.getMatcher(input)) != null) {
-            // handleShowTime(matcher);
+            System.out.println(controller.showTime().getData());
         } else if ((matcher = models.enums.commands.GameMenu.showdate.getMatcher(input)) != null) {
-            // handleShowDate(matcher);
+            System.out.println(controller.showDate().getData());
         } else if ((matcher = models.enums.commands.GameMenu.showdatetime.getMatcher(input)) != null) {
-            // handleShowDateTime(matcher);
+            System.out.println(controller.showDatetime().getData());
         } else if ((matcher = models.enums.commands.GameMenu.showdayofweek.getMatcher(input)) != null) {
-            // handleShowDayOfWeek(matcher);
+            System.out.println(controller.showDayWeek().getData());
         } else if ((matcher = models.enums.commands.GameMenu.cheateadvancetime.getMatcher(input)) != null) {
-            // handleCheatAdvanceTime(matcher);
+            System.out.println(controller.cheateAdvanceTime(matcher).getData());
         } else if ((matcher = models.enums.commands.GameMenu.cheatadvencedate.getMatcher(input)) != null) {
-            // handleCheatAdvanceDate(matcher);
+            System.out.println(controller.cheateAdvanceDate(matcher).getData());
         } else if ((matcher = models.enums.commands.GameMenu.showseason.getMatcher(input)) != null) {
-            // handleShowSeason(matcher);
+            System.out.println(controller.showSeason().getData());
         } else if ((matcher = models.enums.commands.GameMenu.cheatthor.getMatcher(input)) != null) {
             // handleCheatThor(matcher);
         } else if ((matcher = models.enums.commands.GameMenu.showweather.getMatcher(input)) != null) {
