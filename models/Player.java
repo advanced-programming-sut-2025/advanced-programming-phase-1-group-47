@@ -13,7 +13,16 @@ public class Player extends User {
     private int id;
 
     public Player(String username, String password, String email, String nickname, Gender gender, String securityQuestion, String securityAnswer) {
+
         super(username, password, email, nickname, gender, securityQuestion, securityAnswer);
+
+        skills = new Skill[]{
+                new Skill(SkillType.FARMING),
+                new Skill(SkillType.FISHING),
+                new Skill(SkillType.MINING),
+                new Skill(SkillType.FORAGING)
+        };
+
     }
 
     public void gainXP(SkillType type , int xp) {
@@ -42,6 +51,10 @@ public class Player extends User {
 
     public void setSkills(Skill[] skills) {
         this.skills = skills;
+    }
+
+    public void skillProgress(int skillNumber, int progress) {
+        skills[skillNumber].progress(progress);
     }
 
     public int getMoney() {
