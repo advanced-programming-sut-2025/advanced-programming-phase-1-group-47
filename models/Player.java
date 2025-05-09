@@ -7,7 +7,13 @@ public class Player extends User {
     private Point Coordinates;
     private int Energy;
     private Invetory invetory;
-    private Skill[] skills;
+    private Skill[] skills = new Skill[]{
+            new Skill(SkillType.FARMING),
+            new Skill(SkillType.FISHING),
+            new Skill(SkillType.MINING),
+            new Skill(SkillType.FORAGING)
+    };
+    
     private Energy energy;
     private int money;
     private int id;
@@ -15,13 +21,6 @@ public class Player extends User {
     public Player(String username, String password, String email, String nickname, Gender gender, String securityQuestion, String securityAnswer) {
 
         super(username, password, email, nickname, gender, securityQuestion, securityAnswer);
-
-        skills = new Skill[]{
-                new Skill(SkillType.FARMING),
-                new Skill(SkillType.FISHING),
-                new Skill(SkillType.MINING),
-                new Skill(SkillType.FORAGING)
-        };
 
     }
 
