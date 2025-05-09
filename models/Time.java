@@ -2,71 +2,32 @@ package models;
 
 import models.enums.Season;
 import models.enums.month;
+import models.enums.weekDays;
 
+import javax.crypto.SealedObject;
+
+//هندل کردن تایم هایی که خودکار جابه جا میشوند مثل ده شب تا 9 صبح و همچنین 28 روز بودن فصول به بخش گیم سپرده شده
 public class Time {
-    private int hour;
-    private Season season;
-    private month month;
-    private int day;
-    private int year;
-    public Time() {
-        this.hour = 9;
-        this.day = 1;
-        this.season = Season.SPRING;
-        this.month = models.enums.month.January; // مقداردهی پیش‌فرض به ماه
-        this.year=0;
+    public static int hour = 9;
+    public static Season getSeason() {
+        return Season.values()[(hour / (24 * 30)) % 4];
     }
 
-    public int getHour() {
+    public static weekDays getDayWeek(){
+        return weekDays.values()[hour % 7];
+    }
+    public static int getDayOfMonth() {
+        return (hour / 24) % 30 + 1; // روز بین 1 تا 30
+    }
+    public static month getMonth(){
+        return month.values()[(hour / (24 * 30)) % 12];
+    }
+
+    public static void setHour(int hour) {
+        Time.hour = hour;
+    }
+
+    public static int getHour() {
         return hour;
-    }
-
-    public void setHour(int hour) {
-        this.hour = hour;
-    }
-
-    public Season getSeason() {
-        return season;
-    }
-
-    public void setSeason(Season season) {
-        this.season = season;
-    }
-
-    public month getMonth() {
-        return month;
-    }
-
-    public void setMonth(month month) {
-        this.month = month;
-    }
-
-    public int getDay() {
-        return day;
-    }
-
-    public void setDay(int day) {
-        this.day = day;
-    }
-
-    public String save() {
-        return season + "," + month + "," + day + "," + hour;
-    }
-
-    public void load(String data) {
-        String[] parts = data.split(",");
-        if (parts.length != 4) return;
-        this.season = Season.valueOf(parts[0]);
-        this.month = month.valueOf(parts[1]);
-        this.day = Integer.parseInt(parts[2]);
-        this.hour = Integer.parseInt(parts[3]);
-    }
-
-    public int getYear() {
-        return year;
-    }
-
-    public void setYear(int year) {
-        this.year = year;
     }
 }
