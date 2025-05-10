@@ -98,13 +98,13 @@ public class GameMenuController {
     }
     public void walk(Matcher matcher, Scanner scanner) {
         int[][] grid = new int[50][40];
+        Set<TileType> walkable = Set.of(TileType.EMPTY, TileType.STONE, TileType.TREE, TileType.COTTAGE, TileType.PERSON);
         for (int i = 0; i < 50; i++) {
             for (int j = 0; j < 40; j++) {
-                Set<TileType> walkable = Set.of(TileType.EMPTY, TileType.STONE, TileType.TREE,TileType.COTTAGE, TileType.PERSON);
-                if (walkable.contains(App.currentGame.map.tiles[i][j].type)) {
+                TileType tileType = App.currentGame.map.tiles[i][j].type;
+                if (tileType != null && walkable.contains(tileType)) {
                     grid[i][j] = 0;
-                }
-                else {
+                } else {
                     grid[i][j] = 1;
                 }
             }
@@ -112,28 +112,54 @@ public class GameMenuController {
 
         Point personPoint = App.currentGame.map.farms[App.currentGame.turn].personPoint;
         int startX = personPoint.x, startY = personPoint.y;
+        int targetX = Integer.parseInt(matcher.group("x"));
+        int targetY = Integer.parseInt(matcher.group("y"));
 
-        List<int[]> path = shortestPath(grid, startX, startY, Integer.parseInt(matcher.group("x")),
-                Integer.parseInt(matcher.group("y")));
-        List<int[]> turns = getTurns(path);
-        if (path.isEmpty()) {
+        List<int[]> fullPath = shortestPath(grid, startX, startY, targetX, targetY);
+        if (fullPath.isEmpty()) {
             System.out.println("No path found.");
-        } else {
-            System.out.println("Turns in the path:" + turns.size());
-            System.out.println("Shortest path length: " + (path.size() - 1));
-            System.out.println("Path:");
-            for (int[] p : path) {
-                System.out.println(Arrays.toString(p));
-            }
-            for (int k = 1; k < path.size(); k++) {
-                int[] p = path.get(k);
-                App.currentGame.map.tiles[personPoint.x][personPoint.y].type = App.currentGame.map.farms[App.currentGame.turn].getLastTileType();
-                App.currentGame.map.tiles[personPoint.x][personPoint.y].type = App.currentGame.map.farms[App.currentGame.turn].lastTileType = App.currentGame.map.tiles[p[0]][p[1]].type;
-                App.currentGame.map.tiles[p[0]][p[1]].type = TileType.PERSON;
-                personPoint = new Point(p[0], p[1]);
-            }
+            return;
         }
+
+        List<int[]> turns = getTurns(fullPath);
+        int energyCost = fullPath.size() + 10 * turns.size();
+        int energyUnits = energyCost / 20;
+
+        int currentEnergy = 5;
+        System.out.println("You need " + energyUnits + " energy to get there. Do you want to go?");
+        String input = scanner.nextLine();
+        if (!input.equalsIgnoreCase("yes")) return;
+        int usedEnergy = 0;
+        for (int k = 1; k < fullPath.size(); k++) {
+            int[] prev = fullPath.get(k - 1);
+            int[] curr = fullPath.get(k);
+
+            // تشخیص turn
+            boolean isTurn = (k > 1) && (
+                    curr[0] - prev[0] != prev[0] - fullPath.get(k - 2)[0] ||
+                            curr[1] - prev[1] != prev[1] - fullPath.get(k - 2)[1]
+            );
+
+            usedEnergy += isTurn ? 11 : 1;
+
+            if (usedEnergy > currentEnergy * 20) {
+                System.out.println("Energy ran out before reaching destination." + "\nNew Point: (" + curr[0] + ", " + curr[1] + ")");
+                break;
+            }
+
+            // جابه‌جایی روی map
+            App.currentGame.map.tiles[personPoint.x][personPoint.y].type =
+                    App.currentGame.map.farms[App.currentGame.turn].lastTileType;
+            App.currentGame.map.farms[App.currentGame.turn].lastTileType =
+                    App.currentGame.map.tiles[curr[0]][curr[1]].type;
+            App.currentGame.map.tiles[curr[0]][curr[1]].type = TileType.PERSON;
+            App.currentGame.map.farms[App.currentGame.turn].personPoint = new Point(curr[0], curr[1]);
+            personPoint = new Point(curr[0], curr[1]); // به‌روز رسانی برای تکرار بعدی
+        }
+
+        System.out.println("Used energy: " + (usedEnergy / 20) + " units.");
     }
+
     static class Node {
         int x, y, dist;
         Node parent;
@@ -189,7 +215,6 @@ public class GameMenuController {
 
         while (!queue.isEmpty()) {
             Node current = queue.poll();
-
             if (current.x == endX && current.y == endY) {
                 endNode = current;
                 break;

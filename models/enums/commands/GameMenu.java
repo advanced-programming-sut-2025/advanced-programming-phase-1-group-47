@@ -1,8 +1,6 @@
 package models.enums.commands;
 
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import static java.util.regex.Pattern.compile;
 
 public enum GameMenu {

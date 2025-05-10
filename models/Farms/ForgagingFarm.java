@@ -10,11 +10,11 @@ import models.enums.TileType;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class CraftingFarm {
+public class ForgagingFarm {
     Tile[][] temp = new Tile[50][40];
     Farm farm;
 
-    public CraftingFarm() {
+    public ForgagingFarm() {
         for (int i = 0; i < Map.farmWidth; i++) {
             for (int j = 0; j < Map.farmHeight; j++) {
                 this.temp[i][j] = new Tile(new Point(i, j), TileType.EMPTY);

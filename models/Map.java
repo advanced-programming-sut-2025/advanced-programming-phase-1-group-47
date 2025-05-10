@@ -1,14 +1,9 @@
 package models;
 
+import java.util.ArrayList;
 import models.Farms.*;
 import models.buildings.Building;
-import models.buildings.Cottage;
-import models.buildings.Lake;
-import models.buildings.greenHouse;
 import models.enums.TileType;
-import models.things.products.Fish;
-
-import java.util.ArrayList;
 
 public class Map {
     private ArrayList<Building> buildings;
@@ -41,9 +36,9 @@ public class Map {
                     farm = quarryFarm.getFarm();
                     break;
                 case "4":
-                    CraftingFarm craftingFarm = new CraftingFarm();
-                    temp = craftingFarm.getTemp();
-                    farm = craftingFarm.getFarm();
+                    ForgagingFarm ForgagingFarm = new ForgagingFarm();
+                    temp = ForgagingFarm.getTemp();
+                    farm = ForgagingFarm.getFarm();
                     break;
                 default:
                     throw new IllegalArgumentException("Unknown farm type: " + types[i]);
