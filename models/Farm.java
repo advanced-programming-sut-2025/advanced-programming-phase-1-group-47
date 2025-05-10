@@ -16,7 +16,7 @@ public class Farm {
     ArrayList<greenHouse> greenHouses = new ArrayList<>();
     ArrayList<Quarry> quarries = new ArrayList<>();
     public Point personPoint;
-    public TileType lastTileType;
+    public TileType lastTileType = TileType.COTTAGE;
     public Farm(int farmId, Ground ground, Cottage cottage, ArrayList<greenHouse> greenHouses,
                 ArrayList<Quarry> quarries,ArrayList<Lake> lakes, Point personPoint) {
         this.farmId = farmId;
@@ -27,7 +27,7 @@ public class Farm {
         this.lakes = lakes;
         this.personPoint = personPoint;
     }
-
+    
     public void setQuarries(ArrayList<Quarry> quarries) {
         this.quarries = quarries;
     }

@@ -36,7 +36,6 @@ public class FishingFarm {
         // Cottage – یک عدد، وسط نقشه
         changeTiles(new Point(22, 18), new Point(26, 22), TileType.COTTAGE);
         changeTiles(new Point(22, 20), new Point(22,20), TileType.DOOR);
-        changeTiles(new Point(22, 19), new Point(22,19), TileType.PERSON);
         // Lake – دو عدد، کوچک‌تر و در نواحی باز
         lakes.add(new Lake(new Ground(new Point(10, 25), new Point(19, 31))));
         changeTiles(new Point(10, 25), new Point(19, 31), TileType.LAKE);
@@ -51,7 +50,7 @@ public class FishingFarm {
                 greenHouses,
                 quarries,
                 lakes,
-                new Point(24,20)
+                new Point(23,20)
         );
 
         Random rand = new Random();

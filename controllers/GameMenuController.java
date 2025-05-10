@@ -97,25 +97,36 @@ public class GameMenuController {
         }
     }
     public void walk(Matcher matcher, Scanner scanner) {
-        int[][] grid = new int[50][40];
-        Set<TileType> walkable = Set.of(TileType.EMPTY, TileType.STONE, TileType.TREE, TileType.COTTAGE, TileType.PERSON);
-        for (int i = 0; i < 50; i++) {
-            for (int j = 0; j < 40; j++) {
-                TileType tileType = App.currentGame.map.tiles[i][j].type;
-                if (tileType != null && walkable.contains(tileType)) {
-                    grid[i][j] = 0;
-                } else {
-                    grid[i][j] = 1;
-                }
+        int farmWidth = 50, farmHeight = 40;
+
+        // مسیر قابل عبور (0) و غیرقابل عبور (1)
+        int[][] grid = new int[farmWidth][farmHeight];
+        Set<TileType> walkable = Set.of(TileType.EMPTY, TileType.STONE, TileType.TREE, TileType.PERSON, TileType.DOOR);
+
+        int turn = App.currentGame.turn;
+        Point offset = App.farmStart[turn];
+        Point personRel = App.currentGame.map.farms[turn].personPoint;
+
+        // ساخت grid فقط برای مزرعه‌ی خود بازیکن
+        for (int i = 0; i < farmWidth; i++) {
+            for (int j = 0; j < farmHeight; j++) {
+                TileType tileType = App.currentGame.map.tiles[offset.x + i][offset.y + j].type;
+                grid[i][j] = (tileType != null && walkable.contains(tileType)) ? 0 : 1;
             }
         }
 
-        Point personPoint = App.currentGame.map.farms[App.currentGame.turn].personPoint;
-        int startX = personPoint.x, startY = personPoint.y;
+        // گرفتن مقصد از ورودی کاربر (مختصات محلی مزرعه)
         int targetX = Integer.parseInt(matcher.group("x"));
         int targetY = Integer.parseInt(matcher.group("y"));
 
-        List<int[]> fullPath = shortestPath(grid, startX, startY, targetX, targetY);
+        // بررسی اینکه مقصد داخل محدوده مزرعه است یا نه
+        if (targetX < 0 || targetX >= farmWidth || targetY < 0 || targetY >= farmHeight) {
+            System.out.println("Destination is outside your farm!");
+            return;
+        }
+
+        // مسیر‌یابی
+        List<int[]> fullPath = shortestPath(grid, personRel.x, personRel.y, targetX, targetY);
         if (fullPath.isEmpty()) {
             System.out.println("No path found.");
             return;
@@ -123,42 +134,46 @@ public class GameMenuController {
 
         List<int[]> turns = getTurns(fullPath);
         int energyCost = fullPath.size() + 10 * turns.size();
-        int energyUnits = energyCost / 20;
+        int energyUnits = (int) Math.ceil(energyCost / 20.0);
 
-        int currentEnergy = 5;
-        System.out.println("You need " + energyUnits + " energy to get there. Do you want to go?");
+        int currentEnergy = 5; // فرضی
+        System.out.println("You need " + energyUnits + " energy to get there. Do you want to go? (yes/no)");
         String input = scanner.nextLine();
         if (!input.equalsIgnoreCase("yes")) return;
-        int usedEnergy = 0;
-        for (int k = 1; k < fullPath.size(); k++) {
-            int[] prev = fullPath.get(k - 1);
-            int[] curr = fullPath.get(k);
 
-            // تشخیص turn
+        int usedEnergy = 0;
+        Point lastRel = personRel;
+
+        for (int k = 1; k < fullPath.size(); k++) {
+            int[] curr = fullPath.get(k);
+            int[] prev = fullPath.get(k - 1);
+
             boolean isTurn = (k > 1) && (
                     curr[0] - prev[0] != prev[0] - fullPath.get(k - 2)[0] ||
                             curr[1] - prev[1] != prev[1] - fullPath.get(k - 2)[1]
             );
 
             usedEnergy += isTurn ? 11 : 1;
-
             if (usedEnergy > currentEnergy * 20) {
-                System.out.println("Energy ran out before reaching destination." + "\nNew Point: (" + curr[0] + ", " + curr[1] + ")");
+                System.out.println("Energy ran out before reaching destination. Stopped at (" + curr[0] + ", " + curr[1] + ")");
                 break;
             }
 
-            // جابه‌جایی روی map
-            App.currentGame.map.tiles[personPoint.x][personPoint.y].type =
-                    App.currentGame.map.farms[App.currentGame.turn].lastTileType;
-            App.currentGame.map.farms[App.currentGame.turn].lastTileType =
-                    App.currentGame.map.tiles[curr[0]][curr[1]].type;
-            App.currentGame.map.tiles[curr[0]][curr[1]].type = TileType.PERSON;
-            App.currentGame.map.farms[App.currentGame.turn].personPoint = new Point(curr[0], curr[1]);
-            personPoint = new Point(curr[0], curr[1]); // به‌روز رسانی برای تکرار بعدی
+            // پاک‌سازی جای قبلی
+            App.currentGame.map.tiles[offset.x + lastRel.x][offset.y + lastRel.y].type = App.currentGame.map.farms[turn].lastTileType;
+
+            // ذخیره‌ی tile جدید
+            App.currentGame.map.farms[turn].lastTileType = App.currentGame.map.tiles[offset.x + curr[0]][offset.y + curr[1]].type;
+
+            // گذاشتن شخصیت در مکان جدید
+            App.currentGame.map.tiles[offset.x + curr[0]][offset.y + curr[1]].type = TileType.PERSON;
+            App.currentGame.map.farms[turn].personPoint = new Point(curr[0], curr[1]);
+            lastRel = new Point(curr[0], curr[1]);
         }
 
         System.out.println("Used energy: " + (usedEnergy / 20) + " units.");
     }
+
 
     static class Node {
         int x, y, dist;

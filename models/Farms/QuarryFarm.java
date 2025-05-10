@@ -51,7 +51,7 @@ public class QuarryFarm {
                 greenHouses,
                 quarries,
                 lakes,
-                new Point(6,6)
+                new Point(8,7)
         );
 
         Random rand = new Random();

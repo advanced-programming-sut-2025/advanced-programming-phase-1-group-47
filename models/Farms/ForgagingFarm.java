@@ -48,7 +48,7 @@ public class ForgagingFarm {
                 greenHouses,
                 quarries,
                 lakes,
-                new Point(6,6)
+                new Point(9,7)
         );
 
         Random rand = new Random();

@@ -1,6 +1,7 @@
 package views.menu;
 
 import controllers.GameMenuController;
+import models.App;
 import models.enums.commands.GameMenu;
 
 import java.util.Scanner;
@@ -23,7 +24,7 @@ public class GameMenuView extends AppMenu {
         } else if ((matcher = models.enums.commands.GameMenu.deletecurrentgame.getMatcher(input)) != null) {
             // handleDeleteCurrentGame(matcher);
         } else if ((matcher = models.enums.commands.GameMenu.nextturn.getMatcher(input)) != null) {
-            // handleNextTurn(matcher);
+            App.currentGame.turn = (App.currentGame.turn + 1) % 4;
         } else if ((matcher = models.enums.commands.GameMenu.showtime.getMatcher(input)) != null) {
             System.out.println(controller.showTime().getData());
         } else if ((matcher = models.enums.commands.GameMenu.showdate.getMatcher(input)) != null) {

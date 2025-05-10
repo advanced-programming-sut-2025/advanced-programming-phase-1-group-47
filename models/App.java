@@ -8,7 +8,7 @@ public class App {
     public static ArrayList<User> users = new ArrayList<>();
     public static ArrayList<Player> players = new ArrayList<>();
     public static User loggedInUser = null;
-
+    public static Point[] farmStart = new Point[]{new Point(0,0), new Point(110,0), new Point(0,80), new Point(110,80),};
     public static Game currentGame;
     public static ArrayList<Game> games;
 

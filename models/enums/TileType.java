@@ -1,7 +1,7 @@
 package models.enums;
 
 public enum TileType {
-    EMPTY("⬜⬜"),
+    EMPTY("⬜"),
     TREE("🌲"),
     STONE("🔘"),
     FORAGING("🍄"),
