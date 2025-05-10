@@ -74,7 +74,7 @@ public class ProfileMenuController {
                 App.setLoggedInUser(null);
                 return new Result<>(true, "You are now in loginMenu!\n");
             }
-            case "mainleMenu" -> {
+            case "mainMenu" -> {
                 App.setCurrentMenu(Menu.MainMenu);
                 return new Result<>(true, "You are now in mainMenu!\n");
             }
