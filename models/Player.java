@@ -1,8 +1,11 @@
 package models;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import models.enums.Gender;
 import models.enums.SkillType;
-
+import models.things.relations.Gift;
 public class Player extends User {
     private Point Coordinates;
     private int Energy;
@@ -11,12 +14,72 @@ public class Player extends User {
     private Energy energy;
     private int money;
     private int id;
-
+    //friendships
+    private Map <Player, Integer> friendshipXP;
+    private Map <Player, Integer> friendshipLevel;
+    private Map <Player, ArrayList<String>> talkHistory;
+    private Map <Player, ArrayList<String>> giftHistory;
+    private Map <Player, ArrayList<Gift>> pendingGifts;
+    private Map <Player, Boolean> hasBeenTalkedTo;
+    private Map <Player, Boolean> hasBeenGiftedTo;
+    private Map <Player, Boolean> hasbeenHugged;
+    private Player partner;
+    //friendships
     public Player(String username, String password, String email, String nickname, Gender gender, String securityQuestion, String securityAnswer) {
         super(username, password, email, nickname, gender, securityQuestion, securityAnswer);
         this.Coordinates = new Point(0, 0);
         this.invetory = new Invetory();
         this.skills = new Skill[0];
+        money = 0;
+        friendshipXP = new HashMap<>();
+        friendshipLevel = new HashMap<>();
+        talkHistory = new HashMap<>();
+        giftHistory = new HashMap<>();
+        pendingGifts = new HashMap<>();
+        hasBeenTalkedTo = new HashMap<>();
+        hasBeenGiftedTo = new HashMap<>();
+        hasbeenHugged = new HashMap<>();
+        partner = null;
+    }
+
+    public void setupRelations() {
+        for (Player player : App.getCurrentGame().getPlayers()) {
+            friendshipXP.put(player, 0);
+            friendshipLevel.put(player, 0);
+            talkHistory.put(player, new ArrayList<>());
+            giftHistory.put(player, new ArrayList<>());
+            pendingGifts.put(player, new ArrayList<>());
+            hasBeenGiftedTo.put(player, false);
+            hasBeenTalkedTo.put(player, false);
+            hasbeenHugged.put(player, false);
+        }
+    }
+    public boolean GetHasTalkedToPlayer(Player player) {
+        return hasBeenTalkedTo.get(player);
+    }
+    public void setHasBeenTalkedTo(Player player , boolean state) {
+        hasBeenTalkedTo.put(player, state);
+    }
+
+    public void addMessegeToTalkHistory(Player player , String messege) {
+        ArrayList<String> oldTalkhistory = talkHistory.get(player);
+        oldTalkhistory.add(messege);
+        talkHistory.put(player, oldTalkhistory);
+    }
+    public void addGiftToPendingGifts(Player player,Gift gift) {
+        ArrayList<Gift> oldPendingGifts = pendingGifts.get(player);
+        oldPendingGifts.add(gift);
+        pendingGifts.put(player, oldPendingGifts);
+    }
+    public void addFriendshipXP(int amount, Player player) {
+        int xp = friendshipXP.getOrDefault(player, 0) + amount;
+        int level = friendshipLevel.getOrDefault(player, 0);
+        while (xp >= (level + 1) * 100) {
+            xp -= (level + 1) * 100;
+            level++;
+        }
+        friendshipLevel.put(player, level);
+        friendshipXP.put(player, xp);
     }
     public void gainXP(SkillType type , int xp) {
     }
@@ -58,5 +121,13 @@ public class Player extends User {
     }
     public void addMoney(int moneyToAdd) {
         money+=moneyToAdd;
+    }
+
+    public void setCoordinates(Point Coordinates) {
+        this.Coordinates = Coordinates;
+    }
+
+    public Point getCoordinates() {
+        return Coordinates;
     }
 }

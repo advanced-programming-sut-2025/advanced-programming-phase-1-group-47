@@ -1,18 +1,12 @@
 package controllers;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Random;
-import models.App;
-import models.NPC;
-import models.Result;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import models.*;
-import models.NPCs.*;
 import models.buildings.Building;
 import models.enums.Season;
 import models.enums.TileType;
-import models.enums.commands.GameMenu;
 import models.things.Item;
 import models.things.relations.Quest;
 
@@ -42,6 +36,67 @@ public class GameMenuController {
     public Result<String> EatFood() {
         return null;
     }
+    public Result<String> talkToPlayer(String username , String messege) {
+        for (Player player : App.getCurrentGame().getPlayers()) {
+            if(player.getUsername().equals(username)) {
+                if(!isPlayerNear(player))
+                    return new Result<>(false, "Player too far away!");
+                if(player.GetHasTalkedToPlayer(App.getCurrentGame().getCurrentPlayer())){
+                    player.addFriendshipXP(20, App.getCurrentGame().getCurrentPlayer());
+                    App.getCurrentGame().getCurrentPlayer().addFriendshipXP(20, player);
+                }
+                messege = App.getCurrentGame().getCurrentPlayer().getUsername() + " : " + messege;
+                player.addMessegeToTalkHistory(App.getCurrentGame().getCurrentPlayer(), messege);
+                App.getCurrentGame().getCurrentPlayer().addMessegeToTalkHistory(player, messege);
+                player.setHasBeenTalkedTo(App.getCurrentGame().getCurrentPlayer(), true);
+                App.getCurrentGame().getCurrentPlayer().setHasBeenTalkedTo(player, true);
+                return new Result<>(true, messege);
+            }
+        }
+        return new Result<>(false, "can't find player username!");
+    }
+    public Result<String> giveGiftToPlayer(String username , String itemName , String itemAmount) {
+        for (Player player : App.getCurrentGame().getPlayers()) {
+            if(player.getUsername().equals(username)) {
+                if(!isPlayerNear(player))
+                    return new Result<>(false, "Player too far away!");
+                boolean validAmount = false;
+                int amount = 0;
+                try {
+                    amount =Integer.parseInt(itemAmount);
+                    validAmount = true;
+                } catch (NumberFormatException e) {
+                    validAmount = false;
+                }
+                if(!validAmount)
+                    return new Result<>(false, "item amount invalid");
+                for (Item item : App.getCurrentGame().getCurrentPlayer().getInvetory().getItems()) {
+                    if(item.getName().equalsIgnoreCase(itemName)) {
+                        if(item.getAmount() < amount)
+                            return new Result<>(false, "You Don't have enough of that Item!");
+                        Item giftedItem = item;
+                        giftedItem.setAmount(amount);
+                        item.reduceAmount(amount);
+                        if(item.getAmount() == 0)
+                            App.getCurrentGame().getCurrentPlayer().getInvetory().getItems().remove(item);
+                        player.addItemToPendingGifts(App.getCurrentGame().getCurrentPlayer(), item);
+                    }
+                }
+                return new Result<String>(false, "You Don't Have That Item!");
+            }
+        }
+        return new Result<>(false, "can't find player username!");
+    }
+    private boolean isPlayerNear(Player player) {
+        int dx = Math.abs(player.getCoordinates().getX() - App.getCurrentGame().getCurrentPlayer().getCoordinates().getX());
+        int dy = Math.abs(player.getCoordinates().getY() - App.getCurrentGame().getCurrentPlayer().getCoordinates().getY());
+        return dx < 2 && dy < 2;
+    }
+    
+
+
+
+
     public Result<String> TalkToNPC(String npcname) {
         Random rand = new Random();
         int randomNumber = rand.nextInt(5);
@@ -108,40 +163,50 @@ public class GameMenuController {
     public Result<String> FinishQuest(int QuestIndex) {
         for (NPC npc : App.getCurrentGame().getNpcs()) {
             if (npc.getQuest1().getQuestID() == QuestIndex) {
-                if(!isNPCHere())
+                if(!isNPCHere(npc))
                     return new Result<>(false , "NPC too far away!");
-                return finishQuest2(npc.getQuest1());
+                return finishQuest2(npc.getQuest1() , npc);
                 
             }
             if (npc.getQuest2().getQuestID() == QuestIndex) {
-                if(!isNPCHere())
+                if(!isNPCHere(npc))
                     return new Result<>(false , "NPC too far away!");
-                return finishQuest2(npc.getQuest2());
+                return finishQuest2(npc.getQuest2() , npc);
             }
             if (npc.getQuest3().getQuestID() == QuestIndex) {
-                if(!isNPCHere())
+                if(!isNPCHere(npc))
                     return new Result<>(false , "NPC too far away!");
-                return finishQuest2(npc.getQuest3());
+                return finishQuest2(npc.getQuest3() , npc);
             }
             
         }
         return new Result<>(false , "invalid Quest index");
     }
     //for finishquest
-    private boolean isNPCHere() {
-        return false; //TODO
+    private boolean isNPCHere(NPC npc) {
+        int dx = Math.abs(npc.getCoordinates().getX() - App.getCurrentGame().getCurrentPlayer().getCoordinates().getX());
+        int dy = Math.abs(npc.getCoordinates().getY() - App.getCurrentGame().getCurrentPlayer().getCoordinates().getY());
+        return dx < 2 && dy < 2;
     }
-    private Result<String> finishQuest2(Quest quest) {
+    private Result<String> finishQuest2(Quest quest , NPC npc) {
         if(quest.isIsDone())
             return new Result<>(false , "Quest Already Done!");
         if(!quest.getIsActive().get(App.getCurrentGame().getCurrentPlayer()))
             return new Result<>(false , "You don't have access to that Quest yet!");
         for (Item item : App.getCurrentGame().getCurrentPlayer().getInvetory().getItems()) {
             if(item.questEquals(quest.getRequiermentItems())) {
+                /*check if item is giftable
+                *TODO
+                *TODO
+                *check if item is giftable
+                */
                 item.reduceAmount(quest.getRequiermentItems().getAmount());
                 if(item.getAmount() == 0)
                     App.getCurrentGame().getCurrentPlayer().getInvetory().getItems().remove(item);
-                App.getCurrentGame().getCurrentPlayer().getInvetory().getItems().add(quest.getRewards());
+                if(quest.getRewards().getItemID() == 201)
+                   npc.addFriendship(200, App.getCurrentGame().getCurrentPlayer()); 
+                else
+                    App.getCurrentGame().getCurrentPlayer().getInvetory().getItems().add(quest.getRewards());
                 App.getCurrentGame().getCurrentPlayer().addMoney(quest.getRewardMoney());
                 quest.setIsDone(true);
                 return new Result<>(true , "Quest completed");
