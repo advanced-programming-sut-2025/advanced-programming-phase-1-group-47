@@ -21,24 +21,22 @@ public class CraftingFarm {
             }
         }
 
-        Cottage cottage = new Cottage(new Ground(new Point(5, 5), new Point(10, 9)));
+        Cottage cottage = new Cottage(new Ground(new Point(5, 5), new Point(9, 9)), new Point(5,7));
         ArrayList<greenHouse> greenHouses = new ArrayList<>();
         ArrayList<Quarry> quarries = new ArrayList<>();
         ArrayList<Lake> lakes = new ArrayList<>();
 
-        // For crafting, let's assume more stones and trees, fewer buildings
-
         // Greenhouse – یکی، کوچک‌تر، پایین چپ
-        greenHouses.add(new greenHouse(new Ground(new Point(2, 30), new Point(6, 35))));
+        greenHouses.add(new greenHouse(new Ground(new Point(2, 30), new Point(6, 35)), new Point(6,33)));
         changeTiles(new Point(2, 30), new Point(6, 35), TileType.GREENHOUSE);
-
+        changeTiles(new Point(6,32), new Point(6,32), TileType.DOOR);
         // Quarry – یکی، بالا راست
-        quarries.add(new Quarry(new Ground(new Point(40, 2), new Point(45, 7))));
+        quarries.add(new Quarry(new Ground(new Point(40, 2), new Point(45, 7)),new Point(40,5)));
         changeTiles(new Point(40, 2), new Point(45, 7), TileType.QUARRY);
-
+        changeTiles(new Point(40,5), new Point(40,5), TileType.DOOR);
         // Cottage – وسط نقشه
         changeTiles(new Point(5, 5), new Point(10, 9), TileType.COTTAGE);
-
+        changeTiles(new Point(10,7), new Point(10,7), TileType.DOOR);
         // Lake – یکی، وسط پایین
         lakes.add(new Lake(new Ground(new Point(20, 30), new Point(25, 34))));
         changeTiles(new Point(20, 30), new Point(25, 34), TileType.LAKE);
@@ -49,7 +47,8 @@ public class CraftingFarm {
                 cottage,
                 greenHouses,
                 quarries,
-                lakes
+                lakes,
+                new Point(6,6)
         );
 
         Random rand = new Random();

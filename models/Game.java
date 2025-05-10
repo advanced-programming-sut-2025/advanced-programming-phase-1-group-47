@@ -14,6 +14,7 @@ public class Game {
     public ArrayList<NPC> npcs;
     public Player currentPlayer;
     public Point personPoint;
+    public int turn = 1;
     public Game(Player... players) {
         this.players = new ArrayList<>(Arrays.asList(players));
 //        this.npcs = new ArrayList<>();

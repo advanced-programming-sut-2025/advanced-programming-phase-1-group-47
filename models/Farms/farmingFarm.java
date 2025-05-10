@@ -21,22 +21,22 @@ public class farmingFarm {
             }
         }
 
-        Cottage cottage = new Cottage(new Ground(new Point(5, 5), new Point(10, 9)));
+        Cottage cottage = new Cottage(new Ground(new Point(5, 5), new Point(9, 9)),new Point(5,7));
         ArrayList<greenHouse> greenHouses = new ArrayList<>();
         ArrayList<Quarry> quarries = new ArrayList<>();
         ArrayList<Lake> lakes = new ArrayList<>();
 
         // Greenhouse - افزایش و اندازه بزرگ‌تر
-        greenHouses.add(new greenHouse(new Ground(new Point(22, 18), new Point(26, 23))));
+        greenHouses.add(new greenHouse(new Ground(new Point(22, 18), new Point(26, 23)),new Point(24,18)));
         changeTiles(new Point(22, 18), new Point(26,23), TileType.GREENHOUSE);
-
+        changeTiles(new Point(24, 18), new Point(24,18), TileType.DOOR);
         // Quarry – یک عدد کوچک
-        quarries.add(new Quarry(new Ground(new Point(40, 30), new Point(44, 34))));
+        quarries.add(new Quarry(new Ground(new Point(40, 30), new Point(44, 34)), new Point(40,32)));
         changeTiles(new Point(40, 30), new Point(44, 34), TileType.QUARRY);
-
+        changeTiles(new Point(40,32), new Point(40,32), TileType.DOOR);
         // Cottage
-        changeTiles(new Point(5, 5), new Point(10, 9), TileType.COTTAGE);
-
+        changeTiles(new Point(5, 5), new Point(9, 9), TileType.COTTAGE);
+        changeTiles(new Point(9, 7), new Point(9,7), TileType.DOOR);
         // Lake – فقط یکی، کوچک
         lakes.add(new Lake(new Ground(new Point(32, 8), new Point(36, 12))));
         changeTiles(new Point(32, 8), new Point(36, 12), TileType.LAKE);
@@ -47,7 +47,8 @@ public class farmingFarm {
                 cottage,
                 greenHouses,
                 quarries,
-                lakes
+                lakes,
+                new Point(6,6)
         );
 
         Random rand = new Random();

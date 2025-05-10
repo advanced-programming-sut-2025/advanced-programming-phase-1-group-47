@@ -6,29 +6,20 @@ import models.enums.Menu;
 public class App {
 
     public static ArrayList<User> users = new ArrayList<>();
-
-    public static ArrayList<Game> games = new ArrayList<>();
-
+    public static ArrayList<Player> players = new ArrayList<>();
     public static User loggedInUser = null;
 
-    public static ArrayList<Player> players = new ArrayList<>();
-
-    public static Map gameMap;
+    public static Game currentGame;
+    public static ArrayList<Game> games;
 
     public static Menu currentMenu = Menu.LoginMenu;
-
-    public static Game currentGame;
 
     public static Game getCurrentGame() {
         return currentGame;
     }
 
-    public static void setGameMap(Map gameMap) {
-        App.gameMap = gameMap;
-    }
-
-    public static void setCurrentGame(Game newCurrentGame) {
-        currentGame = newCurrentGame;
+    public static void setCurrentGame(Game currentGame) {
+        App.currentGame = currentGame;
     }
 
     public static Menu getCurrentMenu() {
@@ -46,13 +37,6 @@ public class App {
             }
         }
         return null;
-    }
-    public static ArrayList<Game> getGames() {
-        return games;
-    }
-
-    public static void setGames(ArrayList<Game> newGames) {
-        games = newGames;
     }
 
     public static ArrayList<User> getUsers() {

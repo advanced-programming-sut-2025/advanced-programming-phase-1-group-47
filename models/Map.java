@@ -49,7 +49,6 @@ public class Map {
                     throw new IllegalArgumentException("Unknown farm type: " + types[i]);
             }
             farms[i] = farm;
-            if (App.currentGame.currentPlayer.getId() == i ){
                 if(i==0)
                     setTiles(new Point(0, 0), new Point(50, 40), temp);
                 else if(i==1)
@@ -58,7 +57,9 @@ public class Map {
                     setTiles(new Point(0, 80), new Point(50, 120), temp);
                 else if(i==3)
                     setTiles(new Point(110, 80), new Point(160, 120), temp);
-            }
+                Tile personTile = new Tile(farm.personPoint, TileType.PERSON);
+                this.tiles[farm.personPoint.x][farm.personPoint.y] = personTile;
+                farm.ground.tiles[farm.personPoint.x][farm.personPoint.y].type = TileType.PERSON;
         }
     }
     public void setBuildings(ArrayList<Building> buildings) {

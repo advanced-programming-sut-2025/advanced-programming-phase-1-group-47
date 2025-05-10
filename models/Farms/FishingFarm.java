@@ -19,35 +19,39 @@ public class FishingFarm {
                 this.temp[i][j] = new Tile(new Point(i,j) , TileType.EMPTY);
             }
         }
-        Cottage cottage = new Cottage(new Ground(new Point(1,1), new Point(7,4)));
+        Cottage cottage = new Cottage(new Ground(new Point(1,1), new Point(5,5)),
+                new Point(5,3));
         ArrayList<greenHouse> greenHouses = new ArrayList<>();
         ArrayList<Quarry> quarries = new ArrayList<>();
         ArrayList<Lake> lakes = new ArrayList<>();
 
-// Greenhouse – یک عدد، کوچک، بالا سمت چپ
-        greenHouses.add(new greenHouse(new Ground(new Point(2, 2), new Point(6, 7))));
+        // Greenhouse – یک عدد، کوچک، بالا سمت چپ
+        greenHouses.add(new greenHouse(new Ground(new Point(2, 2), new Point(6, 7)), new Point(2,5)));
         changeTiles(new Point(2, 2), new Point(6,7), TileType.GREENHOUSE);
-
-// Quarry – یک عدد، پایین سمت راست
-        quarries.add(new Quarry(new Ground(new Point(40, 30), new Point(44, 34))));
+        changeTiles(new Point(2, 5), new Point(2,5), TileType.DOOR);
+        // Quarry – یک عدد، پایین سمت راست
+        quarries.add(new Quarry(new Ground(new Point(40, 30), new Point(44, 34)), new Point(40,32)));
         changeTiles(new Point(40, 30), new Point(44, 34), TileType.QUARRY);
-
-// Cottage – یک عدد، وسط نقشه
+        changeTiles(new Point(42, 30), new Point(42,30), TileType.DOOR);
+        // Cottage – یک عدد، وسط نقشه
         changeTiles(new Point(22, 18), new Point(26, 22), TileType.COTTAGE);
-
-// Lake – دو عدد، کوچک‌تر و در نواحی باز
+        changeTiles(new Point(22, 20), new Point(22,20), TileType.DOOR);
+        changeTiles(new Point(22, 19), new Point(22,19), TileType.PERSON);
+        // Lake – دو عدد، کوچک‌تر و در نواحی باز
         lakes.add(new Lake(new Ground(new Point(10, 25), new Point(19, 31))));
         changeTiles(new Point(10, 25), new Point(19, 31), TileType.LAKE);
 
         lakes.add(new Lake(new Ground(new Point(30, 5), new Point(39, 14))));
         changeTiles(new Point(30, 5), new Point(39, 14), TileType.LAKE);
+
         this.farm = new Farm(
                 1,
                 new Ground(new Point(0, 0), new Point(50, 40)),
                 cottage,
                 greenHouses,
                 quarries,
-                lakes
+                lakes,
+                new Point(24,20)
         );
 
         Random rand = new Random();

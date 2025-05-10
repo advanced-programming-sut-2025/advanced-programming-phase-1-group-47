@@ -16,8 +16,6 @@ public class GameMenuView extends AppMenu {
         Matcher matcher;
         if ((matcher = models.enums.commands.GameMenu.newgame.getMatcher(input)) != null) {
             System.out.println(controller.handleNewGame(matcher,scanner).getData());
-        } else if ((matcher = models.enums.commands.GameMenu.gamemap.getMatcher(input)) != null) {
-             handleGameMap(matcher);
         } else if ((matcher = models.enums.commands.GameMenu.loadgame.getMatcher(input)) != null) {
             // handleLoadGame(matcher);
         } else if ((matcher = models.enums.commands.GameMenu.exitgame.getMatcher(input)) != null) {
@@ -51,7 +49,7 @@ public class GameMenuView extends AppMenu {
         } else if ((matcher = models.enums.commands.GameMenu.greenhousebuild.getMatcher(input)) != null) {
             // handleGreenhouseBuild(matcher);
         } else if ((matcher = models.enums.commands.GameMenu.walk.getMatcher(input)) != null) {
-//             handleWalk(matcher);
+             controller.walk(matcher,scanner);
         } else if ((matcher = models.enums.commands.GameMenu.printmap.getMatcher(input)) != null) {
             controller.printMap();
         } else if ((matcher = models.enums.commands.GameMenu.mapreadinghelper.getMatcher(input)) != null) {
@@ -112,23 +110,4 @@ public class GameMenuView extends AppMenu {
             System.out.println("Invalid command");
         }
     }
-
-
-    private void handleGameMap(Matcher matcher) {
-        // پیاده‌سازی برای بارگذاری نقشه
-        String mapNumber = matcher.group("map_number");
-//        controller.loadMap(mapNumber);
-    }
-
-    private void handleLoadGame(Matcher matcher) {
-        // پیاده‌سازی برای بارگذاری بازی
-//        controller.loadGame();
-    }
-
-    private void handleExitGame(Matcher matcher) {
-        // پیاده‌سازی برای خروج از بازی
-//        controller.exitGame();
-    }
-
-    // به همین صورت برای سایر دستورات و متدهای مربوطه پیاده‌سازی کنید.
 }

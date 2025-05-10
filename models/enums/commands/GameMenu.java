@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 import static java.util.regex.Pattern.compile;
 
 public enum GameMenu {
-    newgame("^\\s*game\\s+new\\s+-u\\s+(?<player1>\\S+)\\s+(?<player2>\\S+)\\s+(?<player3>\\S+)\\s*$"),
+    newgame("^\\s*game\\s+new\\s+-u\\s+(?<player1>\\S+)(\\s+(?<player2>\\S+))?(\\s+(?<player3>\\S+))?\\s*$"),
     gamemap("^\\s*game\\s+map\\s+(?<mapNumber>\\S+)\\s*$"),
     loadgame("^\\s*load\\s+game\\s*$"),
     exitgame("^\\s*exit\\s+game\\s*$"),
