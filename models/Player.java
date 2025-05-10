@@ -57,8 +57,14 @@ public class Player extends User {
     public boolean GetHasTalkedToPlayer(Player player) {
         return hasBeenTalkedTo.get(player);
     }
+    public boolean GetHasHuggedPlayer(Player player) {
+        return hasbeenHugged.get(player);
+    }
     public void setHasBeenTalkedTo(Player player , boolean state) {
         hasBeenTalkedTo.put(player, state);
+    }
+    public void setHasHuggedPlayer(Player player , boolean state) {
+        hasbeenHugged.put(player, state);
     }
 
     public void addMessegeToTalkHistory(Player player , String messege) {
@@ -129,5 +135,25 @@ public class Player extends User {
 
     public Point getCoordinates() {
         return Coordinates;
+    }
+
+    public Map<Player, Integer> getFriendshipLevel() {
+        return friendshipLevel;
+    }
+
+    public void setFriendshipLevel(Map<Player, Integer> friendshipLevel) {
+        this.friendshipLevel = friendshipLevel;
+    }
+
+    public Map<Player, Integer> getFriendshipXP() {
+        return friendshipXP;
+    }
+
+    public void setFriendshipXP(Map<Player, Integer> friendshipXP) {
+        this.friendshipXP = friendshipXP;
+    }
+
+    public Map<Player, Boolean> getHasbeenHugged() {
+        return hasbeenHugged;
     }
 }

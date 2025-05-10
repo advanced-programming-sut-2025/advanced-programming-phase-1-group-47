@@ -41,7 +41,7 @@ public class GameMenuController {
             if(player.getUsername().equals(username)) {
                 if(!isPlayerNear(player))
                     return new Result<>(false, "Player too far away!");
-                if(player.GetHasTalkedToPlayer(App.getCurrentGame().getCurrentPlayer())){
+                if(!player.GetHasTalkedToPlayer(App.getCurrentGame().getCurrentPlayer())){
                     player.addFriendshipXP(20, App.getCurrentGame().getCurrentPlayer());
                     App.getCurrentGame().getCurrentPlayer().addFriendshipXP(20, player);
                 }
@@ -58,6 +58,8 @@ public class GameMenuController {
     public Result<String> giveGiftToPlayer(String username , String itemName , String itemAmount) {
         for (Player player : App.getCurrentGame().getPlayers()) {
             if(player.getUsername().equals(username)) {
+                if(player.getFriendshipLevel().get(App.getCurrentGame().getCurrentPlayer()) == 0)
+                    return new Result<>(false, "You don't know that player enough to send Gifts!");
                 if(!isPlayerNear(player))
                     return new Result<>(false, "Player too far away!");
                 boolean validAmount = false;
@@ -84,6 +86,22 @@ public class GameMenuController {
                     }
                 }
                 return new Result<>(false, "You Don't Have That Item!");
+            }
+        }
+        return new Result<>(false, "can't find player username!");
+    }
+    public Result<String> hugPlayer(String username) {
+        for (Player player : App.getCurrentGame().getPlayers()) {
+            if(player.getUsername().equals(username)) {
+                if(!isPlayerNear(player))
+                    return new Result<>(false, "Player too far away!");
+                if(!player.GetHasHuggedPlayer(App.getCurrentGame().getCurrentPlayer())){
+                    player.addFriendshipXP(60, App.getCurrentGame().getCurrentPlayer());
+                    App.getCurrentGame().getCurrentPlayer().addFriendshipXP(60, player);
+                }
+                player.setHasHuggedPlayer(App.getCurrentGame().getCurrentPlayer(), true);
+                App.getCurrentGame().getCurrentPlayer().setHasHuggedPlayer(player, true);
+                return new Result<>(true, "You hugged " + username + "!");
             }
         }
         return new Result<>(false, "can't find player username!");
