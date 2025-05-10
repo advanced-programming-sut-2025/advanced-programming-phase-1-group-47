@@ -1,5 +1,4 @@
 package controllers;
-import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.regex.Matcher;
@@ -8,6 +7,7 @@ import models.buildings.Building;
 import models.enums.Season;
 import models.enums.TileType;
 import models.things.Item;
+import models.things.relations.Gift;
 import models.things.relations.Quest;
 
 public class GameMenuController {
@@ -74,15 +74,16 @@ public class GameMenuController {
                     if(item.getName().equalsIgnoreCase(itemName)) {
                         if(item.getAmount() < amount)
                             return new Result<>(false, "You Don't have enough of that Item!");
-                        Item giftedItem = item;
-                        giftedItem.setAmount(amount);
+                        Item giftedItem = new Item(item , amount);
                         item.reduceAmount(amount);
                         if(item.getAmount() == 0)
                             App.getCurrentGame().getCurrentPlayer().getInvetory().getItems().remove(item);
-                        player.addItemToPendingGifts(App.getCurrentGame().getCurrentPlayer(), item);
+                        player.addGiftToPendingGifts(App.getCurrentGame().getCurrentPlayer(), new Gift(giftedItem, App.getGiftIdCounter()));
+                        App.addGiftIdCounter();
+                        return new Result<>(true, "Gift Given!");
                     }
                 }
-                return new Result<String>(false, "You Don't Have That Item!");
+                return new Result<>(false, "You Don't Have That Item!");
             }
         }
         return new Result<>(false, "can't find player username!");
@@ -182,6 +183,36 @@ public class GameMenuController {
         }
         return new Result<>(false , "invalid Quest index");
     }
+
+    public Result<String> listQuests() {
+        StringBuilder output = new StringBuilder();
+        Player currentPlayer = App.getCurrentGame().getCurrentPlayer();
+    
+        for (NPC npc : App.getCurrentGame().getNpcs()) {
+            Quest[] quests = {npc.getQuest1(), npc.getQuest2(), npc.getQuest3()};
+    
+            for (Quest quest : quests) {
+                if (quest == null) continue;
+                Boolean isActive = quest.getIsActive().get(currentPlayer);
+                if (isActive != null && isActive) {
+                    output.append(quest.getQuestID())
+                          .append(" :For ").append(npc.getName())
+                          .append(" Items needed : ")
+                          .append(quest.getRequiermentItems().getName())
+                          .append(" ").append(quest.getRequiermentItems().getAmount())
+                          .append(" :The Rewards : ")
+                          .append(quest.getRewards().getName())
+                          .append(" ").append(quest.getRewards().getAmount())
+                          .append(" And the Reward Money Of :")
+                          .append(quest.getRewardMoney())
+                          .append("\n");
+                }
+            }
+        }
+    
+        return new Result<>(true, output.toString());
+    }
+    
     //for finishquest
     private boolean isNPCHere(NPC npc) {
         int dx = Math.abs(npc.getCoordinates().getX() - App.getCurrentGame().getCurrentPlayer().getCoordinates().getX());
