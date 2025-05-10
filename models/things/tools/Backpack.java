@@ -18,12 +18,6 @@ public class Backpack extends Tool {
         this.backpackables = new ArrayList<>();
     }
 
-    @Override
-    public Result useTool(Tool tool, Point point) {
-        // You can process something or just return default
-        return super.useTool(tool, point); // placeholder
-    }
-
     public void setBackpackables(ArrayList<backpackable> backpackables) {
         this.backpackables = backpackables;
     }
@@ -42,5 +36,15 @@ public class Backpack extends Tool {
 
     public void deleteBackpack(backpackable backpackable) {
         backpackables.remove(backpackable);
+    }
+
+    @Override
+    public int getEnergyCost() {
+        return 0;
+    }
+
+    @Override
+    public Result<String> useTool(Point point) {
+        return null;
     }
 }

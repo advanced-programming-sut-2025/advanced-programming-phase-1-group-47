@@ -19,8 +19,14 @@ public class Hoe extends Tool {
     public void setQuality(Quality quality) {
         this.quality = quality;
     }
-    public Result useTool(Point point) {
-        // فرض کنیم Hoe زمین رو شخم می‌زنه
-        return new Result(true, "Used hoe at " + point + " with quality: " + quality);
+
+    @Override
+    public int getEnergyCost() {
+        return quality.getEnergy();
+    }
+
+    @Override
+    public Result<String> useTool(Point point) {
+        return new Result<>(true, "Hoe used at point " + point);
     }
 }

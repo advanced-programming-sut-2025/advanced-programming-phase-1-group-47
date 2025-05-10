@@ -166,4 +166,30 @@ public class GameMenuController {
         App.getCurrentGame().getCurrentPlayer().skillProgress(3, 10);
         return null;
     }
+
+    public Result<String> crafting() {
+        if(App.getCurrentGame().getCurrentPlayer().getEnergy() < 3) {
+            return new Result<>(false, "Lack of energy!");
+        }
+
+        // fill here
+
+        // this is for energy
+        App.getCurrentGame().getCurrentPlayer().setEnergy(App.getCurrentGame().getCurrentPlayer().getEnergy() - 2);
+
+        return null;
+    }
+
+    public Result<String> cooking() {
+        if(App.getCurrentGame().getCurrentPlayer().getEnergy() < 4) {
+            return new Result<>(false, "Lack of energy!");
+        }
+
+        // fill here
+
+        // this is for energy
+        App.getCurrentGame().getCurrentPlayer().setEnergy(App.getCurrentGame().getCurrentPlayer().getEnergy() - 3);
+
+        return null;
+    }
 }

@@ -2,14 +2,33 @@ package models.things.tools;
 
 import models.Point;
 import models.Result;
+import models.enums.Quality;
 
 public class Pickaxe extends Tool {
 
-    public Pickaxe(String name, int itemID, int value, int parentItemID, int amount) {
+    private Quality quality;
+
+    public Pickaxe(String name, int itemID, int value, int parentItemID, int amount, Quality quality) {
         super(name, itemID, value, parentItemID, amount);
+
+        this.quality = quality;
     }
 
-    public Result useTool(Point point) {
-        return new Result(true, "Pickaxe used at point " + point);
+    public Quality getQuality() {
+        return quality;
+    }
+
+    public void setQuality(Quality quality) {
+        this.quality = quality;
+    }
+
+    @Override
+    public int getEnergyCost() {
+        return quality.getEnergy();
+    }
+
+    @Override
+    public Result<String> useTool(Point point) {
+        return new Result<>(true, "Pickaxe used at point " + point);
     }
 }

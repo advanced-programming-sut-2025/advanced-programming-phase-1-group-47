@@ -4,8 +4,7 @@ import models.enums.Gender;
 import models.enums.SkillType;
 
 public class Player extends User {
-    private Point Coordinates;
-    private int Energy;
+    private Point coordinates;
     private Invetory invetory;
     private Skill[] skills = new Skill[]{
             new Skill(SkillType.FARMING),
@@ -13,8 +12,8 @@ public class Player extends User {
             new Skill(SkillType.MINING),
             new Skill(SkillType.FORAGING)
     };
-    
-    private Energy energy;
+
+    private Energy energy = new Energy(200, 200);
     private int money;
     private int id;
 
@@ -37,11 +36,11 @@ public class Player extends User {
     }
 
     public int getEnergy() {
-        return Energy;
+        return energy.getCurrentEnergy();
     }
 
-    public void setEnergy(int Energy) {
-        this.Energy = Energy;
+    public void setEnergy(int energy) {
+         this.energy.setCurrentEnergy(energy);
     }
 
     public Skill[] getSkills() {
@@ -69,5 +68,37 @@ public class Player extends User {
     }
     public void addMoney(int moneyToAdd) {
         money+=moneyToAdd;
+    }
+
+    public Skill getFarmingSkill() {
+        return skills[0];
+    }
+
+    public void setFarmingSkill(Skill farming) {
+        skills[0] = farming;
+    }
+
+    public Skill getFishingSkill() {
+        return skills[1];
+    }
+
+    public void setFishingSkill(Skill fishing) {
+        skills[1] = fishing;
+    }
+
+    public Skill getMiningSkill() {
+        return skills[2];
+    }
+
+    public void setMiningSkill(Skill mining) {
+        skills[2] = mining;
+    }
+
+    public Skill getForagingSkill() {
+        return skills[3];
+    }
+
+    public void setForagingSkill(Skill foraging) {
+        skills[3] = foraging;
     }
 }

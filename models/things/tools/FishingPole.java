@@ -20,7 +20,13 @@ public class FishingPole extends Tool {
         this.rod = rod;
     }
 
-    public Result useTool(Point point) {
-        return new Result(true, "Fishing with rod: " + rod + " at point " + point);
+    @Override
+    public int getEnergyCost() {
+        return rod.getEnergy();
+    }
+
+    @Override
+    public Result<String> useTool(Point point) {
+        return new Result<>(true, "Fishing with rod: " + rod + " at point " + point);
     }
 }
