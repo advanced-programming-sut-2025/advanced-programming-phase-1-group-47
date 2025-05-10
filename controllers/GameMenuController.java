@@ -139,6 +139,8 @@ public class GameMenuController {
             if(npc.getName().equalsIgnoreCase(npcName)) {
                 for(Item item : App.getCurrentGame().getCurrentPlayer().getInvetory().getItems()) {
                     if(item.getName().equalsIgnoreCase(giftName)){
+                        if(item.getValue() == -1)
+                            return new Result<String>(false, "You Can't gift that Item!");
                         App.getCurrentGame().getCurrentPlayer().getInvetory().removeItem(item);
                         for(Item favitem : npc.getFavorites()) {
                             if(favitem.getItemID() == item.getItemID() || favitem.getItemID() == item.getParentItemID()){
@@ -244,11 +246,6 @@ public class GameMenuController {
             return new Result<>(false , "You don't have access to that Quest yet!");
         for (Item item : App.getCurrentGame().getCurrentPlayer().getInvetory().getItems()) {
             if(item.questEquals(quest.getRequiermentItems())) {
-                /*check if item is giftable
-                *TODO
-                *TODO
-                *check if item is giftable
-                */
                 item.reduceAmount(quest.getRequiermentItems().getAmount());
                 if(item.getAmount() == 0)
                     App.getCurrentGame().getCurrentPlayer().getInvetory().getItems().remove(item);
