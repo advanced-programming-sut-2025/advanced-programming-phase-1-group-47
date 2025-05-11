@@ -1,6 +1,4 @@
 package controllers;
-import java.util.Random;
-import java.util.Scanner;
 import java.util.*;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
@@ -187,7 +185,28 @@ public class GameMenuController {
     
         return new Result<>(true, output.toString());
     }
-    
+    public Result<String> FinishQuest(int QuestIndex) {
+        for (NPC npc : App.getCurrentGame().getNpcs()) {
+            if (npc.getQuest1().getQuestID() == QuestIndex) {
+                if(!isNPCHere(npc))
+                    return new Result<>(false , "NPC too far away!");
+                return finishQuest2(npc.getQuest1() , npc);
+                
+            }
+            if (npc.getQuest2().getQuestID() == QuestIndex) {
+                if(!isNPCHere(npc))
+                    return new Result<>(false , "NPC too far away!");
+                return finishQuest2(npc.getQuest2() , npc);
+            }
+            if (npc.getQuest3().getQuestID() == QuestIndex) {
+                if(!isNPCHere(npc))
+                    return new Result<>(false , "NPC too far away!");
+                return finishQuest2(npc.getQuest3() , npc);
+            }
+            
+        }
+        return new Result<>(false , "invalid Quest index");
+    }
     //for finishquest
     private boolean isNPCHere(NPC npc) {
         int dx = Math.abs(npc.getCoordinates().getX() - App.getCurrentGame().getCurrentPlayer().getCoordinates().getX());
