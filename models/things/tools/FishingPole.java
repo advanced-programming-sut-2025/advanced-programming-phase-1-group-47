@@ -1,26 +1,38 @@
 package models.things.tools;
 
+import models.App;
 import models.Point;
 import models.Result;
-import models.enums.Rods;
+import models.enums.RodType;
+import models.enums.SkillType;
+import models.things.Item;
 
-public class FishingPole extends Tool {
-    private Rods rod;
+public class FishingPole extends Item {
+    private final RodType rodType; // Made final to ensure immutability
 
-    public FishingPole(String name, int itemID, int value, int parentItemID, int amount, Rods rod) {
-        super(name, itemID, value, parentItemID, amount);
-        this.rod = rod;
+    public FishingPole(RodType rodType) {
+        super("fishing pole", 54, rodType.getPrice(), 0, 1);
+        this.rodType = rodType;
     }
 
-    public Rods getRod() {
-        return rod;
+    public RodType getRodType() {
+        return rodType;
     }
 
-    public void setRod(Rods rod) {
-        this.rod = rod;
+    public int energyCost() {
+        int fraction = 0;
+        if(App.getCurrentGame().getCurrentPlayer().getSkills()[1].getLevel() == 4) {
+            fraction++;
+        }
+
+        if(App.getCurrentGame().getCurrentPlayer().getBuff().getSkill().getType().equals(SkillType.FISHING)) {
+            fraction++;
+        }
+
+        return (int) (rodType.getEnergyCost() * App.getCurrentGame().getWeather().getIntensity() - fraction);
     }
 
-    public Result useTool(Point point) {
-        return new Result(true, "Fishing with rod: " + rod + " at point " + point);
+    public Result<String> useTool(Point point) {
+        return new Result<>(true, "Fishing with rod: " + rodType.getName() + " at point " + point);
     }
 }

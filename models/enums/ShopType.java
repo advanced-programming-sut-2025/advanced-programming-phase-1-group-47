@@ -11,5 +11,5 @@ public enum ShopType {
     Marnies,
     TheSaloon;
 
-    private ArrayList<Item> 
+//    private ArrayList<Item>
 }

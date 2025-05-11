@@ -1,15 +1,20 @@
 package models.things.tools;
 
+import models.App;
 import models.Point;
 import models.Result;
+import models.things.Item;
 
-public class MilkPail extends Tool {
-
-    public MilkPail(String name, int itemID, int value, int parentItemID, int amount) {
-        super(name, itemID, value, parentItemID, amount);
+public class MilkPail extends Item {
+    public MilkPail() {
+        super("milk pail", 55, 1000, 0, 1);
     }
-    public Result useTool(Point point) {
-        // فرض کنیم این ابزار برای جمع‌آوری شیر از یک نقطه استفاده می‌شود
-        return new Result(true, "Milk pail used at " + point);
+
+    public int energyCost() {
+        return (int) (4 * App.getCurrentGame().getWeather().getIntensity());
+    }
+
+    public Result<String> useTool(){
+        return null;
     }
 }
