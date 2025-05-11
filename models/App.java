@@ -14,6 +14,14 @@ public class App {
 
     public static Menu currentMenu = Menu.LoginMenu;
 
+    public static Game currentGame;
+
+    public static int giftIdCounter = 0;
+
+
+    public static void addGiftIdCounter() {
+        giftIdCounter++;
+    }
     public static Game getCurrentGame() {
         return currentGame;
     }
@@ -73,6 +81,10 @@ public class App {
     }
     public static void logOut(){
 
+    }
+
+    public static int getGiftIdCounter() {
+        return giftIdCounter;
     }
 
 }

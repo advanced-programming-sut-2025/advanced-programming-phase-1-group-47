@@ -14,7 +14,14 @@ public class Item {
         this.ParentItemID = ParentItemID;
         this.amount = amount;
     }
-  
+    public Item(Item item , int amount) {
+        this.name = item.getName();
+        this.ItemID = item.getItemID();
+        this.ParentItemID = item.getParentItemID();
+        this.value = item.getValue();
+        this.amount = amount;
+    }
+
     public void addAmount(int add) {
         amount+=add;
     }

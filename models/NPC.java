@@ -19,7 +19,7 @@ public class NPC {
     private ArrayList<String> responses;
     private ArrayList<Item> possibleGifts;
     private int TimeUntilQuest3;
-
+    private Point coordinates;
     public String getName() {
         return name;
     }
@@ -35,6 +35,7 @@ public class NPC {
         this.responses = responses;
         this.possibleGifts = possibleGifts;
         this.TimeUntilQuest3 = TimeUntilQuest3;
+        this.coordinates = new Point(0, 0);
         friendship = new HashMap<>();
         for (Player player : App.getCurrentGame().getPlayers()) {
             friendship.put(player, 0);
@@ -95,5 +96,13 @@ public class NPC {
 
     public void setQuest3(Quest quest3) {
         this.quest3 = quest3;
+    }
+
+    public Point getCoordinates() {
+        return coordinates;
+    }
+
+    public void setCoordinates(Point coordinates) {
+        this.coordinates = coordinates;
     }
 }

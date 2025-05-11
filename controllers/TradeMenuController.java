@@ -1,11 +1,9 @@
 package controllers;
 
-import models.Player;
 import models.Result;
-import models.things.Item;
 
 public class TradeMenuController {
-    public Result<String> trade(Player giverPlayer ,Player TakerPlayer , int giverMoney , Item giverItem , int takerMoney , Item takerItem){
+    public Result<String> trade(String username , String type , String item , String amount ,String price , String targetItem , String targetAmount){
         return null;
     }
     public Result<String> AcceptOrDenyTrade(String messege) {
