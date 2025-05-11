@@ -100,14 +100,12 @@ public class GameMenuController {
         }
     }
     public Result<String> showTime(){
-        return new Result<>(true, "Spended Hours : " + Time.getHour()%24);
+        return new Result<>(true, "Spent Hours : " + Time.getHourOfDay());
     }
     public Result<String> showDate(){
-        return new Result<>(true, "Date: " +  Time.getSeason() + " / " + Time.getDayOfMonth());
+        return new Result<>(true, "Date: " +  Time.getSeason() + " / " + Time.getDayOfSeason());
     }
-    public Result<String> showDatetime(){
-        return new Result<>(true, "Date: " +  Time.getSeason() + "/" + Time.getDayOfMonth() + " ---" + Time.getHour() + ": 00");
-    }
+
     public Result<String> showDayWeek(){
         return new Result<>(true, "Day week: " + Time.getDayWeek());
     }
@@ -126,7 +124,7 @@ public class GameMenuController {
         if(day < 0 )
             return new Result<>(false, "Invalid Day format (Day | Day > 0");
         Time.hour += day;
-        return new Result<>(false, "new Day: " + Time.getDayOfMonth());
+        return new Result<>(false, "new Day: " + Time.getDayOfSeason());
     }
     public Result<String> GiveGiftToNPC(NPC npc , Item gift) {
         return null;
