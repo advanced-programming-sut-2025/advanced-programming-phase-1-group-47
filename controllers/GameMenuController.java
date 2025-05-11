@@ -572,10 +572,10 @@ public Result<String> listGifts() {
 
 
     public Result<String> showTime(){
-        return new Result<>(true, "Spent Hours : " + Time.getHourOfDay());
+        return new Result<>(true, "Spent Hours : " + App.currentGame.time.getHourOfDay());
     }
     public Result<String> showDate(){
-        return new Result<>(true, "Date: " +  Time.getSeason() + " / " + Time.getDayOfSeason());
+        return new Result<>(true, "Date: " +  Time.getSeason() + " / " + App.currentGame.time.getDayOfSeason());
     }
 
     public Result<String> showDayWeek(){
@@ -596,7 +596,7 @@ public Result<String> listGifts() {
         if(day < 0 )
             return new Result<>(false, "Invalid Day format (Day | Day > 0");
         Time.hour += day;
-        return new Result<>(false, "new Day: " + Time.getDayOfSeason());
+        return new Result<>(false, "new Day: " + App.currentGame.time.getDayOfSeason());
     }
     public Result<String> GiveGiftToNPC(NPC npc , Item gift) {
         return null;
