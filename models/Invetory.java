@@ -14,7 +14,14 @@ public class Invetory {
         items.remove(item);
     }
     public void addItem(Item item) {
-        items.add(item);
+        for(Item item2 : items){
+            if(item2.getItemID() == item.getItemID()) {
+                item2.addAmount(item.getAmount());
+                return;
+            }
+        }
+        if(item.getItemID() != 0)
+            items.add(item);
     }
     public void setBackpack(Backpack backpack) {
         this.backpack = backpack;

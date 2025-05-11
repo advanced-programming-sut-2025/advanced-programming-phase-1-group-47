@@ -21,24 +21,25 @@ public class QuarryFarm {
             }
         }
 
-        Cottage cottage = new Cottage(new Ground(new Point(4, 4), new Point(9, 8)));
+        Cottage cottage = new Cottage(new Ground(new Point(4, 4), new Point(8, 8)),new Point(8,6));
         ArrayList<greenHouse> greenHouses = new ArrayList<>();
         ArrayList<Quarry> quarries = new ArrayList<>();
         ArrayList<Lake> lakes = new ArrayList<>();
 
         // Quarry – دو تا، با اندازه متفاوت
-        quarries.add(new Quarry(new Ground(new Point(10, 10), new Point(18, 16))));
-        quarries.add(new Quarry(new Ground(new Point(25, 5), new Point(32, 10))));
+        quarries.add(new Quarry(new Ground(new Point(10, 10), new Point(18, 16)), new Point(18,13)));
+        quarries.add(new Quarry(new Ground(new Point(25, 5), new Point(32, 10)), new Point(32,7)));
         changeTiles(new Point(10, 10), new Point(18, 16), TileType.QUARRY);
+        changeTiles(new Point(10, 13), new Point(10,13), TileType.DOOR);
         changeTiles(new Point(25, 5), new Point(32, 10), TileType.QUARRY);
-
+        changeTiles(new Point(32,7), new Point(32,7), TileType.DOOR);
         // Greenhouse – یکی، کوچک
-        greenHouses.add(new greenHouse(new Ground(new Point(35, 30), new Point(39,35))));
+        greenHouses.add(new greenHouse(new Ground(new Point(35, 30), new Point(39,35)), new Point(37,30)));
         changeTiles(new Point(35, 30), new Point(39,35), TileType.GREENHOUSE);
-
+        changeTiles(new Point(37,30), new Point(37,30), TileType.DOOR);
         // Cottage
-        changeTiles(new Point(4, 4), new Point(9, 8), TileType.COTTAGE);
-
+        changeTiles(new Point(4, 4), new Point(9, 9), TileType.COTTAGE);
+        changeTiles(new Point(9,7), new Point(9,7), TileType.DOOR);
         // Lake – یکی، کوچک و جدا
         lakes.add(new Lake(new Ground(new Point(40, 10), new Point(44, 14))));
         changeTiles(new Point(40, 10), new Point(44, 14), TileType.LAKE);
@@ -49,7 +50,8 @@ public class QuarryFarm {
                 cottage,
                 greenHouses,
                 quarries,
-                lakes
+                lakes,
+                new Point(8,7)
         );
 
         Random rand = new Random();
