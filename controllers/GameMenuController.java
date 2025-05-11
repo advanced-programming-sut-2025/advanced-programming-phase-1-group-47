@@ -2,7 +2,6 @@ package controllers;
 import java.util.*;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
-
 import models.*;
 import models.Map;
 import models.NPCs.*;
@@ -10,7 +9,6 @@ import models.buildings.Building;
 import models.enums.Menu;
 import models.enums.Season;
 import models.enums.TileType;
-import models.enums.commands.GameMenu;
 import models.things.Item;
 import models.things.relations.Gift;
 import models.things.relations.Quest;
@@ -118,7 +116,7 @@ public class GameMenuController {
         int dy = Math.abs(player.getCoordinates().getY() - App.getCurrentGame().getCurrentPlayer().getCoordinates().getY());
         return dx < 2 && dy < 2;
     }
-
+    
     public Result<String> TalkToNPC(String npcname) {
         Random rand = new Random();
         int randomNumber = rand.nextInt(5);
@@ -135,7 +133,7 @@ public class GameMenuController {
             }
         }
         return new Result<>(false , "No NPC found with that name!");
-
+        
     }
     public Result<String> GiveGiftToNPC(String npcName , String giftName) {
         for (NPC npc : App.getCurrentGame().getNpcs()){
@@ -148,7 +146,7 @@ public class GameMenuController {
                         for(Item favitem : npc.getFavorites()) {
                             if(favitem.getItemID() == item.getItemID() || favitem.getItemID() == item.getParentItemID()){
                                 npc.addFriendship(200, App.getCurrentGame().getCurrentPlayer());
-                                return new Result<>(true, "Thanks! I love this Gift!");
+                                return new Result<>(true, "Thanks! I love this Gift!");                                
                             }
                         }
                         npc.addFriendship(50, App.getCurrentGame().getCurrentPlayer());
@@ -184,18 +182,17 @@ public Result<String> listGifts() {
     return new Result<>(true, output.toString());
 }
 
-
-    public Result<String> rateGift() {
-
-    }
+    //public Result<String> rateGift() {
+   //
+  //  }
 
     public Result<String> listQuests() {
         StringBuilder output = new StringBuilder();
         Player currentPlayer = App.getCurrentGame().getCurrentPlayer();
-
+    
         for (NPC npc : App.getCurrentGame().getNpcs()) {
             Quest[] quests = {npc.getQuest1(), npc.getQuest2(), npc.getQuest3()};
-
+    
             for (Quest quest : quests) {
                 if (quest == null) continue;
                 Boolean isActive = quest.getIsActive().get(currentPlayer);
@@ -214,7 +211,7 @@ public Result<String> listGifts() {
                 }
             }
         }
-
+    
         return new Result<>(true, output.toString());
     }
     public Result<String> FinishQuest(int QuestIndex) {
@@ -223,7 +220,7 @@ public Result<String> listGifts() {
                 if(!isNPCHere(npc))
                     return new Result<>(false , "NPC too far away!");
                 return finishQuest2(npc.getQuest1() , npc);
-
+                
             }
             if (npc.getQuest2().getQuestID() == QuestIndex) {
                 if(!isNPCHere(npc))
@@ -235,7 +232,7 @@ public Result<String> listGifts() {
                     return new Result<>(false , "NPC too far away!");
                 return finishQuest2(npc.getQuest3() , npc);
             }
-
+            
         }
         return new Result<>(false , "invalid Quest index");
     }
@@ -256,7 +253,7 @@ public Result<String> listGifts() {
                 if(item.getAmount() == 0)
                     App.getCurrentGame().getCurrentPlayer().getInvetory().getItems().remove(item);
                 if(quest.getRewards().getItemID() == 201)
-                   npc.addFriendship(200, App.getCurrentGame().getCurrentPlayer());
+                   npc.addFriendship(200, App.getCurrentGame().getCurrentPlayer()); 
                 else
                     App.getCurrentGame().getCurrentPlayer().getInvetory().getItems().add(quest.getRewards());
                 App.getCurrentGame().getCurrentPlayer().addMoney(quest.getRewardMoney());
@@ -577,11 +574,9 @@ public Result<String> listGifts() {
         return new Result<>(true, "Spent Hours : " + Time.getHourOfDay());
     }
     public Result<String> showDate(){
-        return new Result<>(true, "Date: " +  Time.getSeason() + " " + Time.getDayWeek());
+        return new Result<>(true, "Date: " +  Time.getSeason() + " / " + Time.getDayOfSeason());
     }
-    public Result<String> showDatetime(){
-        return new Result<>(true, "Date: " +  Time.getSeason() + "/" + Time.getDayWeek() + " ---" + Time.getHour() + ": 00");
-    }
+
     public Result<String> showDayWeek(){
         return new Result<>(true, "Day week: " + Time.getDayWeek());
     }
@@ -600,9 +595,8 @@ public Result<String> listGifts() {
         if(day < 0 )
             return new Result<>(false, "Invalid Day format (Day | Day > 0");
         Time.hour += day;
-        return new Result<>(false, "new Day: " + Time.getDayWeek());
+        return new Result<>(false, "new Day: " + Time.getDayOfSeason());
     }
-
     public Result<String> GiveGiftToNPC(NPC npc , Item gift) {
         return null;
     }
