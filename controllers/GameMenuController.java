@@ -573,6 +573,7 @@ public Result<String> listGifts() {
 
     public Result<String> showTime(){
         return new Result<>(true, "Spent Hours : " + App.currentGame.time.getHourOfDay());
+        return new Result<>(true, "Spent Hours : " + App.currentGame.time.getHourOfDay());
     }
     public Result<String> showDate(){
         return new Result<>(true, "Date: " +  App.currentGame.time.getSeason() + " / " + App.currentGame.time.getDayOfSeason());
@@ -597,6 +598,11 @@ public Result<String> listGifts() {
             return new Result<>(false, "Invalid Day format (Day | Day > 0");
         App.currentGame.time.hour += day;
         return new Result<>(false, "new Day: " + App.getCurrentGame().getTime().getDayOfSeason());
+        Time.hour += day;
+        return new Result<>(false, "new Day: " + App.currentGame.time.getDayOfSeason());
+    }
+    public Result<String> GiveGiftToNPC(NPC npc , Item gift) {
+        return null;
     }
     public Result<String> FinishQuest(Invetory playerItems , int QuestIndex) {
         return null;
