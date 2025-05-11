@@ -159,6 +159,33 @@ public class GameMenuController {
         return new Result<>(false , "NPC name incorrect");
 
     }
+public Result<String> listGifts() {
+    StringBuilder output = new StringBuilder();
+    Player currentPlayer = App.getCurrentGame().getCurrentPlayer();
+
+    for (Player player : App.getCurrentGame().getPlayers()) {
+        if (player.equals(currentPlayer)) continue;
+
+        List<Gift> giftsFromPlayer = currentPlayer.getPendingGifts().get(player);
+        if (giftsFromPlayer == null || giftsFromPlayer.isEmpty()) continue;
+
+        for (Gift gift : giftsFromPlayer) {
+            output.append(player.getUsername())
+                  .append(" : ")
+                  .append(gift.getID())
+                  .append(" > ")
+                  .append(gift.getItem().getName())
+                  .append(" NOT RATED YET\n");
+        }
+    }
+
+    return new Result<>(true, output.toString());
+}
+
+
+    public Result<String> rateGift() {
+
+    }
   
     public Result<String> listQuests() {
         StringBuilder output = new StringBuilder();
@@ -545,14 +572,12 @@ public class GameMenuController {
 
 
     public Result<String> showTime(){
-        return new Result<>(true, "Spended Hours : " + Time.getHour()%24);
+        return new Result<>(true, "Spent Hours : " + Time.getHourOfDay());
     }
     public Result<String> showDate(){
-        return new Result<>(true, "Date: " +  Time.getSeason() + " / " + Time.getDayOfMonth());
+        return new Result<>(true, "Date: " +  Time.getSeason() + " / " + Time.getDayOfSeason());
     }
-    public Result<String> showDatetime(){
-        return new Result<>(true, "Date: " +  Time.getSeason() + "/" + Time.getDayOfMonth() + " ---" + Time.getHour() + ": 00");
-    }
+
     public Result<String> showDayWeek(){
         return new Result<>(true, "Day week: " + Time.getDayWeek());
     }
@@ -571,7 +596,7 @@ public class GameMenuController {
         if(day < 0 )
             return new Result<>(false, "Invalid Day format (Day | Day > 0");
         Time.hour += day;
-        return new Result<>(false, "new Day: " + Time.getDayOfMonth());
+        return new Result<>(false, "new Day: " + Time.getDayOfSeason());
     }
     public Result<String> GiveGiftToNPC(NPC npc , Item gift) {
         return null;

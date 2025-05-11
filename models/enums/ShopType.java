@@ -1,7 +1,5 @@
 package models.enums;
 
-import java.util.ArrayList;
-
 public enum ShopType {
     BlackSmith,
     JojaMart,
@@ -10,4 +8,5 @@ public enum ShopType {
     FishShop,
     Marnies,
     TheSaloon;
+
 }
