@@ -1,11 +1,12 @@
 package models;
 
 import java.util.ArrayList;
+
+import models.enums.BackpackType;
 import models.things.Item;
-import models.things.tools.Backpack;
 
 public class Invetory {
-    private Backpack backpack;
+    private BackpackType backpackType;
     private ArrayList<eatble> foods;
     private ArrayList<Item> items;
     private ArrayList<Tool> tools;
@@ -23,8 +24,8 @@ public class Invetory {
         if(item.getItemID() != 0)
             items.add(item);
     }
-    public void setBackpack(Backpack backpack) {
-        this.backpack = backpack;
+    public void setBackpack(BackpackType backpackType) {
+        this.backpackType = backpackType;
     }
 
     public void setFoods(ArrayList<eatble> foods) {
@@ -51,7 +52,9 @@ public class Invetory {
         return tools;
     }
 
-    public Backpack getBackpack() {
-        return backpack;
+    public BackpackType getBackpack() {
+        return backpackType;
     }
+
+
 }

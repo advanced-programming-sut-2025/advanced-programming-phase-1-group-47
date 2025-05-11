@@ -1,4 +1,4 @@
-package model.enums;
+package models.enums;
 public enum Direction {
     NORTH("north",0,1),
     SOUTH("south",0,-1),

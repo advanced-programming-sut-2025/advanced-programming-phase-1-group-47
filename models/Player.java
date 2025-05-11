@@ -5,12 +5,15 @@ import java.util.HashMap;
 import java.util.Map;
 import models.enums.Gender;
 import models.enums.SkillType;
+import models.enums.TrashCanType;
 import models.things.relations.Gift;
 public class Player extends User {
     private Point Coordinates;
     private int Energy;
     private Invetory invetory;
-    private Skill[] skills = new Skill[]{
+    TrashCanType trashCanType = TrashCanType.REGULARTRASHCAN;
+    private Buff buff = null;
+    private final Skill[] skills = new Skill[]{
             new Skill(SkillType.FARMING),
             new Skill(SkillType.FISHING),
             new Skill(SkillType.MINING),
@@ -36,7 +39,6 @@ public class Player extends User {
         super(username, password, email, nickname, gender, securityQuestion, securityAnswer);
         this.Coordinates = new Point(0, 0);
         this.invetory = new Invetory();
-        this.skills = new Skill[0];
         money = 0;
         friendshipXP = new HashMap<>();
         friendshipLevel = new HashMap<>();
@@ -121,10 +123,6 @@ public class Player extends User {
         return skills;
     }
 
-    public void setSkills(Skill[] skills) {
-        this.skills = skills;
-    }
-
     public void skillProgress(int skillNumber, int progress) {
         skills[skillNumber].progress(progress);
     }
@@ -171,6 +169,15 @@ public class Player extends User {
     public Map<Player, Boolean> getHasbeenHugged() {
         return hasbeenHugged;
     }
+
+    public Buff getBuff() {
+        return buff;
+    }
+
+    public void setBuff(Buff buff) {
+        this.buff = buff;
+    }
+
 
     public Map<Player, ArrayList<Gift>> getPendingGifts() {
         return pendingGifts;

@@ -19,4 +19,11 @@ public class Skill {
             level ++;
     }
 
+    public int getLevel() {
+        return level;
+    }
+
+    public SkillType getType() {
+        return type;
+    }
 }

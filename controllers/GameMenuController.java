@@ -184,7 +184,7 @@ public Result<String> listGifts() {
 
 
     //public Result<String> rateGift() {
-    //
+    //    
   //  }
   
     public Result<String> listQuests() {
@@ -583,9 +583,6 @@ public Result<String> listGifts() {
     }
     public Result<String> showSeason(){
         return new Result<>(true, "Season: " + String.valueOf(Time.getSeason()));
-    }
-    public Result<String> showDatetime(){
-        return new Result<>(true, "Season: " + String.valueOf(Time.getSeason()) + " / " + Time.getDayOfSeason());
     }
     public Result<String> cheateAdvanceTime(Matcher matcher){
         int hour = Integer.parseInt(matcher.group("time"));

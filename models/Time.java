@@ -3,7 +3,9 @@ package models;
 import models.enums.Season;
 import models.enums.weekDays;
 
+import javax.crypto.SealedObject;
 
+//هندل کردن تایم هایی که خودکار جابه جا میشوند مثل ده شب تا 9 صبح و همچنین 28 روز بودن فصول به بخش گیم سپرده شده
 public class Time {
 
     public static int hour = 9;
@@ -17,16 +19,17 @@ public class Time {
     }
 
     public static weekDays getDayWeek(){
-        return weekDays.values()[(((hour + 23) / 24) % 7) - 1];
+        return (weekDays.values()[(((hour + 23) / 24) % 7) - 1]);
     }
 
-    public static int getDayOfSeason() {
-        return(((hour + 23) / 24) % 28);
+    public int getDayOfSeason() {
+        return (((hour + 23) / 24) % 28);
     }
 
-    public static int getHourOfDay() {
+    public int getHourOfDay() {
         return (hour % 24);
     }
+
     public static int getHour() {
         return hour;
     }
