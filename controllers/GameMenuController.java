@@ -23,7 +23,6 @@ public class GameMenuController {
     public Result<String> showMenu() {
         return null;
     }
-
     public Result<String> SetUpNextDay() {
         return null;
     }
@@ -235,33 +234,33 @@ public class GameMenuController {
         }
         return new Result<>(false , "You don't have the quest Item (Or Enough of it)");
     }
-public Result<String> handleNewGame(Matcher matcher, Scanner scanner) {
-        String player1 = matcher.group("player1");
-        String player2 = matcher.group("player2");
-        String player3 = matcher.group("player3");
+    public Result<String> handleNewGame(Matcher matcher, Scanner scanner) {
+            String player1 = matcher.group("player1");
+            String player2 = matcher.group("player2");
+            String player3 = matcher.group("player3");
 
-        User u1 = App.findPlayer(player1);
-        User u2 = App.findPlayer(player2);
-        User u3 = App.findPlayer(player3);
-        Player p1 = new Player(u1.getUsername(), u1.getPassword(), u1.getEmail(),u1.getNickname(),u1.getGender(),u1.getSecurityQuestion(),u1.getSecurityAnswer());
-        Player p2 = new Player(u2.getUsername(), u2.getPassword(), u2.getEmail(), u2.getNickname(),u2.getGender(),u2.getSecurityQuestion(),u2.getSecurityAnswer());
-        Player p3 = new Player(u3.getUsername(), u3.getPassword(), u3.getEmail(), u3.getNickname(),u3.getGender(),u3.getSecurityQuestion(),u3.getSecurityAnswer());
+            User u1 = App.findPlayer(player1);
+            User u2 = App.findPlayer(player2);
+            User u3 = App.findPlayer(player3);
+            Player p1 = new Player(u1.getUsername(), u1.getPassword(), u1.getEmail(),u1.getNickname(),u1.getGender(),u1.getSecurityQuestion(),u1.getSecurityAnswer());
+            Player p2 = new Player(u2.getUsername(), u2.getPassword(), u2.getEmail(), u2.getNickname(),u2.getGender(),u2.getSecurityQuestion(),u2.getSecurityAnswer());
+            Player p3 = new Player(u3.getUsername(), u3.getPassword(), u3.getEmail(), u3.getNickname(),u3.getGender(),u3.getSecurityQuestion(),u3.getSecurityAnswer());
 
 
-        String[] farmNames = new String[4];
-        for(int i = 0; i < 4; i++) {
-            String input = scanner.nextLine();
-            if ((matcher = models.enums.commands.GameMenu.gamemap.getMatcher(input)) != null) {
-                farmNames[i] = matcher.group("mapNumber");
+            String[] farmNames = new String[4];
+            for(int i = 0; i < 4; i++) {
+                String input = scanner.nextLine();
+                if ((matcher = models.enums.commands.GameMenu.gamemap.getMatcher(input)) != null) {
+                    farmNames[i] = matcher.group("mapNumber");
+                }
             }
+            Game newGame = new Game((Player)p1, (Player)p2, (Player)p3);
+            Map newMap = new Map(farmNames);
+            newGame.map = newMap;
+            App.setCurrentGame(newGame);
+            TileType lastTileType = TileType.COTTAGE;
+            return new Result<>(true, "New game started with players: " + player1 + ", " + player2 + ", " + player3);
         }
-        Game newGame = new Game((Player)p1, (Player)p2, (Player)p3);
-        Map newMap = new Map(farmNames);
-        newGame.map = newMap;
-        App.setCurrentGame(newGame);
-        TileType lastTileType = TileType.COTTAGE;
-        return new Result<>(true, "New game started with players: " + player1 + ", " + player2 + ", " + player3);
-    }
     public void printMap() {
         for (int i = 0; i < 160; i++) {
             for (int j = 0; j < 120; j++) {
