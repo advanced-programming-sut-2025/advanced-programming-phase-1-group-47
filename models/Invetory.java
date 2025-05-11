@@ -2,15 +2,18 @@ package models;
 
 import java.util.ArrayList;
 
-import models.enums.BackpackType;
 import models.things.Item;
 
 public class Invetory {
-    private BackpackType backpackType;
-    private ArrayList<eatble> foods;
-    private ArrayList<Item> items;
-    private ArrayList<Tool> tools;
+//    private BackpackType backpackType;
+    private ArrayList<eatble> foods = new ArrayList<>();
+    private ArrayList<Item> items = new ArrayList<>();
+    private ArrayList<Tool> tools = new ArrayList<>();
+    private  int capacity = 20;
 
+    public Invetory(int i) {
+        this.capacity = 20;
+    }
     public void removeItem(Item item) {
         items.remove(item);
     }
@@ -24,8 +27,8 @@ public class Invetory {
         if(item.getItemID() != 0)
             items.add(item);
     }
-    public void setBackpack(BackpackType backpackType) {
-        this.backpackType = backpackType;
+    public void setCapacity(int capacity) {
+        this.capacity = capacity;
     }
 
     public void setFoods(ArrayList<eatble> foods) {
@@ -52,8 +55,8 @@ public class Invetory {
         return tools;
     }
 
-    public BackpackType getBackpack() {
-        return backpackType;
+    public int getCapacity() {
+        return capacity;
     }
 
 
