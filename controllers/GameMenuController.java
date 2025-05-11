@@ -183,7 +183,7 @@ public Result<String> listGifts() {
 }
 
 
-    //public Result<String> rateGift() {
+     //public Result<String> rateGift() {
     //    
   //  }
   
@@ -572,34 +572,31 @@ public Result<String> listGifts() {
 
 
     public Result<String> showTime(){
-        return new Result<>(true, "Spent Hours : " + Time.getHourOfDay());
+        return new Result<>(true, "Spent Hours : " + App.currentGame.time.getHourOfDay());
     }
     public Result<String> showDate(){
-        return new Result<>(true, "Date: " +  Time.getSeason() + " / " + Time.getDayOfSeason());
+        return new Result<>(true, "Date: " +  App.currentGame.time.getSeason() + " / " + App.currentGame.time.getDayOfSeason());
     }
 
     public Result<String> showDayWeek(){
-        return new Result<>(true, "Day week: " + Time.getDayWeek());
+        return new Result<>(true, "Day week: " + App.currentGame.time.getDayWeek());
     }
     public Result<String> showSeason(){
-        return new Result<>(true, "Season: " + String.valueOf(Time.getSeason()));
+        return new Result<>(true, "Season: " + String.valueOf(App.currentGame.time.getSeason()));
     }
     public Result<String> cheateAdvanceTime(Matcher matcher){
         int hour = Integer.parseInt(matcher.group("time"));
         if(hour<0)
             return new Result<>(false, "Invalid hour format (Time | Time > 0");
-        Time.hour += hour;
-        return new Result<>(false, "new Time: " + Time.getHour());
+        App.currentGame.time.hour += hour;
+        return new Result<>(false, "new Time: " + App.currentGame.time.getHour());
     }
     public Result<String> cheateAdvanceDate(Matcher matcher){
         int day = Integer.parseInt(matcher.group("day")) * 24;
         if(day < 0 )
             return new Result<>(false, "Invalid Day format (Day | Day > 0");
-        Time.hour += day;
-        return new Result<>(false, "new Day: " + Time.getDayOfSeason());
-    }
-    public Result<String> GiveGiftToNPC(NPC npc , Item gift) {
-        return null;
+        App.currentGame.time.hour += day;
+        return new Result<>(false, "new Day: " + App.getCurrentGame().getTime().getDayOfSeason());
     }
     public Result<String> FinishQuest(Invetory playerItems , int QuestIndex) {
         return null;
