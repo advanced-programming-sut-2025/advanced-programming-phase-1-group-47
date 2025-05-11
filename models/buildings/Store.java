@@ -11,6 +11,6 @@ public  class Store  extends Building  {
     public Point Door;
     public Store(Ground ground, TileType type) {
         super(ground);
-        ground.set_tile(ground.get_start_point(),ground.getEndPoint(), TileType.STORE);
+//        ground.set_tile(ground.get_start_point(),ground.getEndPoint(), TileType.STORE);
     }
 }
