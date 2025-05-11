@@ -1,7 +1,7 @@
 package models;
-import java.util.Map;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 import models.enums.Season;
 import models.things.Item;
 public class AllTheItemsInTheGame {
@@ -56,13 +56,13 @@ public class AllTheItemsInTheGame {
         temp2.put(339, new Plant(339, new Point(0, 0), "Yam", 160, true, 45, 20, "Yam Seeds", 0, 0, 10, Season.FALL, new int[]{1, 3, 3, 3}, false, false, false));
         temp2.put(340, new Plant(340, new Point(0, 0), "Sweet Gem Berry", 3000, false, -1, -1, "Rare Seed", 0, 0, 24, Season.FALL, new int[]{2, 4, 6, 6, 6}, false, false, false));
         temp2.put(341, new Plant(341, new Point(0, 0), "Powdermelon", 60, true, 63, 28, "Powdermelon Seeds", 0, 0, 7, Season.WINTER, new int[]{1, 2, 1, 2, 1}, true, false, false));
-        temp2.put(342, new Plant(342, new Point(0, 0), "Ancient Fruit", 550, false, -1, -1, "Ancient Seeds", 0, 0, 28, Season.ALL_EXCEPT_WINTER, new int[]{2, 7, 7, 7, 5}, false, false, false));
+        temp2.put(342, new Plant(342, new Point(0, 0), "Ancient Fruit", 550, false, -1, -1, "Ancient Seeds", 0, 0, 28, Season.OTHER_THAN_WINER, new int[]{2, 7, 7, 7, 5}, false, false, false));
         allPlants = Collections.unmodifiableMap(temp2);
     }
     public static Plant getPlantById(int id) {
         return allPlants.get(id);
     }
 
-
+//
 
 }
