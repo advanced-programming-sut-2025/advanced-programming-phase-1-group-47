@@ -95,6 +95,8 @@ public class GameMenuController {
     public Result<String> hugPlayer(String username) {
         for (Player player : App.getCurrentGame().getPlayers()) {
             if(player.getUsername().equals(username)) {
+                if(player.getFriendshipLevel().get(App.getCurrentGame().getCurrentPlayer()) > 1)
+                    return new Result<>(false, "You don't know that player enough to Hug");
                 if(!isPlayerNear(player))
                     return new Result<>(false, "Player too far away!");
                 if(!player.GetHasHuggedPlayer(App.getCurrentGame().getCurrentPlayer())){
