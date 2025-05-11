@@ -1,19 +1,26 @@
 package models.things.products;
 
+import models.enums.ProductQuality;
 import models.things.Item;
 
-public abstract class Product extends Item {
+public  class Product extends Item {
     private boolean isEdible;
     private int energy;
     private int health;
+    private ProductQuality quality;
+    private boolean isFruit;
+    private boolean isVegetable;
 
     // Constructor
     public Product(String name, int itemID, int value, int parentItemID, int amount,
-                   boolean isEdible, int energy, int health) {
+                   boolean isEdible, int energy, int health , ProductQuality quality , boolean isFruit , boolean isVegetable) {
         super(name, itemID, value, parentItemID, amount);
         this.isEdible = isEdible;
         this.energy = energy;
         this.health = health;
+        this.quality = quality;
+        this.isFruit = isFruit;
+        this.isVegetable = isVegetable;
     }
 
     // Getters and Setters

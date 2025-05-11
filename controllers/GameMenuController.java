@@ -158,6 +158,33 @@ public class GameMenuController {
         return new Result<>(false , "NPC name incorrect");
 
     }
+public Result<String> listGifts() {
+    StringBuilder output = new StringBuilder();
+    Player currentPlayer = App.getCurrentGame().getCurrentPlayer();
+
+    for (Player player : App.getCurrentGame().getPlayers()) {
+        if (player.equals(currentPlayer)) continue;
+
+        List<Gift> giftsFromPlayer = currentPlayer.getPendingGifts().get(player);
+        if (giftsFromPlayer == null || giftsFromPlayer.isEmpty()) continue;
+
+        for (Gift gift : giftsFromPlayer) {
+            output.append(player.getUsername())
+                  .append(" : ")
+                  .append(gift.getID())
+                  .append(" > ")
+                  .append(gift.getItem().getName())
+                  .append(" NOT RATED YET\n");
+        }
+    }
+
+    return new Result<>(true, output.toString());
+}
+
+
+    public Result<String> rateGift() {
+
+    }
   
     public Result<String> listQuests() {
         StringBuilder output = new StringBuilder();
