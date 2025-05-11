@@ -23,6 +23,7 @@ public class GameMenuController {
     public Result<String> showMenu() {
         return null;
     }
+
     public Result<String> SetUpNextDay() {
         return null;
     }
