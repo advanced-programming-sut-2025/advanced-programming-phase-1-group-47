@@ -182,9 +182,9 @@ public Result<String> listGifts() {
 }
 
 
-  //  public Result<String> rateGift() {
-//
-//    }
+    public Result<String> rateGift() {
+        
+    }
   
     public Result<String> listQuests() {
         StringBuilder output = new StringBuilder();

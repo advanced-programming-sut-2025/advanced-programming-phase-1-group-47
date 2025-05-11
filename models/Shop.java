@@ -39,6 +39,6 @@ public class Shop {
             combined.addAll(winterStock);
         return combined;
     }
-    //
+
 
 }
