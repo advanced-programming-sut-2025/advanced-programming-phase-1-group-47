@@ -2,7 +2,6 @@ package models;
 
 import models.enums.ProductQuality;
 import models.enums.Season;
-import models.things.Item;
 import models.things.products.Product;
 
 
@@ -14,7 +13,7 @@ public class Plant {
     private boolean isEdible;
     private int energy;
     private int health;
-    private Item source;
+    private String source;
     private int currentStage;
     private int currentStageCount;
     private int totalHarvestTime;
@@ -25,7 +24,7 @@ public class Plant {
     private boolean isFruit;
 
     public Plant(int plantID, Point point, String name, int baseValue, boolean isEdible, int energy, int health,
-                 Item source, int currentStage, int currentStageCount, int totalHarvestTime, Season seasonOfGrowth,
+                 String source, int currentStage, int currentStageCount, int totalHarvestTime, Season seasonOfGrowth,
                  int[] growStages, boolean isReUsable, boolean canBecomeGiant, boolean isFruit) {
         this.plantID = plantID;
         this.point = point;
