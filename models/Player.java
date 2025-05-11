@@ -39,7 +39,6 @@ public class Player extends User {
         super(username, password, email, nickname, gender, securityQuestion, securityAnswer);
         this.Coordinates = new Point(0, 0);
         this.invetory = new Invetory();
-        this.skills = new Skill[0];
         money = 0;
         friendshipXP = new HashMap<>();
         friendshipLevel = new HashMap<>();
@@ -122,10 +121,6 @@ public class Player extends User {
 
     public Skill[] getSkills() {
         return skills;
-    }
-
-    public void setSkills(Skill[] skills) {
-        this.skills = skills;
     }
 
     public void skillProgress(int skillNumber, int progress) {
