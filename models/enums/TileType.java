@@ -9,6 +9,8 @@ public enum TileType {
     GREENHOUSE("🏡"),
     COTTAGE("🏘️"),
     STORE("🏬"),
+    DOOR("🚪"),
+    WALL("🧱"),
     PERSON("🧑‍🌾"),
     QUARRY("⛏️"),
     ;

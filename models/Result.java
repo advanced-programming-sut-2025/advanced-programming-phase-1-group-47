@@ -8,7 +8,11 @@ public class Result<Type> {
         this.success = success;
         this.data = data;
     }
-        
+
+    public Type getData() {
+        return data;
+    }
+
     @Override
     public String toString() {
         return data.toString();

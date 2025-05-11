@@ -1,14 +1,9 @@
 package models;
 
+import java.util.ArrayList;
 import models.Farms.*;
 import models.buildings.Building;
-import models.buildings.Cottage;
-import models.buildings.Lake;
-import models.buildings.greenHouse;
 import models.enums.TileType;
-import models.things.products.Fish;
-
-import java.util.ArrayList;
 
 public class Map {
     private ArrayList<Building> buildings;
@@ -21,8 +16,6 @@ public class Map {
                 this.tiles[i][j] = new Tile(new Point(i,j), TileType.EMPTY);
             }
         }
-
-
         for (int i = 0; i < 4; i++) {
             Farm farm;
             Tile[][] temp;
@@ -43,15 +36,14 @@ public class Map {
                     farm = quarryFarm.getFarm();
                     break;
                 case "4":
-                    CraftingFarm craftingFarm = new CraftingFarm();
-                    temp = craftingFarm.getTemp();
-                    farm = craftingFarm.getFarm();
+                    ForgagingFarm ForgagingFarm = new ForgagingFarm();
+                    temp = ForgagingFarm.getTemp();
+                    farm = ForgagingFarm.getFarm();
                     break;
                 default:
                     throw new IllegalArgumentException("Unknown farm type: " + types[i]);
             }
             farms[i] = farm;
-            if (App.currentGame.currentPlayer.getId() == i+1){
                 if(i==0)
                     setTiles(new Point(0, 0), new Point(50, 40), temp);
                 else if(i==1)
@@ -60,10 +52,9 @@ public class Map {
                     setTiles(new Point(0, 80), new Point(50, 120), temp);
                 else if(i==3)
                     setTiles(new Point(110, 80), new Point(160, 120), temp);
-            }
+                this.tiles [App.farmStart[i].x + farm.personPoint.x][App.farmStart[i].y + farm.personPoint.y].type = TileType.PERSON;
         }
     }
-
     public void setBuildings(ArrayList<Building> buildings) {
         this.buildings = buildings;
     }

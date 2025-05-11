@@ -1,0 +1,29 @@
+register -u ali123 -p Ali@1234 Ali@1234 -n Ali -e ali123@example.com -g male
+pick question -q 1 -a Tehran -c Tehran
+register -u sara88 -p Sara@5678 Sara@5678 -n Sara -e sara88@example.com -g female
+pick question -q 2 -a BlueSky -c BlueSky
+register -u reza99 -p Reza@9999 Reza@9999 -n Reza -e reza99@example.com -g male
+pick question -q 3 -a CatName -c CatName
+register -u tina77 -p Tina@0000 Tina@0000 -n Tina -e tina77@example.com -g female
+pick question -q 1 -a 123Street -c 123Street
+menu enter GameMenu
+game new -u ali123 sara88 reza99
+game map 1
+game map 2
+game map 3
+game map 4
+print map -l 12,34 -s 5
+time
+date
+season
+datetime
+day of the week
+cheat advance time -12h
+cheat advance time 12h
+cheat advance day -5d
+cheat advance day 5d
+time
+date
+season
+datetime
+day of the week

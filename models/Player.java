@@ -10,7 +10,13 @@ public class Player extends User {
     private Point Coordinates;
     private int Energy;
     private Invetory invetory;
-    private Skill[] skills;
+    private Skill[] skills = new Skill[]{
+            new Skill(SkillType.FARMING),
+            new Skill(SkillType.FISHING),
+            new Skill(SkillType.MINING),
+            new Skill(SkillType.FORAGING)
+    };
+    
     private Energy energy;
     private int money;
     private int id;
@@ -26,6 +32,7 @@ public class Player extends User {
     private Player partner;
     //friendships
     public Player(String username, String password, String email, String nickname, Gender gender, String securityQuestion, String securityAnswer) {
+
         super(username, password, email, nickname, gender, securityQuestion, securityAnswer);
         this.Coordinates = new Point(0, 0);
         this.invetory = new Invetory();
@@ -86,8 +93,12 @@ public class Player extends User {
         }
         friendshipLevel.put(player, level);
         friendshipXP.put(player, xp);
+
+      
     }
+
     public void gainXP(SkillType type , int xp) {
+
     }
 
     public void setId(int id) {
@@ -112,6 +123,10 @@ public class Player extends User {
 
     public void setSkills(Skill[] skills) {
         this.skills = skills;
+    }
+
+    public void skillProgress(int skillNumber, int progress) {
+        skills[skillNumber].progress(progress);
     }
 
     public int getMoney() {

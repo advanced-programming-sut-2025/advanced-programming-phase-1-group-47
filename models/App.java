@@ -6,10 +6,11 @@ import models.enums.Menu;
 public class App {
 
     public static ArrayList<User> users = new ArrayList<>();
-
-    public static ArrayList<Game> games = new ArrayList<>();
-
+    public static ArrayList<Player> players = new ArrayList<>();
     public static User loggedInUser = null;
+    public static Point[] farmStart = new Point[]{new Point(0,0), new Point(110,0), new Point(0,80), new Point(110,80),};
+    public static Game currentGame;
+    public static ArrayList<Game> games;
 
     public static Menu currentMenu = Menu.LoginMenu;
 
@@ -25,8 +26,8 @@ public class App {
         return currentGame;
     }
 
-    public static void setCurrentGame(Game newCurrentGame) {
-        currentGame = newCurrentGame;
+    public static void setCurrentGame(Game currentGame) {
+        App.currentGame = currentGame;
     }
 
     public static Menu getCurrentMenu() {
@@ -36,24 +37,14 @@ public class App {
     public static void setCurrentMenu(Menu newMenu) {
         currentMenu = newMenu;
     }
-    public static Player findPlayer(String playerName) {
-        for(Game game : games) {
-            if (game.equals(currentGame)) {
-                for (Player player : game.getPlayers()) {
-                    if (player.equals(playerName)) {
-                        return player;
-                    }
-                }
+
+    public static User findPlayer(String playerName) {
+        for (User user : App.getUsers()) {
+            if (user.getUsername().equals(playerName)){
+                return user;
             }
         }
         return null;
-    }
-    public static ArrayList<Game> getGames() {
-        return games;
-    }
-
-    public static void setGames(ArrayList<Game> newGames) {
-        games = newGames;
     }
 
     public static ArrayList<User> getUsers() {
@@ -84,6 +75,10 @@ public class App {
     //when user wants to logOut or change turn, this should be runned to reset all features like current game,
     //current menu, loggedInUser and...
     //fill it pls
+    @Override
+    public String toString() {
+        return "Game Number " + 2;
+    }
     public static void logOut(){
 
     }

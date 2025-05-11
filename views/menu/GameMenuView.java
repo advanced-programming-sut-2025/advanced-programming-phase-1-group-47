@@ -1,6 +1,7 @@
 package views.menu;
 
 import controllers.GameMenuController;
+import models.App;
 import models.enums.commands.GameMenu;
 
 import java.util.Scanner;
@@ -15,9 +16,7 @@ public class GameMenuView extends AppMenu {
         String input = scanner.nextLine();
         Matcher matcher;
         if ((matcher = models.enums.commands.GameMenu.newgame.getMatcher(input)) != null) {
-            controller.handleNewGame(matcher,scanner);
-        } else if ((matcher = models.enums.commands.GameMenu.gamemap.getMatcher(input)) != null) {
-             handleGameMap(matcher);
+            System.out.println(controller.handleNewGame(matcher,scanner).getData());
         } else if ((matcher = models.enums.commands.GameMenu.loadgame.getMatcher(input)) != null) {
             // handleLoadGame(matcher);
         } else if ((matcher = models.enums.commands.GameMenu.exitgame.getMatcher(input)) != null) {
@@ -25,21 +24,21 @@ public class GameMenuView extends AppMenu {
         } else if ((matcher = models.enums.commands.GameMenu.deletecurrentgame.getMatcher(input)) != null) {
             // handleDeleteCurrentGame(matcher);
         } else if ((matcher = models.enums.commands.GameMenu.nextturn.getMatcher(input)) != null) {
-            // handleNextTurn(matcher);
+            App.currentGame.turn = (App.currentGame.turn + 1) % 4;
         } else if ((matcher = models.enums.commands.GameMenu.showtime.getMatcher(input)) != null) {
-            // handleShowTime(matcher);
+            System.out.println(controller.showTime().getData());
         } else if ((matcher = models.enums.commands.GameMenu.showdate.getMatcher(input)) != null) {
-            // handleShowDate(matcher);
+            System.out.println(controller.showDate().getData());
         } else if ((matcher = models.enums.commands.GameMenu.showdatetime.getMatcher(input)) != null) {
-            // handleShowDateTime(matcher);
+            System.out.println(controller.showDatetime().getData());
         } else if ((matcher = models.enums.commands.GameMenu.showdayofweek.getMatcher(input)) != null) {
-            // handleShowDayOfWeek(matcher);
+            System.out.println(controller.showDayWeek().getData());
         } else if ((matcher = models.enums.commands.GameMenu.cheateadvancetime.getMatcher(input)) != null) {
-            // handleCheatAdvanceTime(matcher);
+            System.out.println(controller.cheateAdvanceTime(matcher).getData());
         } else if ((matcher = models.enums.commands.GameMenu.cheatadvencedate.getMatcher(input)) != null) {
-            // handleCheatAdvanceDate(matcher);
+            System.out.println(controller.cheateAdvanceDate(matcher).getData());
         } else if ((matcher = models.enums.commands.GameMenu.showseason.getMatcher(input)) != null) {
-            // handleShowSeason(matcher);
+            System.out.println(controller.showSeason().getData());
         } else if ((matcher = models.enums.commands.GameMenu.cheatthor.getMatcher(input)) != null) {
             // handleCheatThor(matcher);
         } else if ((matcher = models.enums.commands.GameMenu.showweather.getMatcher(input)) != null) {
@@ -51,9 +50,9 @@ public class GameMenuView extends AppMenu {
         } else if ((matcher = models.enums.commands.GameMenu.greenhousebuild.getMatcher(input)) != null) {
             // handleGreenhouseBuild(matcher);
         } else if ((matcher = models.enums.commands.GameMenu.walk.getMatcher(input)) != null) {
-            // handleWalk(matcher);
+             controller.walk(matcher,scanner);
         } else if ((matcher = models.enums.commands.GameMenu.printmap.getMatcher(input)) != null) {
-            // handlePrintMap(matcher);
+            controller.printMap();
         } else if ((matcher = models.enums.commands.GameMenu.mapreadinghelper.getMatcher(input)) != null) {
             // handleMapReadingHelper(matcher);
         } else if ((matcher = models.enums.commands.GameMenu.showenergy.getMatcher(input)) != null) {
@@ -112,23 +111,4 @@ public class GameMenuView extends AppMenu {
             System.out.println("Invalid command");
         }
     }
-
-
-    private void handleGameMap(Matcher matcher) {
-        // پیاده‌سازی برای بارگذاری نقشه
-        String mapNumber = matcher.group("map_number");
-//        controller.loadMap(mapNumber);
-    }
-
-    private void handleLoadGame(Matcher matcher) {
-        // پیاده‌سازی برای بارگذاری بازی
-//        controller.loadGame();
-    }
-
-    private void handleExitGame(Matcher matcher) {
-        // پیاده‌سازی برای خروج از بازی
-//        controller.exitGame();
-    }
-
-    // به همین صورت برای سایر دستورات و متدهای مربوطه پیاده‌سازی کنید.
 }
