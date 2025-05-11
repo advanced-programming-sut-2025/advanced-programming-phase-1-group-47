@@ -9,6 +9,9 @@ public enum Menu {
     MainMenu(new MainMenu()),
     ProfileMenu(new ProfileMenu()),
     GameMenu(new GameMenuView()),
+    GreenHouseMenu(new FarmingMenu()),
+    StoreMenu(new ShopMenu()),
+    cottageMenu(new HouseMenu()),
     ExitMenu(new ExitMenu());
     private final AppMenu menu;
 

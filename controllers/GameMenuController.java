@@ -6,6 +6,7 @@ import models.*;
 import models.Map;
 import models.NPCs.*;
 import models.buildings.Building;
+import models.enums.Menu;
 import models.enums.Season;
 import models.enums.TileType;
 import models.things.Item;
@@ -294,10 +295,7 @@ public Result<String> listGifts() {
         for (int i = 0; i < 160; i++) {
             for (int j = 0; j < 120; j++) {
                 TileType type = App.currentGame.map.tiles[i][j].type;
-                if (i == 50 || i == 110 || j == 40 || j == 80) {
-                    System.out.print("🧱");
-                    continue;
-                }
+
                 System.out.print(type != TileType.EMPTY ? type.getSticker() : "++");
             }
             System.out.println();
@@ -307,17 +305,16 @@ public Result<String> listGifts() {
         int farmWidth = 50, farmHeight = 40;
 
         // مسیر قابل عبور (0) و غیرقابل عبور (1)
-        int[][] grid = new int[farmWidth][farmHeight];
-        Set<TileType> walkable = Set.of(TileType.EMPTY, TileType.STONE, TileType.TREE, TileType.PERSON, TileType.DOOR);
-
-        int turn = App.currentGame.turn;
+        int[][] grid = new int[160][120];
+        Set<TileType> walkable = Set.of(TileType.EMPTY, TileType.STONE, TileType.TREE, TileType.PERSON, TileType.DOOR, TileType.FARMWALL);
+        Game currentGame = App.currentGame;
+        int turn = currentGame.turn;
         Point offset = App.farmStart[turn];
         Point personRel = App.currentGame.map.farms[turn].personPoint;
 
-        // ساخت grid فقط برای مزرعه‌ی خود بازیکن
-        for (int i = 0; i < farmWidth; i++) {
-            for (int j = 0; j < farmHeight; j++) {
-                TileType tileType = App.currentGame.map.tiles[offset.x + i][offset.y + j].type;
+        for (int i = 0; i < 160; i++) {
+            for (int j = 0; j < 120; j++) {
+                TileType tileType = App.currentGame.map.tiles[i][j].type;
                 grid[i][j] = (tileType != null && walkable.contains(tileType)) ? 0 : 1;
             }
         }
@@ -325,13 +322,8 @@ public Result<String> listGifts() {
         // گرفتن مقصد از ورودی کاربر (مختصات محلی مزرعه)
         int targetX = Integer.parseInt(matcher.group("x"));
         int targetY = Integer.parseInt(matcher.group("y"));
-
-        // بررسی اینکه مقصد داخل محدوده مزرعه است یا نه
-        if (targetX < 0 || targetX >= farmWidth || targetY < 0 || targetY >= farmHeight) {
-            System.out.println("Destination is outside your farm!");
-            return;
-        }
-
+        targetX -= offset.x;
+        targetY -= offset.y;
         // مسیر‌یابی
         List<int[]> fullPath = shortestPath(grid, personRel.x, personRel.y, targetX, targetY);
         if (fullPath.isEmpty()) {
@@ -343,7 +335,7 @@ public Result<String> listGifts() {
         int energyCost = fullPath.size() + 10 * turns.size();
         int energyUnits = (int) Math.ceil(energyCost / 20.0);
 
-        int currentEnergy = 5; // فرضی
+        int currentEnergy = 20;
         System.out.println("You need " + energyUnits + " energy to get there. Do you want to go? (yes/no)");
         String input = scanner.nextLine();
         if (!input.equalsIgnoreCase("yes")) return;
@@ -377,11 +369,123 @@ public Result<String> listGifts() {
             App.currentGame.map.farms[turn].personPoint = new Point(curr[0], curr[1]);
             lastRel = new Point(curr[0], curr[1]);
         }
+//        checkEnteringMenu();
+        if (currentGame.map.farms[turn].lastTileType == TileType.DOOR) {
+            Map map = currentGame.map;
+            Point farmOffset = App.farmStart[turn];
+            Point relPerson = map.farms[turn].personPoint;
+            Point absPerson = new Point(farmOffset.x + relPerson.x, farmOffset.y + relPerson.y);
 
-        System.out.println("Used energy: " + (usedEnergy / 20) + " units.");
+            int[] dx = {-1, -1, -1, 0, 0, 1, 1, 1};
+            int[] dy = {-1,  0,  1, -1, 1, -1, 0, 1};
+
+            TileType[] types = new TileType[8];
+            int[] counts = new int[8];
+            int uniqueCount = 0;
+
+            for (int i = 0; i < 8; i++) {
+                int nx = absPerson.x + dx[i];
+                int ny = absPerson.y + dy[i];
+
+                if (nx >= 0 && nx < map.tiles.length && ny >= 0 && ny < map.tiles[0].length) {
+                    Tile neighbor = map.tiles[nx][ny];
+                    if (neighbor != null && neighbor.type != null) {
+                        boolean found = false;
+                        for (int j = 0; j < uniqueCount; j++) {
+                            if (types[j] == neighbor.type) {
+                                counts[j]++;
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (!found) {
+                            types[uniqueCount] = neighbor.type;
+                            counts[uniqueCount] = 1;
+                            uniqueCount++;
+                        }
+                    }
+                }
+            }
+            if (uniqueCount == 0) {
+                System.out.println("No valid surrounding tiles found.");
+            } else {
+                int maxIndex = 0;
+                for (int i = 1; i < uniqueCount; i++) {
+                    if (counts[i] > counts[maxIndex]) {
+                        maxIndex = i;
+                    }
+                }
+                if (counts[maxIndex] == 5){
+                    String menu = types[maxIndex].toString();
+                    if (menu.equals("BLACKSMITH") || menu.equals("JOJAMART") || menu.equals("PIERRESSTORE") || menu.equals("CARPENTER") ||
+                            menu.equals("FISHSHOP") || menu.equals("MARNIESRANCH") || menu.equals("STARDROPSALOON")){
+                        App.currentMenu = Menu.StoreMenu;
+                    }
+                    else if (menu.equals("GREENHOUSE")){
+                        App.currentMenu = Menu.GreenHouseMenu;
+                    }
+                    else if (menu.equals("COTTTAGE")){
+                        App.currentMenu = Menu.cottageMenu;
+                    }
+                }
+//                System.out.println("Most common TileType around player: " + types[maxIndex] + " (" + counts[maxIndex] + " times)");
+            }
+        }
+        System.out.println("Used energy: " + Math.min(currentEnergy,usedEnergy / 20 + 1) + " units.");
     }
+    public void checkEnteringMenu(){
+        Game currentGame = App.currentGame;
+        int turn = currentGame.turn;
 
+        if (currentGame.map.farms[turn].lastTileType == TileType.DOOR) {
+            Map map = currentGame.map;
+            Point farmOffset = App.farmStart[turn];
+            Point relPerson = map.farms[turn].personPoint;
+            Point absPerson = new Point(farmOffset.x + relPerson.x, farmOffset.y + relPerson.y);
 
+            int[] dx = {-1, -1, -1, 0, 0, 1, 1, 1};
+            int[] dy = {-1,  0,  1, -1, 1, -1, 0, 1};
+
+            TileType[] types = new TileType[8];
+            int[] counts = new int[8];
+            int uniqueCount = 0;
+
+            for (int i = 0; i < 8; i++) {
+                int nx = absPerson.x + dx[i];
+                int ny = absPerson.y + dy[i];
+
+                if (nx >= 0 && nx < map.tiles.length && ny >= 0 && ny < map.tiles[0].length) {
+                    Tile neighbor = map.tiles[nx][ny];
+                    if (neighbor != null && neighbor.type != null) {
+                        boolean found = false;
+                        for (int j = 0; j < uniqueCount; j++) {
+                            if (types[j] == neighbor.type) {
+                                counts[j]++;
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (!found) {
+                            types[uniqueCount] = neighbor.type;
+                            counts[uniqueCount] = 1;
+                            uniqueCount++;
+                        }
+                    }
+                }
+            }
+            if (uniqueCount == 0) {
+                System.out.println("No valid surrounding tiles found.");
+            } else {
+                int maxIndex = 0;
+                for (int i = 1; i < uniqueCount; i++) {
+                    if (counts[i] > counts[maxIndex]) {
+                        maxIndex = i;
+                    }
+                }
+                System.out.println("Most common TileType around player: " + types[maxIndex] + " (" + counts[maxIndex] + " times)");
+            }
+        }
+    }
     static class Node {
         int x, y, dist;
         Node parent;
@@ -435,17 +539,15 @@ public Result<String> listGifts() {
 
         Node endNode = null;
 
-        while (!queue.isEmpty()) {
+        while(!queue.isEmpty()) {
             Node current = queue.poll();
             if (current.x == endX && current.y == endY) {
                 endNode = current;
                 break;
             }
-
             for (int dir = 0; dir < 4; dir++) {
                 int newX = current.x + dx[dir];
                 int newY = current.y + dy[dir];
-
                 if (newX >= 0 && newY >= 0 && newX < n && newY < m &&
                         grid[newX][newY] == 0 && !visited[newX][newY]) {
                     visited[newX][newY] = true;
@@ -470,14 +572,12 @@ public Result<String> listGifts() {
 
 
     public Result<String> showTime(){
-        return new Result<>(true, "Spended Hours : " + Time.getHour()%24);
+        return new Result<>(true, "Spent Hours : " + Time.getHourOfDay());
     }
     public Result<String> showDate(){
-        return new Result<>(true, "Date: " +  Time.getSeason() + " / " + Time.getDayOfMonth());
+        return new Result<>(true, "Date: " +  Time.getSeason() + " / " + Time.getDayOfSeason());
     }
-    public Result<String> showDatetime(){
-        return new Result<>(true, "Date: " +  Time.getSeason() + "/" + Time.getDayOfMonth() + " ---" + Time.getHour() + ": 00");
-    }
+
     public Result<String> showDayWeek(){
         return new Result<>(true, "Day week: " + Time.getDayWeek());
     }
@@ -496,7 +596,7 @@ public Result<String> listGifts() {
         if(day < 0 )
             return new Result<>(false, "Invalid Day format (Day | Day > 0");
         Time.hour += day;
-        return new Result<>(false, "new Day: " + Time.getDayOfMonth());
+        return new Result<>(false, "new Day: " + Time.getDayOfSeason());
     }
     public Result<String> GiveGiftToNPC(NPC npc , Item gift) {
         return null;
