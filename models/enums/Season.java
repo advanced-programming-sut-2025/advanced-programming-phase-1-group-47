@@ -8,4 +8,5 @@ public enum Season {
     SPRING_SUMMER,
     SUMMER_FALL,
     OTHER_THAN_WINER;
+    //
 }
