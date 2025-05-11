@@ -34,7 +34,7 @@ public class GameMenuView extends AppMenu {
         } else if ((matcher = models.enums.commands.GameMenu.showdate.getMatcher(input)) != null) {
             System.out.println(controller.showDate().getData());
         } else if ((matcher = models.enums.commands.GameMenu.showdatetime.getMatcher(input)) != null) {
-            System.out.println(controller.showDatetime().getData());
+            System.out.println(controller.showDate().getData());
         } else if ((matcher = models.enums.commands.GameMenu.showdayofweek.getMatcher(input)) != null) {
             System.out.println(controller.showDayWeek().getData());
         } else if ((matcher = models.enums.commands.GameMenu.cheateadvancetime.getMatcher(input)) != null) {

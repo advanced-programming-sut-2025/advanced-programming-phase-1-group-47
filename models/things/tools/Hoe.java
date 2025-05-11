@@ -1,26 +1,34 @@
 package models.things.tools;
 
+import models.App;
 import models.Point;
 import models.Result;
-import models.enums.Quality;
+import models.enums.SkillType;
+import models.things.Item;
 
-public class Hoe extends Tool {
-    private Quality quality;
+public class Hoe extends Item {
+    private Type type;
 
-    public Hoe(String name, int itemID, int value, int parentItemID, int amount, Quality quality) {
-        super(name, itemID, value, parentItemID, amount);
-        this.quality = quality;
+    public Hoe(Type type) {
+        super("hoe" + type.getName(), 61, type.getPrice(), 0, 1);
+        this.type = type;
     }
 
-    public Quality getQuality() {
-        return quality;
+
+    public int energyCost() {
+        int fraction = 0;
+        if(App.getCurrentGame().getCurrentPlayer().getSkills()[0].getLevel() == 4) {
+            fraction++;
+        }
+
+        if(App.getCurrentGame().getCurrentPlayer().getBuff().getSkill().getType().equals(SkillType.FARMING)) {
+            fraction++;
+        }
+
+        return (int) (type.getEnergyCost() * App.getCurrentGame().getWeather().getIntensity() - fraction);
     }
 
-    public void setQuality(Quality quality) {
-        this.quality = quality;
-    }
-    public Result useTool(Point point) {
-        // فرض کنیم Hoe زمین رو شخم می‌زنه
-        return new Result(true, "Used hoe at " + point + " with quality: " + quality);
+    public Result<String> useTool(Point point) {
+        return new Result<>(true, "Hoe used at point " + point);
     }
 }
