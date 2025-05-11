@@ -10,6 +10,4 @@ public enum ShopType {
     FishShop,
     Marnies,
     TheSaloon;
-
-    private ArrayList<Item> 
 }
