@@ -14,6 +14,7 @@ public class Game {
     public ArrayList<NPC> npcs;
     public Player currentPlayer;
     public Point personPoint;
+    public int turn = 0;
     public Game(Player... players) {
         this.players = new ArrayList<>(Arrays.asList(players));
 //        this.npcs = new ArrayList<>();
@@ -23,9 +24,9 @@ public class Game {
 //        npcs.add(Leah.getInstance().leahBuilder());
 //        npcs.add(Robin.getInstance().robinBuilder());
 //        this.time = new Time();
-        if (!this.players.isEmpty()) {
-            this.currentPlayer = this.players.get(0);
-        }
+//        if (!this.players.isEmpty()) {
+//            this.currentPlayer = this.players.get(0);
+//        }
     }
 
     public ArrayList<Player> getPlayers() {

@@ -11,6 +11,9 @@ public class TrashCan extends Tool {
         super(name, itemID, value, parentItemID, amount);
         this.quality = quality;
     }
+    public Result useTool(Point point) {
+        return new Result(true, "Trash can used at point " + point);
+    }
 
     public Quality getQuality() {
         return quality;
@@ -19,15 +22,4 @@ public class TrashCan extends Tool {
     public void setQuality(Quality quality) {
         this.quality = quality;
     }
-
-    @Override
-    public int getEnergyCost() {
-        return 0;
-    }
-
-    @Override
-    public Result<String> useTool(Point point) {
-        return new Result<>(true, "TrashCan used at point " + point);
-    }
-
 }

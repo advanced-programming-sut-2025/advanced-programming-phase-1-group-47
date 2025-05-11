@@ -10,7 +10,7 @@ public abstract class Tool extends Item {
         super(name, itemID, value, parentItemID, amount);
     }
 
-    public abstract int getEnergyCost();
-
-    public abstract Result<String> useTool(Point point);
+    public Result useTool(Tool tool, Point point) {
+        return null;
+    }
 }

@@ -4,12 +4,6 @@ public class Energy {
     private int energyCap;
     private int currentEnergy;
 
-
-    public Energy(int energyCap, int currentEnergy) {
-        this.energyCap = energyCap;
-        this.currentEnergy = currentEnergy;
-    }
-
     public int getEnergyCap() {
         return energyCap;
     }
@@ -25,5 +19,4 @@ public class Energy {
     public void setCurrentEnergy(int currentEnergy) {
         this.currentEnergy = currentEnergy;
     }
-
 }

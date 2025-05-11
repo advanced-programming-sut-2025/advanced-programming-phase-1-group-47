@@ -6,29 +6,26 @@ import models.enums.Menu;
 public class App {
 
     public static ArrayList<User> users = new ArrayList<>();
-
-    public static ArrayList<Game> games = new ArrayList<>();
-
-    public static User loggedInUser = null;
-
     public static ArrayList<Player> players = new ArrayList<>();
-
-    public static Map gameMap;
+    public static User loggedInUser = null;
+    public static Point[] farmStart = new Point[]{new Point(0,0), new Point(110,0), new Point(0,80), new Point(110,80),};
+    public static Game currentGame = null;
+    public static ArrayList<Game> games;
 
     public static Menu currentMenu = Menu.LoginMenu;
 
-    public static Game currentGame;
+    public static int giftIdCounter = 0;
 
+
+    public static void addGiftIdCounter() {
+        giftIdCounter++;
+    }
     public static Game getCurrentGame() {
         return currentGame;
     }
 
-    public static void setGameMap(Map gameMap) {
-        App.gameMap = gameMap;
-    }
-
-    public static void setCurrentGame(Game newCurrentGame) {
-        currentGame = newCurrentGame;
+    public static void setCurrentGame(Game currentGame) {
+        App.currentGame = currentGame;
     }
 
     public static Menu getCurrentMenu() {
@@ -46,13 +43,6 @@ public class App {
             }
         }
         return null;
-    }
-    public static ArrayList<Game> getGames() {
-        return games;
-    }
-
-    public static void setGames(ArrayList<Game> newGames) {
-        games = newGames;
     }
 
     public static ArrayList<User> getUsers() {
@@ -89,6 +79,10 @@ public class App {
     }
     public static void logOut(){
 
+    }
+
+    public static int getGiftIdCounter() {
+        return giftIdCounter;
     }
 
 }

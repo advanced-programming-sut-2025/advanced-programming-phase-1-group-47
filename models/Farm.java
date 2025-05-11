@@ -15,18 +15,76 @@ public class Farm {
     Cottage cottage;
     ArrayList<greenHouse> greenHouses = new ArrayList<>();
     ArrayList<Quarry> quarries = new ArrayList<>();
-    public Farm(int farmId, Ground ground, Cottage cottage, ArrayList<greenHouse> greenHouses, ArrayList<Quarry> quarries,ArrayList<Lake> lakes) {
+    public Point personPoint;
+    public ArrayList<Point> FarmDors = new ArrayList<>();
+    public TileType lastTileType = TileType.COTTAGE;
+    public Farm(int farmId, Ground ground, Cottage cottage, ArrayList<greenHouse> greenHouses,
+                ArrayList<Quarry> quarries,ArrayList<Lake> lakes, Point personPoint) {
         this.farmId = farmId;
         this.ground = ground;
         this.cottage = cottage;
         this.greenHouses = greenHouses;
         this.quarries = quarries;
         this.lakes = lakes;
+        this.personPoint = personPoint;
     }
-//    farms[0] = new Farm(new Point(0, 0), new Point(farmWidth, farmHeight),TileType.COTTAGE);
-//    farms[1] = new Farm(new Point(160 - farmWidth, 0), new Point(160, farmHeight),TileType.LAKE);
-//    farms[2] = new Farm(new Point(0, 120 - farmHeight), new Point(farmWidth, 120),TileType.FORAGING);
-//    farms[3] = new Farm(new Point(160 - farmWidth, 120 - farmHeight), new Point(160,120),TileType.STONE);
+
+    public void setQuarries(ArrayList<Quarry> quarries) {
+        this.quarries = quarries;
+    }
+
+    public void setGreenHouses(ArrayList<greenHouse> greenHouses) {
+        this.greenHouses = greenHouses;
+    }
+
+    public void setLastTileType(TileType lastTileType) {
+        this.lastTileType = lastTileType;
+    }
+
+    public void setFarmId(int farmId) {
+        this.farmId = farmId;
+    }
+
+    public void setLakes(ArrayList<Lake> lakes) {
+        this.lakes = lakes;
+    }
+
+    public void setCottage(Cottage cottage) {
+        this.cottage = cottage;
+    }
+
+    public ArrayList<greenHouse> getGreenHouses() {
+        return greenHouses;
+    }
+
+    public void setPersonPoint(Point personPoint) {
+        this.personPoint = personPoint;
+    }
+
+    public ArrayList<Lake> getLakes() {
+        return lakes;
+    }
+
+    public ArrayList<Quarry> getQuarries() {
+        return quarries;
+    }
+
+    public Cottage getCottage() {
+        return cottage;
+    }
+
+    public int getFarmId() {
+        return farmId;
+    }
+
+    public TileType getLastTileType() {
+        return lastTileType;
+    }
+
+    public Point getPersonPoint() {
+        return personPoint;
+    }
+
     public void setGround(Ground ground) {
         this.ground = ground;
     }
