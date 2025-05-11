@@ -38,7 +38,7 @@ public class Harvey {
         return possibleGifts;
     }
     private Quest questBuilder1() {
-        Item requieredItems = new Item("PLANT", 49, 0, 0, 12);
+        Item requieredItems = new Item("PLANT", 301, 0, 0, 12);
         Item rewards = new Item("null item", 0, 0, 0, 1);
         Quest quest = new Quest(requieredItems, rewards , 750 ,4 );
         return quest;

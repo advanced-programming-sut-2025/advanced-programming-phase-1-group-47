@@ -171,4 +171,12 @@ public class Player extends User {
     public Map<Player, Boolean> getHasbeenHugged() {
         return hasbeenHugged;
     }
+
+    public Map<Player, ArrayList<Gift>> getPendingGifts() {
+        return pendingGifts;
+    }
+
+    public void setPendingGifts(Map<Player, ArrayList<Gift>> pendingGifts) {
+        this.pendingGifts = pendingGifts;
+    }
 }

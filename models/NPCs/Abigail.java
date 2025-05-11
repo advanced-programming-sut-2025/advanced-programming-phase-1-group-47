@@ -43,13 +43,13 @@ public class Abigail {
         return quest;
     }
     private Quest questBuilder2() {
-        Item requieredItems = new Item("Pumpkin", 45, 320, 0, 1);
+        Item requieredItems = new Item("Pumpkin", 338, 320, 301, 1);
         Item rewards = new Item("null item", 0, 0, 0, 1);
         Quest quest = new Quest(requieredItems, rewards , 500 , 2);
         return quest;
     }
     private Quest questBuilder3() {
-        Item requieredItems = new Item("Wheat", 51, 25, 0, 50);
+        Item requieredItems = new Item("Wheat", 328, 25, 301, 50);
         Item rewards = new Item("Iridium Sprinkler", 40, 1000, 0, 1);
         Quest quest = new Quest(requieredItems, rewards , 0 , 3);
         return quest;
