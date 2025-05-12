@@ -2,8 +2,6 @@ package models;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-
-import models.NPCs.*;
 import models.enums.Weather;
 
 public class Game {
@@ -17,6 +15,7 @@ public class Game {
     public Point personPoint;
     public int turn = 0;
     private ArrayList<Shop> shops;
+    private ArrayList<Plant> plants;
     public Game(Player... players) {
         this.players = new ArrayList<>(Arrays.asList(players));
         User u3 = App.getLoggedInUser();
@@ -35,6 +34,9 @@ public class Game {
     }
     public ArrayList<Player> getPlayers() {
         return players;
+    }
+    public void addPlantInPlants(Plant plant) {
+        plants.add(plant);
     }
 
     public ArrayList<NPC> getNpcs() {
@@ -55,5 +57,9 @@ public class Game {
 
     public void setShops(ArrayList<Shop> shops) {
         this.shops = shops;
+    }
+
+    public ArrayList<Plant> getPlants() {
+        return plants;
     }
 }

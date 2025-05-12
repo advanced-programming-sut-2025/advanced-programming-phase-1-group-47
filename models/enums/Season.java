@@ -7,6 +7,7 @@ public enum Season {
     WINTER,
     SPRING_SUMMER,
     SUMMER_FALL,
-    OTHER_THAN_WINER;
+    OTHER_THAN_WINER,
+    SPECIAL;
     //
 }

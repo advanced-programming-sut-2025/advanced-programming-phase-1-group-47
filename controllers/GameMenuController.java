@@ -756,7 +756,56 @@ public class GameMenuController {
         return new Result<>(false, "Item does not Exist!");
     }
 
+    public Result<String> plantPlant (String seedName , String direction) {
+        Player currentPlayer = App.getCurrentGame().getCurrentPlayer();
+        for(Item item : currentPlayer.getInvetory().getItems()){
+            if (item.getName().equalsIgnoreCase(seedName)) {
+                Plant basePlant = AllTheItemsInTheGame.getPlantById(item.getItemID() - 100);
+                item.reduceAmount(1);
+                if(item.getAmount() == 0)
+                    currentPlayer.getInvetory().getItems().remove(item);
+                Point offset = getOffsetFromDirection(direction);
+                if (offset == null) {
+                    return new Result<>(false, "Invalid direction!");
+                }
 
+                Point current = currentPlayer.getCoordinates();
+                Point target = new Point(current.getX() + offset.getX(), current.getY() + offset.getY());
+                //check if target point is شخم type @sarsar
+
+
+
+            
+                return putPlantInGround(new Plant(basePlant, target));
+            }
+        }
+        return new Result<>(false, "You don't have that seed!");
+    }
+
+
+    public Point getOffsetFromDirection(String direction) {
+        switch (direction.toUpperCase()) {
+            case "NORTH": return new Point(-1, 0);
+            case "SOUTH": return new Point(1, 0);
+            case "EAST": return new Point(0, 1);
+            case "WEST": return new Point(0, -1);
+            case "NORTH_EAST": return new Point(-1, 1);
+            case "NORTH_WEST": return new Point(-1, -1);
+            case "SOUTH_EAST": return new Point(1, 1);
+            case "SOUTH_WEST": return new Point(1, -1);
+            default: return null;
+        }
+    }
+
+
+    public Result<String> putPlantInGround (Plant plant) {
+        App.getCurrentGame().addPlantInPlants(plant);
+        Point placeInMap = plant.getPoint();
+        //Change tileType In Map @sarsar
+
+
+        return new Result<>(true, "You have Planted the Plant!");
+    }
 
     public Result<String> farming() {
         //fill here...

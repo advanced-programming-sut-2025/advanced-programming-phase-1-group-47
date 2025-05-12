@@ -6,23 +6,23 @@ import models.things.products.Product;
 
 
 public class Plant {
-    private int plantID;
+    private final int plantID;
     private Point point;
-    private String name;
-    private int baseValue;
-    private boolean isEdible;
-    private int energy;
-    private int health;
-    private String source;
+    private final String name;
+    private final int baseValue;
+    private final boolean isEdible;
+    private final int energy;
+    private final int health;
+    private final String source;
     private int currentStage;
     private int currentStageCount;
-    private int totalHarvestTime;
-    private int regrowthTime;
-    private Season seasonOfGrowth;
-    private int[] growStages;
-    private boolean isReUsable;
-    private boolean canBecomeGiant;
-    private boolean isFruit;
+    private final int totalHarvestTime;
+    private final int regrowthTime;
+    private final Season seasonOfGrowth;
+    private final int[] growStages;
+    private final boolean isReUsable;
+    private final boolean canBecomeGiant;
+    private final boolean isFruit;
     private boolean hasBeenWatered;
     private boolean hasBeenFertilized;
 
@@ -48,6 +48,27 @@ public class Plant {
         this.hasBeenWatered = false;
         this.hasBeenFertilized = false;
         this.regrowthTime = regrowthTime;
+    }
+    public Plant(Plant plant , Point point) {
+        this.plantID = plant.getPlantID();
+        this.point = point;
+        this.name = plant.getName();
+        this.baseValue = plant.getBaseValue();
+        this.isEdible = plant.isIsEdible();
+        this.energy = plant.getEnergy();
+        this.health = plant.getHealth();
+        this.source = plant.getSource();
+        this.currentStage = plant.getCurrentStage();
+        this.currentStageCount = plant.getCurrentStageCount();
+        this.totalHarvestTime = plant.getTotalHarvestTime();
+        this.seasonOfGrowth = plant.getSeasonOfGrowth();
+        this.growStages = plant.getGrowStages();
+        this.isReUsable = plant.isIsReUsable();
+        this.canBecomeGiant = plant.isCanBecomeGiant();
+        this.isFruit = plant.isIsFruit();
+        this.hasBeenWatered = false;
+        this.hasBeenFertilized = false;
+        this.regrowthTime = plant.getRegrowthTime();
     }
 
     public Product harvestPlant() {
