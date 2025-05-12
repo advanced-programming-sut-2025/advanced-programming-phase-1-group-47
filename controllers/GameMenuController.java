@@ -389,6 +389,8 @@ public class GameMenuController {
             Map newMap = new Map(farmNames);
             newGame.map = newMap;
             App.setCurrentGame(newGame);
+            for(Player player : App.getCurrentGame().getPlayers())
+                player.setupRelations();
             App.currentGame.setNpc();
             TileType lastTileType = TileType.COTTAGE;
             return new Result<>(true, "New game started with players: " + player1 + ", " + player2 + ", " + player3);

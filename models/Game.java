@@ -2,6 +2,7 @@ package models;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import models.NPCs.*;
 import models.enums.Weather;
 
 public class Game {
@@ -25,8 +26,6 @@ public class Game {
         Player p4 = new Player(u3.getUsername(), u3.getPassword(), u3.getEmail(), u3.getNickname(),u3.getGender(),u3.getSecurityQuestion(),u3.getSecurityAnswer());
         this.players.add(p4);
         currentPlayer = p4;
-        for(Player player : this.players)
-            player.setupRelations();
         this.time = new Time();
     }
   
