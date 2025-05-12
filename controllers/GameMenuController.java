@@ -84,6 +84,7 @@ public class GameMenuController {
                         if(item.getAmount() == 0)
                             App.getCurrentGame().getCurrentPlayer().getInvetory().getItems().remove(item);
                         player.addGiftToPendingGifts(App.getCurrentGame().getCurrentPlayer(), new Gift(giftedItem, App.getGiftIdCounter()));
+                        player.getInvetory().addItem(giftedItem);
                         App.addGiftIdCounter();
                         return new Result<>(true, "Gift Given!");
                     }
@@ -160,33 +161,100 @@ public class GameMenuController {
         return new Result<>(false , "NPC name incorrect");
 
     }
-public Result<String> listGifts() {
-    StringBuilder output = new StringBuilder();
-    Player currentPlayer = App.getCurrentGame().getCurrentPlayer();
+    public Result<String> listGifts() {
+        StringBuilder output = new StringBuilder();
+        Player currentPlayer = App.getCurrentGame().getCurrentPlayer();
 
-    for (Player player : App.getCurrentGame().getPlayers()) {
-        if (player.equals(currentPlayer)) continue;
+        for (Player player : App.getCurrentGame().getPlayers()) {
+            if (player.equals(currentPlayer)) continue;
+            List<Gift> giftsFromPlayer = currentPlayer.getPendingGifts().get(player);
+            if (giftsFromPlayer == null || giftsFromPlayer.isEmpty()) continue;
 
-        List<Gift> giftsFromPlayer = currentPlayer.getPendingGifts().get(player);
-        if (giftsFromPlayer == null || giftsFromPlayer.isEmpty()) continue;
-
-        for (Gift gift : giftsFromPlayer) {
-            output.append(player.getUsername())
-                  .append(" : ")
-                  .append(gift.getID())
-                  .append(" > ")
-                  .append(gift.getItem().getName())
-                  .append(" NOT RATED YET\n");
+            for (Gift gift : giftsFromPlayer) {
+                output.append(player.getUsername())
+                    .append(" : ")
+                    .append(gift.getID())
+                    .append(" > ")
+                    .append(gift.getItem().getName())
+                    .append(" NOT RATED YET\n");
+            }
         }
+
+        return new Result<>(true, output.toString());
+    }
+    public Result<String> listGiftHistory(String username) {
+        boolean found = false;
+        StringBuilder output = new StringBuilder();
+        for (Player player : App.getCurrentGame().getPlayers()) {
+            if (player.getUsername().equalsIgnoreCase(username)) {
+                found = true;
+                List<Gift> giftsFromPlayer = player.getGiftHistory().get(App.getCurrentGame().getCurrentPlayer());
+                if (giftsFromPlayer == null || giftsFromPlayer.isEmpty()) continue;
+                for (Gift gift : giftsFromPlayer) {
+                    output.append(player.getUsername())
+                        .append(" : ")
+                        .append(gift.getID())
+                        .append(" > ")
+                        .append(gift.getItem().getName())
+                        .append("\n");
+                }
+            }
+        }
+        if(found)
+            return new Result<>(true , output.toString());
+        return new Result<>(false, "username not found");
     }
 
-    return new Result<>(true, output.toString());
-}
 
+    public Result<String> rateGift(String giftId , String rate) {
+        if(!giftId.matches("\\d+") || !rate.matches("\\d+"))
+            return new Result<>(false, "giftId or Rate Format invalid!");
+        if( Integer.parseInt(rate) > 5 || Integer.parseInt(rate)<1)
+            return new Result<>(false, "Use a number between 1 and 5 ");
+        Player currentPlayer = App.getCurrentGame().getCurrentPlayer();
+        for(Player player : App.getCurrentGame().getPlayers()) {
+            if (player.equals(currentPlayer)) continue;
+            List<Gift> giftsFromPlayer = currentPlayer.getPendingGifts().get(player);
+            if (giftsFromPlayer == null || giftsFromPlayer.isEmpty()) continue;
+            for(Gift gift : giftsFromPlayer){
+                if(gift.getID() == Integer.parseInt(giftId)) {
+                    player.addGiftToGiftHistory(currentPlayer, gift);
+                    currentPlayer.addGiftToGiftHistory(player, gift);
+                    giftsFromPlayer.remove(gift);
+                    player.addFriendshipXP( (Integer.parseInt(rate) - 3) * 30 + 15 , currentPlayer);
+                    currentPlayer.addFriendshipXP( (Integer.parseInt(rate) - 3) * 30 + 15 , player);
+                    return new Result<>(true, "Gift Rated as a " + rate + " Out of five!");
+                }
+            }
+        }
+        return new Result<>(false, "Giftid invalid Check with Gift list");
+        
+    }
+    public Result<String> giveFlower(String username) {
+        Player currentPlayer = App.getCurrentGame().getCurrentPlayer();
+        for (Player player : App.getCurrentGame().getPlayers()) {
+            if(player.getUsername().equals(username)) {
+                if(!isPlayerNear(player))
+                    return new Result<>(false, "Player too far away!");
+                if(player.getFriendshipLevel().get(currentPlayer)!=2 || player.getFriendshipXP().get(currentPlayer) < 300)
+                    return new Result<>(false, "You are not in a relationship position of giving a flower");
+                for(Item item : currentPlayer.getInvetory().getItems()) {
+                    if(item.getItemID() == 202) {
+                        player.getInvetory().addItem(item);
+                        currentPlayer.getInvetory().getItems().remove(item);
+                        player.setFriendshipLevel(currentPlayer , 3);
+                        currentPlayer.setFriendshipLevel(player , 3);
+                        player.setFriendshipXP(currentPlayer , 0);
+                        currentPlayer.setFriendshipXP(player , 0);
+                        return new Result<String>(true, "Flower Given!");
+                    }
+                }
+                return new Result<String>(false, "You don't have a flower in your inventory!");
 
-    //public Result<String> rateGift() {
-    //    
-  //  }
+            }
+        }
+        return new Result<>(false, "can't find player username!");
+    }
   
     public Result<String> listQuests() {
         StringBuilder output = new StringBuilder();
@@ -605,6 +673,57 @@ public Result<String> listGifts() {
     public Result<String> FinishQuest(Invetory playerItems , int QuestIndex) {
         return null;
     }
+    public Result<String> showCraftInfo(String itemName){
+        StringBuilder output = new StringBuilder();
+        Plant plant = null;
+        for (int i = 302 ; i < 343;i++){
+        plant = AllTheItemsInTheGame.allPlants.get(i);
+        if (plant != null && plant.getName().equals(itemName)) {
+            output.append("Name: ")
+                  .append(itemName)
+                  .append("\n")
+                  .append("Source: ")
+                  .append(plant.getSource())
+                  .append("\n")
+                  .append("Stages: ");
+            for (int stage : plant.getGrowStages())
+                output.append(stage).append("-");
+            output.append("\n")
+                  .append("Total Harvest Time: ")
+                  .append(plant.getTotalHarvestTime())
+                  .append("\n")
+                  .append("One Time: ")
+                  .append(!plant.isIsReUsable())
+                  .append("\n")
+                  .append("Regrowth Time: ")
+                  .append(plant.getRegrowthTime())
+                  .append("\n")
+                  .append("Base Sell Price: ")
+                  .append(plant.getBaseValue())
+                  .append("\n")
+                  .append("is Edible: ")
+                  .append(plant.isIsEdible())
+                  .append("\n")
+                  .append("Base Energy: ")
+                  .append(plant.getEnergy())
+                  .append("\n")
+                  .append("Base Health: ")
+                  .append(plant.getHealth())
+                  .append("\n")
+                  .append("Season: ")
+                  .append(plant.getSeasonOfGrowth())
+                  .append("\n")
+                  .append("Can Become Giant: ")
+                  .append(plant.isCanBecomeGiant());
+            return new Result<>(true, output.toString());
+        }
+        }
+        //another loop for foraging HERE TODO 
+        
+        return new Result<>(false, "Item does not Exist!");
+    }
+
+
 
     public Result<String> farming() {
         //fill here...
