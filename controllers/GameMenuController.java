@@ -127,8 +127,9 @@ public class GameMenuController {
         if(App.getCurrentGame().getTime().getSeason().equals(Season.WINTER))
             randomNumber+=15;
         for(NPC npc : App.getCurrentGame().getNpcs()){
+            System.out.println("NPC: " + npc.getName());
             if(npc.getName().equalsIgnoreCase(npcname)){
-                npc.addFriendship(20 , App.getCurrentGame().getCurrentPlayer());
+                npc.addFriendship(20 , App.getCurrentGame().currentPlayer);
                 return new Result<>(true , npc.getResponses().get(randomNumber));
             }
         }
@@ -268,7 +269,6 @@ public Result<String> listGifts() {
             String player1 = matcher.group("player1");
             String player2 = matcher.group("player2");
             String player3 = matcher.group("player3");
-
             User u1 = App.findPlayer(player1);
             User u2 = App.findPlayer(player2);
             User u3 = App.findPlayer(player3);
@@ -288,6 +288,7 @@ public Result<String> listGifts() {
             Map newMap = new Map(farmNames);
             newGame.map = newMap;
             App.setCurrentGame(newGame);
+            App.currentGame.setNpc();
             TileType lastTileType = TileType.COTTAGE;
             return new Result<>(true, "New game started with players: " + player1 + ", " + player2 + ", " + player3);
         }
