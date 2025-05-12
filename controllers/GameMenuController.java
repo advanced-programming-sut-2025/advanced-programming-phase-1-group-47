@@ -183,6 +183,19 @@ public class GameMenuController {
 
         return new Result<>(true, output.toString());
     }
+
+    public Result<String> showNpcs() {
+        StringBuilder output = new StringBuilder();
+        for(NPC npc : App.getCurrentGame().getNpcs()) {
+            output.append(npc.getName())
+                  .append(" : ")
+                  .append(npc.getFriendship().get(App.getCurrentGame().getCurrentPlayer()))
+                  .append("\n");
+        }
+        return new Result<>(false, output.toString());
+    }
+
+
     public Result<String> listGiftHistory(String username) {
         boolean found = false;
         StringBuilder output = new StringBuilder();
@@ -710,7 +723,7 @@ public class GameMenuController {
     public Result<String> showCraftInfo(String itemName){
         StringBuilder output = new StringBuilder();
         Plant plant = null;
-        for (int i = 302 ; i < 343;i++){
+        for (int i = 302 ; i < 357;i++){ //302-357 is the ids for plants and trees
         plant = AllTheItemsInTheGame.allPlants.get(i);
         if (plant != null && plant.getName().equals(itemName)) {
             output.append("Name: ")
@@ -722,7 +735,7 @@ public class GameMenuController {
                   .append("Stages: ");
             for (int stage : plant.getGrowStages())
                    output.append(stage).append("-");
-                   output.append("\n")
+            output.append("\n")
                   .append("Total Harvest Time: ")
                   .append(plant.getTotalHarvestTime())
                   .append("\n")
