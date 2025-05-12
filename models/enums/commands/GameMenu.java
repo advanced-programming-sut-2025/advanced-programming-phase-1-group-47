@@ -1,6 +1,8 @@
 package models.enums.commands;
 
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import static java.util.regex.Pattern.compile;
 
 public enum GameMenu {
@@ -23,6 +25,8 @@ public enum GameMenu {
     cheatweatherset("^\\s*cheat\\s+weather\\s+set\\s+(?<Type>\\S+)\\s*$"),
     greenhousebuild("^\\s*greenhouse\\s+build\\s*$"),
     walk("^\\s*walk\\s+-l\\s*(?<x>\\d+),(?<y>\\d+)\\s*$"),
+    showPoint("^\\s*#\\s*"),
+    Guide("^\\s*Guide\\s*$"),
     printmap("^\\s*print\\s*map\\s+-l\\s*(?<x>\\d+),(?<y>\\d+)\\s+-s\\s*(?<size>\\d+)\\s*$"),
     mapreadinghelper("^\\s*help\\s+reading\\s+map\\s*$"),
     showenergy("^\\s*energy\\s+show\\s*$"),
@@ -104,11 +108,11 @@ public enum GameMenu {
     }
 
     public Matcher getMatcher(String input) {
-        Matcher matcher = compile(this.command).matcher(input);
+        Pattern pattern = Pattern.compile(this.command, Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(input);
         if (matcher.matches()) {
             return matcher;
         }
         return null;
     }
-
 }

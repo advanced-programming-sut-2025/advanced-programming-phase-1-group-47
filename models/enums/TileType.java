@@ -12,6 +12,7 @@ public enum TileType {
     DOOR("🚪"),
     WALL("🧱"),
     FARMWALL("🌾"),
+    QUARRY("⛏️"),
 
     ABIGEL("👩‍🦰"),
     SEBASTIAN("👨‍🦱"),
@@ -20,7 +21,7 @@ public enum TileType {
     ROBIN("👩‍🔧"),
     NPCHOUSE("🏰"),
     PERSON("🧑‍🌾"),
-    QUARRY("⛏️"),
+
 
     BLACKSMITH("⚒️"),
     JOJAMART("🛒"),

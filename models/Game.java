@@ -2,6 +2,8 @@ package models;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import models.NPCs.*;
 import models.enums.Weather;
 
 public class Game {

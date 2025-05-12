@@ -10,12 +10,8 @@ import java.util.regex.Matcher;
 
 public class GameMenuView extends AppMenu {
     private final GameMenuController controller = new GameMenuController();
-
     @Override
     public void check(Scanner scanner) {
-//        if (App.currentGame != null) {
-//
-//        }
         System.out.println("You are now in Game menu");
         String input = scanner.nextLine();
         Matcher matcher;
@@ -58,9 +54,9 @@ public class GameMenuView extends AppMenu {
         } else if ((matcher = models.enums.commands.GameMenu.printmap.getMatcher(input)) != null) {
             controller.printMap();
         } else if ((matcher = models.enums.commands.GameMenu.mapreadinghelper.getMatcher(input)) != null) {
-            // handleMapReadingHelper(matcher);
+//             handleMapReadingHelper(matcher);
         } else if ((matcher = models.enums.commands.GameMenu.showenergy.getMatcher(input)) != null) {
-            // handleShowEnergy(matcher);
+//             handleShowEnergy(matcher);
         } else if ((matcher = models.enums.commands.GameMenu.cheatenergyset.getMatcher(input)) != null) {
             // handleCheatEnergySet(matcher);
         } else if ((matcher = models.enums.commands.GameMenu.cheatenergyunlimited.getMatcher(input)) != null) {
@@ -109,10 +105,42 @@ public class GameMenuView extends AppMenu {
             // handleCookingPrepare(matcher);
         } else if ((matcher = models.enums.commands.GameMenu.eatfood.getMatcher(input)) != null) {
             // handleEatFood(matcher);
-        } else if ((matcher = models.enums.commands.GameMenu.build.getMatcher(input)) != null) {
+        }
+        else if ((matcher = models.enums.commands.GameMenu.build.getMatcher(input)) != null) {
             // handleBuild(matcher);
-        } else {
+        }else if ((matcher = GameMenu.Guide.getMatcher(input)) != null) {
+            System.out.println("=== 🏪 فروشگاه‌ها و مکان‌های عمومی ===");
+            printPlace("Blacksmith", "BLACKSMITH", 60, 110, 65, 115, 64, 112);
+            printPlace("Marnie's Ranch", "MARNIESRANCH", 70, 90, 75, 95, 74, 92);
+            printPlace("Carpenter Shop", "CARPENTER", 80, 30, 85, 35, 84, 32);
+            printPlace("Fish Shop", "FISHSHOP", 60, 20, 65, 25, 64, 22);
+            printPlace("Joja Mart", "JOJAMART", 120, 60, 125, 65, 124, 62);
+            printPlace("Stardrop Saloon", "STARDROPSALOON", 25, 70, 30, 75, 29, 72);
+            printPlace("Pierre's Store", "PIERRESSTORE", 15, 50, 20, 55, 19, 52);
+
+            System.out.println("\n=== 🏠 خانه‌های شخصیت‌های NPC ===");
+            printNpc("Abigel", "ABIGEL", 52, 56, 58, 62, 58, 59);
+            printNpc("Leah", "LEAH", 54, 70, 60, 76, 60, 73);
+            printNpc("Robin", "ROBIN", 100, 55, 106, 61, 106, 58);
+            printNpc("Sebastian", "SEBASTIAN", 70, 45, 76, 51, 76, 48);
+            printNpc("Harvey", "HARVEY", 80, 57, 86, 63, 86, 60);
+            // handleBuild(matcher);
+        }
+        else if ((matcher = GameMenu.showPoint.getMatcher(input)) != null) {
+            System.out.println("Player Point : (" + App.currentGame.map.farms[App.currentGame.turn].personPoint.x + "," + App.currentGame.map.farms[App.currentGame.turn].personPoint.y + ")");
+            // handleBuild(matcher);
+        }
+        else {
             System.out.println("Invalid command");
         }
+    }
+
+    private static void printNpc(String name, String type, int x1, int y1, int x2, int y2, int npcX, int npcY) {
+        System.out.printf("شخصیت: %-10s | نوع: %-10s | خانه: (%d,%d) تا (%d,%d) | موقعیت NPC: (%d,%d)%n",
+                name, type, x1, y1, x2, y2, npcX, npcY);
+    }
+    private static void printPlace(String name, String type, int x1, int y1, int x2, int y2, int doorX, int doorY) {
+        System.out.printf("نام: %-20s | نوع: %-15s | محدوده: (%d,%d) تا (%d,%d) | در: (%d,%d)%n",
+                name, type, x1, y1, x2, y2, doorX, doorY);
     }
 }
