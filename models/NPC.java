@@ -25,7 +25,7 @@ public class NPC {
     }
 
     public NPC(String name , String job , Quest quest1 , Quest quest2 , Quest quest3 ,ArrayList<Item> favorites
-    ,ArrayList<String> responses , ArrayList<Item> possibleGifts , int TimeUntilQuest3){
+    ,ArrayList<String> responses , ArrayList<Item> possibleGifts , int TimeUntilQuest3 ,Point coordinates){
         this.name = name;
         this.job = job;
         this.quest1 = quest1;
@@ -35,7 +35,7 @@ public class NPC {
         this.responses = responses;
         this.possibleGifts = possibleGifts;
         this.TimeUntilQuest3 = TimeUntilQuest3;
-        this.coordinates = new Point(0, 0);
+        this.coordinates = coordinates;
         friendship = new HashMap<>();
         for (Player player : App.getCurrentGame().getPlayers()) {
             friendship.put(player, 0);
@@ -46,7 +46,6 @@ public class NPC {
         hasBeenTalkedTo  = new HashMap<>();
         for (Player player : App.getCurrentGame().getPlayers())
             hasBeenTalkedTo.put(player, false);
-        
     }
 
     public void addFriendship(int amount , Player player) {

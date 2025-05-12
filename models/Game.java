@@ -18,20 +18,26 @@ public class Game {
     private ArrayList<Plant> plants;
     public Game(Player... players) {
         this.players = new ArrayList<>(Arrays.asList(players));
-//        this.npcs = new ArrayList<>();
-//        npcs.add(Abigail.getInstance().abigailBuilder());
-//        npcs.add(Sebastion.getInstance().sebastionBuilder());
-//        npcs.add(Harvey.getInstance().harveyBuilder());
-//        npcs.add(Leah.getInstance().leahBuilder());
-//        npcs.add(Robin.getInstance().robinBuilder());
-//        this.time = new Time();
 //        if (!this.players.isEmpty()) {
 //            this.currentPlayer = this.players.get(0);
 //        }
+        User u3 = App.getLoggedInUser();
+        Player p4 = new Player(u3.getUsername(), u3.getPassword(), u3.getEmail(), u3.getNickname(),u3.getGender(),u3.getSecurityQuestion(),u3.getSecurityAnswer());
+        this.players.add(p4);
+        currentPlayer = p4;
         for(Player player : this.players)
             player.setupRelations();
+        this.time = new Time();
     }
-
+  
+    public void setNpc(){
+        this.npcs = new ArrayList<>();
+        npcs.add(Abigail.getInstance().abigailBuilder());
+        npcs.add(Sebastion.getInstance().sebastionBuilder());
+        npcs.add(Harvey.getInstance().harveyBuilder());
+        npcs.add(Leah.getInstance().leahBuilder());
+        npcs.add(Robin.getInstance().robinBuilder());
+    }
     public ArrayList<Player> getPlayers() {
         return players;
     }

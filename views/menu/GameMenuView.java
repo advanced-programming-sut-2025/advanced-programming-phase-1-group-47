@@ -108,7 +108,12 @@ public class GameMenuView extends AppMenu {
         }
         else if ((matcher = models.enums.commands.GameMenu.build.getMatcher(input)) != null) {
             // handleBuild(matcher);
-        }else if ((matcher = GameMenu.Guide.getMatcher(input)) != null) {
+        }else if ((matcher = models.enums.commands.GameMenu.meetNPC.getMatcher(input)) != null) {
+            System.out.println(controller.TalkToNPC(matcher.group("npcName")).getData());
+        }else if ((matcher = GameMenu.giftNPC.getMatcher(input)) != null) {
+            System.out.println(controller.GiveGiftToNPC(matcher.group("npcName"),matcher.group("item")).getData());
+        }
+        else if ((matcher = GameMenu.Guide.getMatcher(input)) != null) {
             System.out.println("=== 🏪 فروشگاه‌ها و مکان‌های عمومی ===");
             printPlace("Blacksmith", "BLACKSMITH", 60, 110, 65, 115, 64, 112);
             printPlace("Marnie's Ranch", "MARNIESRANCH", 70, 90, 75, 95, 74, 92);
