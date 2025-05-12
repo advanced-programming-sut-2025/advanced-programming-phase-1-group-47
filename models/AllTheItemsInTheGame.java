@@ -57,7 +57,20 @@ public class AllTheItemsInTheGame {
         temp2.put(340, new Plant(340, new Point(0, 0), "Sweet Gem Berry", 3000, false, -1, -1, "Rare Seed", 0, 0, 24, Season.FALL, new int[]{2, 4, 6, 6, 6}, false, false, false,0));
         temp2.put(341, new Plant(341, new Point(0, 0), "Powdermelon", 60, true, 63, 28, "Powdermelon Seeds", 0, 0, 7, Season.WINTER, new int[]{1, 2, 1, 2, 1}, true, false, false,0));
         temp2.put(342, new Plant(342, new Point(0, 0), "Ancient Fruit", 550, false, -1, -1, "Ancient Seeds", 0, 0, 28, Season.OTHER_THAN_WINER, new int[]{2, 7, 7, 7, 5}, true, false, false,7));
-        temp2.put(343, new Tree(343, new Point(0 , 0), "Apricot Tree", 59, true, 38, 30, "Apricot Sapling", 0, 0, 28, Season.SPRING, new int[]{7,7,7,7}, true, false, false, 0, 1));
+        temp2.put(343, new Tree(343, new Point(0, 0), "Apricot Tree", 59, true, 38, 17, "Apricot Sapling", 0, 0, 28, Season.SPRING, new int[]{7, 7, 7, 7}, true, false, true, 1, 1));
+        temp2.put(344, new Tree(344, new Point(0, 0), "Cherry Tree", 80, true, 38, 17, "Cherry Sapling", 0, 0, 28, Season.SPRING, new int[]{7, 7, 7, 7}, true, false, true, 1, 1));
+        temp2.put(345, new Tree(345, new Point(0, 0), "Banana Tree", 150, true, 75, 33, "Banana Sapling", 0, 0, 28, Season.SUMMER, new int[]{7, 7, 7, 7}, true, false, true, 1, 1));
+        temp2.put(346, new Tree(346, new Point(0, 0), "Mango Tree", 130, true, 100, 45, "Mango Sapling", 0, 0, 28, Season.SUMMER, new int[]{7, 7, 7, 7}, true, false, true, 1, 1));
+        temp2.put(347, new Tree(347, new Point(0, 0), "Orange Tree", 100, true, 38, 17, "Orange Sapling", 0, 0, 28, Season.SUMMER, new int[]{7, 7, 7, 7}, true, false, true, 1, 1));
+        temp2.put(348, new Tree(348, new Point(0, 0), "Peach Tree", 140, true, 38, 17, "Peach Sapling", 0, 0, 28, Season.SUMMER, new int[]{7, 7, 7, 7}, true, false, true, 1, 1));
+        temp2.put(349, new Tree(349, new Point(0, 0), "Apple Tree", 100, true, 38, 17, "Apple Sapling", 0, 0, 28, Season.FALL, new int[]{7, 7, 7, 7}, true, false, true, 1, 1));
+        temp2.put(350, new Tree(350, new Point(0, 0), "Pomegranate Tree", 140, true, 38, 17, "Pomegranate Sapling", 0, 0, 28, Season.FALL, new int[]{7, 7, 7, 7}, true, false, true, 1, 1));
+        temp2.put(351, new Tree(351, new Point(0, 0), "Oak Tree", 150, false, 0, 0, "Acorns", 0, 0, 28, Season.SPECIAL, new int[]{7, 7, 7, 7}, true, false, false, 7, 7));
+        temp2.put(352, new Tree(352, new Point(0, 0), "Maple Tree", 200, false, 0, 0, "Maple Seeds", 0, 0, 28, Season.SPECIAL, new int[]{7, 7, 7, 7}, true, false, false, 9, 9));
+        temp2.put(353, new Tree(353, new Point(0, 0), "Pine Tree", 100, false, 0, 0, "Pine Cones", 0, 0, 28, Season.SPECIAL, new int[]{7, 7, 7, 7}, true, false, false, 5, 5));
+        temp2.put(354, new Tree(354, new Point(0, 0), "Mahogany Tree", 2, true, -2, 0, "Mahogany Seeds", 0, 0, 28, Season.SPECIAL, new int[]{7, 7, 7, 7}, true, false, true, 1, 1));
+        temp2.put(355, new Tree(355, new Point(0, 0), "Mushroom Tree", 40, true, 38, 17, "Mushroom Tree Seeds", 0, 0, 28, Season.SPECIAL, new int[]{7, 7, 7, 7}, true, false, true, 1, 1));
+        temp2.put(356, new Tree(356, new Point(0, 0), "Mystic Tree", 1000, true, 500, 225, "Mystic Tree Seeds", 0, 0, 28, Season.SPECIAL, new int[]{7, 7, 7, 7}, true, false, true, 7, 7));
         allPlants = Collections.unmodifiableMap(temp2);
     }
     public static Plant getPlantById(int id) {
