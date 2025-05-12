@@ -1,10 +1,9 @@
 package controllers;
 
-import models.App;
-import models.Map;
-import models.Point;
-import models.Tile;
+import models.*;
+import models.enums.ShopType;
 import models.enums.TileType;
+import models.things.Item;
 
 public class shopMenuController {
     public TileType whatIsTileType(){
@@ -61,6 +60,46 @@ public class shopMenuController {
 //                System.out.println("Most common TileType around player: " +  + " (" + counts[maxIndex] + " times)");
             }
         }
+        return null;
+    }
+
+    public ShopType getShop() {
+        if(whatIsTileType().equals(TileType.BLACKSMITH)) {
+            return ShopType.BlackSmith;
+        } else if(whatIsTileType().equals(TileType.JOJAMART)) {
+            return ShopType.JojaMart;
+        } else if(whatIsTileType().equals(TileType.PIERRESSTORE)) {
+            return ShopType.Pierres;
+        } else if(whatIsTileType().equals(TileType.CARPENTER)) {
+            return ShopType.Carpenters;
+        } else if(whatIsTileType().equals(TileType.FISHSHOP)) {
+            return ShopType.FishShop;
+        } else if(whatIsTileType().equals(TileType.MARNIESRANCH)) {
+            return ShopType.Marnies;
+        } else if(whatIsTileType().equals(TileType.STARDROPSALOON)) {
+            return ShopType.TheSaloon;
+        }
+        return null;
+    }
+
+    public void showAllProducts() {
+//        ShopType shopType = getShop();
+//
+//        Shop shop;
+    }
+
+    public void showAvailableProducts() {
+
+    }
+
+    public Result<String> purchase(String productName, String stringAmount) {
+//        if(!stringAmount.matches("^\\d$")) {
+//            return new Result<>(false, "Invalid form of amount!");
+//        }
+//
+//        int amount =Integer.parseInt(stringAmount);
+
+
         return null;
     }
 }
