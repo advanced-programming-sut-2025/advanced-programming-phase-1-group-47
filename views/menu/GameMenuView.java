@@ -62,7 +62,7 @@ public class GameMenuView extends AppMenu {
         } else if ((matcher = models.enums.commands.GameMenu.cheatenergyunlimited.getMatcher(input)) != null) {
             // handleCheatEnergyUnlimited(matcher);
         } else if ((matcher = models.enums.commands.GameMenu.showinventory.getMatcher(input)) != null) {
-            // handleShowInventory(matcher);
+             controller.showInventory();
         } else if ((matcher = models.enums.commands.GameMenu.inventorytrashtotal.getMatcher(input)) != null) {
             // handleInventoryTrashTotal(matcher);
         } else if ((matcher = models.enums.commands.GameMenu.inventorytrash.getMatcher(input)) != null) {
