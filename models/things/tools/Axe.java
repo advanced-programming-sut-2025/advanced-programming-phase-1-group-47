@@ -11,7 +11,7 @@ public class Axe extends Item {
     private Type type;
 
     public Axe(Type type) {
-        super("axe" + type.getName(), 52, type.getPrice(), 0, 1);
+        super(type.getName() + " axe", 52, type.getPrice(), 0, 1);
         this.type = type;
     }
 
