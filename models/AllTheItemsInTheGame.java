@@ -10,7 +10,7 @@ public class AllTheItemsInTheGame {
 
     static {
         Map<Integer, Item> temp = new HashMap<>();
-        for (int i = 302; i < 343;i++)
+        for (int i = 302; i < 380;i++)
             temp.put(i, getPlantById(i).harvestPlant());
         allItems = Collections.unmodifiableMap(temp);
     }
