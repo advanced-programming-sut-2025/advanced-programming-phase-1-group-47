@@ -1,6 +1,7 @@
 package models;
 
 import java.util.ArrayList;
+import java.util.logging.SocketHandler;
 
 import models.things.Item;
 
@@ -57,6 +58,12 @@ public class Invetory {
 
     public int getCapacity() {
         return capacity;
+    }
+
+    public void showInventory() {
+        for(Item item : items) {
+            System.out.println(item.getName() + " " + item.getAmount());
+        }
     }
 
 

@@ -8,7 +8,7 @@ public class Tree extends Plant {
                 int[] growStages, boolean isReUsable, boolean canBecomeGiant, boolean isFruit,
                 int foodCycle) {
         super(plantID, point, name, baseValue, isEdible, energy, health, source, currentStage,
-              currentStageCount, totalHarvestTime, seasonOfGrowth, growStages, isReUsable, canBecomeGiant, isFruit);
+              currentStageCount, totalHarvestTime, seasonOfGrowth, growStages, isReUsable, canBecomeGiant, isFruit, 1);
         this.foodCycle = foodCycle;
     }
     public int getFoodCycle() {

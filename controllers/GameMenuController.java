@@ -756,4 +756,8 @@ public class GameMenuController {
         App.getCurrentGame().getCurrentPlayer().skillProgress(3, 10);
         return null;
     }
+
+    public void showInventory() {
+        App.getCurrentGame().getCurrentPlayer().getInvetory().showInventory();
+    }
 }
