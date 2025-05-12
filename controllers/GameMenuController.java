@@ -153,7 +153,7 @@ public class GameMenuController {
                 for(Item item : App.getCurrentGame().getCurrentPlayer().getInvetory().getItems()) {
                     if(item.getName().equalsIgnoreCase(giftName)){
                         if(item.getValue() == -1)
-                            return new Result<String>(false, "You Can't gift that Item!");
+                            return new Result<>(false, "You Can't gift that Item!");
                         App.getCurrentGame().getCurrentPlayer().getInvetory().removeItem(item);
                         for(Item favitem : npc.getFavorites()) {
                             if(favitem.getItemID() == item.getItemID() || favitem.getItemID() == item.getParentItemID()){
@@ -269,7 +269,7 @@ public class GameMenuController {
                         return new Result<String>(true, "Flower Given!");
                     }
                 }
-                return new Result<String>(false, "You don't have a flower in your inventory!");
+                return new Result<>(false, "You don't have a flower in your inventory!");
 
             }
         }
