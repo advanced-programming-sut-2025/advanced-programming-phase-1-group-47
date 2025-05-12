@@ -671,10 +671,6 @@ public class GameMenuController {
         Collections.reverse(path);
         return path;
     }
-
-
-
-
     public Result<String> showTime(){
         return new Result<>(true, "Spent Hours : " + App.currentGame.time.getHourOfDay());
     }
@@ -685,9 +681,11 @@ public class GameMenuController {
     public Result<String> showDayWeek(){
         return new Result<>(true, "Day week: " + Time.getDayWeek());
     }
+
     public Result<String> showSeason(){
         return new Result<>(true, "Season: " + String.valueOf(Time.getSeason()));
     }
+
     public Result<String> cheateAdvanceTime(Matcher matcher){
         int hour = Integer.parseInt(matcher.group("time"));
         if(hour<0)
@@ -695,6 +693,7 @@ public class GameMenuController {
         Time.hour += hour;
         return new Result<>(false, "new Time: " + Time.getHour());
     }
+
     public Result<String> cheateAdvanceDate(Matcher matcher){
         int day = Integer.parseInt(matcher.group("day")) * 24;
         if(day < 0 )
@@ -722,8 +721,8 @@ public class GameMenuController {
                   .append("\n")
                   .append("Stages: ");
             for (int stage : plant.getGrowStages())
-                output.append(stage).append("-");
-            output.append("\n")
+                   output.append(stage).append("-");
+                   output.append("\n")
                   .append("Total Harvest Time: ")
                   .append(plant.getTotalHarvestTime())
                   .append("\n")
@@ -774,9 +773,6 @@ public class GameMenuController {
                 Point current = currentPlayer.getCoordinates();
                 Point target = new Point(current.getX() + offset.getX(), current.getY() + offset.getY());
                 //check if target point is شخم type @sarsar
-
-
-
             
                 return putPlantInGround(new Plant(basePlant, target));
             }
@@ -798,7 +794,6 @@ public class GameMenuController {
             default: return null;
         }
     }
-
 
     public Result<String> putPlantInGround (Plant plant) {
         App.getCurrentGame().addPlantInPlants(plant);

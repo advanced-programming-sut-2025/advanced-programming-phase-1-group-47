@@ -58,7 +58,6 @@ public class Player extends User {
         invetory.addItem(new WateringCan(Type.REGULAR));
         invetory.addItem(new FishingPole(RodType.TRAININGROD));
         invetory.addItem(new Scythe());
-
     }
 
     public void setupRelations() {
