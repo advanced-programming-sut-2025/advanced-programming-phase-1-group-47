@@ -4,9 +4,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import models.enums.Gender;
+import models.enums.RodType;
 import models.enums.SkillType;
 import models.enums.TrashCanType;
 import models.things.relations.Gift;
+import models.things.tools.*;
+
 public class Player extends User {
     private Point Coordinates;
     private int Energy;
@@ -38,7 +41,7 @@ public class Player extends User {
 
         super(username, password, email, nickname, gender, securityQuestion, securityAnswer);
         this.Coordinates = new Point(0, 0);
-        this.invetory = new Invetory();
+        this.invetory = new Invetory(20);
         money = 0;
         friendshipXP = new HashMap<>();
         friendshipLevel = new HashMap<>();
@@ -49,6 +52,13 @@ public class Player extends User {
         hasBeenGiftedTo = new HashMap<>();
         hasbeenHugged = new HashMap<>();
         partner = null;
+        invetory.addItem(new Axe(Type.REGULAR));
+        invetory.addItem(new Hoe(Type.REGULAR));
+        invetory.addItem(new Pickaxe(Type.REGULAR));
+        invetory.addItem(new WateringCan(Type.REGULAR));
+        invetory.addItem(new FishingPole(RodType.TRAININGROD));
+        invetory.addItem(new Scythe());
+
     }
 
     public void setupRelations() {
