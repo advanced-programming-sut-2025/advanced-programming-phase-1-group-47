@@ -9,7 +9,7 @@ import models.enums.Weather;
 public class Game {
     private final ArrayList<Player> players;
     public Map map;
-    public Time time;
+    public Time time = new Time();
     public Weather weather;
     public Weather tomarrowsWeather;
     public ArrayList<NPC> npcs;
