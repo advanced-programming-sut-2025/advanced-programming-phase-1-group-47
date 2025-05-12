@@ -110,8 +110,8 @@ public class GameMenuView extends AppMenu {
             // handleBuild(matcher);
         }else if ((matcher = models.enums.commands.GameMenu.meetNPC.getMatcher(input)) != null) {
             System.out.println(controller.TalkToNPC(matcher.group("npcName")).getData());
-        }else if ((matcher = GameMenu.gift.getMatcher(input)) != null) {
-            System.out.println(controller.TalkToNPC(matcher.group("npcName")).getData());
+        }else if ((matcher = GameMenu.giftNPC.getMatcher(input)) != null) {
+            System.out.println(controller.GiveGiftToNPC(matcher.group("npcName"),matcher.group("item")).getData());
         }
         else if ((matcher = GameMenu.Guide.getMatcher(input)) != null) {
             System.out.println("=== 🏪 فروشگاه‌ها و مکان‌های عمومی ===");

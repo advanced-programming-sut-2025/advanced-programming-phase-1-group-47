@@ -2,6 +2,7 @@ package models.NPCs;
 
 import java.util.ArrayList;
 import models.NPC;
+import models.Point;
 import models.things.Item;
 import models.things.relations.Quest;
 public class Abigail {
@@ -17,9 +18,10 @@ public class Abigail {
         Quest quest1 = questBuilder1();
         Quest quest2 = questBuilder2();
         Quest quest3 = questBuilder3();
+        NPC abigail = new NPC("abigail" , "Student" , quest1 , quest2 , quest3 , favorites , responses , possibleGifts , 1
+         , new Point(58, 59));
 
-        
-        NPC abigail = new NPC("abigail" , "Student" , quest1 , quest2 , quest3 , favorites , responses , possibleGifts , 1);
+
         return  abigail;
     }
     private ArrayList<Item> favoriteBuilder() {

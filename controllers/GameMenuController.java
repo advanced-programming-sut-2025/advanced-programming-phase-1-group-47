@@ -119,6 +119,8 @@ public class GameMenuController {
     }
     
     public Result<String> TalkToNPC(String npcname) {
+        if (!isNPCHere())
+            return new Result<>(false, "There is No NPC Around You!");
         Random rand = new Random();
         int randomNumber = rand.nextInt(5);
         if(App.getCurrentGame().getTime().getSeason().equals(Season.SUMMER))
@@ -128,7 +130,6 @@ public class GameMenuController {
         if(App.getCurrentGame().getTime().getSeason().equals(Season.WINTER))
             randomNumber+=15;
         for(NPC npc : App.getCurrentGame().getNpcs()){
-            System.out.println("NPC: " + npc.getName());
             if(npc.getName().equalsIgnoreCase(npcname)){
                 npc.addFriendship(20 , App.getCurrentGame().currentPlayer);
                 return new Result<>(true , npc.getResponses().get(randomNumber));
@@ -228,7 +229,6 @@ public class GameMenuController {
             }
         }
         return new Result<>(false, "Giftid invalid Check with Gift list");
-        
     }
     public Result<String> giveFlower(String username) {
         Player currentPlayer = App.getCurrentGame().getCurrentPlayer();
@@ -287,18 +287,18 @@ public class GameMenuController {
     public Result<String> FinishQuest(int QuestIndex) {
         for (NPC npc : App.getCurrentGame().getNpcs()) {
             if (npc.getQuest1().getQuestID() == QuestIndex) {
-                if(!isNPCHere(npc))
+                if(!isNPCHere())
                     return new Result<>(false , "NPC too far away!");
                 return finishQuest2(npc.getQuest1() , npc);
                 
             }
             if (npc.getQuest2().getQuestID() == QuestIndex) {
-                if(!isNPCHere(npc))
+                if(!isNPCHere())
                     return new Result<>(false , "NPC too far away!");
                 return finishQuest2(npc.getQuest2() , npc);
             }
             if (npc.getQuest3().getQuestID() == QuestIndex) {
-                if(!isNPCHere(npc))
+                if(!isNPCHere())
                     return new Result<>(false , "NPC too far away!");
                 return finishQuest2(npc.getQuest3() , npc);
             }
@@ -307,10 +307,43 @@ public class GameMenuController {
         return new Result<>(false , "invalid Quest index");
     }
     //for finishquest
-    private boolean isNPCHere(NPC npc) {
-        int dx = Math.abs(npc.getCoordinates().getX() - App.getCurrentGame().getCurrentPlayer().getCoordinates().getX());
-        int dy = Math.abs(npc.getCoordinates().getY() - App.getCurrentGame().getCurrentPlayer().getCoordinates().getY());
-        return dx < 2 && dy < 2;
+    private boolean isNPCHere() {
+        Point playerPOint = App.currentGame.map.farms[App.currentGame.turn].personPoint;
+        TileType[] Neighbers = getSurroundingTiles(playerPOint);
+        for (TileType type : Neighbers) {
+            if (type.equals(TileType.ABIGEL) ||  type.equals(TileType.SEBASTIAN) || type.equals(TileType.HARVEY)
+            || type.equals(TileType.LEAH ) || type.equals(TileType.ROBIN) ) {
+                return true;
+            }
+        }
+        return false;
+//        int dx = Math.abs(npc.getCoordinates().getX() - playerPOint.x);
+//        int dy = Math.abs(npc.getCoordinates().getY() - playerPOint.y);
+//        return dx < 2 && dy < 2;
+
+    }
+    public TileType[] getSurroundingTiles(Point center) {
+        TileType[] surrounding = new TileType[8];
+        int[][] directions = {
+                {-1, -1}, {-1, 0}, {-1, 1},
+                {0, -1},          {0, 1},
+                {1, -1},  {1, 0},  {1, 1}
+        };
+
+        int count = 0;
+        for (int[] dir : directions) {
+            int nx = center.x + dir[0];
+            int ny = center.y + dir[1];
+
+            if (nx >= 0 && nx < App.currentGame.map.tiles.length &&
+                    ny >= 0 && ny < App.currentGame.map.tiles[0].length) {
+
+                surrounding[count++] = App.currentGame.map.tiles[nx][ny].type;
+            } else {
+                surrounding[count++] = null;
+            }
+        }
+        return surrounding;
     }
     private Result<String> finishQuest2(Quest quest , NPC npc) {
         if(quest.isIsDone())
