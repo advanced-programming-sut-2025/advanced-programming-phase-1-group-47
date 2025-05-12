@@ -12,12 +12,12 @@ public class Time {
         Time.hour = hour;
     }
 
-    public static Season getSeason() {
-        return Season.values()[(((((hour + 23) / 24) + 27) / 28) % 4) - 1];
+    public Season getSeason() {
+        return Season.values()[((((((hour + 23) / 24) + 27) / 28) - 1) % 4)];
     }
 
-    public static weekDays getDayWeek(){
-        return (weekDays.values()[(((hour + 23) / 24) % 7) - 1]);
+    public weekDays getDayWeek(){
+        return (weekDays.values()[((((hour + 23) / 24) - 1) % 7)]);
     }
 
     public int getDayOfSeason() {

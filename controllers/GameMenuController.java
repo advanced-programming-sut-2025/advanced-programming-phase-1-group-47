@@ -9,6 +9,7 @@ import models.buildings.Building;
 import models.enums.Menu;
 import models.enums.Season;
 import models.enums.TileType;
+import models.enums.Weather;
 import models.things.Item;
 import models.things.relations.Gift;
 import models.things.relations.Quest;
@@ -136,7 +137,15 @@ public class GameMenuController {
             }
         }
         return new Result<>(false , "No NPC found with that name!");
-        
+    }
+    public void nextDay() {
+        Map map = App.currentGame.map;
+        for(int i = 0 ; i < App.currentGame.getPlayers().size() ; i++) {
+
+        }
+        for (Player player : App.getCurrentGame().getPlayers()) {
+
+        }
     }
     public Result<String> GiveGiftToNPC(String npcName , String giftName) {
         for (NPC npc : App.getCurrentGame().getNpcs()){
@@ -195,7 +204,6 @@ public class GameMenuController {
         return new Result<>(false, output.toString());
     }
 
-
     public Result<String> listGiftHistory(String username) {
         boolean found = false;
         StringBuilder output = new StringBuilder();
@@ -218,8 +226,6 @@ public class GameMenuController {
             return new Result<>(true , output.toString());
         return new Result<>(false, "username not found");
     }
-
-
     public Result<String> rateGift(String giftId , String rate) {
         if(!giftId.matches("\\d+") || !rate.matches("\\d+"))
             return new Result<>(false, "giftId or Rate Format invalid!");
@@ -243,6 +249,7 @@ public class GameMenuController {
         }
         return new Result<>(false, "Giftid invalid Check with Gift list");
     }
+
     public Result<String> giveFlower(String username) {
         Player currentPlayer = App.getCurrentGame().getCurrentPlayer();
         for (Player player : App.getCurrentGame().getPlayers()) {
@@ -275,7 +282,6 @@ public class GameMenuController {
     
         for (NPC npc : App.getCurrentGame().getNpcs()) {
             Quest[] quests = {npc.getQuest1(), npc.getQuest2(), npc.getQuest3()};
-    
             for (Quest quest : quests) {
                 if (quest == null) continue;
                 Boolean isActive = quest.getIsActive().get(currentPlayer);
@@ -330,10 +336,6 @@ public class GameMenuController {
             }
         }
         return false;
-//        int dx = Math.abs(npc.getCoordinates().getX() - playerPOint.x);
-//        int dy = Math.abs(npc.getCoordinates().getY() - playerPOint.y);
-//        return dx < 2 && dy < 2;
-
     }
     public TileType[] getSurroundingTiles(Point center) {
         TileType[] surrounding = new TileType[8];
@@ -419,30 +421,32 @@ public class GameMenuController {
         }
     }
     public void walk(Matcher matcher, Scanner scanner) {
-        int farmWidth = 50, farmHeight = 40;
-
-        // مسیر قابل عبور (0) و غیرقابل عبور (1)
         int[][] grid = new int[160][120];
-        Set<TileType> walkable = Set.of(TileType.EMPTY, TileType.STONE, TileType.TREE, TileType.PERSON, TileType.DOOR, TileType.FARMWALL);
-        Game currentGame = App.currentGame;
-        int turn = currentGame.turn;
-        Point offset = App.farmStart[turn];
-        Point personRel = App.currentGame.map.farms[turn].personPoint;
+        Set<TileType> walkable = Set.of(
+                TileType.EMPTY, TileType.STONE, TileType.TREE,
+                TileType.PERSON, TileType.DOOR, TileType.FARMWALL
+        );
 
+        Game game = App.currentGame;
+        int turn = game.turn;
+        Point offset = App.farmStart[turn];
+        Point personRel = game.map.farms[turn].personPoint;
+        Point personAbs = new Point(offset.x + personRel.x, offset.y + personRel.y);
+
+        // ساخت گراف مسیر‌یابی
         for (int i = 0; i < 160; i++) {
             for (int j = 0; j < 120; j++) {
-                TileType tileType = App.currentGame.map.tiles[i][j].type;
-                grid[i][j] = (tileType != null && walkable.contains(tileType)) ? 0 : 1;
+                TileType type = game.map.tiles[i][j].type;
+                grid[i][j] = (type != null && walkable.contains(type)) ? 0 : 1;
             }
         }
 
-        // گرفتن مقصد از ورودی کاربر (مختصات محلی مزرعه)
+        // گرفتن مقصد به صورت مطلق
         int targetX = Integer.parseInt(matcher.group("x"));
         int targetY = Integer.parseInt(matcher.group("y"));
-        targetX -= offset.x;
-        targetY -= offset.y;
-        // مسیر‌یابی
-        List<int[]> fullPath = shortestPath(grid, personRel.x, personRel.y, targetX, targetY);
+
+        // مسیر‌یابی بین مختصات مطلق
+        List<int[]> fullPath = shortestPath(grid, personAbs.x, personAbs.y, targetX, targetY);
         if (fullPath.isEmpty()) {
             System.out.println("No path found.");
             return;
@@ -458,7 +462,7 @@ public class GameMenuController {
         if (!input.equalsIgnoreCase("yes")) return;
 
         int usedEnergy = 0;
-        Point lastRel = personRel;
+        Point lastAbs = personAbs;
 
         for (int k = 1; k < fullPath.size(); k++) {
             int[] curr = fullPath.get(k);
@@ -471,27 +475,29 @@ public class GameMenuController {
 
             usedEnergy += isTurn ? 11 : 1;
             if (usedEnergy > currentEnergy * 20) {
-                System.out.println("Energy ran out before reaching destination. Stopped at (" + curr[0] + ", " + curr[1] + ")");
+                System.out.printf("Energy ran out before reaching destination. Stopped at (%d, %d)%n", curr[0], curr[1]);
                 break;
             }
 
-            // پاک‌سازی جای قبلی
-            App.currentGame.map.tiles[offset.x + lastRel.x][offset.y + lastRel.y].type = App.currentGame.map.farms[turn].lastTileType;
+            // حذف شخصیت از جای قبلی و بازیابی نوع قبلی
+            game.map.tiles[lastAbs.x][lastAbs.y].type = game.map.farms[turn].lastTileType;
 
             // ذخیره‌ی tile جدید
-            App.currentGame.map.farms[turn].lastTileType = App.currentGame.map.tiles[offset.x + curr[0]][offset.y + curr[1]].type;
+            TileType newType = game.map.tiles[curr[0]][curr[1]].type;
+            game.map.farms[turn].lastTileType = newType;
 
-            // گذاشتن شخصیت در مکان جدید
-            App.currentGame.map.tiles[offset.x + curr[0]][offset.y + curr[1]].type = TileType.PERSON;
-            App.currentGame.map.farms[turn].personPoint = new Point(curr[0], curr[1]);
-            lastRel = new Point(curr[0], curr[1]);
+            // قرار دادن شخصیت در مکان جدید
+            game.map.tiles[curr[0]][curr[1]].type = TileType.PERSON;
+
+            // به‌روزرسانی مکان نسبی در مزرعه (برای سازگاری با سیستم)
+            game.map.farms[turn].personPoint = new Point(curr[0] - offset.x, curr[1] - offset.y);
+
+            lastAbs = new Point(curr[0], curr[1]);
         }
-//        checkEnteringMenu();
-        if (currentGame.map.farms[turn].lastTileType == TileType.DOOR) {
-            Map map = currentGame.map;
-            Point farmOffset = App.farmStart[turn];
-            Point relPerson = map.farms[turn].personPoint;
-            Point absPerson = new Point(farmOffset.x + relPerson.x, farmOffset.y + relPerson.y);
+
+        // بررسی همسایگی در مقصد اگر روی DOOR ایستاده‌ایم
+        if (game.map.farms[turn].lastTileType == TileType.DOOR) {
+            Point absPerson = lastAbs;
 
             int[] dx = {-1, -1, -1, 0, 0, 1, 1, 1};
             int[] dy = {-1,  0,  1, -1, 1, -1, 0, 1};
@@ -504,8 +510,8 @@ public class GameMenuController {
                 int nx = absPerson.x + dx[i];
                 int ny = absPerson.y + dy[i];
 
-                if (nx >= 0 && nx < map.tiles.length && ny >= 0 && ny < map.tiles[0].length) {
-                    Tile neighbor = map.tiles[nx][ny];
+                if (nx >= 0 && nx < 160 && ny >= 0 && ny < 120) {
+                    Tile neighbor = game.map.tiles[nx][ny];
                     if (neighbor != null && neighbor.type != null) {
                         boolean found = false;
                         for (int j = 0; j < uniqueCount; j++) {
@@ -523,32 +529,33 @@ public class GameMenuController {
                     }
                 }
             }
-            if (uniqueCount == 0) {
-                System.out.println("No valid surrounding tiles found.");
-            } else {
+
+            if (uniqueCount > 0) {
                 int maxIndex = 0;
                 for (int i = 1; i < uniqueCount; i++) {
-                    if (counts[i] > counts[maxIndex]) {
-                        maxIndex = i;
-                    }
+                    if (counts[i] > counts[maxIndex]) maxIndex = i;
                 }
-                if (counts[maxIndex] == 5){
+
+                if (counts[maxIndex] == 5) {
                     String menu = types[maxIndex].toString();
-                    if (menu.equals("BLACKSMITH") || menu.equals("JOJAMART") || menu.equals("PIERRESSTORE") || menu.equals("CARPENTER") ||
-                            menu.equals("FISHSHOP") || menu.equals("MARNIESRANCH") || menu.equals("STARDROPSALOON")){
-                        App.currentMenu = Menu.StoreMenu;
-                    }
-                    else if (menu.equals("GREENHOUSE")){
-                        App.currentMenu = Menu.GreenHouseMenu;
-                    }
-                    else if (menu.equals("COTTTAGE")){
-                        App.currentMenu = Menu.cottageMenu;
+                    switch (menu) {
+                        case "BLACKSMITH", "JOJAMART", "PIERRESSTORE", "CARPENTER",
+                             "FISHSHOP", "MARNIESRANCH", "STARDROPSALOON" -> App.currentMenu = Menu.StoreMenu;
+                        case "GREENHOUSE" -> App.currentMenu = Menu.GreenHouseMenu;
+                        case "COTTTAGE" -> App.currentMenu = Menu.cottageMenu;
                     }
                 }
-//                System.out.println("Most common TileType around player: " + types[maxIndex] + " (" + counts[maxIndex] + " times)");
             }
         }
-        System.out.println("Used energy: " + Math.min(currentEnergy,usedEnergy / 20 + 1) + " units.");
+
+        System.out.println("Used energy: " + Math.min(currentEnergy, usedEnergy / 20 + 1) + " units.");
+    }
+    private Point getAbsolutePlayerPoint() {
+        Game game = App.currentGame;
+        int turn = game.turn;
+        Point offset = App.farmStart[turn];
+        Point rel = game.map.farms[turn].personPoint;
+        return new Point(offset.x + rel.x, offset.y + rel.y);
     }
     public void checkEnteringMenu(){
         Game currentGame = App.currentGame;
@@ -688,15 +695,15 @@ public class GameMenuController {
         return new Result<>(true, "Spent Hours : " + App.currentGame.time.getHourOfDay());
     }
     public Result<String> showDate(){
-        return new Result<>(true, "Date: " +  Time.getSeason() + " / " + App.currentGame.time.getDayOfSeason());
+        return new Result<>(true, "Date: " +  App.currentGame.time.getSeason() + " / " + App.currentGame.time.getDayOfSeason());
     }
 
     public Result<String> showDayWeek(){
-        return new Result<>(true, "Day week: " + Time.getDayWeek());
+        return new Result<>(true, "Day week: " + App.currentGame.time.getDayWeek());
     }
 
     public Result<String> showSeason(){
-        return new Result<>(true, "Season: " + String.valueOf(Time.getSeason()));
+        return new Result<>(true, "Season: " + String.valueOf(App.currentGame.time.getSeason()));
     }
 
     public Result<String> cheateAdvanceTime(Matcher matcher){
@@ -817,6 +824,28 @@ public class GameMenuController {
         return new Result<>(true, "You have Planted the Plant!");
     }
 
+    public Result<String> showWeather(){
+        if (App.currentGame != null) {
+            return new Result<>(true, App.getCurrentGame().weather.toString());
+        }
+        return new Result<>(false, "Enter a Game first");
+    }
+    public Result<String> changeWeather(Matcher matcher) {
+        try{
+            App.currentGame.weather = Weather.valueOf(matcher.group("Type").toUpperCase());
+            return new Result<>(true, "Weather Changed!");
+        }
+        catch(IllegalArgumentException e){
+            return new Result<>(false, "Invalid Weather Type!");
+        }
+    }
+
+    public Result<String> showWeatherForecast(){
+        if (App.currentGame != null) {
+            return new Result<>(true, App.getCurrentGame().setWeather().toString());
+        }
+        return new Result<>(false, "Enter a Game first");
+    }
     public Result<String> farming() {
         //fill here...
 

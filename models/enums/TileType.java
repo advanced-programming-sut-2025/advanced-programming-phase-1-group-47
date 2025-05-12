@@ -21,7 +21,7 @@ public enum TileType {
     ROBIN("👩‍🔧"),
     NPCHOUSE("🏰"),
     PERSON("🧑‍🌾"),
-
+    THUNDERED("🌩️"),
 
     BLACKSMITH("⚒️"),
     JOJAMART("🛒"),

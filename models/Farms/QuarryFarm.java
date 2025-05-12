@@ -55,7 +55,7 @@ public class QuarryFarm {
         );
 
         Random rand = new Random();
-        for (int i = 0; i < rand.nextInt(1500, 1600); i++) {
+        for (int i = 0; i < rand.nextInt(400,500); i++) {
             int x = rand.nextInt(Map.farmWidth);
             int y = rand.nextInt(Map.farmHeight);
             int t = rand.nextInt(Map.farmHeight);

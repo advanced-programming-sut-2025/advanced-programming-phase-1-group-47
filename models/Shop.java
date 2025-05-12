@@ -29,13 +29,13 @@ public class Shop {
 
     public ArrayList<Item> getStock() {
     ArrayList<Item> combined = new ArrayList<>(permaStock);
-        if(Time.getSeason() == Season.SPRING)
+        if(App.currentGame.time.getSeason() == Season.SPRING)
             combined.addAll(springStock);
-        if(Time.getSeason() == Season.SUMMER)
+        if(App.currentGame.time.getSeason() == Season.SUMMER)
             combined.addAll(summerStock);
-        if(Time.getSeason() == Season.FALL)
+        if(App.currentGame.time.getSeason() == Season.FALL)
             combined.addAll(fallStock);
-        if(Time.getSeason() == Season.WINTER)
+        if(App.currentGame.time.getSeason() == Season.WINTER)
             combined.addAll(winterStock);
         return combined;
     }

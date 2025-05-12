@@ -42,11 +42,11 @@ public class GameMenuView extends AppMenu {
         } else if ((matcher = models.enums.commands.GameMenu.cheatthor.getMatcher(input)) != null) {
             // handleCheatThor(matcher);
         } else if ((matcher = models.enums.commands.GameMenu.showweather.getMatcher(input)) != null) {
-            // handleShowWeather(matcher);
+             System.out.println(controller.showWeather().getData());
         } else if ((matcher = models.enums.commands.GameMenu.weatherforecast.getMatcher(input)) != null) {
-            // handleWeatherForecast(matcher);
+             System.out.println(controller.showWeatherForecast().getData());
         } else if ((matcher = models.enums.commands.GameMenu.cheatweatherset.getMatcher(input)) != null) {
-            // handleCheatWeatherSet(matcher);
+            System.out.println(controller.changeWeather(matcher).getData());
         } else if ((matcher = models.enums.commands.GameMenu.greenhousebuild.getMatcher(input)) != null) {
             // handleGreenhouseBuild(matcher);
         } else if ((matcher = models.enums.commands.GameMenu.walk.getMatcher(input)) != null) {
@@ -112,6 +112,8 @@ public class GameMenuView extends AppMenu {
             System.out.println(controller.TalkToNPC(matcher.group("npcName")).getData());
         }else if ((matcher = GameMenu.giftNPC.getMatcher(input)) != null) {
             System.out.println(controller.GiveGiftToNPC(matcher.group("npcName"),matcher.group("item")).getData());
+        }else if ((matcher = GameMenu.friendshipNPClist.getMatcher(input)) != null) {
+            System.out.println(controller.showNpcs().getData());
         }
         else if ((matcher = GameMenu.Guide.getMatcher(input)) != null) {
             System.out.println("=== 🏪 فروشگاه‌ها و مکان‌های عمومی ===");
@@ -132,7 +134,10 @@ public class GameMenuView extends AppMenu {
             // handleBuild(matcher);
         }
         else if ((matcher = GameMenu.showPoint.getMatcher(input)) != null) {
-            System.out.println("Player Point : (" + App.currentGame.map.farms[App.currentGame.turn].personPoint.x + "," + App.currentGame.map.farms[App.currentGame.turn].personPoint.y + ")");
+            System.out.println("Player Point : (" + (App.currentGame.map.farms[App.currentGame.turn].personPoint.x +
+                    App.farmStart[App.currentGame.turn].x) + "," + (App.currentGame.map.farms[App.currentGame.turn].personPoint.y +
+                    App.farmStart[App.currentGame.turn].y) + ")");
+            System.out.println("Player turn :" + App.currentGame.turn);
             // handleBuild(matcher);
         }
         else {

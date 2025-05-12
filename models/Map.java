@@ -12,14 +12,11 @@ public class Map {
     public static final int farmWidth = 50, farmHeight = 40;
 
     public Map(String[] types) {
-        // مقداردهی اولیه همه‌ی خانه‌ها به EMPTY
         for (int i = 0; i < 160; i++) {
             for (int j = 0; j < 120; j++) {
                 tiles[i][j] = new Tile(new Point(i, j), TileType.EMPTY);
             }
         }
-
-        // ساخت مزارع و جایگذاری آن‌ها در نقاط مشخص
         for (int i = 0; i < 4; i++) {
             Farm farm;
             Tile[][] temp;

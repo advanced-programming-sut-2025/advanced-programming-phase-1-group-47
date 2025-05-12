@@ -52,17 +52,17 @@ public class ForgagingFarm {
         );
 
         Random rand = new Random();
-        for (int i = 0; i < rand.nextInt(1600, 1700); i++) {
+        for (int i = 0; i < rand.nextInt(400,500); i++) {
             int x = rand.nextInt(Map.farmWidth);
             int y = rand.nextInt(Map.farmHeight);
             int t = rand.nextInt(Map.farmHeight);
             if (this.temp[x][y].type == TileType.EMPTY) {
                 if (t % 6 == 0) {
-                    this.temp[x][y].type = TileType.FORAGING;
+                    this.temp[x][y].type = TileType.STONE;
                 } else if ((t % 3) % 2 == 0) {
                     this.temp[x][y].type = TileType.TREE;
                 } else if ((t % 3) % 2 == 1) {
-                    this.temp[x][y].type = TileType.STONE;
+                    this.temp[x][y].type = TileType.FORAGING;
                 }
             }
         }
