@@ -20,7 +20,7 @@ public class Sebastion {
         Quest quest2 = questBuilder2();
         Quest quest3 = questBuilder3();
 
-        NPC abigail = new NPC("sebastion" , "Student" , quest1 , quest2 , quest3 , favorites , responses , possibleGifts , 2,
+        NPC abigail = new NPC("sebastian" , "Student" , quest1 , quest2 , quest3 , favorites , responses , possibleGifts , 2,
                 new Point(76,48));
         return  abigail;
     }

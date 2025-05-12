@@ -71,6 +71,29 @@ public class AllTheItemsInTheGame {
         temp2.put(354, new Tree(354, new Point(0, 0), "Mahogany Tree", 2, true, -2, 0, "Mahogany Seeds", 0, 0, 28, Season.SPECIAL, new int[]{7, 7, 7, 7}, true, false, true, 1, 1));
         temp2.put(355, new Tree(355, new Point(0, 0), "Mushroom Tree", 40, true, 38, 17, "Mushroom Tree Seeds", 0, 0, 28, Season.SPECIAL, new int[]{7, 7, 7, 7}, true, false, true, 1, 1));
         temp2.put(356, new Tree(356, new Point(0, 0), "Mystic Tree", 1000, true, 500, 225, "Mystic Tree Seeds", 0, 0, 28, Season.SPECIAL, new int[]{7, 7, 7, 7}, true, false, true, 7, 7));
+        temp2.put(357, new foragingCrop(new Point(0, 0), 357, "Common Mushroom", Season.SPECIAL, 40, 38, 30));
+        temp2.put(358, new foragingCrop(new Point(0, 0), 358, "Daffodil", Season.SPRING, 30, 0, 30));
+        temp2.put(359, new foragingCrop(new Point(0, 0), 359, "Dandelion", Season.SPRING, 40, 25, 30));
+        temp2.put(360, new foragingCrop(new Point(0, 0), 360, "Leek", Season.SPRING, 60, 40, 30));
+        temp2.put(361, new foragingCrop(new Point(0, 0), 361, "Morel", Season.SPRING, 150, 20, 30));
+        temp2.put(362, new foragingCrop(new Point(0, 0), 362, "Salmonberry", Season.SPRING, 5, 25, 30));
+        temp2.put(363, new foragingCrop(new Point(0, 0), 363, "Spring Onion", Season.SPRING, 8, 13, 30));
+        temp2.put(364, new foragingCrop(new Point(0, 0), 364, "Wild Horseradish", Season.SPRING, 50, 13, 30));
+        temp2.put(365, new foragingCrop(new Point(0, 0), 365, "Fiddlehead Fern", Season.SUMMER, 90, 25, 30));
+        temp2.put(366, new foragingCrop(new Point(0, 0), 366, "Grape", Season.SUMMER, 80, 38, 30));
+        temp2.put(367, new foragingCrop(new Point(0, 0), 367, "Red Mushroom", Season.SUMMER, 75, -50, 30));
+        temp2.put(368, new foragingCrop(new Point(0, 0), 368, "Spice Berry", Season.SUMMER, 80, 25, 30));
+        temp2.put(369, new foragingCrop(new Point(0, 0), 369, "Sweet Pea", Season.SUMMER, 50, 0, 30));
+        temp2.put(370, new foragingCrop(new Point(0, 0), 370, "Blackberry", Season.FALL, 25, 25, 30));
+        temp2.put(371, new foragingCrop(new Point(0, 0), 371, "Chanterelle", Season.FALL, 160, 75, 30));
+        temp2.put(372, new foragingCrop(new Point(0, 0), 372, "Hazelnut", Season.FALL, 40, 38, 30));
+        temp2.put(373, new foragingCrop(new Point(0, 0), 373, "Purple Mushroom", Season.FALL, 90, 30, 30));
+        temp2.put(374, new foragingCrop(new Point(0, 0), 374, "Wild Plum", Season.FALL, 80, 25, 30));
+        temp2.put(375, new foragingCrop(new Point(0, 0), 375, "Crocus", Season.WINTER, 60, 0, 30));
+        temp2.put(376, new foragingCrop(new Point(0, 0), 376, "Crystal Fruit", Season.WINTER, 150, 63, 30));
+        temp2.put(377, new foragingCrop(new Point(0, 0), 377, "Holly", Season.WINTER, 80, -37, 30));
+        temp2.put(378, new foragingCrop(new Point(0, 0), 378, "Snow Yam", Season.WINTER, 100, 30, 30));
+        temp2.put(379, new foragingCrop(new Point(0, 0), 379, "Winter Root", Season.WINTER, 70, 25, 30));
         allPlants = Collections.unmodifiableMap(temp2);
     }
     public static Plant getPlantById(int id) {
