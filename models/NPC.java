@@ -104,4 +104,8 @@ public class NPC {
     public void setCoordinates(Point coordinates) {
         this.coordinates = coordinates;
     }
+
+    public Map<Player, Integer> getFriendship() {
+        return friendship;
+    }
 }
