@@ -28,6 +28,8 @@ public class Game {
 //        if (!this.players.isEmpty()) {
 //            this.currentPlayer = this.players.get(0);
 //        }
+        for(Player player : this.players)
+            player.setupRelations();
     }
 
     public ArrayList<Player> getPlayers() {
