@@ -877,7 +877,15 @@ public class GameMenuController {
 *   return ??
 *
 *
-*
+*   /@amoojoey need the Use Watering_Can function to have this at the end
+    for (Plant plant : App.getCurrentGame().getPlants()) {
+        if(plant.getPoint().getX() == Integer.parseInt(x) && plant.getPoint().getY() == Integer.parseInt(y)) {
+            plant.setHasBeenWatered(true);
+            return new Result<>(true,"Plant watered");
+        }
+    }
+    return new Result<>(false,"No Plant there!");
+
 *
 *
 *
@@ -906,6 +914,7 @@ public class GameMenuController {
         return new Result<>(true, "Plant harvested");
         //@sarsar change tiltype back (Point at plant.getpoint)
     }
+
 
     public Result<String> showWeather(){
         if (App.currentGame != null) {
