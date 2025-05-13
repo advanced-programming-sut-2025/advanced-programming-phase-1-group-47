@@ -74,6 +74,5 @@ public class Item {
         if (item.getItemID() != this.ItemID)
             return false;
         return item.getAmount() <= this.amount;
-
     }
 }  

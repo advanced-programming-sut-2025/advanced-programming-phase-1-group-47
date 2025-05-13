@@ -52,21 +52,27 @@ public class shopMenuController {
     }
     public Result<String> buy(Shop store, Matcher matcher) {
         int amount;
+        store = returnStoreToApp(store);
         StringBuilder result = new StringBuilder();
         String productName = matcher.group("product");
+        Player player = App.currentGame.getPlayers().get(((App.currentGame.turn - 1) < 0)? 4 + (App.currentGame.turn-1)%4 : (App.currentGame.turn)%4);
+        System.out.println(player.getNickname());
         try{
             amount = Integer.parseInt(matcher.group("count"));
         }
         catch (NumberFormatException e){
-            amount = 1;
+            if (matcher.group("count") == null)
+                amount = 1;
+            else
+                return new Result<>(false, "Invalid amount.");
         }
         for (Item i : getSeasonalStock(store)) {
             if (i.getName().equals(productName)) {
                 if (amount > i.getAmount()) {
                     return new Result<>(false, "the Store doesnt have this amount \nAmount : " + i.getAmount());
                 }
-                i.addAmount( -1 * amount);
-                returnStoreToApp(store);
+                i.reduceAmount(amount);
+                player.setInvetory(i,amount);
                 return new Result<>(true, ((amount > 1)?amount:1) + " number  of product " + productName + " has been purchased");
             }
         }
@@ -75,28 +81,29 @@ public class shopMenuController {
                 if (amount > i.getAmount()) {
                     return new Result<>(false, "the Store doesnt have this amount \nAmount : " + i.getAmount());
                 }
-                i.addAmount( -1 * amount);
-                returnStoreToApp(store);
-                return new Result<>(true, ((amount > 1)?amount:1) + " number  of product " + productName + " has been purchased");
+                i.reduceAmount(amount);
+                return new Result<>(true, amount + " number  of product " + productName + " has been purchased");
             }
         }
         return new Result<>(false, "no such product: " + productName);
     }
-    public void returnStoreToApp(Shop store) {
+    public Shop returnStoreToApp(Shop store) {
         ShopType type = store.getType();
-        if (type == ShopType.FishShop) {
-            App.currentGame.FishShopStore = store;
-        } else if (type == ShopType.Marnies) {
-            App.currentGame.MarniesRanchStore = store;
-        } else if (type == ShopType.JojaMart) {
-            App.currentGame.JojaMartStore = store;
-        } else if (type == ShopType.Carpenters) {
-            App.currentGame.CarpenterStore = store;
-        } else if (type == ShopType.BlackSmith) {
-            App.currentGame.BlacksmithStore = store;
-        } else if (type == ShopType.TheSaloon) {
-            App.currentGame.TheSaloonStore = store;
+        if (type.equals(ShopType.FishShop)) {
+            return App.currentGame.FishShopStore;
+        } else if (type.equals(ShopType.Marnies)) {
+            return App.currentGame.MarniesRanchStore;
+        } else if (type.equals(ShopType.JojaMart)) {
+            return App.currentGame.JojaMartStore;
+        } else if (type.equals(ShopType.Carpenters)) {
+            return App.currentGame.CarpenterStore;
+        } else if (type.equals(ShopType.BlackSmith)) {
+            return App.currentGame.BlacksmithStore;
+        } else if (type.equals(ShopType.TheSaloon)) {
+            return App.currentGame.TheSaloonStore;
         }
+        else
+            return null;
     }
 
     public ArrayList<Item> getSeasonalStock(Shop store) {
