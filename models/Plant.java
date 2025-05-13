@@ -154,4 +154,12 @@ public class Plant {
     public int getRegrowthTime() {
         return regrowthTime;
     }
+
+    public void setHasBeenWatered(boolean hasBeenWatered) {
+        this.hasBeenWatered = hasBeenWatered;
+    }
+
+    public void setHasBeenFertilized(boolean hasBeenFertilized) {
+        this.hasBeenFertilized = hasBeenFertilized;
+    }
 }
