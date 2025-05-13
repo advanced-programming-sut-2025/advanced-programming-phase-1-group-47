@@ -49,4 +49,12 @@ public class Trade {
     public Player getPlayer2() {
         return player2;
     }
+
+    public int getPrice() {
+        return price;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
+    }
 }

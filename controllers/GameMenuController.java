@@ -781,7 +781,10 @@ public class GameMenuController {
         Player currentPlayer = App.getCurrentGame().getCurrentPlayer();
         for(Item item : currentPlayer.getInvetory().getItems()){
             if (item.getName().equalsIgnoreCase(seedName)) {
+                if(item.getItemID() > 356 || item.getItemID() < 302)
+                    return new Result<>(false, "the Item you are attempting to plant is not a Seed!");
                 Plant basePlant = AllTheItemsInTheGame.getPlantById(item.getItemID() - 100);
+                //forgot to check season TODO
                 item.reduceAmount(1);
                 if(item.getAmount() == 0)
                     currentPlayer.getInvetory().getItems().remove(item);
@@ -797,7 +800,7 @@ public class GameMenuController {
                 return putPlantInGround(new Plant(basePlant, target));
             }
         }
-        return new Result<>(false, "You don't have that seed!");
+        return new Result<>(false, "You don't have that seed/Item!");
     }
 
 
@@ -822,6 +825,86 @@ public class GameMenuController {
 
 
         return new Result<>(true, "You have Planted the Plant!");
+    }
+
+
+    public String showSpecificCraftInfo(Plant plant) {
+        int daysPast = 0;
+        for (int i = 0 ; i <plant.getGrowStages().length; i++) {
+            if(plant.getCurrentStage() > i)
+                daysPast+=plant.getGrowStages()[i];
+            if(plant.getCurrentStage() == i)
+                daysPast+=plant.getCurrentStageCount();
+        }
+        StringBuilder output= new StringBuilder();
+        output.append("Current Grow Stage: ")
+              .append(plant.getCurrentStage())
+              .append("\n")
+              .append("current Grow Stage Count (days in current grow stage) :")
+              .append(plant.getCurrentStageCount())
+              .append("\n")
+              .append("is watered today? ")
+              .append(plant.isHasBeenWatered())
+              .append("\n")
+              .append("is fertilized? ")
+              .append(plant.isHasBeenFertilized())
+              .append("\n")
+              .append("Days Until Ready to Harvest: ")
+              .append(plant.getTotalHarvestTime() - daysPast)
+              .append("\n");
+        return output.toString();
+    }
+
+    public Result<String> showPlant(String x ,String y) {
+        if(!x.matches("\\d+") || !y.matches("\\d+"))
+            return new Result<>(false, "Point invalid!");
+        for (Plant plant : App.getCurrentGame().getPlants()) {
+            if(plant.getPoint().getX() == Integer.parseInt(x) && plant.getPoint().getY() == Integer.parseInt(y)) {
+                return new Result<>(true , showCraftInfo(plant.getName()).toString() + showSpecificCraftInfo(plant));
+            }
+        }
+        return new Result<>(false, "Plant not found");
+
+    }
+    
+    /*@amoojoey need  the Use Sⅽythe method to lead into harvestPlant with this code in it:
+    for (Plant plant : App.getCurrentGame().getPlants()) {
+        if(plant.getPoint().getX() == Integer.parseInt(x) && plant.getPoint().getY() == Integer.parseInt(y)) {
+            //LEAD TO HARVEST PLANT
+            return harvestPlant(plant);
+        }
+    //LEAD TO HARVEST WEED
+*   return ??
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*/
+
+    public Result<String> harvestPlant(Plant plant) {
+        if((plant.getCurrentStage() != plant.getGrowStages().length - 1)
+         || (plant.getCurrentStageCount() != plant.getGrowStages()[plant.getGrowStages().length - 1] - 1))
+            return new Result<>(false, "Plant not ready to harvest yet!");
+        App.getCurrentGame().getPlants().remove(plant);
+        App.getCurrentGame().getCurrentPlayer().getInvetory().addItem(plant.harvestPlant());
+        //@sarsar change tiltype back (Point at plant.getpoint)
+        //@amoojoey give player 5XP skill in farming
+        return new Result<>(true, "Plant harvested");
+        //@sarsar change tiltype back (Point at plant.getpoint)
     }
 
     public Result<String> showWeather(){

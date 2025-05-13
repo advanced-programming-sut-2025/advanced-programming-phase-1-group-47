@@ -9,13 +9,13 @@ public class TradeMenuController {
         for (Player player : App.getCurrentGame().getPlayers()) {
             if(player.getUsername().equalsIgnoreCase(username)) {
                 if (!type.equals("offer") && !type.equals("request"))
-                    return new Result<String>(false, "type invalid!");
+                    return new Result<>(false, "type invalid!");
                 
             }
         }
-        return new Result<String>(false, "No player found with that Username!");
+        return new Result<>(false, "No player found with that Username!");
     }
-    public Result<String> AcceptOrDenyTrade(String messege) {
+    public Result<String> AcceptOrDenyTrade(String messege , String tradeId) {
         return null;
     }
 }
