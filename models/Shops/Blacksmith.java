@@ -12,30 +12,32 @@ public class Blacksmith {
         ArrayList<Item> summerStock = summerStockBuilder();
         ArrayList<Item> fallStock = fallStockBuilder();
         ArrayList<Item> winterStock = winterStockBuilder();
-
-        Shop blacksmith = new Shop(ShopType.BlackSmith, permaStock, springStock, 
-        summerStock, fallStock, 9, 16, winterStock);
-        return blacksmith;
+        return new Shop(ShopType.BlackSmith, permaStock, springStock,
+                summerStock, fallStock, 9, 16, winterStock);
     }
+
     private ArrayList<Item> permaStockBuilder() {
         ArrayList<Item> returnvalue = new ArrayList<>();
-        returnvalue.add(new Item("Copper Ore",21 , 75 , 0 , 1000000));
-        returnvalue.add(new Item("Iron Ore",1 ,150 , 0 , 1000000));
-        returnvalue.add(new Item("Gold Ore",21 , 400 , 0 , 1000000));
-        returnvalue.add(new Item("Coal",21 , 150 , 0 , 1000000));
+        returnvalue.add(new Item("Copper Ore", 21, 75, 0, 1000000));
+        returnvalue.add(new Item("Iron Ore", 1, 150, 0, 1000000));
+        returnvalue.add(new Item("Gold Ore", 21, 400, 0, 1000000));
+        returnvalue.add(new Item("Coal", 21, 150, 0, 1000000));
         return returnvalue;
     }
 
     private ArrayList<Item> springStockBuilder() {
-        return null;
+        return new ArrayList<>();
     }
+
     private ArrayList<Item> summerStockBuilder() {
-        return null;
+        return new ArrayList<>();
     }
+
     private ArrayList<Item> fallStockBuilder() {
-        return null;
+        return new ArrayList<>();
     }
+
     private ArrayList<Item> winterStockBuilder() {
-        return null;
+        return new ArrayList<>();
     }
 }

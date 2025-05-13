@@ -1,12 +1,123 @@
 package controllers;
 
 import models.*;
+import models.Shops.Blacksmith;
 import models.enums.ShopType;
 import models.enums.TileType;
 import models.things.Item;
 
+import java.util.ArrayList;
+import java.util.regex.Matcher;
+
 public class shopMenuController {
+    public Result<String> showAvailableProducts(Shop store) {
+        StringBuilder result = new StringBuilder();
+
+        for (Item i : getSeasonalStock(store)) {
+            if (i.getAmount() == 0) continue;
+            result.append(i.getName()).append(" - ").append(i.getValue()).append("\n");
+        }
+
+        result.append("Permanent stock:\n");
+        for (Item i : store.getPermaStock()) {
+            if (i.getAmount() == 0) continue;
+            result.append(i.getName()).append(" - ").append(i.getValue()).append("\n");
+        }
+
+        return new Result<>(true, result.toString());
+    }
+    public Result<String> showAllProducts(Shop store) {
+        StringBuilder result = new StringBuilder();
+        for (Item i : App.currentGame.JojaMartStore.getSpringStock()) {
+            if (i.getAmount() == 0) continue;
+            result.append(i.getName()).append(" - ").append(i.getValue()).append("\n");
+        }
+        for (Item i : store.getSummerStock()) {
+            if (i.getAmount() == 0) continue;
+            result.append(i.getName()).append(" - ").append(i.getValue()).append("\n");
+        }
+        for (Item i : store.getFallStock()) {
+            if (i.getAmount() == 0) continue;
+            result.append(i.getName()).append(" - ").append(i.getValue()).append("\n");
+        }
+        for (Item i : store.getWinterStock()) {
+            if (i.getAmount() == 0) continue;
+            result.append(i.getName()).append(" - ").append(i.getValue()).append("\n");
+        }
+        for (Item i : store.getPermaStock()) {
+            if (i.getAmount() == 0) continue;
+            result.append(i.getName()).append(" - ").append(i.getValue()).append("\n");
+        }
+        return new Result<>(true, result.toString());
+    }
+    public Result<String> buy(Shop store, Matcher matcher) {
+        int amount;
+        StringBuilder result = new StringBuilder();
+        String productName = matcher.group("product");
+        try{
+            amount = Integer.parseInt(matcher.group("count"));
+        }
+        catch (NumberFormatException e){
+            amount = 1;
+        }
+        for (Item i : getSeasonalStock(store)) {
+            if (i.getName().equals(productName)) {
+                if (amount > i.getAmount()) {
+                    return new Result<>(false, "the Store doesnt have this amount \nAmount : " + i.getAmount());
+                }
+                i.addAmount( -1 * amount);
+                returnStoreToApp(store);
+                return new Result<>(true, ((amount > 1)?amount:1) + " number  of product " + productName + " has been purchased");
+            }
+        }
+        for (Item i : store.getPermaStock()) {
+            if (i.getName().equals(productName)) {
+                if (amount > i.getAmount()) {
+                    return new Result<>(false, "the Store doesnt have this amount \nAmount : " + i.getAmount());
+                }
+                i.addAmount( -1 * amount);
+                returnStoreToApp(store);
+                return new Result<>(true, ((amount > 1)?amount:1) + " number  of product " + productName + " has been purchased");
+            }
+        }
+        return new Result<>(false, "no such product: " + productName);
+    }
+    public void returnStoreToApp(Shop store) {
+        ShopType type = store.getType();
+        if (type == ShopType.FishShop) {
+            App.currentGame.FishShopStore = store;
+        } else if (type == ShopType.Marnies) {
+            App.currentGame.MarniesRanchStore = store;
+        } else if (type == ShopType.JojaMart) {
+            App.currentGame.JojaMartStore = store;
+        } else if (type == ShopType.Carpenters) {
+            App.currentGame.CarpenterStore = store;
+        } else if (type == ShopType.BlackSmith) {
+            App.currentGame.BlacksmithStore = store;
+        } else if (type == ShopType.TheSaloon) {
+            App.currentGame.TheSaloonStore = store;
+        }
+    }
+
+    public ArrayList<Item> getSeasonalStock(Shop store) {
+        String season = App.currentGame.time.getSeason().toString();
+        switch (season) {
+            case "SPRING":
+                return store.getSpringStock();
+            case "SUMMER":
+                return store.getSummerStock();
+            case "FALL":
+                return store.getFallStock();
+            case "WINTER":
+                return store.getWinterStock();
+            default:
+                return new ArrayList<>(); // اگر فصل ناشناخته بود، لیست خالی برمی‌گرده
+        }
+    }
+
     public TileType whatIsTileType(){
+        if (App.currentGame == null)
+            return null;
         int turn = App.currentGame.turn;
         Point playerPont = App.currentGame.map.farms[turn].personPoint;
         if (App.currentGame.map.farms[turn].lastTileType == TileType.DOOR) {

@@ -21,7 +21,6 @@ public class Item {
         this.value = item.getValue();
         this.amount = amount;
     }
-
     public void addAmount(int add) {
         amount+=add;
     }

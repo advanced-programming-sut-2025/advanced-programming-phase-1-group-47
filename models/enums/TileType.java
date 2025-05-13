@@ -1,7 +1,6 @@
 package models.enums;
 
 public enum TileType {
-    // موارد قبلی
     EMPTY("⬜"),
     TREE("🌲"),
     STONE("🔘"),
@@ -29,7 +28,18 @@ public enum TileType {
     CARPENTER("🧰"),
     FISHSHOP("🎣"),
     MARNIESRANCH("🐴"),
-    STARDROPSALOON("🍺");
+    STARDROPSALOON("🍺"),
+
+    // حیوانات
+    COW("🐄"),
+    DINOSAUR("🦖"),
+    DUCK("🦆"),
+    GOAT("🐐"),
+    HEN("🐔"),
+    PIG("🐖"),
+    RABBIT("🐇"),
+    SHEEP("🐑")
+    ;
 
     private final String sticker;
 

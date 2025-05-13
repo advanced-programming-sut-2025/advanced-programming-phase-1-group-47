@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Random;
 
 import models.NPCs.*;
+import models.Shops.*;
 import models.enums.Weather;
 
 public class Game {
@@ -17,6 +18,13 @@ public class Game {
     public Player currentPlayer;
     private static final Random RAND = new Random();
     public Point personPoint;
+    public Shop BlacksmithStore = new Blacksmith().blacksmithBulider();
+    public Shop JojaMartStore = new JojaMart().jojaBuilder();
+    public Shop CarpenterStore = new Carpenter().carpenterBuilder();
+    public Shop FishShopStore = new FishShop().fishShopBulider();
+    public Shop MarniesRanchStore = new MarniesRanch().MarnieRanchBuilder();
+    public Shop TheSaloonStore = new TheSaloon().theSaloonBuilder();
+
     public int turn = 0;
     private ArrayList<Shop> shops;
     private ArrayList<Plant> plants;

@@ -1,10 +1,7 @@
 package models;
 
-import models.enums.AnimalProductType;
-import models.enums.Animals;
+import models.enums.AnimalType;
 import models.enums.FishType;
-
-import java.util.Map;
 
 public class Fish {
     FishType fishType;

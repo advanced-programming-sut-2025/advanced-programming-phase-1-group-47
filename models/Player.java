@@ -14,6 +14,8 @@ public class Player extends User {
     private Point Coordinates;
     private int Energy;
     private Invetory invetory;
+
+    ArrayList<Animal> animals = new ArrayList<>();
     TrashCanType trashCanType = TrashCanType.REGULARTRASHCAN;
     private Buff buff = null;
     private final Skill[] skills = new Skill[]{

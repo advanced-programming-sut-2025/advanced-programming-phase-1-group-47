@@ -2,28 +2,29 @@ package models;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import models.enums.AnimalProductType;
-import models.enums.Animals;
+import models.enums.AnimalType;
 
 public abstract class Animal {
     private String name;
-    private final Animals animalType;
+    private final AnimalType animalType;
     private Map<Player, Integer> friendship = new HashMap<>();
-    public Animal(Animals animalType) {
+    private AnimalProductType productType;
+    public Animal(AnimalType animalType) {
         this.animalType = animalType;
     }
-    private AnimalProductType productType;
 
     public void setProductType(AnimalProductType productType) {
         this.productType = productType;
     }
-    public Animal(AnimalProductType productType, Animals animalType, Map<Player, Integer> friendship, Animals animal, Point point, String name) {
+    public Animal(AnimalProductType productType,AnimalType animalType, Map<Player, Integer> friendship, AnimalType animal, Point point, String name) {
         this.productType = productType;
         this.animalType = animalType;
         this.friendship = friendship;
         this.name = name;
     }
-    public Animals getAnimalType() {
+    public AnimalType getAnimalType() {
         return animalType;
     }
 
