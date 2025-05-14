@@ -1,13 +1,11 @@
 package controllers;
 
+import java.util.ArrayList;
+import java.util.regex.Matcher;
 import models.*;
-import models.Shops.Blacksmith;
 import models.enums.ShopType;
 import models.enums.TileType;
 import models.things.Item;
-
-import java.util.ArrayList;
-import java.util.regex.Matcher;
 
 public class shopMenuController {
     public Result<String> showAvailableProducts(Shop store) {
@@ -72,7 +70,7 @@ public class shopMenuController {
                     return new Result<>(false, "the Store doesnt have this amount \nAmount : " + i.getAmount());
                 }
                 i.reduceAmount(amount);
-                player.setInvetory(i,amount);
+                //player.setInvetory(i,amount);
                 return new Result<>(true, ((amount > 1)?amount:1) + " number  of product " + productName + " has been purchased");
             }
         }

@@ -1,60 +1,57 @@
 package models;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+
 import models.things.Item;
 
 public class Invetory {
-    private HashMap<eatble, Integer> foods = new HashMap<>();
-    private HashMap<Item, Integer> items = new HashMap<>();
-    private HashMap<Tool, Integer> tools = new HashMap<>();
-    private int capacity = 20;
+//    private BackpackType backpackType;
+    private ArrayList<eatble> foods = new ArrayList<>();
+    private ArrayList<Item> items = new ArrayList<>();
+    private ArrayList<Tool> tools = new ArrayList<>();
+    private  int capacity = 20;
 
-    public Invetory(int capacity) {
-        this.capacity = capacity;
+    public Invetory(int i) {
+        this.capacity = 20;
     }
-
     public void removeItem(Item item) {
-        if (items.containsKey(item)) {
-            int current = items.get(item);
-            if (current <= item.getAmount()) {
-                items.remove(item);
-            } else {
-                items.put(item, current - item.getAmount());
+        items.remove(item);
+    }
+    public void addItem(Item item) {
+        for(Item item2 : items){
+            if(item2.getItemID() == item.getItemID()) {
+                item2.addAmount(item.getAmount());
+                return;
             }
         }
+        if(item.getItemID() != 0)
+            items.add(item);
     }
-
-    public void addItem(Item item) {
-        if (item.getItemID() == 0) return;
-
-        items.put(item, items.getOrDefault(item, 0) + item.getAmount());
-    }
-
     public void setCapacity(int capacity) {
         this.capacity = capacity;
     }
 
-    public void setFoods(HashMap<eatble, Integer> foods) {
+    public void setFoods(ArrayList<eatble> foods) {
         this.foods = foods;
     }
 
-    public void setItems(HashMap<Item, Integer> items) {
+    public void setItems(ArrayList<Item> items) {
         this.items = items;
     }
 
-    public void setTools(HashMap<Tool, Integer> tools) {
+    public void setTools(ArrayList<Tool> tools) {
         this.tools = tools;
     }
 
-    public HashMap<eatble, Integer> getFoods() {
+    public ArrayList<eatble> getFoods() {
         return foods;
     }
 
-    public HashMap<Item, Integer> getItems() {
+    public ArrayList<Item> getItems() {
         return items;
     }
 
-    public HashMap<Tool, Integer> getTools() {
+    public ArrayList<Tool> getTools() {
         return tools;
     }
 
@@ -63,8 +60,10 @@ public class Invetory {
     }
 
     public void showInventory() {
-        for (Item item : items.keySet()) {
-            System.out.println(item.getName() + " " + items.get(item));
+        for(Item item : items) {
+            System.out.println(item.getName() + " " + item.getAmount());
         }
     }
+
+
 }

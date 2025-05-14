@@ -83,7 +83,7 @@ public class GameMenuController {
                 }
                 if(!validAmount)
                     return new Result<>(false, "item amount invalid");
-                for (Item item : App.getCurrentGame().getCurrentPlayer().getInvetory().getItems().keySet()) {
+                for (Item item : App.getCurrentGame().getCurrentPlayer().getInvetory().getItems()) {
                     if(item.getName().equalsIgnoreCase(itemName)) {
                         if(item.getAmount() < amount)
                             return new Result<>(false, "You Don't have enough of that Item!");
@@ -157,7 +157,7 @@ public class GameMenuController {
     public Result<String> GiveGiftToNPC(String npcName , String giftName) {
         for (NPC npc : App.getCurrentGame().getNpcs()){
             if(npc.getName().equalsIgnoreCase(npcName)) {
-                for (Item item : App.getCurrentGame().getCurrentPlayer().getInvetory().getItems().keySet()) {
+                for(Item item : App.getCurrentGame().getCurrentPlayer().getInvetory().getItems()) {
                     if(item.getName().equalsIgnoreCase(giftName)){
                         if(item.getValue() == -1)
                             return new Result<>(false, "You Can't gift that Item!");
@@ -265,7 +265,7 @@ public class GameMenuController {
                     return new Result<>(false, "Player too far away!");
                 if(player.getFriendshipLevel().get(currentPlayer)!=2 || player.getFriendshipXP().get(currentPlayer) < 300)
                     return new Result<>(false, "You are not in a relationship position of giving a flower");
-                for (Item item : App.getCurrentGame().getCurrentPlayer().getInvetory().getItems().keySet()) {
+                for(Item item : currentPlayer.getInvetory().getItems()) {
                     if(item.getItemID() == 202) {
                         player.getInvetory().addItem(item);
                         currentPlayer.getInvetory().getItems().remove(item);
@@ -372,7 +372,7 @@ public class GameMenuController {
             return new Result<>(false , "Quest Already Done!");
         if(!quest.getIsActive().get(App.getCurrentGame().getCurrentPlayer()))
             return new Result<>(false , "You don't have access to that Quest yet!");
-        for (Item item : App.getCurrentGame().getCurrentPlayer().getInvetory().getItems().keySet()) {
+        for (Item item : App.getCurrentGame().getCurrentPlayer().getInvetory().getItems()) {
             if(item.questEquals(quest.getRequiermentItems())) {
                 item.reduceAmount(quest.getRequiermentItems().getAmount());
                 if(quest.getRewards().getItemID() == 201) //201 is the friendship level item that shall not exist
@@ -380,8 +380,7 @@ public class GameMenuController {
                 else if(npc.getFriendship().get(App.getCurrentGame().getCurrentPlayer()) >= 400)
                         App.getCurrentGame().getCurrentPlayer().getInvetory().getItems().add(new Item(quest.getRewards(), quest.getRewards().getAmount() * 2));
                 else
-                    App.getCurrentGame().getCurrentPlayer().getInvetory().getItems().put(quest.getRewards(),1);
-                // Changed By Sarsar Salahi Take a Notice to this
+                    App.getCurrentGame().getCurrentPlayer().getInvetory().getItems().add(quest.getRewards());
                 App.getCurrentGame().getCurrentPlayer().addMoney(quest.getRewardMoney());
                 quest.setIsDone(true);
                 if(item.getAmount() == 0)
@@ -786,7 +785,7 @@ public class GameMenuController {
 
     public Result<String> plantPlant (String seedName , String direction) {
         Player currentPlayer = App.getCurrentGame().getCurrentPlayer();
-        for (Item item : App.getCurrentGame().getCurrentPlayer().getInvetory().getItems().keySet()) {
+        for(Item item : currentPlayer.getInvetory().getItems()){
             if (item.getName().equalsIgnoreCase(seedName)) {
                 if(item.getItemID() > 356 || item.getItemID() < 302)
                     return new Result<>(false, "the Item you are attempting to plant is not a Seed!");
@@ -983,8 +982,7 @@ public class GameMenuController {
     //har chi mikhaid update she too shab barai farda ro bezanid inja 
     public void setUpNextDay() {
         for (Plant plant : App.getCurrentGame().getPlants()) {
-            if(plant.isHasBeenWatered())
-                plant.grow();
+            if(plant.isHasBeenWatered())  plant.grow();
             plant.setHasBeenWatered(false);
         }
         for (NPC npc : App.getCurrentGame().getNpcs()) {
