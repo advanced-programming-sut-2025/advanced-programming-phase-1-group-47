@@ -24,8 +24,8 @@ public class GameMenuView extends AppMenu {
         } else if ((matcher = models.enums.commands.GameMenu.deletecurrentgame.getMatcher(input)) != null) {
             // handleDeleteCurrentGame(matcher);
         } else if ((matcher = models.enums.commands.GameMenu.nextturn.getMatcher(input)) != null) {
-            App.currentGame.turn = (App.currentGame.turn + 1) % 4;
-            App.currentGame.currentPlayer = App.currentGame.getPlayers().get(((App.currentGame.turn - 1) < 0)? 4 + (App.currentGame.turn-1)%4 : (App.currentGame.turn)%4);
+            App.currentGame.turn = App.currentGame.turn+1;
+            App.currentGame.currentPlayer = App.getCurrentGame().getPlayers().get((App.currentGame.turn - 1)%4);
         } else if ((matcher = models.enums.commands.GameMenu.showtime.getMatcher(input)) != null) {
             System.out.println(controller.showTime().getData());
         } else if ((matcher = models.enums.commands.GameMenu.showdate.getMatcher(input)) != null) {
@@ -166,11 +166,12 @@ public class GameMenuView extends AppMenu {
             // handleBuild(matcher);
         }
         else if ((matcher = GameMenu.showPoint.getMatcher(input)) != null) {
-            System.out.println("Player Point : (" + (App.currentGame.map.farms[App.currentGame.turn].personPoint.x +
-                    App.farmStart[App.currentGame.turn].x) + "," + (App.currentGame.map.farms[App.currentGame.turn].personPoint.y +
-                    App.farmStart[App.currentGame.turn].y) + ")");
             System.out.println("Player turn :" + App.currentGame.turn);
-            // handleBuild(matcher);
+            System.out.println(4%4);
+            System.out.println("Player Point : (" + (App.currentGame.map.farms[(App.currentGame.turn+1)%4].personPoint.x +
+                    App.farmStart[(App.currentGame.turn)%4+ 1].x) + "," + (App.currentGame.map.farms[(App.currentGame.turn+ 1)%4].personPoint.y +
+                    App.farmStart[(App.currentGame.turn)%4+ 1].y) + ")");
+            System.out.println(App.currentGame.getPlayers().get((App.currentGame.turn + 1)%4).getUsername());
         }
         else {
             System.out.println("Invalid command");

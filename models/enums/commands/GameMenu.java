@@ -74,7 +74,7 @@ public enum GameMenu {
     cheatadddollars("^\\s*cheat\\s+add\\s+(?<count>\\d+)\\s+dollars\\s*$"),
     sellproduct("^\\s*sell\\s+(?<productName>\\S+)\\s+-n\\s+(?<count>\\d+)\\s*$"),
     friendships("^\\s*friendships\\s*$"),
-    talk("^\\s*talk\\s+-u\\s+(?<username>\\S+)\\s+-m\\s+(?<message>\\S+)\\s*$"),
+    talk("^\\s*talk\\s+-u\\s+(?<username>\\S+)\\s+-m\\s+(?<message>.+?)\\s*$"),
     talkhistory("^\\s*talk\\s+history\\s+-u\\s+(?<username>\\S+)\\s*$"),
     gift("^\\s*gift\\s+-u\\s+(?<username>\\S+)\\s+-i\\s+(?<item>\\S+)\\s+-a\\s+(?<amount>\\d+)\\s*$"),
     giftlist("^\\s*gift\\s+list\\s*$"),
