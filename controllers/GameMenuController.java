@@ -188,14 +188,13 @@ public class GameMenuController {
         for(Player player : App.getCurrentGame().getPlayers()) {
             if(player.equals(App.getCurrentGame().getCurrentPlayer())) continue;
             output.append(player.getUsername())
-                  .append("-")
+                  .append("-\n")
                   .append(player.getFriendshipLevel().get(App.getCurrentGame().getCurrentPlayer()))
-                  .append("-")
+                  .append("-\n")
                   .append(player.getFriendshipXP().get(App.getCurrentGame().getCurrentPlayer()));
         }
         return new Result<String>(false, output.toString());
     }
-
 
     public Result<String> hugPlayer(String username) {
         for (Player player : App.getCurrentGame().getPlayers()) {
@@ -351,7 +350,21 @@ public class GameMenuController {
         }
         return new Result<>(false, "Giftid invalid Check with Gift list");
     }
-
+    public Result<String> showTalkHistory(String username) {
+        boolean found = false;
+        StringBuilder output = new StringBuilder();
+        for(Player player : App.getCurrentGame().getPlayers()) {
+            if(player.getUsername().equals(username)){
+                found = true;
+                for(String messege : App.getCurrentGame().getCurrentPlayer().getTalkHistory().get(player)) {
+                    output.append(messege)
+                            .append("\n");
+                }
+            }
+        }
+        if(found) return new Result<String>(true, output.toString());
+        return new Result<String>(false, "User not real!");
+    }
     public Result<String> giveFlower(String username) {
         Player currentPlayer = App.getCurrentGame().getCurrentPlayer();
         for (Player player : App.getCurrentGame().getPlayers()) {
@@ -475,7 +488,7 @@ public class GameMenuController {
                 else if(npc.getFriendship().get(App.getCurrentGame().getCurrentPlayer()) >= 400)
                         App.getCurrentGame().getCurrentPlayer().getInvetory().getItems().add(new Item(quest.getRewards(), quest.getRewards().getAmount() * 2));
                 else
-                    App.getCurrentGame().getCurrentPlayer().getInvetory().getItems().put(quest.getRewards(),1);
+                    App.getCurrentGame().getCurrentPlayer().getInvetory().getItems().add(quest.getRewards());
                 App.getCurrentGame().getCurrentPlayer().addMoney(quest.getRewardMoney());
                 quest.setIsDone(true);
                 if(item.getAmount() == 0)
@@ -1106,24 +1119,6 @@ public class GameMenuController {
                 player2.setHasHuggedPlayer(player1, false);
             }
         setShops();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     }
     private void setShops() {
         App.getCurrentGame().BlacksmithStore = new Blacksmith().blacksmithBulider();

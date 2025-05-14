@@ -63,6 +63,10 @@ public class Player extends User {
         invetory.addItem(new Scythe());
     }
 
+    public Map<Player, ArrayList<String>> getTalkHistory() {
+        return talkHistory;
+    }
+
     public void setupRelations() {
         for (Player player : App.getCurrentGame().getPlayers()) {
             friendshipXP.put(player, 0);
