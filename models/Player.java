@@ -7,6 +7,7 @@ import models.enums.Gender;
 import models.enums.RodType;
 import models.enums.SkillType;
 import models.enums.TrashCanType;
+import models.things.Item;
 import models.things.relations.Gift;
 import models.things.tools.*;
 
@@ -109,7 +110,6 @@ public class Player extends User {
     }
 
     public void addGiftToPendingGifts(Player player, Gift gift) {
-    public void addGiftToPendingGifts(Player player,Gift gift) {
         ArrayList<Gift> oldPendingGifts = pendingGifts.get(player);
         oldPendingGifts.add(gift);
         pendingGifts.put(player, oldPendingGifts);

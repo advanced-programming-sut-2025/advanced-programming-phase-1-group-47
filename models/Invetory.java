@@ -1,6 +1,6 @@
 package models;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import models.things.Item;
 
 public class Invetory {
@@ -39,8 +39,8 @@ public class Invetory {
         this.foods = foods;
     }
 
-    public void setItems(ArrayList<Item> items) {
-        this.items = items;
+    public void setItems(Item item) {
+        this.items.add(item);
     }
 
     public void setTools(ArrayList<Tool> tools) {
