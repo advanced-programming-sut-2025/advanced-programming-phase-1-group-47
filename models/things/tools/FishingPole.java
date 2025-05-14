@@ -11,7 +11,7 @@ public class FishingPole extends Item {
     private final RodType rodType; // Made final to ensure immutability
 
     public FishingPole(RodType rodType) {
-        super(rodType.getName(), +"-fishing pole", 54, rodType.getPrice(), 0, 1);
+        super(rodType.getName() + "-fishing pole", 54, rodType.getPrice(), 0, 1);
         this.rodType = rodType;
     }
 

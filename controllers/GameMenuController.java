@@ -183,6 +183,20 @@ public class GameMenuController {
         }
         return new Result<>(false, "can't find player username!");
     }
+    public Result<String> showFriendships() {
+        StringBuilder output = new StringBuilder();
+        for(Player player : App.getCurrentGame().getPlayers()) {
+            if(player.equals(App.getCurrentGame().getCurrentPlayer())) continue;
+            output.append(player.getUsername())
+                  .append("-")
+                  .append(player.getFriendshipLevel().get(App.getCurrentGame().getCurrentPlayer()))
+                  .append("-")
+                  .append(player.getFriendshipXP().get(App.getCurrentGame().getCurrentPlayer()));
+        }
+        return new Result<String>(false, output.toString());
+    }
+
+
     public Result<String> hugPlayer(String username) {
         for (Player player : App.getCurrentGame().getPlayers()) {
             if(player.getUsername().equals(username)) {

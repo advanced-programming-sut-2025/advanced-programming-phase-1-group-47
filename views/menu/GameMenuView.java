@@ -43,15 +43,15 @@ public class GameMenuView extends AppMenu {
         } else if ((matcher = models.enums.commands.GameMenu.cheatthor.getMatcher(input)) != null) {
             // handleCheatThor(matcher);
         } else if ((matcher = models.enums.commands.GameMenu.showweather.getMatcher(input)) != null) {
-             System.out.println(controller.showWeather().getData());
+            System.out.println(controller.showWeather().getData());
         } else if ((matcher = models.enums.commands.GameMenu.weatherforecast.getMatcher(input)) != null) {
-             System.out.println(controller.showWeatherForecast().getData());
+            System.out.println(controller.showWeatherForecast().getData());
         } else if ((matcher = models.enums.commands.GameMenu.cheatweatherset.getMatcher(input)) != null) {
             System.out.println(controller.changeWeather(matcher).getData());
         } else if ((matcher = models.enums.commands.GameMenu.greenhousebuild.getMatcher(input)) != null) {
             System.out.println(controller.BuildGreenHouse().getData());
         } else if ((matcher = models.enums.commands.GameMenu.walk.getMatcher(input)) != null) {
-             controller.walk(matcher,scanner);
+            controller.walk(matcher,scanner);
         } else if ((matcher = models.enums.commands.GameMenu.printmap.getMatcher(input)) != null) {
             controller.printMap();
         } else if ((matcher = models.enums.commands.GameMenu.showenergy.getMatcher(input)) != null) {
@@ -61,7 +61,7 @@ public class GameMenuView extends AppMenu {
         } else if ((matcher = models.enums.commands.GameMenu.cheatenergyunlimited.getMatcher(input)) != null) {
             controller.setEnergyCapacity();
         } else if ((matcher = models.enums.commands.GameMenu.showinventory.getMatcher(input)) != null) {
-             controller.showInventory();
+            controller.showInventory();
         } else if ((matcher = models.enums.commands.GameMenu.inventorytrashtotal.getMatcher(input)) != null) {
             System.out.println(controller.InventoryTrashTotal(matcher).getData());
         } else if ((matcher = models.enums.commands.GameMenu.inventorytrash.getMatcher(input)) != null) {
@@ -101,7 +101,41 @@ public class GameMenuView extends AppMenu {
             // handleCookingRecipe(matcher);
         } else if ((matcher = models.enums.commands.GameMenu.cookingprepare.getMatcher(input)) != null) {
             // handleCookingPrepare(matcher);
-        } else if ((matcher = models.enums.commands.GameMenu.eatfood.getMatcher(input)) != null) {
+        } else if ((matcher = models.enums.commands.GameMenu.friendships.getMatcher(input)) != null) {
+            // handleEatFood(matcher);
+        } else if ((matcher = models.enums.commands.GameMenu.talk.getMatcher(input)) != null) {
+            // handleEatFood(matcher);
+        } else if ((matcher = models.enums.commands.GameMenu.talkhistory.getMatcher(input)) != null) {
+            // handleEatFood(matcher);
+        } else if ((matcher = models.enums.commands.GameMenu.gift.getMatcher(input)) != null) {
+            // handleEatFood(matcher);
+        } else if ((matcher = models.enums.commands.GameMenu.giftlist.getMatcher(input)) != null) {
+            // handleEatFood(matcher);
+        } else if ((matcher = models.enums.commands.GameMenu.giftrate.getMatcher(input)) != null) {
+            // handleEatFood(matcher);
+        } else if ((matcher = models.enums.commands.GameMenu.gifthistory.getMatcher(input)) != null) {
+            // handleEatFood(matcher);
+        } else if ((matcher = models.enums.commands.GameMenu.hug.getMatcher(input)) != null) {
+            // handleEatFood(matcher);
+        } else if ((matcher = models.enums.commands.GameMenu.flower.getMatcher(input)) != null) {
+            // handleEatFood(matcher);
+        } else if ((matcher = models.enums.commands.GameMenu.askmarriage.getMatcher(input)) != null) {
+            // handleEatFood(matcher);
+        } else if ((matcher = models.enums.commands.GameMenu.respondmarriageaccept.getMatcher(input)) != null) {
+            // handleEatFood(matcher);
+        } else if ((matcher = models.enums.commands.GameMenu.respondmarriagereject.getMatcher(input)) != null) {
+            // handleEatFood(matcher);
+        } else if ((matcher = models.enums.commands.GameMenu.starttrade.getMatcher(input)) != null) {
+            // handleEatFood(matcher);
+        } else if ((matcher = models.enums.commands.GameMenu.trade.getMatcher(input)) != null) {
+            // handleEatFood(matcher);
+        } else if ((matcher = models.enums.commands.GameMenu.tradelist.getMatcher(input)) != null) {
+            // handleEatFood(matcher);
+        } else if ((matcher = models.enums.commands.GameMenu.traderesponseaccept.getMatcher(input)) != null) {
+            // handleEatFood(matcher);
+        } else if ((matcher = models.enums.commands.GameMenu.traderesponsereject.getMatcher(input)) != null) {
+            // handleEatFood(matcher);
+        } else if ((matcher = models.enums.commands.GameMenu.tradehistory.getMatcher(input)) != null) {
             // handleEatFood(matcher);
         }
         else if ((matcher = models.enums.commands.GameMenu.build.getMatcher(input)) != null) {
