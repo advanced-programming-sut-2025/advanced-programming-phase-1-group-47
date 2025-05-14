@@ -135,7 +135,7 @@ public class GameMenuController {
                     return new Result<>(false, "Player too far away!");
                 if(!player.GetHasTalkedToPlayer(App.getCurrentGame().getCurrentPlayer())){
                     player.addFriendshipXP(20, App.getCurrentGame().getCurrentPlayer());
-                    App.getCurrentGame().getCurrentPlayer().addFriendshipXP(20, player);
+                    App.getCurrentGame().players.get(App.currentGame.turn).addFriendshipXP(20, player);
                 }
                 messege = App.getCurrentGame().getCurrentPlayer().getUsername() + " : " + messege;
                 player.addMessegeToTalkHistory(App.getCurrentGame().getCurrentPlayer(), messege);

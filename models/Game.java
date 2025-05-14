@@ -8,7 +8,7 @@ import models.Shops.*;
 import models.enums.Weather;
 
 public class Game {
-    private final ArrayList<Player> players;
+    public ArrayList<Player> players;
     public Map map;
     public Time time = new Time();
     public Weather weather;
