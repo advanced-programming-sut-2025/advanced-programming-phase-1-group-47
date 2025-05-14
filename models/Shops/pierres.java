@@ -1,7 +1,6 @@
 package models.Shops;
 
 import java.util.ArrayList;
-
 import models.Shop;
 import models.enums.ShopType;
 import models.things.Item;
@@ -25,7 +24,7 @@ public class pierres {
         returnvalue.add(new Item("Grass Starter",25 , 125 , 0 , 1000000));
         returnvalue.add(new Item("Suger",27 , 125 , 0 , 1000000));
         returnvalue.add(new Item("White Flour", 28 , 125 , 0 , 1000000));
-        returnvalue.add(new Item("Rice",48 , 250 , 0 , 1000000));   
+        returnvalue.add(new Item("Rice",48 , 250 , 0 , 1000000));
         return returnvalue;
     }
 

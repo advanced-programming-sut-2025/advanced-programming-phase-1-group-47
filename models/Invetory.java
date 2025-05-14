@@ -1,7 +1,6 @@
 package models;
 
 import java.util.ArrayList;
-
 import models.things.Item;
 
 public class Invetory {
