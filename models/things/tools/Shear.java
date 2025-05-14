@@ -8,7 +8,7 @@ import models.things.Item;
 public class Shear extends Item {
 
     public Shear() {
-        super("shear", 58, 1000, 0, 1);
+        super("-shear", 58, 1000, 0, 1);
     }
 
     public int energyCost() {

@@ -22,7 +22,7 @@ public class QuarryFarm {
         }
 
         Cottage cottage = new Cottage(new Ground(new Point(4, 4), new Point(8, 8)),new Point(8,6));
-        ArrayList<greenHouse> greenHouses = new ArrayList<>();
+        greenHouse greenHouses ;
         ArrayList<Quarry> quarries = new ArrayList<>();
         ArrayList<Lake> lakes = new ArrayList<>();
 
@@ -34,7 +34,7 @@ public class QuarryFarm {
         changeTiles(new Point(25, 5), new Point(32, 10), TileType.QUARRY);
         changeTiles(new Point(32,7), new Point(32,7), TileType.DOOR);
         // Greenhouse – یکی، کوچک
-        greenHouses.add(new greenHouse(new Ground(new Point(35, 30), new Point(39,35)), new Point(37,30)));
+        greenHouses = (new greenHouse(new Ground(new Point(35, 30), new Point(39,35)), new Point(37,30)));
         changeTiles(new Point(35, 30), new Point(39,35), TileType.GREENHOUSE);
         changeTiles(new Point(37,30), new Point(37,30), TileType.DOOR);
         // Cottage

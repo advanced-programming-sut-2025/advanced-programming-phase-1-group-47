@@ -8,7 +8,7 @@ import models.things.Item;
 public class Scythe extends Item {
 
     public Scythe() {
-        super("scythe", 57, 0, 0, 1);
+        super("-scythe", 57, 0, 0, 1);
     }
 
     public int energyCost() {

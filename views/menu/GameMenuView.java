@@ -25,6 +25,7 @@ public class GameMenuView extends AppMenu {
             // handleDeleteCurrentGame(matcher);
         } else if ((matcher = models.enums.commands.GameMenu.nextturn.getMatcher(input)) != null) {
             App.currentGame.turn = (App.currentGame.turn + 1) % 4;
+            App.currentGame.currentPlayer = App.currentGame.getPlayers().get(((App.currentGame.turn - 1) < 0)? 4 + (App.currentGame.turn-1)%4 : (App.currentGame.turn)%4);
         } else if ((matcher = models.enums.commands.GameMenu.showtime.getMatcher(input)) != null) {
             System.out.println(controller.showTime().getData());
         } else if ((matcher = models.enums.commands.GameMenu.showdate.getMatcher(input)) != null) {
@@ -48,31 +49,29 @@ public class GameMenuView extends AppMenu {
         } else if ((matcher = models.enums.commands.GameMenu.cheatweatherset.getMatcher(input)) != null) {
             System.out.println(controller.changeWeather(matcher).getData());
         } else if ((matcher = models.enums.commands.GameMenu.greenhousebuild.getMatcher(input)) != null) {
-            // handleGreenhouseBuild(matcher);
+            System.out.println(controller.BuildGreenHouse().getData());
         } else if ((matcher = models.enums.commands.GameMenu.walk.getMatcher(input)) != null) {
              controller.walk(matcher,scanner);
         } else if ((matcher = models.enums.commands.GameMenu.printmap.getMatcher(input)) != null) {
             controller.printMap();
-        } else if ((matcher = models.enums.commands.GameMenu.mapreadinghelper.getMatcher(input)) != null) {
-//             handleMapReadingHelper(matcher);
         } else if ((matcher = models.enums.commands.GameMenu.showenergy.getMatcher(input)) != null) {
-//             handleShowEnergy(matcher);
+            System.out.println(controller.showEnergy().getData());
         } else if ((matcher = models.enums.commands.GameMenu.cheatenergyset.getMatcher(input)) != null) {
-            // handleCheatEnergySet(matcher);
+            System.out.println(controller.setEnergy(matcher).getData());
         } else if ((matcher = models.enums.commands.GameMenu.cheatenergyunlimited.getMatcher(input)) != null) {
-            // handleCheatEnergyUnlimited(matcher);
+            controller.setEnergyCapacity();
         } else if ((matcher = models.enums.commands.GameMenu.showinventory.getMatcher(input)) != null) {
              controller.showInventory();
         } else if ((matcher = models.enums.commands.GameMenu.inventorytrashtotal.getMatcher(input)) != null) {
-            // handleInventoryTrashTotal(matcher);
+            System.out.println(controller.InventoryTrashTotal(matcher).getData());
         } else if ((matcher = models.enums.commands.GameMenu.inventorytrash.getMatcher(input)) != null) {
-            // handleInventoryTrash(matcher);
+            System.out.println(controller.InventoryTrash(matcher).getData());
         } else if ((matcher = models.enums.commands.GameMenu.equiptool.getMatcher(input)) != null) {
-            // handleEquipTool(matcher);
+            System.out.println(controller.EquipTool(matcher).getData());
         } else if ((matcher = models.enums.commands.GameMenu.currenttool.getMatcher(input)) != null) {
-            // handleCurrentTool(matcher);
+            System.out.println(controller.showCurrentTool().getData());
         } else if ((matcher = models.enums.commands.GameMenu.availabletool.getMatcher(input)) != null) {
-            // handleAvailableTool(matcher);
+            System.out.println(controller.showAvailableTools().getData());
         } else if ((matcher = models.enums.commands.GameMenu.upgradetool.getMatcher(input)) != null) {
             // handleUpgradeTool(matcher);
         } else if ((matcher = models.enums.commands.GameMenu.tooluse.getMatcher(input)) != null) {
@@ -80,9 +79,8 @@ public class GameMenuView extends AppMenu {
         } else if ((matcher = models.enums.commands.GameMenu.craftinfo.getMatcher(input)) != null) {
             // handleCraftInfo(matcher);
         } else if ((matcher = models.enums.commands.GameMenu.plant.getMatcher(input)) != null) {
-            // handlePlant(matcher);
+            System.out.println(controller.plantPlant(matcher.group("seed"), matcher.group("direction")).getData());
         } else if ((matcher = models.enums.commands.GameMenu.showplant.getMatcher(input)) != null) {
-            // handleShowPlant(matcher);
         } else if ((matcher = models.enums.commands.GameMenu.fertilize.getMatcher(input)) != null) {
             // handleFertilize(matcher);
         } else if ((matcher = models.enums.commands.GameMenu.water.getMatcher(input)) != null) {

@@ -10,7 +10,7 @@ public class Hoe extends Item {
     private Type type;
 
     public Hoe(Type type) {
-        super(type.getName() + " hoe", 61, type.getPrice(), 0, 1);
+        super(type.getName() + "hoe", 61, type.getPrice(), 0, 1);
         this.type = type;
     }
 

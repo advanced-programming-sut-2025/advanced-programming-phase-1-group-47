@@ -11,7 +11,7 @@ public class Pickaxe extends Item {
     private Type type;
 
     public Pickaxe(Type type) {
-        super("pickaxe" + type.getName(), 56, type.getPrice(), 0, 1);
+        super(type.getName() + "-pickaxe", 56, type.getPrice(), 0, 1);
         this.type = type;
     }
 

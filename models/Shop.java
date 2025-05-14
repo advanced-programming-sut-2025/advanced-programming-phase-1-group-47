@@ -40,7 +40,6 @@ public class Shop {
         this.stoppingHour = 24;
         this.type = null;  // می‌توان بعداً با setter تنظیم کرد
     }
-
     public ArrayList<Item> getStock() {
         ArrayList<Item> combined = new ArrayList<>(permaStock);
         Season season = App.currentGame.time.getSeason();

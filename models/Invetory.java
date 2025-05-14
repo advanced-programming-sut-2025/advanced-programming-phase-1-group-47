@@ -1,16 +1,20 @@
 package models;
 
-import java.util.ArrayList;
-
+import java.util.HashMap;
 import models.things.Item;
 
 public class Invetory {
-//    private BackpackType backpackType;
+    //    private BackpackType backpackType;
     private ArrayList<eatble> foods = new ArrayList<>();
     private ArrayList<Item> items = new ArrayList<>();
     private ArrayList<Tool> tools = new ArrayList<>();
     private  int capacity = 20;
-
+    public Item findItemFromName(String name){
+        for(Item i : items)
+            if (i.getName().equals(name))
+                return i;
+        return null;
+    }
     public Invetory(int i) {
         this.capacity = 20;
     }

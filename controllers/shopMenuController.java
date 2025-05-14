@@ -1,6 +1,7 @@
 package controllers;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import models.*;
 import models.enums.ShopType;
@@ -13,41 +14,49 @@ public class shopMenuController {
 
         for (Item i : getSeasonalStock(store)) {
             if (i.getAmount() == 0) continue;
-            result.append(i.getName()).append(" - ").append(i.getValue()).append("\n");
+            result.append(i.getName()).append(" - ").append(i.getValue()).append("$\n");
         }
 
         result.append("Permanent stock:\n");
         for (Item i : store.getPermaStock()) {
             if (i.getAmount() == 0) continue;
-            result.append(i.getName()).append(" - ").append(i.getValue()).append("\n");
+            result.append(i.getName()).append(" - ").append(i.getValue()).append("$\n");
         }
 
         return new Result<>(true, result.toString());
     }
     public Result<String> showAllProducts(Shop store) {
         StringBuilder result = new StringBuilder();
-        for (Item i : App.currentGame.JojaMartStore.getSpringStock()) {
-            if (i.getAmount() == 0) continue;
-            result.append(i.getName()).append(" - ").append(i.getValue()).append("\n");
+
+        appendItemList(result, store.getSpringStock(), "Spring");
+        appendItemList(result, store.getSummerStock(), "Summer");
+        appendItemList(result, store.getFallStock(), "Fall");
+        appendItemList(result, store.getWinterStock(), "Winter");
+        appendItemList(result, store.getPermaStock(), "Permanent");
+
+        if (result.length() == 0) {
+            return new Result<>(true, "No products available in the shop.");
         }
-        for (Item i : store.getSummerStock()) {
-            if (i.getAmount() == 0) continue;
-            result.append(i.getName()).append(" - ").append(i.getValue()).append("\n");
-        }
-        for (Item i : store.getFallStock()) {
-            if (i.getAmount() == 0) continue;
-            result.append(i.getName()).append(" - ").append(i.getValue()).append("\n");
-        }
-        for (Item i : store.getWinterStock()) {
-            if (i.getAmount() == 0) continue;
-            result.append(i.getName()).append(" - ").append(i.getValue()).append("\n");
-        }
-        for (Item i : store.getPermaStock()) {
-            if (i.getAmount() == 0) continue;
-            result.append(i.getName()).append(" - ").append(i.getValue()).append("\n");
-        }
+
         return new Result<>(true, result.toString());
     }
+
+    private void appendItemList(StringBuilder result, List<Item> items, String label) {
+        if (items == null || items.isEmpty()) return;
+        result.append(label).append(" stock:\n");
+        boolean hasItem = false;
+        for (Item i : items) {
+            if (i != null && i.getAmount() > 0) {
+                result.append(i.getName()).append(" - ").append(i.getValue()).append("$\n");
+                hasItem = true;
+            }
+        }
+
+        if (!hasItem) {
+            result.append("No items available.\n");
+        }
+    }
+
     public Result<String> buy(Shop store, Matcher matcher) {
         int amount;
         store = returnStoreToApp(store);
@@ -80,6 +89,7 @@ public class shopMenuController {
                     return new Result<>(false, "the Store doesnt have this amount \nAmount : " + i.getAmount());
                 }
                 i.reduceAmount(amount);
+                player.setInvetory(i,amount);
                 return new Result<>(true, amount + " number  of product " + productName + " has been purchased");
             }
         }
@@ -195,27 +205,6 @@ public class shopMenuController {
         } else if(whatIsTileType().equals(TileType.STARDROPSALOON)) {
             return ShopType.TheSaloon;
         }
-        return null;
-    }
-
-    public void showAllProducts() {
-//        ShopType shopType = getShop();
-//
-//        Shop shop;
-    }
-
-    public void showAvailableProducts() {
-
-    }
-
-    public Result<String> purchase(String productName, String stringAmount) {
-//        if(!stringAmount.matches("^\\d$")) {
-//            return new Result<>(false, "Invalid form of amount!");
-//        }
-//
-//        int amount =Integer.parseInt(stringAmount);
-
-
         return null;
     }
 }

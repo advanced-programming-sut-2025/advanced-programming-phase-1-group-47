@@ -12,9 +12,9 @@ import models.things.tools.*;
 
 public class Player extends User {
     private Point Coordinates;
-    private int Energy;
+    private int Energy = 200;
     private Invetory invetory;
-
+    public Item currentToll;
     ArrayList<Animal> animals = new ArrayList<>();
     TrashCanType trashCanType = TrashCanType.REGULARTRASHCAN;
     private Buff buff = null;
@@ -25,7 +25,7 @@ public class Player extends User {
             new Skill(SkillType.FORAGING)
     };
     
-    private Energy energy;
+    public Energy EnergyObject = new Energy(200,200);
     private int money;
     private int id;
     //friendships
@@ -101,6 +101,14 @@ public class Player extends User {
         oldTalkhistory.add(messege);
         talkHistory.put(player, oldTalkhistory);
     }
+
+    public void setInvetory(Item item, int amount) {
+        Item i = this.invetory.findItemFromName(item.getName());
+        item.setAmount(amount + (i == null ? amount : i.getAmount() + amount));
+        this.invetory.setItems(item);
+    }
+
+    public void addGiftToPendingGifts(Player player, Gift gift) {
     public void addGiftToPendingGifts(Player player,Gift gift) {
         ArrayList<Gift> oldPendingGifts = pendingGifts.get(player);
         oldPendingGifts.add(gift);

@@ -1,5 +1,4 @@
 package models.enums;
-
 public enum TileType {
     EMPTY("⬜"),
     TREE("🌲"),
@@ -7,6 +6,7 @@ public enum TileType {
     FORAGING("🍄"),
     LAKE("🌊"),
     GREENHOUSE("🏡"),
+    GREENHOUSEREPAIRED("@@"),
     COTTAGE("🏘️"),
     DOOR("🚪"),
     WALL("🧱"),
@@ -21,7 +21,7 @@ public enum TileType {
     NPCHOUSE("🏰"),
     PERSON("🧑‍🌾"),
     THUNDERED("🌩️"),
-
+    // فروشگاه ها
     BLACKSMITH("⚒️"),
     JOJAMART("🛒"),
     PIERRESSTORE("🏪"),
@@ -38,8 +38,13 @@ public enum TileType {
     HEN("🐔"),
     PIG("🐖"),
     RABBIT("🐇"),
-    SHEEP("🐑")
-    ;
+    SHEEP("🐑"),
+
+    // کشاورزی
+    TILLED("🟫"),
+    SEED("🌱"),
+    PLANT("🌿"),
+    GROWN_PLANT("🥬");
 
     private final String sticker;
 
