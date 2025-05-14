@@ -1,7 +1,6 @@
 package models.Shops;
 
 import java.util.ArrayList;
-
 import models.Shop;
 import models.enums.ShopType;
 import models.things.Item;
@@ -20,12 +19,12 @@ public class TheSaloon {
     }
     private ArrayList<Item> permaStockBuilder() {
         ArrayList<Item> returnvalue = new ArrayList<>();//TODO
-        returnvalue.add(new Item("Beer",29 , 250 , 0 , 10000));
-        returnvalue.add(new Item("Trout Soup",29 , 250 , 0 , 10000));
-        returnvalue.add(new Item("Trout Soup",29 , 250 , 0 , 10000));
-        returnvalue.add(new Item("Trout Soup",29 , 250 , 0 , 10000));
-        returnvalue.add(new Item("Trout Soup",29 , 250 , 0 , 10000));
-        returnvalue.add(new Item("Trout Soup",29 , 250 , 0 , 10000));
+        returnvalue.add(new Item("Beer",26 , 400 , 0 , 10000));
+        returnvalue.add(new Item("Salad",35 , 220 , 0 , 10000));
+        returnvalue.add(new Item("Bread",31 , 120 , 0 , 10000));
+        returnvalue.add(new Item("Spaghetti",47 , 240 , 0 , 10000));
+        returnvalue.add(new Item("Pizza",5 , 600 , 0 , 10000));
+        returnvalue.add(new Item("Coffee",6 , 300 , 0 , 10000));
         return returnvalue;
     }
 

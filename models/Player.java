@@ -83,6 +83,9 @@ public class Player extends User {
     public void setHasBeenTalkedTo(Player player , boolean state) {
         hasBeenTalkedTo.put(player, state);
     }
+    public void setHasBeenGiftedTo (Player player , boolean state) {
+        hasBeenGiftedTo.put(player, state);
+    }
     public void setHasHuggedPlayer(Player player , boolean state) {
         hasbeenHugged.put(player, state);
     }

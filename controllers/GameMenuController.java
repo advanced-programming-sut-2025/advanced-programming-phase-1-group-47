@@ -5,6 +5,13 @@ import java.util.regex.Matcher;
 import models.*;
 import models.Map;
 import models.NPCs.*;
+import models.Shops.Blacksmith;
+import models.Shops.Carpenter;
+import models.Shops.FishShop;
+import models.Shops.JojaMart;
+import models.Shops.MarniesRanch;
+import models.Shops.TheSaloon;
+import models.Shops.pierres;
 import models.buildings.Building;
 import models.enums.Menu;
 import models.enums.Season;
@@ -368,14 +375,16 @@ public class GameMenuController {
         for (Item item : App.getCurrentGame().getCurrentPlayer().getInvetory().getItems()) {
             if(item.questEquals(quest.getRequiermentItems())) {
                 item.reduceAmount(quest.getRequiermentItems().getAmount());
-                if(item.getAmount() == 0)
-                    App.getCurrentGame().getCurrentPlayer().getInvetory().getItems().remove(item);
-                if(quest.getRewards().getItemID() == 201)
+                if(quest.getRewards().getItemID() == 201) //201 is the friendship level item that shall not exist
                    npc.addFriendship(200, App.getCurrentGame().getCurrentPlayer()); 
+                else if(npc.getFriendship().get(App.getCurrentGame().getCurrentPlayer()) >= 400)
+                        App.getCurrentGame().getCurrentPlayer().getInvetory().getItems().add(new Item(quest.getRewards(), quest.getRewards().getAmount() * 2));
                 else
                     App.getCurrentGame().getCurrentPlayer().getInvetory().getItems().add(quest.getRewards());
                 App.getCurrentGame().getCurrentPlayer().addMoney(quest.getRewardMoney());
                 quest.setIsDone(true);
+                if(item.getAmount() == 0)
+                    App.getCurrentGame().getCurrentPlayer().getInvetory().getItems().remove(item);
                 return new Result<>(true , "Quest completed");
             }
         }
@@ -724,9 +733,6 @@ public class GameMenuController {
     public Result<String> GiveGiftToNPC(NPC npc , Item gift) {
         return null;
     }
-    public Result<String> FinishQuest(Invetory playerItems , int QuestIndex) {
-        return null;
-    }
     public Result<String> showCraftInfo(String itemName){
         StringBuilder output = new StringBuilder();
         Plant plant = null;
@@ -904,8 +910,7 @@ public class GameMenuController {
 */
 
     public Result<String> harvestPlant(Plant plant) {
-        if((plant.getCurrentStage() != plant.getGrowStages().length - 1)
-         || (plant.getCurrentStageCount() != plant.getGrowStages()[plant.getGrowStages().length - 1] - 1))
+        if(plant.getCurrentStage() != -1)
             return new Result<>(false, "Plant not ready to harvest yet!");
         App.getCurrentGame().getPlants().remove(plant);
         App.getCurrentGame().getCurrentPlayer().getInvetory().addItem(plant.harvestPlant());
@@ -972,5 +977,59 @@ public class GameMenuController {
 
     public void showInventory() {
         App.getCurrentGame().getCurrentPlayer().getInvetory().showInventory();
+    }
+
+    //har chi mikhaid update she too shab barai farda ro bezanid inja 
+    public void setUpNextDay() {
+        for (Plant plant : App.getCurrentGame().getPlants()) {
+            if(plant.isHasBeenWatered())
+                plant.grow();
+            plant.setHasBeenWatered(false);
+        }
+        for (NPC npc : App.getCurrentGame().getNpcs()) {
+            for(Player player : App.getCurrentGame().getPlayers()) {
+                npc.getHasBeenGiftedTo().put(player, false);
+                npc.getHasBeenTalkedTo().put(player, false);
+                if (npc.getFriendship().get(player) >= 200)
+                    npc.getQuest2().getIsActive().put(player, true);
+            }
+        }
+        for(Player player1 : App.getCurrentGame().getPlayers())
+            for(Player player2 : App.getCurrentGame().getPlayers()) {
+                player1.setHasBeenTalkedTo(player2, false);
+                player2.setHasBeenTalkedTo(player1, false);
+                player1.setHasBeenGiftedTo(player2, false);
+                player2.setHasBeenGiftedTo(player1, false);
+                player1.setHasHuggedPlayer(player2, false);
+                player2.setHasHuggedPlayer(player1, false);
+            }
+        setShops();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    }
+    private void setShops() {
+        App.getCurrentGame().BlacksmithStore = new Blacksmith().blacksmithBulider();
+        App.getCurrentGame().JojaMartStore = new JojaMart().jojaBuilder();
+        App.getCurrentGame().CarpenterStore = new Carpenter().carpenterBuilder();
+        App.getCurrentGame().FishShopStore = new FishShop().fishShopBulider();
+        App.getCurrentGame().MarniesRanchStore = new MarniesRanch().MarnieRanchBuilder();
+        App.getCurrentGame().TheSaloonStore = new TheSaloon().theSaloonBuilder();
+        App.getCurrentGame().pierresStore = new pierres().pierresBuilder();
     }
 }

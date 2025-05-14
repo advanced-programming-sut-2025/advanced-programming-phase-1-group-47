@@ -108,4 +108,20 @@ public class NPC {
     public Map<Player, Integer> getFriendship() {
         return friendship;
     }
+
+    public void setHasBeenTalkedTo(Map<Player, Boolean> hasBeenTalkedTo) {
+        this.hasBeenTalkedTo = hasBeenTalkedTo;
+    }
+
+    public void setHasBeenGiftedTo(Map<Player, Boolean> hasBeenGiftedTo) {
+        this.hasBeenGiftedTo = hasBeenGiftedTo;
+    }
+
+    public Map<Player, Boolean> getHasBeenTalkedTo() {
+        return hasBeenTalkedTo;
+    }
+
+    public Map<Player, Boolean> getHasBeenGiftedTo() {
+        return hasBeenGiftedTo;
+    }
 }
