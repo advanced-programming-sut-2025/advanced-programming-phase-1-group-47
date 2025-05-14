@@ -12,10 +12,10 @@ public class EnergyController {
         player.setEnergy(energy);
         return null;
     }
-    public Result passOut(int energy, Player player){
-        if(energy < 0){
-            return new Result(true, new Energy());
-        }
-        return null;
+    public void passOut(int energy, Player player){
+//        if(energy < 0){
+//             new Energy(player.getEnergy(),0);
+//        }
+//        return null;
     }
 }

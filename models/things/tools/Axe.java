@@ -11,16 +11,11 @@ public class Axe extends Item {
     private Type type;
 
     public Axe(Type type) {
-        super(type.getName() + " axe", 52, type.getPrice(), 0, 1);
+        super(type.getName() + "-axe", 52, type.getPrice(), 0, 1);
         this.type = type;
     }
-
     public Type getType(){
         return type;
-    }
-
-    public Result<String> useTool(Point point) {
-        return new Result<>(true, "Axe used at point " + point);
     }
 
     public int energyCost() {

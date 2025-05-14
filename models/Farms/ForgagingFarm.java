@@ -22,12 +22,12 @@ public class ForgagingFarm {
         }
 
         Cottage cottage = new Cottage(new Ground(new Point(5, 5), new Point(9, 9)), new Point(5,7));
-        ArrayList<greenHouse> greenHouses = new ArrayList<>();
+        greenHouse greenHouses;
         ArrayList<Quarry> quarries = new ArrayList<>();
         ArrayList<Lake> lakes = new ArrayList<>();
 
         // Greenhouse – یکی، کوچک‌تر، پایین چپ
-        greenHouses.add(new greenHouse(new Ground(new Point(2, 30), new Point(6, 35)), new Point(6,33)));
+        greenHouses = (new greenHouse(new Ground(new Point(2, 30), new Point(6, 35)), new Point(6,33)));
         changeTiles(new Point(2, 30), new Point(6, 35), TileType.GREENHOUSE);
         changeTiles(new Point(6,32), new Point(6,32), TileType.DOOR);
         // Quarry – یکی، بالا راست

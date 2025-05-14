@@ -9,7 +9,7 @@ import models.enums.TileType;
 
 public  class greenHouse  extends Building  {
     ArrayList<Tree> trees = new ArrayList<>();
-    boolean hasRepeare = false;
+    public boolean hasRepeare = false;
     public Point Door;
     public greenHouse(Ground ground, Point Door) {
         super(ground);

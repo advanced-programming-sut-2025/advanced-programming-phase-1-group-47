@@ -7,7 +7,7 @@ import models.things.Item;
 
 public class MilkPail extends Item {
     public MilkPail() {
-        super("milk pail", 55, 1000, 0, 1);
+        super("-milk pail", 55, 1000, 0, 1);
     }
 
     public int energyCost() {

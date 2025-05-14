@@ -1,6 +1,7 @@
 package models;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import models.buildings.Cottage;
 import models.buildings.Lake;
@@ -13,13 +14,28 @@ public class Farm {
     Ground ground;
     ArrayList<Lake> lakes = new ArrayList<>();
     Cottage cottage;
-    ArrayList<greenHouse> greenHouses = new ArrayList<>();
+    greenHouse greenHouses;
     ArrayList<Quarry> quarries = new ArrayList<>();
+    private ArrayList<Plant> plants = new ArrayList<>();
     public Point personPoint;
     public ArrayList<Point> FarmDors = new ArrayList<>();
     public TileType lastTileType = TileType.COTTAGE;
-    public Farm(int farmId, Ground ground, Cottage cottage, ArrayList<greenHouse> greenHouses,
-                ArrayList<Quarry> quarries,ArrayList<Lake> lakes, Point personPoint) {
+    public HashMap<Point,Plant> plantMap = new HashMap<>();
+
+    public void setPlants(ArrayList<Plant> plants) {
+        this.plants = plants;
+    }
+    public HashMap<Point, Plant> getPlantMap() {
+        return plantMap;
+    }
+    public void setPlantMap(Plant plant, Point point) {
+        this.plantMap.put(point, plant);
+    }
+    public Plant getPlant(Point point) {
+        return plantMap.get(point);
+    }
+    public Farm(int farmId, Ground ground, Cottage cottage, greenHouse greenHouses,
+                ArrayList<Quarry> quarries, ArrayList<Lake> lakes, Point personPoint) {
         this.farmId = farmId;
         this.ground = ground;
         this.cottage = cottage;
@@ -29,11 +45,19 @@ public class Farm {
         this.personPoint = personPoint;
     }
 
+    public void setPlants(Plant plant) {
+        this.plants.add(plant);
+    }
+
+    public ArrayList<Plant> getPlants() {
+        return plants;
+    }
+
     public void setQuarries(ArrayList<Quarry> quarries) {
         this.quarries = quarries;
     }
 
-    public void setGreenHouses(ArrayList<greenHouse> greenHouses) {
+    public void setGreenHouses(greenHouse greenHouses) {
         this.greenHouses = greenHouses;
     }
 
@@ -53,7 +77,7 @@ public class Farm {
         this.cottage = cottage;
     }
 
-    public ArrayList<greenHouse> getGreenHouses() {
+    public greenHouse getGreenHouses() {
         return greenHouses;
     }
 

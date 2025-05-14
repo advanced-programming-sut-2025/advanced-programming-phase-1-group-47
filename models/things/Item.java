@@ -1,11 +1,13 @@
 package models.things;
 
+import models.things.tools.Type;
+
 public class Item {
     private String name;
     private int ItemID;
     private int ParentItemID; //for wine/pickled vegtables/fruit jam /fish /plant /i hate NPCs
     private int value;
-    private int amount;
+    private int amount = 0;
 
     public Item(String name ,int ItemID , int value , int ParentItemID , int amount) {
         this.name = name;
@@ -13,6 +15,9 @@ public class Item {
         this.value = value;
         this.ParentItemID = ParentItemID;
         this.amount = amount;
+    }
+    public Type getType(){
+        return null;
     }
     public Item(Item item , int amount) {
         this.name = item.getName();

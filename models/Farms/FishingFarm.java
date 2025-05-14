@@ -21,12 +21,12 @@ public class FishingFarm {
         }
         Cottage cottage = new Cottage(new Ground(new Point(1,1), new Point(5,5)),
                 new Point(5,3));
-        ArrayList<greenHouse> greenHouses = new ArrayList<>();
+        greenHouse greenHouses;
         ArrayList<Quarry> quarries = new ArrayList<>();
         ArrayList<Lake> lakes = new ArrayList<>();
 
         // Greenhouse – یک عدد، کوچک، بالا سمت چپ
-        greenHouses.add(new greenHouse(new Ground(new Point(2, 2), new Point(6, 7)), new Point(2,5)));
+        greenHouses = (new greenHouse(new Ground(new Point(2, 2), new Point(6, 7)), new Point(2,5)));
         changeTiles(new Point(2, 2), new Point(6,7), TileType.GREENHOUSE);
         changeTiles(new Point(2, 5), new Point(2,5), TileType.DOOR);
         // Quarry – یک عدد، پایین سمت راست

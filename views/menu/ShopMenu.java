@@ -1,5 +1,6 @@
 package views.menu;
 
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Scanner;
 import java.util.regex.Matcher;
@@ -33,6 +34,7 @@ public class ShopMenu extends AppMenu{
         } else if (StoreName.equalsIgnoreCase("STARDROPSALOON")){
             store = App.currentGame.TheSaloonStore;
         }
+        System.out.println("Welcome to " +  store.getType().toString().toLowerCase(Locale.ROOT) + " shop");
     }
     @Override
     public void check(Scanner scanner) {
