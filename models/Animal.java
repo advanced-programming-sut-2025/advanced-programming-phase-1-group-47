@@ -5,22 +5,25 @@ import java.util.Map;
 
 import models.enums.AnimalProductType;
 import models.enums.AnimalType;
+import models.things.Item;
 
-public abstract class Animal {
+public class Animal extends Item {
     private String name;
     private final AnimalType animalType;
     private Map<Player, Integer> friendship = new HashMap<>();
     private AnimalProductType productType;
     public Animal(AnimalType animalType) {
+        super(animalType.getName(),animalType.getItemId(),animalType.getPrice(),-1,0);
         this.animalType = animalType;
+
     }
 
     public void setProductType(AnimalProductType productType) {
         this.productType = productType;
     }
-    public Animal(AnimalProductType productType,AnimalType animalType, Map<Player, Integer> friendship, AnimalType animal, Point point, String name) {
+    public void Animal(AnimalProductType productType,AnimalType animalType, Map<Player, Integer> friendship, AnimalType animal, Point point, String name) {
         this.productType = productType;
-        this.animalType = animalType;
+//        this.animalType = animalType;
         this.friendship = friendship;
         this.name = name;
     }

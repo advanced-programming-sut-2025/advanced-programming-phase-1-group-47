@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import models.enums.AnimalType;
 import models.enums.Season;
 import models.things.Item;
 
@@ -11,10 +12,12 @@ public class AllTheItemsInTheGame {
 
     public static final Map<Integer, Plant> allPlants;
     public static final Map<Integer, Item> allItems;
+    private static Map<Integer, Animal> allAnimals;
 
     static {
         // اول allPlants را مقداردهی می‌کنیم
         Map<Integer, Plant> tempPlants = new HashMap<>();
+        Map<Integer, Animal> tempAnimal = new HashMap<>();
         tempPlants.put(302, new Plant(302, new Point(0, 0), "Blue Jazz", 50, true, 45, 20, "Jazz Seeds", 0, 0, 7, Season.SPRING, new int[]{1, 2, 2, 2}, false, false, false,0));
         tempPlants.put(303, new Plant(303, new Point(0, 0), "Carrot", 35, true, 75, 33, "Carrot Seeds", 0, 0, 3, Season.SPRING, new int[]{1, 1, 1}, false, false, false,0));
         tempPlants.put(304, new Plant(304, new Point(0, 0), "Cauliflower", 175, true, 75, 33, "Cauliflower Seeds", 0, 0, 12, Season.SPRING, new int[]{1, 2, 4, 4, 1}, false, true, false,0));
@@ -94,8 +97,13 @@ public class AllTheItemsInTheGame {
         tempPlants.put(378, new foragingCrop(new Point(0, 0), 378, "Snow Yam", Season.WINTER, 100, 30, 30));
         tempPlants.put(379, new foragingCrop(new Point(0, 0), 379, "Winter Root", Season.WINTER, 70, 25, 30));
 
+        tempAnimal.put(AnimalType.COW.getItemId(), new Animal(AnimalType.COW));
+        tempAnimal.put(AnimalType.HEN.getItemId(), new Animal(AnimalType.HEN));
+        tempAnimal.put(AnimalType.DUCK.getItemId(), new Animal(AnimalType.DUCK));
+        tempAnimal.put(AnimalType.PIG.getItemId(), new Animal(AnimalType.PIG));
+        tempAnimal.put(AnimalType.GOAT.getItemId(), new Animal(AnimalType.GOAT));
+        tempAnimal.put(AnimalType.COW.getItemId(), new Animal(AnimalType.COW));
         allPlants = Collections.unmodifiableMap(tempPlants);
-
         // بعد از مقداردهی allPlants حالا می‌تونیم ازش استفاده کنیم
         Map<Integer, Item> tempItems = new HashMap<>();
         for (int i = 302; i < 380; i++) {
