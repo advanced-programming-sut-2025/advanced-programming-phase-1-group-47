@@ -223,4 +223,8 @@ public class Player extends User {
     public Map<Player, ArrayList<Gift>> getGiftHistory() {
         return giftHistory;
     }
+
+    public Map<Player, ArrayList<String>> getTalkHistory() {
+        return talkHistory;
+    }
 }
