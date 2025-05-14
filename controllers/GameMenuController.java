@@ -186,7 +186,7 @@ public class GameMenuController {
     public Result<String> showFriendships() {
         StringBuilder output = new StringBuilder();
         for(Player player : App.getCurrentGame().getPlayers()) {
-            if(player.equals(App.getCurrentGame().getCurrentPlayer())) continue;
+//            if(player.equals(App.getCurrentGame().getCurrentPlayer())) continue;
             output.append(player.getUsername())
                   .append("-\n")
                   .append(player.getFriendshipLevel().get(App.getCurrentGame().getCurrentPlayer()))
@@ -215,9 +215,14 @@ public class GameMenuController {
         return new Result<>(false, "can't find player username!");
     }
     private boolean isPlayerNear(Player player) {
-        int dx = Math.abs(player.getCoordinates().getX() - App.getCurrentGame().getCurrentPlayer().getCoordinates().getX());
-        int dy = Math.abs(player.getCoordinates().getY() - App.getCurrentGame().getCurrentPlayer().getCoordinates().getY());
-        return dx < 2 && dy < 2;
+        Point playerPOint = App.currentGame.map.farms[App.currentGame.turn].personPoint;
+        TileType[] Neighbers = getSurroundingTiles(playerPOint);
+        for (TileType type : Neighbers) {
+            if (type.equals(TileType.PERSON)) {
+                return true;
+            }
+        }
+        return false;
     }
     
     public Result<String> TalkToNPC(String npcname) {

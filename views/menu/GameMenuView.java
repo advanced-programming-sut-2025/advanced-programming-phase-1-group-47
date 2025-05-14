@@ -170,6 +170,8 @@ public class GameMenuView extends AppMenu {
                     App.farmStart[App.currentGame.turn].x) + "," + (App.currentGame.map.farms[App.currentGame.turn].personPoint.y +
                     App.farmStart[App.currentGame.turn].y) + ")");
             System.out.println("Player turn :" + App.currentGame.turn);
+            System.out.println(App.currentGame.getPlayers().get((App.currentGame.turn + 1)%4).getUsername());
+
             // handleBuild(matcher);
         }
         else {
