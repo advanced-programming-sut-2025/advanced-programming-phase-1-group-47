@@ -1121,3 +1121,4 @@ public class GameMenuController {
         App.getCurrentGame().pierresStore = new pierres().pierresBuilder();
     }
 }
+//
