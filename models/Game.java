@@ -3,7 +3,6 @@ package models;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
-
 import models.NPCs.*;
 import models.Shops.*;
 import models.enums.Weather;
@@ -24,6 +23,7 @@ public class Game {
     public Shop FishShopStore = new FishShop().fishShopBulider();
     public Shop MarniesRanchStore = new MarniesRanch().MarnieRanchBuilder();
     public Shop TheSaloonStore = new TheSaloon().theSaloonBuilder();
+    public Shop pierresStore = new pierres().pierresBuilder();
 
     public int turn = 0;
     private ArrayList<Shop> shops;

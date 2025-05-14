@@ -78,7 +78,23 @@ public class Plant {
         //figure out quality with skills and rand here @amoojoey
         return new Product(name , plantID ,baseValue , 301 ,amount ,isEdible , energy ,health , quality ,isFruit , !isFruit );
     }
+    public void grow() {
+        if(currentStage == -1)
+            return;
+        int currentCap = growStages[currentStage];
+        if ( growStages.length - 1 == currentStage && growStages[growStages.length - 1] - 1 ==currentStageCount){
+            currentStage = -1;
+            return;
+        }
+        if (currentStageCount + 1 == currentCap) {
+            currentStageCount=0;
+            currentStage++;
+        }
+        else
+            currentStageCount++;
 
+    }
+ 
     public int getPlantID() {
         return plantID;
     }
