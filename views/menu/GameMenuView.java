@@ -102,23 +102,23 @@ public class GameMenuView extends AppMenu {
         } else if ((matcher = models.enums.commands.GameMenu.cookingprepare.getMatcher(input)) != null) {
             // handleCookingPrepare(matcher);
         } else if ((matcher = models.enums.commands.GameMenu.friendships.getMatcher(input)) != null) {
-            // handleEatFood(matcher);
+            System.out.println(controller.showFriendships().getData());
         } else if ((matcher = models.enums.commands.GameMenu.talk.getMatcher(input)) != null) {
-            // handleEatFood(matcher);
+            System.out.println(controller.talkToPlayer(matcher.group("username"), matcher.group("message")).getData());
         } else if ((matcher = models.enums.commands.GameMenu.talkhistory.getMatcher(input)) != null) {
-            // handleEatFood(matcher);
+            System.out.println(controller.showTalkHistory(matcher.group("username")).getData());
         } else if ((matcher = models.enums.commands.GameMenu.gift.getMatcher(input)) != null) {
-            // handleEatFood(matcher);
+            System.out.println(controller.giveGiftToPlayer(matcher.group("username"), matcher.group("item"), matcher.group("amount")).getData());
         } else if ((matcher = models.enums.commands.GameMenu.giftlist.getMatcher(input)) != null) {
-            // handleEatFood(matcher);
+            System.out.println(controller.listGifts().getData());
         } else if ((matcher = models.enums.commands.GameMenu.giftrate.getMatcher(input)) != null) {
-            // handleEatFood(matcher);
+            System.out.println(controller.rateGift(matcher.group("giftNumber"), matcher.group("rate")).getData());
         } else if ((matcher = models.enums.commands.GameMenu.gifthistory.getMatcher(input)) != null) {
-            // handleEatFood(matcher);
+            System.out.println(controller.listGiftHistory(matcher.group("username")).getData());
         } else if ((matcher = models.enums.commands.GameMenu.hug.getMatcher(input)) != null) {
-            // handleEatFood(matcher);
+            System.out.println(controller.hugPlayer(matcher.group("username")).getData());
         } else if ((matcher = models.enums.commands.GameMenu.flower.getMatcher(input)) != null) {
-            // handleEatFood(matcher);
+            System.out.println(controller.giveFlower(matcher.group("username")));
         } else if ((matcher = models.enums.commands.GameMenu.askmarriage.getMatcher(input)) != null) {
             // handleEatFood(matcher);
         } else if ((matcher = models.enums.commands.GameMenu.respondmarriageaccept.getMatcher(input)) != null) {
@@ -126,7 +126,7 @@ public class GameMenuView extends AppMenu {
         } else if ((matcher = models.enums.commands.GameMenu.respondmarriagereject.getMatcher(input)) != null) {
             // handleEatFood(matcher);
         } else if ((matcher = models.enums.commands.GameMenu.starttrade.getMatcher(input)) != null) {
-            // handleEatFood(matcher);
+//            System.out.println(controller.);
         } else if ((matcher = models.enums.commands.GameMenu.trade.getMatcher(input)) != null) {
             // handleEatFood(matcher);
         } else if ((matcher = models.enums.commands.GameMenu.tradelist.getMatcher(input)) != null) {
