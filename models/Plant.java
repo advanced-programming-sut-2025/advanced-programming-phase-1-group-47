@@ -81,6 +81,13 @@ public class Plant {
     public void grow() {
         if(currentStage == -1)
             return;
+        if (currentStage == -2) {
+            if (currentStageCount == regrowthTime - 1)
+                currentStage = -1;
+            else
+                currentStageCount++;
+            return;
+        }
         int currentCap = growStages[currentStage];
         if ( growStages.length - 1 == currentStage && growStages[growStages.length - 1] - 1 ==currentStageCount){
             currentStage = -1;
@@ -177,5 +184,13 @@ public class Plant {
 
     public void setHasBeenFertilized(boolean hasBeenFertilized) {
         this.hasBeenFertilized = hasBeenFertilized;
+    }
+
+    public void setCurrentStage(int currentStage) {
+        this.currentStage = currentStage;
+    }
+
+    public void setCurrentStageCount(int currentStageCount) {
+        this.currentStageCount = currentStageCount;
     }
 }

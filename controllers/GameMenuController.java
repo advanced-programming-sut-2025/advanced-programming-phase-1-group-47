@@ -1017,9 +1017,19 @@ public class GameMenuController {
                 daysPast+=plant.getCurrentStageCount();
         }
         StringBuilder output= new StringBuilder();
-        output.append("Current Grow Stage: ")
-              .append(plant.getCurrentStage())
-              .append("\n")
+        output.append("Current Grow Stage: ");
+        switch (plant.getCurrentStage()) {
+            case -1:
+                output.append("READY TO HARVEST");
+                break;
+            case -2:
+                output.append("REGROWING");
+                break;
+            default:
+                output.append(plant.getCurrentStage());
+                break;
+        }
+        output.append("\n")
               .append("current Grow Stage Count (days in current grow stage) :")
               .append(plant.getCurrentStageCount())
               .append("\n")
@@ -1029,9 +1039,18 @@ public class GameMenuController {
               .append("is fertilized? ")
               .append(plant.isHasBeenFertilized())
               .append("\n")
-              .append("Days Until Ready to Harvest: ")
-              .append(plant.getTotalHarvestTime() - daysPast)
-              .append("\n");
+              .append("Days Until Ready to Harvest: ");
+        switch (plant.getCurrentStage()) {
+            case -2:
+                output.append(plant.getRegrowthTime() - plant.getCurrentStageCount());
+                break;
+            case -1:
+                output.append(0);
+                break;
+            default:
+                output.append(plant.getTotalHarvestTime() - daysPast);
+                break;
+        }
         return output.toString();
     }
 
@@ -1086,7 +1105,12 @@ public class GameMenuController {
     public Result<String> harvestPlant(Plant plant) {
         if(plant.getCurrentStage() != -1)
             return new Result<>(false, "Plant not ready to harvest yet!");
-        App.getCurrentGame().getPlants().remove(plant);
+        if(!plant.isIsReUsable())
+            App.getCurrentGame().getPlants().remove(plant);
+        else{
+            plant.setCurrentStage(-2);
+            plant.setCurrentStageCount(0);
+        }
         App.getCurrentGame().getCurrentPlayer().getInvetory().addItem(plant.harvestPlant());
 
         //@sarsar change tiltype back (Point at plant.getpoint)

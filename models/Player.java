@@ -29,7 +29,7 @@ public class Player extends User {
     public Energy EnergyObject = new Energy(200,200);
     private int money;
     private int id;
-    //friendships
+    //friendships & trade
     private Map <Player, Integer> friendshipXP;
     private Map <Player, Integer> friendshipLevel;
     private Map <Player, ArrayList<String>> talkHistory;
@@ -38,8 +38,9 @@ public class Player extends User {
     private Map <Player, Boolean> hasBeenTalkedTo;
     private Map <Player, Boolean> hasBeenGiftedTo;
     private Map <Player, Boolean> hasbeenHugged;
+    private Map <Player, ArrayList<Trade>> pendingTrades;
     private Player partner;
-    //friendships
+    //friendships & trade
     public Player(String username, String password, String email, String nickname, Gender gender, String securityQuestion, String securityAnswer) {
 
         super(username, password, email, nickname, gender, securityQuestion, securityAnswer);
@@ -54,6 +55,7 @@ public class Player extends User {
         hasBeenTalkedTo = new HashMap<>();
         hasBeenGiftedTo = new HashMap<>();
         hasbeenHugged = new HashMap<>();
+        pendingTrades = new HashMap<>();
         partner = null;
         invetory.addItem(new Axe(Type.REGULAR));
         invetory.addItem(new Hoe(Type.REGULAR));
@@ -71,6 +73,7 @@ public class Player extends User {
             talkHistory.put(player, new ArrayList<>());
             giftHistory.put(player, new ArrayList<>());
             pendingGifts.put(player, new ArrayList<>());
+            pendingTrades.put(player, new ArrayList<>());
             hasBeenGiftedTo.put(player, false);
             hasBeenTalkedTo.put(player, false);
             hasbeenHugged.put(player, false);
@@ -103,6 +106,11 @@ public class Player extends User {
         oldTalkhistory.add(messege);
         talkHistory.put(player, oldTalkhistory);
     }
+    public void addTradeToPendingTrades(Player player , Trade trade) {
+        ArrayList<Trade> oldPendingTrades = pendingTrades.get(player);
+        oldPendingTrades.add(trade);
+        pendingTrades.put(player, oldPendingTrades);
+    }
 
     public void setInvetory(Item item, int amount) {
         Item i = this.invetory.findItemFromName(item.getName());
@@ -131,6 +139,22 @@ public class Player extends User {
 
         friendshipLevel.put(player, level);
         friendshipXP.put(player, xp);
+    }
+    public void reduceFriendshipXP(int amount , Player player) {
+        int xp = friendshipXP.get(player) - amount;
+        int level = friendshipLevel.get(player);
+        if (xp < 0) {
+            if(level > 2 || level == 0)
+                xp=0;
+            else {
+                level--;
+                xp = 100 * (level+1) + xp;
+            }
+        }
+
+        friendshipLevel.put(player, level);
+        friendshipXP.put(player, xp);
+            
     }
 
     public void gainXP(SkillType type , int xp) {
@@ -235,5 +259,9 @@ public class Player extends User {
 
     public void setPartner(Player partner) {
         this.partner = partner;
+    }
+
+    public Map<Player, ArrayList<Trade>> getPendingTrades() {
+        return pendingTrades;
     }
 }
