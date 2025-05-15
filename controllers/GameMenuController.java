@@ -133,11 +133,11 @@ public class GameMenuController {
             if(player.getUsername().equals(username)) {
                 if(!isPlayerNear(player))
                     return new Result<>(false, "Player too far away!");
-                if(!player.GetHasTalkedToPlayer(App.getCurrentGame().getCurrentPlayer())){
+//                if(!player.GetHasTalkedToPlayer(App.getCurrentGame().getCurrentPlayer())){
                     System.out.println(player.getUsername() + " has no Talked To Player " + App.getCurrentGame().getCurrentPlayer().getUsername());
                     player.addFriendshipXP(20, App.getCurrentGame().getCurrentPlayer());
                     App.getCurrentGame().getCurrentPlayer().addFriendshipXP(20, player);
-                }
+//                }
                 messege = App.getCurrentGame().getCurrentPlayer().getUsername() + " : " + messege;
                 player.addMessegeToTalkHistory(App.getCurrentGame().getCurrentPlayer(), messege);
                 App.getCurrentGame().getCurrentPlayer().addMessegeToTalkHistory(player, messege);
@@ -190,7 +190,7 @@ public class GameMenuController {
 //            if(player.equals(App.getCurrentGame().getCurrentPlayer())) continue;
             output.append("Username: ").append(player.getUsername()).append("\n")
                     .append("Friendship Level: ").append(player.getFriendshipLevel().get(App.getCurrentGame().getCurrentPlayer())).append("\n")
-                    .append("Friendship XP: ").append(player.getFriendshipXP().get(App.getCurrentGame().getCurrentPlayer())).append("\n");
+                    .append("Friendship XP: ").append(player.getFriendshipXP().get(App.getCurrentGame().getCurrentPlayer())).append("\n\n");
         }
         return new Result<String>(false, output.toString());
     }
