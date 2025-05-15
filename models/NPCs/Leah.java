@@ -42,7 +42,7 @@ public class Leah {
     private Quest questBuilder1() {
         Item requieredItems = new Item("HardWood", 46, 15, 0, 10);
         Item rewards = new Item("null item", 0, 0, 0, 1);
-        Quest quest = new Quest(requieredItems, rewards , 500 , 7,false);
+        Quest quest = new Quest(requieredItems, rewards , 500 , 7,true);
         return quest;
     }
     private Quest questBuilder2() {

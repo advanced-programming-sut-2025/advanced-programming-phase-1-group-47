@@ -41,7 +41,7 @@ public class Sebastion {
     private Quest questBuilder1() {
         Item requieredItems = new Item("Iron Ore", 1, 10, 0, 50);
         Item rewards = new Item("Diamond", 39, 750, 0, 1);
-        Quest quest = new Quest(requieredItems, rewards , 0 ,13,false);
+        Quest quest = new Quest(requieredItems, rewards , 0 ,13,true);
         return quest;
     }
     private Quest questBuilder2() {
