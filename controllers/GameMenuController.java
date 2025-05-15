@@ -15,6 +15,7 @@ import models.Shops.MarniesRanch;
 import models.Shops.TheSaloon;
 import models.Shops.pierres;
 import models.buildings.Building;
+import models.enums.Gender;
 import models.enums.Menu;
 import models.enums.Season;
 import models.enums.TileType;
@@ -145,11 +146,30 @@ public class GameMenuController {
                 App.getCurrentGame().getCurrentPlayer().addMessegeToTalkHistory(player, messege);
                 player.setHasBeenTalkedTo(App.getCurrentGame().getCurrentPlayer(), true);
                 App.getCurrentGame().getCurrentPlayer().setHasBeenTalkedTo(player, true);
+                player.addNotifToNotifications("You have a new messege!!!! - "+ messege);
                 return new Result<>(true, messege);
             }
         }
         return new Result<>(false, "can't find player username!");
     }
+    public Result<String> showHistory(String username) {
+        boolean found = false;
+        StringBuilder output = new StringBuilder();
+        for(Player player : App.getCurrentGame().getPlayers()) {
+            if(player.getUsername().equals(username)){
+                found = true;
+                for(String messege : App.getCurrentGame().getCurrentPlayer().getTalkHistory().get(player)) {
+                    output.append(messege)
+                        .append("\n");
+                }
+            }
+        }
+        if(found) return new Result<String>(true, output.toString());
+        return new Result<String>(false, "User not real!");
+    }
+
+
+
     public Result<String> giveGiftToPlayer(String username , String itemName , String itemAmount) {
         for (Player player : App.getCurrentGame().getPlayers()) {
             if(player.getUsername().equals(username)) {
@@ -178,6 +198,7 @@ public class GameMenuController {
                         player.addGiftToPendingGifts(App.getCurrentGame().getCurrentPlayer(), new Gift(giftedItem, App.getGiftIdCounter()));
                         player.getInvetory().addItem(giftedItem);
                         App.addGiftIdCounter();
+                        player.addNotifToNotifications("You have a new gift!!!!!!! (check using gift list)");
                         return new Result<>(true, "Gift Given!");
                     }
                 }
@@ -189,12 +210,15 @@ public class GameMenuController {
     public Result<String> showFriendships() {
         StringBuilder output = new StringBuilder();
         for(Player player : App.getCurrentGame().getPlayers()) {
-//            if(player.equals(App.getCurrentGame().getCurrentPlayer())) continue;
             output.append("Username: ").append(player.getUsername()).append("\n")
-                    .append("Friendship Level: ").append(player.getFriendshipLevel().get(App.getCurrentGame().getCurrentPlayer())).append("\n")
-                    .append("Friendship XP: ").append(player.getFriendshipXP().get(App.getCurrentGame().getCurrentPlayer())).append("\n\n");
+                  .append("Friendship Level: ").append(player.getFriendshipLevel().get(App.getCurrentGame().getCurrentPlayer())).append("\n")
+                  .append("Friendship XP: ");
+            if(player.getFriendshipXP().get(App.getCurrentGame().getCurrentPlayer()) > (player.getFriendshipLevel().get(App.getCurrentGame().getCurrentPlayer()) + 1) * 100 )
+                output.append((player.getFriendshipLevel().get(App.getCurrentGame().getCurrentPlayer()) + 1) * 100);
+            else
+                output.append(player.getFriendshipXP().get(App.getCurrentGame().getCurrentPlayer()) ); 
         }
-        return new Result<String>(false, output.toString());
+        return new Result<>(true, output.toString());
     }
 
     public Result<String> hugPlayer(String username) {
@@ -386,6 +410,7 @@ public class GameMenuController {
                         currentPlayer.setFriendshipLevel(player , 3);
                         player.setFriendshipXP(currentPlayer , 0);
                         currentPlayer.setFriendshipXP(player , 0);
+                        player.addNotifToNotifications(currentPlayer.getUsername() + " Gave you a flower!!!!");
                         return new Result<String>(true, "Flower Given!");
                     }
                 }
@@ -395,6 +420,39 @@ public class GameMenuController {
         }
         return new Result<>(false, "can't find player username!");
     }
+
+    public Result<String> askMarriage(String username , String ring) {
+        Player currentPlayer = App.getCurrentGame().getCurrentPlayer();
+        if(currentPlayer.getGender().equals(Gender.Female))
+            return new Result<String>(false, "Only male players can ask for marriage.");
+        if(!ring.equalsIgnoreCase("Wedding Ring"))
+            return new Result<String>(false, "That is not a wedding ring!");
+        for (Player player : App.getCurrentGame().getPlayers()) {
+            if(username.equalsIgnoreCase(player.getUsername())) {
+                if(player.getGender().equals(Gender.Male))
+                    return new Result<String>(false, "You are Gay!!!");
+                if(player.getFriendshipLevel().get(currentPlayer)!=3 || player.getFriendshipXP().get(currentPlayer) < 400)
+                    return new Result<String>(false, "You are not Close enough friends to do that!");
+                for (Item item : currentPlayer.getInvetory().getItems()) {
+                    if(item.getItemID() == 203){
+                        player.getInvetory().addItem(item);
+                        currentPlayer.getInvetory().getItems().remove(item);
+                        player.setFriendshipLevel(currentPlayer , 4);
+                        currentPlayer.setFriendshipLevel(player , 4);
+                        player.setFriendshipXP(currentPlayer , 0);
+                        currentPlayer.setFriendshipXP(player , 0);
+                        currentPlayer.setPartner(player);
+                        player.setPartner(currentPlayer);
+                        player.addNotifToNotifications("You are now married to " + currentPlayer.getUsername() + "!!!!!!");
+                        return new Result<String>(true, "You are now married!");
+                    }
+                }
+                return new Result<String>(false, "No ring!");
+            }
+        }
+        return new Result<String>(false, "player not found!");
+    }
+//    public Result<String>()
   
     public Result<String> listQuests() {
         StringBuilder output = new StringBuilder();
@@ -1013,9 +1071,19 @@ public class GameMenuController {
                 daysPast+=plant.getCurrentStageCount();
         }
         StringBuilder output= new StringBuilder();
-        output.append("Current Grow Stage: ")
-              .append(plant.getCurrentStage())
-              .append("\n")
+        output.append("Current Grow Stage: ");
+        switch (plant.getCurrentStage()) {
+            case -1:
+                output.append("READY TO HARVEST");
+                break;
+            case -2:
+                output.append("REGROWING");
+                break;
+            default:
+                output.append(plant.getCurrentStage());
+                break;
+        }
+        output.append("\n")
               .append("current Grow Stage Count (days in current grow stage) :")
               .append(plant.getCurrentStageCount())
               .append("\n")
@@ -1025,9 +1093,18 @@ public class GameMenuController {
               .append("is fertilized? ")
               .append(plant.isHasBeenFertilized())
               .append("\n")
-              .append("Days Until Ready to Harvest: ")
-              .append(plant.getTotalHarvestTime() - daysPast)
-              .append("\n");
+              .append("Days Until Ready to Harvest: ");
+        switch (plant.getCurrentStage()) {
+            case -2:
+                output.append(plant.getRegrowthTime() - plant.getCurrentStageCount());
+                break;
+            case -1:
+                output.append(0);
+                break;
+            default:
+                output.append(plant.getTotalHarvestTime() - daysPast);
+                break;
+        }
         return output.toString();
     }
 
@@ -1082,7 +1159,12 @@ public class GameMenuController {
     public Result<String> harvestPlant(Plant plant) {
         if(plant.getCurrentStage() != -1)
             return new Result<>(false, "Plant not ready to harvest yet!");
-        App.getCurrentGame().getPlants().remove(plant);
+        if(!plant.isIsReUsable())
+            App.getCurrentGame().getPlants().remove(plant);
+        else{
+            plant.setCurrentStage(-2);
+            plant.setCurrentStageCount(0);
+        }
         App.getCurrentGame().getCurrentPlayer().getInvetory().addItem(plant.harvestPlant());
 
         //@sarsar change tiltype back (Point at plant.getpoint)
@@ -1155,9 +1237,13 @@ public class GameMenuController {
     //har chi mikhaid update she too shab barai farda ro bezanid inja 
     public void setUpNextDay() {
         for (Plant plant : App.getCurrentGame().getPlants()) {
-            if(plant.isHasBeenWatered())  plant.grow();
-            plant.setHasBeenWatered(false);
+            if (plant.isHasBeenWatered())  plant.grow();
+            if (App.getCurrentGame().tomarrowsWeather.equals(Weather.RAINY))
+                plant.setHasBeenWatered(true);
+            else
+                plant.setHasBeenWatered(false);
         }
+        //CHANGE WEATHER INTO TOMARROWS WEATHER AND CREATE NEW TOMARROWS WEATHER HERE 
         for (NPC npc : App.getCurrentGame().getNpcs()) {
             for(Player player : App.getCurrentGame().getPlayers()) {
                 npc.getHasBeenGiftedTo().put(player, false);
@@ -1168,6 +1254,8 @@ public class GameMenuController {
         }
         for(Player player1 : App.getCurrentGame().getPlayers())
             for(Player player2 : App.getCurrentGame().getPlayers()) {
+                if (!player1.GetHasTalkedToPlayer(player2) && !player1.getHasbeenHugged().get(player2) && !player1.getHasBeenGiftedTo().get(player2))
+                    player1.reduceFriendshipXP(10, player2);
                 player1.setHasBeenTalkedTo(player2, false);
                 player2.setHasBeenTalkedTo(player1, false);
                 player1.setHasBeenGiftedTo(player2, false);

@@ -25,11 +25,11 @@ public class Player extends User {
             new Skill(SkillType.MINING),
             new Skill(SkillType.FORAGING)
     };
-
+    
     public Energy EnergyObject = new Energy(200,200);
     private int money;
     private int id;
-    //friendships
+    //friendships & trade
     private Map <Player, Integer> friendshipXP;
     private Map <Player, Integer> friendshipLevel;
     private Map <Player, ArrayList<String>> talkHistory;
@@ -38,8 +38,10 @@ public class Player extends User {
     private Map <Player, Boolean> hasBeenTalkedTo;
     private Map <Player, Boolean> hasBeenGiftedTo;
     private Map <Player, Boolean> hasbeenHugged;
+    private Map <Player, ArrayList<Trade>> pendingTrades;
     private Player partner;
-    //friendships
+    private ArrayList<String> notifications;
+    //friendships & trade
     public Player(String username, String password, String email, String nickname, Gender gender, String securityQuestion, String securityAnswer) {
 
         super(username, password, email, nickname, gender, securityQuestion, securityAnswer);
@@ -54,6 +56,8 @@ public class Player extends User {
         hasBeenTalkedTo = new HashMap<>();
         hasBeenGiftedTo = new HashMap<>();
         hasbeenHugged = new HashMap<>();
+        pendingTrades = new HashMap<>();
+        notifications = new ArrayList<>();
         partner = null;
         invetory.addItem(new Axe(Type.REGULAR));
         invetory.addItem(new Hoe(Type.REGULAR));
@@ -61,27 +65,8 @@ public class Player extends User {
         invetory.addItem(new WateringCan(Type.REGULAR));
         invetory.addItem(new FishingPole(RodType.TRAININGROD));
         invetory.addItem(new Scythe());
-        showHistory(this.getUsername());
+    }
 
-    }
-    public Result<String> showHistory(String username) {
-        boolean found = false;
-        StringBuilder output = new StringBuilder();
-        for(Player player : App.getCurrentGame().getPlayers()) {
-            if(player.getUsername().equals(username)){
-                found = true;
-                for(String messege : App.getCurrentGame().getCurrentPlayer().getTalkHistory().get(player)) {
-                    output.append(messege)
-                            .append("\n");
-                }
-            }
-        }
-        if(found) return new Result<String>(true, output.toString());
-        return new Result<String>(false, "User not real!");
-    }
-    public Map<Player, ArrayList<String>> getTalkHistory() {
-        return talkHistory;
-    }
 
     public void setupRelations() {
         for (Player player : App.getCurrentGame().getPlayers()) {
@@ -90,11 +75,25 @@ public class Player extends User {
             talkHistory.put(player, new ArrayList<>());
             giftHistory.put(player, new ArrayList<>());
             pendingGifts.put(player, new ArrayList<>());
+            pendingTrades.put(player, new ArrayList<>());
             hasBeenGiftedTo.put(player, false);
             hasBeenTalkedTo.put(player, false);
             hasbeenHugged.put(player, false);
         }
     }
+    public void addNotifToNotifications(String messege) {
+        notifications.add(messege);
+    }
+    public String printNotifications() {
+        StringBuilder output = new StringBuilder();
+        for(String messege : notifications)
+            output.append(messege).append("\n");
+        return output.toString();
+    }
+    public void resetNotifications() {
+        notifications.clear();
+    }
+
     public boolean GetHasTalkedToPlayer(Player player) {
         return hasBeenTalkedTo.get(player);
     }
@@ -121,6 +120,11 @@ public class Player extends User {
         ArrayList<String> oldTalkhistory = talkHistory.get(player);
         oldTalkhistory.add(messege);
         talkHistory.put(player, oldTalkhistory);
+    }
+    public void addTradeToPendingTrades(Player player , Trade trade) {
+        ArrayList<Trade> oldPendingTrades = pendingTrades.get(player);
+        oldPendingTrades.add(trade);
+        pendingTrades.put(player, oldPendingTrades);
     }
 
     public void setInvetory(Item item, int amount) {
@@ -150,6 +154,22 @@ public class Player extends User {
 
         friendshipLevel.put(player, level);
         friendshipXP.put(player, xp);
+    }
+    public void reduceFriendshipXP(int amount , Player player) {
+        int xp = friendshipXP.get(player) - amount;
+        int level = friendshipLevel.get(player);
+        if (xp < 0) {
+            if(level > 2 || level == 0)
+                xp=0;
+            else {
+                level--;
+                xp = 100 * (level+1) + xp;
+            }
+        }
+
+        friendshipLevel.put(player, level);
+        friendshipXP.put(player, xp);
+            
     }
 
     public void gainXP(SkillType type , int xp) {
@@ -242,5 +262,25 @@ public class Player extends User {
 
     public Map<Player, ArrayList<Gift>> getGiftHistory() {
         return giftHistory;
+    }
+
+    public Map<Player, ArrayList<String>> getTalkHistory() {
+        return talkHistory;
+    }
+
+    public Player getPartner() {
+        return partner;
+    }
+
+    public void setPartner(Player partner) {
+        this.partner = partner;
+    }
+
+    public Map<Player, ArrayList<Trade>> getPendingTrades() {
+        return pendingTrades;
+    }
+
+    public Map<Player, Boolean> getHasBeenGiftedTo() {
+        return hasBeenGiftedTo;
     }
 }

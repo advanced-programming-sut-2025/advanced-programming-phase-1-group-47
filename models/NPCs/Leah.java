@@ -42,19 +42,19 @@ public class Leah {
     private Quest questBuilder1() {
         Item requieredItems = new Item("HardWood", 46, 15, 0, 10);
         Item rewards = new Item("null item", 0, 0, 0, 1);
-        Quest quest = new Quest(requieredItems, rewards , 500 , 7);
+        Quest quest = new Quest(requieredItems, rewards , 500 , 7,true);
         return quest;
     }
     private Quest questBuilder2() {
         Item requieredItems = new Item("Salmon", 151, 75, 0, 1);
         Item rewards = new Item("Salmon Dinner RECIPE", 100, 0, 0, 1);
-        Quest quest = new Quest(requieredItems, rewards , 0 , 8);
+        Quest quest = new Quest(requieredItems, rewards , 0 , 8,false);
         return quest;
     }
     private Quest questBuilder3() {
         Item requieredItems = new Item("Wood", 36, 2, 0, 200);
         Item rewards = new Item("Deluxe Scarecrow", 41, 0, 0, 3);
-        Quest quest = new Quest(requieredItems, rewards , 0 , 9);
+        Quest quest = new Quest(requieredItems, rewards , 0 , 9,false);
         return quest;
     }
  
