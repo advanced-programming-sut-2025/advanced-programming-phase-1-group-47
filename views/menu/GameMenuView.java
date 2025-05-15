@@ -24,8 +24,8 @@ public class GameMenuView extends AppMenu {
         } else if ((matcher = models.enums.commands.GameMenu.deletecurrentgame.getMatcher(input)) != null) {
             // handleDeleteCurrentGame(matcher);
         } else if ((matcher = models.enums.commands.GameMenu.nextturn.getMatcher(input)) != null) {
-            App.currentGame.turn = App.currentGame.turn+1;
-            App.currentGame.currentPlayer = App.getCurrentGame().getPlayers().get((App.currentGame.turn - 1)%4);
+            App.currentGame.currentPlayer = App.getCurrentGame().getPlayers().get((App.currentGame.turn + 1)%(App.currentGame.players.size()));
+            App.currentGame.turn = (App.currentGame.turn + 1)%(App.currentGame.players.size());
         } else if ((matcher = models.enums.commands.GameMenu.showtime.getMatcher(input)) != null) {
             System.out.println(controller.showTime().getData());
         } else if ((matcher = models.enums.commands.GameMenu.showdate.getMatcher(input)) != null) {
@@ -163,18 +163,27 @@ public class GameMenuView extends AppMenu {
             printNpc("Robin", "ROBIN", 100, 55, 106, 61, 106, 58);
             printNpc("Sebastian", "SEBASTIAN", 70, 45, 76, 51, 76, 48);
             printNpc("Harvey", "HARVEY", 80, 57, 86, 63, 86, 60);
-            // handleBuild(matcher);
+            int  k = 0 ;
+            for(Player i : App.getCurrentGame().getPlayers()) {
+                System.out.println(i.getUsername() + " - " + (App.getCurrentGame().map.farms[(k)].personPoint.x + App.farmStart[k].x) + "," + (App.farmStart[k].y + App.getCurrentGame().map.farms[k++].personPoint.y));
+            }
         }
         else if ((matcher = GameMenu.showPoint.getMatcher(input)) != null) {
             System.out.println("Player turn :" + App.currentGame.turn);
-            System.out.println(4%4);
-            System.out.println("Player Point : (" + (App.currentGame.map.farms[(App.currentGame.turn+1)%4].personPoint.x +
-                    App.farmStart[(App.currentGame.turn)%4+ 1].x) + "," + (App.currentGame.map.farms[(App.currentGame.turn+ 1)%4].personPoint.y +
-                    App.farmStart[(App.currentGame.turn)%4+ 1].y) + ")");
-            System.out.println(App.currentGame.getPlayers().get((App.currentGame.turn + 1)%4).getUsername());
+            System.out.println("Player Point : (" +
+                    (App.currentGame.map.farms[(App.currentGame.turn) % 4].personPoint.x +
+                            App.farmStart[(App.currentGame.turn) % 4].x) + "," +
+                    (App.currentGame.map.farms[(App.currentGame.turn) % 4].personPoint.y +
+                            App.farmStart[(App.currentGame.turn) % 4].y) + ")");
+            System.out.println(App.currentGame.currentPlayer.getUsername());
         }
         else {
             System.out.println("Invalid command");
+        }
+        if (input.equals("@")) {
+            int x = scanner.nextInt();
+            int y = scanner.nextInt();
+            System.out.println(App.currentGame.map.tiles[x][y].type.getSticker());
         }
     }
 

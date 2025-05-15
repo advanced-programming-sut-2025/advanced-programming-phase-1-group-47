@@ -15,7 +15,6 @@ public class Animal extends Item {
     public Animal(AnimalType animalType) {
         super(animalType.getName(),animalType.getItemId(),animalType.getPrice(),-1,0);
         this.animalType = animalType;
-
     }
 
     public void setProductType(AnimalProductType productType) {

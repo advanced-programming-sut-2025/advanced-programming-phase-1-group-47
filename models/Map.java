@@ -17,7 +17,7 @@ public class Map {
                 tiles[i][j] = new Tile(new Point(i, j), TileType.EMPTY);
             }
         }
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < types.length; i++) {
             Farm farm;
             Tile[][] temp;
 
