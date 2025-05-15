@@ -2,6 +2,7 @@ package views.menu;
 
 import controllers.GameMenuController;
 import models.*;
+import models.enums.Menu;
 import models.enums.TileType;
 import models.enums.commands.GameMenu;
 
@@ -26,6 +27,9 @@ public class GameMenuView extends AppMenu {
         } else if ((matcher = models.enums.commands.GameMenu.nextturn.getMatcher(input)) != null) {
             App.currentGame.currentPlayer = App.getCurrentGame().getPlayers().get((App.currentGame.turn + 1)%(App.currentGame.players.size()));
             App.currentGame.turn = (App.currentGame.turn + 1)%(App.currentGame.players.size());
+            App.getCurrentGame().currentPlayer.resetNotifications();
+            App.getCurrentGame().currentPlayer.printNotifications();
+
         } else if ((matcher = models.enums.commands.GameMenu.showtime.getMatcher(input)) != null) {
             System.out.println(controller.showTime().getData());
         } else if ((matcher = models.enums.commands.GameMenu.showdate.getMatcher(input)) != null) {
@@ -128,15 +132,8 @@ public class GameMenuView extends AppMenu {
         } else if ((matcher = models.enums.commands.GameMenu.starttrade.getMatcher(input)) != null) {
 //            System.out.println(controller.);
         } else if ((matcher = models.enums.commands.GameMenu.trade.getMatcher(input)) != null) {
-            // handleEatFood(matcher);
-        } else if ((matcher = models.enums.commands.GameMenu.tradelist.getMatcher(input)) != null) {
-            // handleEatFood(matcher);
-        } else if ((matcher = models.enums.commands.GameMenu.traderesponseaccept.getMatcher(input)) != null) {
-            // handleEatFood(matcher);
-        } else if ((matcher = models.enums.commands.GameMenu.traderesponsereject.getMatcher(input)) != null) {
-            // handleEatFood(matcher);
-        } else if ((matcher = models.enums.commands.GameMenu.tradehistory.getMatcher(input)) != null) {
-            // handleEatFood(matcher);
+            System.out.println("Walcome to Trade Menu");
+            App.currentMenu = Menu.TraderMenu;
         }
         else if ((matcher = models.enums.commands.GameMenu.build.getMatcher(input)) != null) {
             // handleBuild(matcher);
@@ -146,6 +143,10 @@ public class GameMenuView extends AppMenu {
             System.out.println(controller.GiveGiftToNPC(matcher.group("npcName"),matcher.group("item")).getData());
         }else if ((matcher = GameMenu.friendshipNPClist.getMatcher(input)) != null) {
             System.out.println(controller.showNpcs().getData());
+        }else if ((matcher = GameMenu.questslist.getMatcher(input)) != null) {
+            System.out.println(controller.listQuests().getData());
+        }else if ((matcher = GameMenu.questsfinish.getMatcher(input)) != null) {
+            System.out.println(controller.FinishQuest(Integer.parseInt(matcher.group("index"))).getData());
         }
         else if ((matcher = GameMenu.Guide.getMatcher(input)) != null) {
             System.out.println("=== 🏪 فروشگاه‌ها و مکان‌های عمومی ===");

@@ -95,7 +95,8 @@ public enum GameMenu {
     giftNPC("^\\s*gift\\s+NPC\\s+(?<npcName>\\S+)\\s+-i\\s+(?<item>\\S+)\\s*$"),
     friendshipNPClist("^\\s*friendship\\s+NPC\\s+list\\s*$"),
     questslist("^\\s*quests\\s+list\\s*$"),
-    questsfinish("^\\s*quests\\s+finish\\s+-i\\s+(?<index>\\d+)\\s*$");
+    questsfinish("^\\s*quests\\s+finish\\s+-i\\s+(?<index>\\d+)\\s*$")
+    ;
 
     private final String command;
 

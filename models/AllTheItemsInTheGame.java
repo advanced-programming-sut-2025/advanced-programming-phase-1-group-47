@@ -122,6 +122,9 @@ public class AllTheItemsInTheGame {
         allItems = Collections.unmodifiableMap(tempItems);
         }
 
+    public static Item getItemById(int id) {
+        return allItems.get(id);
+    }
     public static Plant getPlantById(int id) {
         return allPlants.get(id);
     }

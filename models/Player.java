@@ -25,7 +25,7 @@ public class Player extends User {
             new Skill(SkillType.MINING),
             new Skill(SkillType.FORAGING)
     };
-    
+
     public Energy EnergyObject = new Energy(200,200);
     private int money;
     private int id;
@@ -47,7 +47,7 @@ public class Player extends User {
         super(username, password, email, nickname, gender, securityQuestion, securityAnswer);
         this.Coordinates = new Point(0, 0);
         this.invetory = new Invetory(20);
-        money = 0;
+        money = 5000;
         friendshipXP = new HashMap<>();
         friendshipLevel = new HashMap<>();
         talkHistory = new HashMap<>();
@@ -65,6 +65,7 @@ public class Player extends User {
         invetory.addItem(new WateringCan(Type.REGULAR));
         invetory.addItem(new FishingPole(RodType.TRAININGROD));
         invetory.addItem(new Scythe());
+        invetory.addItem(new Item("Wood", 36, 2, 0, 1000));
     }
 
 
@@ -169,7 +170,7 @@ public class Player extends User {
 
         friendshipLevel.put(player, level);
         friendshipXP.put(player, xp);
-            
+
     }
 
     public void gainXP(SkillType type , int xp) {

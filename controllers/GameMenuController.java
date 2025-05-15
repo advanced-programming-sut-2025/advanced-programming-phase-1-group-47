@@ -1231,7 +1231,11 @@ public class GameMenuController {
     }
 
     public void showInventory() {
-        App.getCurrentGame().getCurrentPlayer().getInvetory().showInventory();
+        Player player = App.getCurrentGame().getCurrentPlayer();
+        System.out.println("Money: " + player.getMoney());
+        for(Item i : player.getInvetory().getItems()){
+            System.out.println(i.getName() + " " + i.getAmount());
+        }
     }
 
     //har chi mikhaid update she too shab barai farda ro bezanid inja 
@@ -1243,7 +1247,9 @@ public class GameMenuController {
             else
                 plant.setHasBeenWatered(false);
         }
-        //CHANGE WEATHER INTO TOMARROWS WEATHER AND CREATE NEW TOMARROWS WEATHER HERE 
+        //CHANGE WEATHER INTO TOMARROWS WEATHER AND CREATE NEW TOMARROWS WEATHER HERE
+        App.currentGame.nextDayWeather();
+
         for (NPC npc : App.getCurrentGame().getNpcs()) {
             for(Player player : App.getCurrentGame().getPlayers()) {
                 npc.getHasBeenGiftedTo().put(player, false);
@@ -1252,6 +1258,7 @@ public class GameMenuController {
                     npc.getQuest2().getIsActive().put(player, true);
             }
         }
+
         for(Player player1 : App.getCurrentGame().getPlayers())
             for(Player player2 : App.getCurrentGame().getPlayers()) {
                 if (!player1.GetHasTalkedToPlayer(player2) && !player1.getHasbeenHugged().get(player2) && !player1.getHasBeenGiftedTo().get(player2))

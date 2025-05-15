@@ -63,11 +63,4 @@ public class Invetory {
         return capacity;
     }
 
-    public void showInventory() {
-        for(Item item : items) {
-            System.out.println(item.getName() + " " + item.getAmount());
-        }
-    }
-
-
 }

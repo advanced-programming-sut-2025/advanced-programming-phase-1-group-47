@@ -41,7 +41,7 @@ public class Game {
         this.plants = new ArrayList<>();
     }
 
-    public void nextDay() {
+    public void nextDayWeather() {
         this.weather = setWeather();
     }
 
