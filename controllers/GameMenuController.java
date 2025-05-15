@@ -1202,9 +1202,13 @@ public class GameMenuController {
     //har chi mikhaid update she too shab barai farda ro bezanid inja 
     public void setUpNextDay() {
         for (Plant plant : App.getCurrentGame().getPlants()) {
-            if(plant.isHasBeenWatered())  plant.grow();
-            plant.setHasBeenWatered(false);
+            if (plant.isHasBeenWatered())  plant.grow();
+            if (App.getCurrentGame().tomarrowsWeather.equals(Weather.RAINY))
+                plant.setHasBeenWatered(true);
+            else
+                plant.setHasBeenWatered(false);
         }
+        //CHANGE WEATHER INTO TOMARROWS WEATHER AND CREATE NEW TOMARROWS WEATHER HERE 
         for (NPC npc : App.getCurrentGame().getNpcs()) {
             for(Player player : App.getCurrentGame().getPlayers()) {
                 npc.getHasBeenGiftedTo().put(player, false);
