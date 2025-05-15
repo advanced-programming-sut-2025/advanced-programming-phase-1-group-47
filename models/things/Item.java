@@ -80,4 +80,6 @@ public class Item {
             return false;
         return item.getAmount() <= this.amount;
     }
+
+    public void eat() {};
 }  
