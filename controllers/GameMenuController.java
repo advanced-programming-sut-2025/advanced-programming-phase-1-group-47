@@ -2,6 +2,8 @@ package controllers;
 import java.util.*;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
+import java.util.stream.Collectors;
+
 import models.*;
 import models.Map;
 import models.NPCs.*;
@@ -133,11 +135,11 @@ public class GameMenuController {
             if(player.getUsername().equals(username)) {
                 if(!isPlayerNear(player))
                     return new Result<>(false, "Player too far away!");
-//                if(!player.GetHasTalkedToPlayer(App.getCurrentGame().getCurrentPlayer())){
+                if(!player.GetHasTalkedToPlayer(App.getCurrentGame().getCurrentPlayer())){
                     System.out.println(player.getUsername() + " has no Talked To Player " + App.getCurrentGame().getCurrentPlayer().getUsername());
                     player.addFriendshipXP(20, App.getCurrentGame().getCurrentPlayer());
                     App.getCurrentGame().getCurrentPlayer().addFriendshipXP(20, player);
-//                }
+                }
                 messege = App.getCurrentGame().getCurrentPlayer().getUsername() + " : " + messege;
                 player.addMessegeToTalkHistory(App.getCurrentGame().getCurrentPlayer(), messege);
                 App.getCurrentGame().getCurrentPlayer().addMessegeToTalkHistory(player, messege);
@@ -489,7 +491,7 @@ public class GameMenuController {
                 if(quest.getRewards().getItemID() == 201) //201 is the friendship level item that shall not exist
                    npc.addFriendship(200, App.getCurrentGame().getCurrentPlayer()); 
                 else if(npc.getFriendship().get(App.getCurrentGame().getCurrentPlayer()) >= 400)
-                        App.getCurrentGame().getCurrentPlayer().getInvetory().getItems().add(new Item(quest.getRewards(), quest.getRewards().getAmount() * 2));
+                    App.getCurrentGame().getCurrentPlayer().getInvetory().getItems().add(new Item(quest.getRewards(), quest.getRewards().getAmount() * 2));
                 else
                     App.getCurrentGame().getCurrentPlayer().getInvetory().getItems().add(quest.getRewards());
                 App.getCurrentGame().getCurrentPlayer().addMoney(quest.getRewardMoney());
@@ -502,44 +504,63 @@ public class GameMenuController {
         return new Result<>(false , "You don't have the quest Item (Or Enough of it)");
     }
     public Result<String> handleNewGame(Matcher matcher, Scanner scanner) {
-            String player1 = matcher.group("player1");
-            String player2 = matcher.group("player2");
-            String player3 = matcher.group("player3");
-            User u1 = App.findPlayer(player1);
-            User u2 = App.findPlayer(player2);
-            User u3 = App.findPlayer(player3);
-            Player p1 = new Player(u1.getUsername(), u1.getPassword(), u1.getEmail(),u1.getNickname(),u1.getGender(),u1.getSecurityQuestion(),u1.getSecurityAnswer());
-            Player p2 = new Player(u2.getUsername(), u2.getPassword(), u2.getEmail(), u2.getNickname(),u2.getGender(),u2.getSecurityQuestion(),u2.getSecurityAnswer());
-            Player p3 = new Player(u3.getUsername(), u3.getPassword(), u3.getEmail(), u3.getNickname(),u3.getGender(),u3.getSecurityQuestion(),u3.getSecurityAnswer());
+        List<Player> players = new ArrayList<>();
+        String[] playerGroups = {"player1", "player2", "player3"};
 
-
-            String[] farmNames = new String[4];
-            for(int i = 0; i < 4; i++) {
-                String input = scanner.nextLine();
-                if ((matcher = models.enums.commands.GameMenu.gamemap.getMatcher(input)) != null) {
-                    farmNames[i] = matcher.group("mapNumber");
+        for (String group : playerGroups) {
+            String playerName = matcher.group(group);
+            if (playerName != null && !playerName.isEmpty()) {
+                User user = App.findPlayer(playerName);
+                if (user == null) {
+                    return new Result<>(false, "User not found: " + playerName);
                 }
+                Player player = new Player(
+                        user.getUsername(), user.getPassword(), user.getEmail(),
+                        user.getNickname(), user.getGender(),
+                        user.getSecurityQuestion(), user.getSecurityAnswer()
+                );
+                players.add(player);
             }
-            Game newGame = new Game((Player)p1, (Player)p2, (Player)p3);
-            Map newMap = new Map(farmNames);
-            newGame.map = newMap;
-            App.setCurrentGame(newGame);
-            for(Player player : App.getCurrentGame().getPlayers())
-                player.setupRelations();
-            App.currentGame.setNpc();
-            TileType lastTileType = TileType.COTTAGE;
-            return new Result<>(true, "New game started with players: " + player1 + ", " + player2 + ", " + player3);
         }
+
+        if (players.size() < 1) {
+            return new Result<>(false, "At least one player is required to start a game.");
+        }
+
+        String[] farmNames = new String[players.size() + 1];
+        for (int i = 0; i < players.size() + 1; i++) {
+            String input = scanner.nextLine();
+            Matcher mapMatcher = models.enums.commands.GameMenu.gamemap.getMatcher(input);
+            if (mapMatcher != null && mapMatcher.matches()) {
+                farmNames[i] = mapMatcher.group("mapNumber");
+            } else {
+                return new Result<>(false, "Invalid map input for player " + (i + 1));
+            }
+        }
+
+        Game newGame = new Game(players);
+        Map newMap = new Map(farmNames);
+        newGame.map = newMap;
+        App.setCurrentGame(newGame);
+
+        for (Player player : App.getCurrentGame().getPlayers()) {
+            player.setupRelations();
+        }
+
+        App.currentGame.setNpc();
+        String playerNames = players.stream().map(Player::getUsername).collect(Collectors.joining(", "));
+        return new Result<>(true, "New game started with players: " + playerNames);
+    }
     public void printMap() {
         for (int i = 0; i < 160; i++) {
             for (int j = 0; j < 120; j++) {
                 TileType type = App.currentGame.map.tiles[i][j].type;
-
                 System.out.print(type != TileType.EMPTY ? type.getSticker() : "++");
             }
             System.out.println();
         }
     }
+
     public void walk(Matcher matcher, Scanner scanner) {
         int[][] grid = new int[160][120];
         Set<TileType> walkable = Set.of(
@@ -1034,11 +1055,13 @@ public class GameMenuController {
         App.getCurrentGame().getCurrentPlayer().getInvetory().addItem(plant.harvestPlant());
 
         //@sarsar change tiltype back (Point at plant.getpoint)
+
+
+        App.currentGame.currentPlayer.skillProgress(0,5);
         //@amoojoey give player 5XP skill in farming
         return new Result<>(true, "Plant harvested");
         //@sarsar change tiltype back (Point at plant.getpoint)
     }
-
 
     public Result<String> showWeather(){
         if (App.currentGame != null) {
