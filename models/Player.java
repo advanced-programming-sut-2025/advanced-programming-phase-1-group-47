@@ -25,7 +25,7 @@ public class Player extends User {
             new Skill(SkillType.MINING),
             new Skill(SkillType.FORAGING)
     };
-    
+
     public Energy EnergyObject = new Energy(200,200);
     private int money;
     private int id;
@@ -61,8 +61,24 @@ public class Player extends User {
         invetory.addItem(new WateringCan(Type.REGULAR));
         invetory.addItem(new FishingPole(RodType.TRAININGROD));
         invetory.addItem(new Scythe());
-    }
+        showHistory(this.getUsername());
 
+    }
+    public Result<String> showHistory(String username) {
+        boolean found = false;
+        StringBuilder output = new StringBuilder();
+        for(Player player : App.getCurrentGame().getPlayers()) {
+            if(player.getUsername().equals(username)){
+                found = true;
+                for(String messege : App.getCurrentGame().getCurrentPlayer().getTalkHistory().get(player)) {
+                    output.append(messege)
+                            .append("\n");
+                }
+            }
+        }
+        if(found) return new Result<String>(true, output.toString());
+        return new Result<String>(false, "User not real!");
+    }
     public Map<Player, ArrayList<String>> getTalkHistory() {
         return talkHistory;
     }

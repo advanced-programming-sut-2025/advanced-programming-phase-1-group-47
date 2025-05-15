@@ -12,7 +12,7 @@ public class AllTheItemsInTheGame {
 
     public static final Map<Integer, Plant> allPlants;
     public static final Map<Integer, Item> allItems;
-    private static Map<Integer, Animal> allAnimals;
+    public static final Map<Integer, Animal> allAnimals;
 
     static {
         // اول allPlants را مقداردهی می‌کنیم
@@ -96,25 +96,31 @@ public class AllTheItemsInTheGame {
         tempPlants.put(377, new foragingCrop(new Point(0, 0), 377, "Holly", Season.WINTER, 80, -37, 30));
         tempPlants.put(378, new foragingCrop(new Point(0, 0), 378, "Snow Yam", Season.WINTER, 100, 30, 30));
         tempPlants.put(379, new foragingCrop(new Point(0, 0), 379, "Winter Root", Season.WINTER, 70, 25, 30));
+        allPlants = Collections.unmodifiableMap(tempPlants);
 
-        tempAnimal.put(AnimalType.COW.getItemId(), new Animal(AnimalType.COW));
+
+        tempAnimal.put(AnimalType.DINOSAUR.getItemId(), new Animal(AnimalType.DINOSAUR));
         tempAnimal.put(AnimalType.HEN.getItemId(), new Animal(AnimalType.HEN));
         tempAnimal.put(AnimalType.DUCK.getItemId(), new Animal(AnimalType.DUCK));
         tempAnimal.put(AnimalType.PIG.getItemId(), new Animal(AnimalType.PIG));
         tempAnimal.put(AnimalType.GOAT.getItemId(), new Animal(AnimalType.GOAT));
         tempAnimal.put(AnimalType.COW.getItemId(), new Animal(AnimalType.COW));
-        allPlants = Collections.unmodifiableMap(tempPlants);
-        // بعد از مقداردهی allPlants حالا می‌تونیم ازش استفاده کنیم
+        tempAnimal.put(AnimalType.RABBIT.getItemId(), new Animal(AnimalType.RABBIT));
+        tempAnimal.put(AnimalType.SHEEP.getItemId(), new Animal(AnimalType.SHEEP));
+        allAnimals = Collections.unmodifiableMap(tempAnimal);
+        // 3. ساخت مپ کلی همه آیتم‌ها (حیوان + گیاه)
         Map<Integer, Item> tempItems = new HashMap<>();
+
+        // اضافه کردن همه حیوان‌ها به مپ آیتم‌ها
+        tempItems.putAll(allAnimals);
         for (int i = 302; i < 380; i++) {
             Plant p = getPlantById(i);
             if (p != null) {
                 tempItems.put(i, p.harvestPlant());
             }
         }
-
         allItems = Collections.unmodifiableMap(tempItems);
-    }
+        }
 
     public static Plant getPlantById(int id) {
         return allPlants.get(id);

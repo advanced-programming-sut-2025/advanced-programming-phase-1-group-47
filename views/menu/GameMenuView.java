@@ -92,7 +92,7 @@ public class GameMenuView extends AppMenu {
         } else if ((matcher = models.enums.commands.GameMenu.placeitem.getMatcher(input)) != null) {
             // handlePlaceItem(matcher);
         } else if ((matcher = models.enums.commands.GameMenu.cheatadditem.getMatcher(input)) != null) {
-            // handleCheatAddItem(matcher);
+            System.out.println(controller.cheatItem(matcher).getData());
         } else if ((matcher = models.enums.commands.GameMenu.cookingrefrigeratorput.getMatcher(input)) != null) {
             // handleCookingRefrigeratorPut(matcher);
         } else if ((matcher = models.enums.commands.GameMenu.cookingrefrigeratorpick.getMatcher(input)) != null) {
