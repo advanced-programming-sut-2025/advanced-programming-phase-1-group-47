@@ -42,7 +42,7 @@ public class Robin {
     private Quest questBuilder1() {
         Item requieredItems = new Item("Wood", 36, 2, 0, 80);
         Item rewards = new Item("null item", 0, 0, 0, 1);
-        Quest quest = new Quest(requieredItems, rewards , 1000 , 10,false);
+        Quest quest = new Quest(requieredItems, rewards , 1000 , 10,true);
         return quest;
     }
     private Quest questBuilder2() {
