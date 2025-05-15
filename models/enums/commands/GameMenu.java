@@ -3,8 +3,6 @@ package models.enums.commands;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static java.util.regex.Pattern.compile;
-
 public enum GameMenu {
     newgame("^\\s*game\\s+new\\s+-u\\s+(?<player1>\\S+)(\\s+(?<player2>\\S+))?(\\s+(?<player3>\\S+))?\\s*$"),
     gamemap("^\\s*game\\s+map\\s+(?<mapNumber>\\S+)\\s*$"),
@@ -86,7 +84,8 @@ public enum GameMenu {
     respondmarriageaccept("^\\s*respond\\s+-accept\\s+-u\\s+(?<username>\\S+)\\s*$"),
     respondmarriagereject("^\\s*respond\\s+-reject\\s+-u\\s+(?<username>\\S+)\\s*$"),
     starttrade("^\\s*start\\s+trade\\s*$"),
-    trade("^\\s*trade\\s*$"),
+    tradewithmoney("^trade\\s+-u\\s+(?<username>\\S+)\\s+-t\\s+(?<type>\\S+)\\s+-i\\s+(?<item>\\S+)\\s+-a\\s+(?<amount>\\d+)(?:\\s+-p\\s+(?<price>\\d+))?$"),
+    tradewithitem("^trade\\s+-u\\s+(?<username>\"[^\"]+\"|\\S+)\\s+-t\\s+(?<type>\"[^\"]+\"|\\S+)\\s+-i\\s+(?<item>\"[^\"]+\"|\\S+)\\s+-a\\s+(?<amount>\\d+)(?:\\s+-ti\\s+(?<targetItem>\"[^\"]+\"|\\S+)\\s+-ta\\s+(?<targetAmount>\\d+))?$"),
     tradelist("^\\s*trade\\s+list\\s*$"),
     traderesponseaccept("^\\s*trade\\s+response\\s+-accept\\s+-i\\s+(?<id>\\d+)\\s*$"),
     traderesponsereject("^\\s*trade\\s+response\\s+-reject\\s+-i\\s+(?<id>\\d+)\\s*$"),
