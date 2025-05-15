@@ -42,19 +42,19 @@ public class Robin {
     private Quest questBuilder1() {
         Item requieredItems = new Item("Wood", 36, 2, 0, 80);
         Item rewards = new Item("null item", 0, 0, 0, 1);
-        Quest quest = new Quest(requieredItems, rewards , 1000 , 10);
+        Quest quest = new Quest(requieredItems, rewards , 1000 , 10,false);
         return quest;
     }
     private Quest questBuilder2() {
         Item requieredItems = new Item("Iron Bar", 37, 120, 0, 10);
         Item rewards = new Item("Bee House", 43, -1, 0, 3);
-        Quest quest = new Quest(requieredItems, rewards , 500 ,11);
+        Quest quest = new Quest(requieredItems, rewards , 500 ,11,false);
         return quest;
     }
     private Quest questBuilder3() {
         Item requieredItems = new Item("Wood", 36, 2, 0, 1000);
         Item rewards = new Item("null item", 0, 0, 0, 1);
-        Quest quest = new Quest(requieredItems, rewards , 25000 ,12);
+        Quest quest = new Quest(requieredItems, rewards , 25000 ,12,false);
         return quest;
     }
  

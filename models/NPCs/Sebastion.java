@@ -41,19 +41,19 @@ public class Sebastion {
     private Quest questBuilder1() {
         Item requieredItems = new Item("Iron Ore", 1, 10, 0, 50);
         Item rewards = new Item("Diamond", 39, 750, 0, 1);
-        Quest quest = new Quest(requieredItems, rewards , 0 ,13);
+        Quest quest = new Quest(requieredItems, rewards , 0 ,13,false);
         return quest;
     }
     private Quest questBuilder2() {
         Item requieredItems = new Item("Pumpkin Pie", 4, 385, 0, 1);
         Item rewards = new Item("null item", 0, 0, 0, 1);
-        Quest quest = new Quest(requieredItems, rewards , 500 ,14);
+        Quest quest = new Quest(requieredItems, rewards , 500 ,14,false);
         return quest;
     }
     private Quest questBuilder3() {
         Item requieredItems = new Item("Stone", 2, 2, 0, 150);
         Item rewards = new Item("Quartz", 38, 25, 0, 50);
-        Quest quest = new Quest(requieredItems, rewards , 0 ,15);
+        Quest quest = new Quest(requieredItems, rewards , 0 ,15,false);
         return quest;
     }
  
