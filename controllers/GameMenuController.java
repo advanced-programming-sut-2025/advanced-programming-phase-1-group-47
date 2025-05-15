@@ -13,6 +13,7 @@ import models.Shops.MarniesRanch;
 import models.Shops.TheSaloon;
 import models.Shops.pierres;
 import models.buildings.Building;
+import models.enums.Gender;
 import models.enums.Menu;
 import models.enums.Season;
 import models.enums.TileType;
@@ -204,20 +205,23 @@ public class GameMenuController {
     public Result<String> showFriendships() {
         StringBuilder output = new StringBuilder();
         for(Player player : App.getCurrentGame().getPlayers()) {
-//            if(player.equals(App.getCurrentGame().getCurrentPlayer())) continue;
+            if(player.equals(App.getCurrentGame().getCurrentPlayer())) continue;
             output.append(player.getUsername())
                   .append("-\n")
                   .append(player.getFriendshipLevel().get(App.getCurrentGame().getCurrentPlayer()))
-                  .append("-\n")
-                  .append(player.getFriendshipXP().get(App.getCurrentGame().getCurrentPlayer()));
+                  .append("-\n");
+                  if(player.getFriendshipXP().get(App.getCurrentGame().getCurrentPlayer()) > (player.getFriendshipLevel().get(App.getCurrentGame().getCurrentPlayer()) + 1) * 100 )
+                    output.append((player.getFriendshipLevel().get(App.getCurrentGame().getCurrentPlayer()) + 1) * 100);
+                  else
+                    output.append(player.getFriendshipXP().get(App.getCurrentGame().getCurrentPlayer()) ); 
         }
-        return new Result<String>(false, output.toString());
+        return new Result<>(true, output.toString());
     }
 
     public Result<String> hugPlayer(String username) {
         for (Player player : App.getCurrentGame().getPlayers()) {
             if(player.getUsername().equals(username)) {
-                if(player.getFriendshipLevel().get(App.getCurrentGame().getCurrentPlayer()) > 1)
+                if(player.getFriendshipLevel().get(App.getCurrentGame().getCurrentPlayer()) < 2)
                     return new Result<>(false, "You don't know that player enough to Hug");
                 if(!isPlayerNear(player))
                     return new Result<>(false, "Player too far away!");
@@ -413,6 +417,38 @@ public class GameMenuController {
         }
         return new Result<>(false, "can't find player username!");
     }
+
+    public Result<String> askMarriage(String username , String ring) {
+        Player currentPlayer = App.getCurrentGame().getCurrentPlayer();
+        if(currentPlayer.getGender().equals(Gender.Female))
+            return new Result<String>(false, "Only male players can ask for marriage.");
+        if(!ring.equalsIgnoreCase("Wedding Ring"))
+            return new Result<String>(false, "That is not a wedding ring!");
+        for (Player player : App.getCurrentGame().getPlayers()) {
+            if(username.equalsIgnoreCase(player.getUsername())) {
+                if(player.getGender().equals(Gender.Male))
+                    return new Result<String>(false, "You are Gay!!!");
+                if(player.getFriendshipLevel().get(currentPlayer)!=3 || player.getFriendshipXP().get(currentPlayer) < 400)
+                    return new Result<String>(false, "You are not Close enough friends to do that!");
+                for (Item item : currentPlayer.getInvetory().getItems()) {
+                    if(item.getItemID() == 203){
+                        player.getInvetory().addItem(item);
+                        currentPlayer.getInvetory().getItems().remove(item);
+                        player.setFriendshipLevel(currentPlayer , 4);
+                        currentPlayer.setFriendshipLevel(player , 4);
+                        player.setFriendshipXP(currentPlayer , 0);
+                        currentPlayer.setFriendshipXP(player , 0);
+                        currentPlayer.setPartner(player);
+                        player.setPartner(currentPlayer);
+                        return new Result<String>(true, "You are now married!");
+                    }
+                }
+                return new Result<String>(false, "No ring!");
+            }
+        }
+        return new Result<String>(false, "player not found!");
+    }
+//    public Result<String>()
   
     public Result<String> listQuests() {
         StringBuilder output = new StringBuilder();

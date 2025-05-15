@@ -63,9 +63,6 @@ public class Player extends User {
         invetory.addItem(new Scythe());
     }
 
-    public Map<Player, ArrayList<String>> getTalkHistory() {
-        return talkHistory;
-    }
 
     public void setupRelations() {
         for (Player player : App.getCurrentGame().getPlayers()) {
@@ -230,5 +227,13 @@ public class Player extends User {
 
     public Map<Player, ArrayList<String>> getTalkHistory() {
         return talkHistory;
+    }
+
+    public Player getPartner() {
+        return partner;
+    }
+
+    public void setPartner(Player partner) {
+        this.partner = partner;
     }
 }
