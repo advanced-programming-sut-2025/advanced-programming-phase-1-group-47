@@ -146,6 +146,7 @@ public class GameMenuController {
                 App.getCurrentGame().getCurrentPlayer().addMessegeToTalkHistory(player, messege);
                 player.setHasBeenTalkedTo(App.getCurrentGame().getCurrentPlayer(), true);
                 App.getCurrentGame().getCurrentPlayer().setHasBeenTalkedTo(player, true);
+                player.addNotifToNotifications("You have a new messege!!!! - "+ messege);
                 return new Result<>(true, messege);
             }
         }
@@ -197,6 +198,7 @@ public class GameMenuController {
                         player.addGiftToPendingGifts(App.getCurrentGame().getCurrentPlayer(), new Gift(giftedItem, App.getGiftIdCounter()));
                         player.getInvetory().addItem(giftedItem);
                         App.addGiftIdCounter();
+                        player.addNotifToNotifications("You have a new gift!!!!!!! (check using gift list)");
                         return new Result<>(true, "Gift Given!");
                     }
                 }
@@ -408,6 +410,7 @@ public class GameMenuController {
                         currentPlayer.setFriendshipLevel(player , 3);
                         player.setFriendshipXP(currentPlayer , 0);
                         currentPlayer.setFriendshipXP(player , 0);
+                        player.addNotifToNotifications(currentPlayer.getUsername() + " Gave you a flower!!!!");
                         return new Result<String>(true, "Flower Given!");
                     }
                 }
@@ -440,6 +443,7 @@ public class GameMenuController {
                         currentPlayer.setFriendshipXP(player , 0);
                         currentPlayer.setPartner(player);
                         player.setPartner(currentPlayer);
+                        player.addNotifToNotifications("You are now married to " + currentPlayer.getUsername() + "!!!!!!");
                         return new Result<String>(true, "You are now married!");
                     }
                 }

@@ -47,6 +47,7 @@ public class TradeMenuController {
                     );
 
                     App.addTradeIdCounter();
+                    player.addNotifToNotifications("You have a new Trade offer!!!!");
                     return new Result<>(true, "Offer Sent!");
                 }
                 return new Result<>(false, "You don't have that item!");
@@ -80,6 +81,7 @@ public class TradeMenuController {
                     );
 
                     App.addTradeIdCounter();
+                    player.addNotifToNotifications("You have a new Trade request!!!!");
                     return new Result<>(true, "Request Sent!");
                 }
 
@@ -140,6 +142,7 @@ public class TradeMenuController {
                         );
 
                         App.addTradeIdCounter();
+                        player.addNotifToNotifications("You have a new Trade offer!!!!");
                         return new Result<>(true, "Offer Sent!");
                     }
                 }
@@ -181,6 +184,7 @@ public class TradeMenuController {
                         );
 
                         App.addTradeIdCounter();
+                        player.addNotifToNotifications("You have a new Trade request!!!!");
                         return new Result<>(true, "Request Sent!");
                     }
                 }
