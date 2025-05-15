@@ -209,8 +209,8 @@ public class GameMenuController {
         StringBuilder output = new StringBuilder();
         for(Player player : App.getCurrentGame().getPlayers()) {
             output.append("Username: ").append(player.getUsername()).append("\n")
-                    .append("Friendship Level: ").append(player.getFriendshipLevel().get(App.getCurrentGame().getCurrentPlayer())).append("\n")
-                    .append("Friendship XP: ");
+                  .append("Friendship Level: ").append(player.getFriendshipLevel().get(App.getCurrentGame().getCurrentPlayer())).append("\n")
+                  .append("Friendship XP: ");
             if(player.getFriendshipXP().get(App.getCurrentGame().getCurrentPlayer()) > (player.getFriendshipLevel().get(App.getCurrentGame().getCurrentPlayer()) + 1) * 100 )
                 output.append((player.getFriendshipLevel().get(App.getCurrentGame().getCurrentPlayer()) + 1) * 100);
             else
@@ -1215,6 +1215,8 @@ public class GameMenuController {
         }
         for(Player player1 : App.getCurrentGame().getPlayers())
             for(Player player2 : App.getCurrentGame().getPlayers()) {
+                if (!player1.GetHasTalkedToPlayer(player2) && !player1.getHasbeenHugged().get(player2) && !player1.getHasBeenGiftedTo().get(player2))
+                    player1.reduceFriendshipXP(10, player2);
                 player1.setHasBeenTalkedTo(player2, false);
                 player2.setHasBeenTalkedTo(player1, false);
                 player1.setHasBeenGiftedTo(player2, false);

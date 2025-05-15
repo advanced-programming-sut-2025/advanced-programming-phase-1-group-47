@@ -264,4 +264,8 @@ public class Player extends User {
     public Map<Player, ArrayList<Trade>> getPendingTrades() {
         return pendingTrades;
     }
+
+    public Map<Player, Boolean> getHasBeenGiftedTo() {
+        return hasBeenGiftedTo;
+    }
 }
