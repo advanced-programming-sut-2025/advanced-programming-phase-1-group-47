@@ -134,8 +134,9 @@ public class GameMenuController {
                 if(!isPlayerNear(player))
                     return new Result<>(false, "Player too far away!");
                 if(!player.GetHasTalkedToPlayer(App.getCurrentGame().getCurrentPlayer())){
+                    System.out.println(player.getUsername() + " has no Talked To Player " + App.getCurrentGame().getCurrentPlayer().getUsername());
                     player.addFriendshipXP(20, App.getCurrentGame().getCurrentPlayer());
-                    App.getCurrentGame().players.get(App.currentGame.turn).addFriendshipXP(20, player);
+                    App.getCurrentGame().getCurrentPlayer().addFriendshipXP(20, player);
                 }
                 messege = App.getCurrentGame().getCurrentPlayer().getUsername() + " : " + messege;
                 player.addMessegeToTalkHistory(App.getCurrentGame().getCurrentPlayer(), messege);
@@ -187,11 +188,9 @@ public class GameMenuController {
         StringBuilder output = new StringBuilder();
         for(Player player : App.getCurrentGame().getPlayers()) {
 //            if(player.equals(App.getCurrentGame().getCurrentPlayer())) continue;
-            output.append(player.getUsername())
-                  .append("-\n")
-                  .append(player.getFriendshipLevel().get(App.getCurrentGame().getCurrentPlayer()))
-                  .append("-\n")
-                  .append(player.getFriendshipXP().get(App.getCurrentGame().getCurrentPlayer()));
+            output.append("Username: ").append(player.getUsername()).append("\n")
+                    .append("Friendship Level: ").append(player.getFriendshipLevel().get(App.getCurrentGame().getCurrentPlayer())).append("\n")
+                    .append("Friendship XP: ").append(player.getFriendshipXP().get(App.getCurrentGame().getCurrentPlayer())).append("\n");
         }
         return new Result<String>(false, output.toString());
     }
@@ -199,7 +198,7 @@ public class GameMenuController {
     public Result<String> hugPlayer(String username) {
         for (Player player : App.getCurrentGame().getPlayers()) {
             if(player.getUsername().equals(username)) {
-                if(player.getFriendshipLevel().get(App.getCurrentGame().getCurrentPlayer()) > 1)
+                if(player.getFriendshipLevel().get(App.getCurrentGame().getCurrentPlayer()) < 2)
                     return new Result<>(false, "You don't know that player enough to Hug");
                 if(!isPlayerNear(player))
                     return new Result<>(false, "Player too far away!");
@@ -218,13 +217,12 @@ public class GameMenuController {
         Point playerPOint = App.currentGame.map.farms[App.currentGame.turn].personPoint;
         TileType[] Neighbers = getSurroundingTiles(playerPOint);
         for (TileType type : Neighbers) {
-            if (type.equals(TileType.PERSON)) {
+            if (type != null &&  type.equals(TileType.PERSON)) {
                 return true;
             }
         }
         return false;
     }
-    
     public Result<String> TalkToNPC(String npcname) {
         if (!isNPCHere())
             return new Result<>(false, "There is No NPC Around You!");
