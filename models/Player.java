@@ -40,6 +40,7 @@ public class Player extends User {
     private Map <Player, Boolean> hasbeenHugged;
     private Map <Player, ArrayList<Trade>> pendingTrades;
     private Player partner;
+    private ArrayList<String> notifications;
     //friendships & trade
     public Player(String username, String password, String email, String nickname, Gender gender, String securityQuestion, String securityAnswer) {
 
@@ -56,6 +57,7 @@ public class Player extends User {
         hasBeenGiftedTo = new HashMap<>();
         hasbeenHugged = new HashMap<>();
         pendingTrades = new HashMap<>();
+        notifications = new ArrayList<>();
         partner = null;
         invetory.addItem(new Axe(Type.REGULAR));
         invetory.addItem(new Hoe(Type.REGULAR));
@@ -79,6 +81,19 @@ public class Player extends User {
             hasbeenHugged.put(player, false);
         }
     }
+    public void addNotifToNotifications(String messege) {
+        notifications.add(messege);
+    }
+    public String printNotifications() {
+        StringBuilder output = new StringBuilder();
+        for(String messege : notifications)
+            output.append(messege).append("\n");
+        return output.toString();
+    }
+    public void resetNotifications() {
+        notifications.clear();
+    }
+
     public boolean GetHasTalkedToPlayer(Player player) {
         return hasBeenTalkedTo.get(player);
     }
