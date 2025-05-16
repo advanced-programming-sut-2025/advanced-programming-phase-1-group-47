@@ -1119,7 +1119,13 @@ public class GameMenuController {
         return new Result<>(false, "Plant not found");
 
     }
-    
+    public Result<String> toolUse(Matcher matcher) {
+        String direction = matcher.group("direction");
+        Point offset = getOffsetFromDirection(direction);
+        Player player = App.currentGame.currentPlayer;
+        Item item = player.currentToll;
+        return null;
+    }
     /*@amoojoey need  the Use Sⅽythe method to lead into harvestPlant with this code in it:
     for (Plant plant : App.getCurrentGame().getPlants()) {
         if(plant.getPoint().getX() == Integer.parseInt(x) && plant.getPoint().getY() == Integer.parseInt(y)) {

@@ -27,8 +27,8 @@ public class GameMenuView extends AppMenu {
         } else if ((matcher = models.enums.commands.GameMenu.nextturn.getMatcher(input)) != null) {
             App.currentGame.currentPlayer = App.getCurrentGame().getPlayers().get((App.currentGame.turn + 1)%(App.currentGame.players.size()));
             App.currentGame.turn = (App.currentGame.turn + 1)%(App.currentGame.players.size());
-            App.getCurrentGame().currentPlayer.resetNotifications();
             App.getCurrentGame().currentPlayer.printNotifications();
+            App.getCurrentGame().currentPlayer.resetNotifications();
 
         } else if ((matcher = models.enums.commands.GameMenu.showtime.getMatcher(input)) != null) {
             System.out.println(controller.showTime().getData());
@@ -79,20 +79,21 @@ public class GameMenuView extends AppMenu {
         } else if ((matcher = models.enums.commands.GameMenu.upgradetool.getMatcher(input)) != null) {
             // handleUpgradeTool(matcher);
         } else if ((matcher = models.enums.commands.GameMenu.tooluse.getMatcher(input)) != null) {
+
             // handleToolUse(matcher);
         } else if ((matcher = models.enums.commands.GameMenu.craftinfo.getMatcher(input)) != null) {
             // handleCraftInfo(matcher);
         } else if ((matcher = models.enums.commands.GameMenu.plant.getMatcher(input)) != null) {
             System.out.println(controller.plantPlant(matcher.group("seed"), matcher.group("direction")).getData());
         } else if ((matcher = models.enums.commands.GameMenu.showplant.getMatcher(input)) != null) {
+            System.out.println(controller.showPlant(matcher.group("x"), matcher.group("y")).getData());
         } else if ((matcher = models.enums.commands.GameMenu.fertilize.getMatcher(input)) != null) {
-            // handleFertilize(matcher);
         } else if ((matcher = models.enums.commands.GameMenu.water.getMatcher(input)) != null) {
-            // handleWater(matcher);
+//            System.out.println(controller);
         } else if ((matcher = models.enums.commands.GameMenu.craftingrecipes.getMatcher(input)) != null) {
-            // handleCraftingRecipes(matcher);
+//            System.out.println(controller.showCraftInfo(matcher.group("seed")).getData());
         } else if ((matcher = models.enums.commands.GameMenu.craftingcraft.getMatcher(input)) != null) {
-            // handleCraftingCraft(matcher);
+//            System.out.println(controller.);
         } else if ((matcher = models.enums.commands.GameMenu.placeitem.getMatcher(input)) != null) {
             // handlePlaceItem(matcher);
         } else if ((matcher = models.enums.commands.GameMenu.cheatadditem.getMatcher(input)) != null) {
@@ -129,9 +130,7 @@ public class GameMenuView extends AppMenu {
             // handleEatFood(matcher);
         } else if ((matcher = models.enums.commands.GameMenu.respondmarriagereject.getMatcher(input)) != null) {
             // handleEatFood(matcher);
-        } else if ((matcher = models.enums.commands.GameMenu.starttrade.getMatcher(input)) != null) {
-//            System.out.println(controller.);
-        } else if ((matcher = models.enums.commands.GameMenu.trade.getMatcher(input)) != null) {
+        }else if ((matcher = models.enums.commands.GameMenu.starttrade.getMatcher(input)) != null) {
             System.out.println("Walcome to Trade Menu");
             App.currentMenu = Menu.TraderMenu;
         }
