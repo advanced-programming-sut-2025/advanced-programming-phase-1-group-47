@@ -20,7 +20,9 @@ import models.enums.Menu;
 import models.enums.Season;
 import models.enums.TileType;
 import models.enums.Weather;
+import models.things.Food.Food;
 import models.things.Item;
+import models.things.products.Product;
 import models.things.relations.Gift;
 import models.things.relations.Quest;
 import models.things.tools.*;
@@ -1320,6 +1322,29 @@ public class GameMenuController {
         App.getCurrentGame().TheSaloonStore = new TheSaloon().theSaloonBuilder();
         App.getCurrentGame().pierresStore = new pierres().pierresBuilder();
     }
+
+    public Result<String> eat(String name) {
+        for(Item item : App.getCurrentGame().getCurrentPlayer().getInvetory().getItems()) {
+            if(item.getName().equals(name)) {
+                if(item instanceof Product product) {
+                    if(product.isEdible()){
+                        App.getCurrentGame().getCurrentPlayer().getInvetory().reduceAmount(item, 1);
+                    }
+                    return product.eat();
+                }
+
+                if(item instanceof Food food) {
+                    App.getCurrentGame().getCurrentPlayer().getInvetory().reduceAmount(item, 1);
+                    return food.eat();
+                }
+
+                return new Result<>(false, "You can not eat this");
+            }
+        }
+
+        return new Result<>(false, "You doesn't have this food!");
+    }
+
     public void setMap(){
         int playerNUmber = App.getCurrentGame().getPlayers().size();
         for(int i=0; i < playerNUmber; i++){
