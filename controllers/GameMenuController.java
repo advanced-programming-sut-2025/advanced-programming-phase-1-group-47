@@ -1000,6 +1000,7 @@ public class GameMenuController {
                 if (!App.currentGame.map.tiles[target.x][target.y].type.equals(TileType.TILLED))
                     return new Result<>(false, "You are attempting to plant in a not tilled Ground!");
                 App.currentGame.map.tiles[target.x][target.y].type = TileType.PLANT;
+                putPlantInGround(new Plant(basePlant, target));
                 return new Result<>(true, "Plant " + item.getName() + " is now planted in (" + target.x + ", " + target.y +") cordinates !");
             }
         }
@@ -1070,7 +1071,7 @@ public class GameMenuController {
                 daysPast+=plant.getCurrentStageCount();
         }
         StringBuilder output= new StringBuilder();
-        output.append("Current Grow Stage: ");
+        output.append("\nCurrent Grow Stage: ");
         switch (plant.getCurrentStage()) {
             case -1:
                 output.append("READY TO HARVEST");
