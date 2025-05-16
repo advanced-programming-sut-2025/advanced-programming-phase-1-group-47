@@ -28,9 +28,9 @@ public class Pickaxe extends Item {
             fraction++;
         }
 
-        if(App.getCurrentGame().getCurrentPlayer().getBuff().getType().equals(SkillType.MINING)) {
-            fraction++;
-        }
+//        if(App.currentGame.currentPlayer.getBuff().getType().equals(SkillType.MINING)) {
+//            fraction++;
+//        }
 
         return (int) (type.getEnergyCost() * App.getCurrentGame().getWeather().getIntensity() - fraction);
     }
@@ -44,11 +44,21 @@ public class Pickaxe extends Item {
             App.currentGame.map.tiles[point.getX()][point.getY()].type = TileType.EMPTY;
             builder.append("the ground " + point.x + ", " + point.y + " got UnTilled");
         }
-//        else if (tileType.equals(TileType.MACHINE)){
-//            App.currentGame.currentPlayer.getInvetory().addItem(AllTheItemsInTheGame.getItemById(30));
-//            App.currentGame.map.tiles[point.getX()][point.getY()].type = TileType.EMPTY;
-//            builder.append("You got a hay at ").append(point.getX()).append(", ").append(point.getY());
-//        }
+        else if (tileType.equals(TileType.MACHINE)){
+
+        }
+        else if (tileType.equals(TileType.STONE)){
+                Random rand = new Random();
+                int randomId = rand.nextInt(16) + 380;
+
+                Item item = AllTheItemsInTheGame.getItemById(randomId);
+                item = new Item(item,rand.nextInt(1));
+                builder.append("You got a Mineral: ").append(item.getName())
+                        .append(" at ").append(point.x).append(", ").append(point.y);
+
+                App.currentGame.map.tiles[point.getX()][point.getY()].type = TileType.EMPTY;
+                App.currentGame.currentPlayer.getInvetory().addItem(item);
+        }
         else {
             builder.append("The point you selected is a ")
                     .append(tileType.toString().toLowerCase());

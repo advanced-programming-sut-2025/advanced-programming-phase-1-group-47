@@ -34,15 +34,6 @@ public class Animal extends Item {
         this.friendship.put(player, level);
     }
 
-//
-//    public void increaseFriendship(Player player, int amount) {
-//        int current = this.friendship.getOrDefault(player, 0);
-//        this.friendship.put(player, current + amount);
-//    }
-//
-//    public int getFriendship(Player player) {
-//        return this.friendship.getOrDefault(player, 0);
-//    }
 
     public HashMap<Player, Integer> getFriendshipMap() {
         return friendship;
@@ -51,4 +42,13 @@ public class Animal extends Item {
     public void setFriendshipMap(HashMap<Player, Integer> friendship) {
         this.friendship = friendship;
     }
+    //
+//    public void increaseFriendship(Player player, int amount) {
+//        int current = this.friendship.getOrDefault(player, 0);
+//        this.friendship.put(player, current + amount);
+//    }
+//
+//    public int getFriendship(Player player) {
+//        return this.friendship.getOrDefault(player, 0);
+//    }
 }

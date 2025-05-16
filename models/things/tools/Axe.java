@@ -1,9 +1,12 @@
 package models.things.tools;
 
 import models.*;
+import models.enums.Season;
 import models.enums.SkillType;
 import models.enums.TileType;
 import models.things.Item;
+
+import java.util.Random;
 
 public class Axe extends Item {
     private Type type;
@@ -27,15 +30,40 @@ public class Axe extends Item {
         }
         return (int) (type.getEnergyCost() * App.getCurrentGame().getWeather().getIntensity() - fraction);
     }
+    public int[] getRangeBySeason(){
+        Time time = App.getCurrentGame().getTime();
+        if (time.getSeason().equals(Season.SUMMER)){
+            return new int[]{365,269};
+        }
+        else if (time.getSeason().equals(Season.SPRING)){
+            return new int[]{357,264};
+        }
+        else if (time.getSeason().equals(Season.FALL)){
+            return new int[]{370,374};
+        }
+        else if (time.getSeason().equals(Season.WINTER)){
+            return new int[]{375,379};
+        }
+        else
+            return new int[]{357,379};
+    }
     @Override
     public String useTool(Point point) {
         Player player = App.getCurrentGame().getCurrentPlayer();
         player.EnergyObject.setCurrentEnergy(player.EnergyObject.getCurrentEnergy() - energyCost());
         StringBuilder builder = new StringBuilder();
         TileType tileType = App.currentGame.map.tiles[point.getX()][point.getY()].type;
+        Random rand = new Random();
         if (tileType.equals(TileType.TREE)){
             App.currentGame.map.tiles[point.getX()][point.getY()].type = TileType.EMPTY;
             builder.append("Derakht ro Ghat kardi dar  (" + point.x + ", " + point.y + ")");
+            int randomId = rand.nextInt(4) + 351;
+            Item item = AllTheItemsInTheGame.getItemById(randomId);
+            builder.append("You got a Tree Seed ").append(item.getName())
+                    .append(" at ").append(point.x).append(", ").append(point.y);
+            App.currentGame.map.tiles[point.getX()][point.getY()].type = TileType.EMPTY;
+            App.currentGame.currentPlayer.getInvetory().addItem(item);
+
             App.currentGame.currentPlayer.getInvetory().addItem(AllTheItemsInTheGame.getItemById(36));
         }
 //        else if (tileType.equals(TileType.MACHINE)){
