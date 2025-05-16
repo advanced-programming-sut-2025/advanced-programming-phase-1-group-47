@@ -1125,6 +1125,15 @@ public class GameMenuController {
         return new Result<>(false, "Plant not found");
         
     }
+    public Result<String> CheatGrowPlant(String x ,String y) {
+        for (Plant plant : App.getCurrentGame().getPlants()) {
+            if(plant.getPoint().getX() == Integer.parseInt(x) && plant.getPoint().getY() == Integer.parseInt(y)) {
+                plant.grow();
+                return new Result<String>(true, "plant grew once!");
+            }
+        }
+        return new Result<String>(false, "Plant not found");
+    }
     public Result<String> toolUse(Matcher matcher) {
         String direction = matcher.group("direction");
         Point offset = getOffsetFromDirection(direction);

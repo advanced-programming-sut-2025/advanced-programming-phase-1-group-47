@@ -1,12 +1,11 @@
 package views.menu;
 
 import controllers.HouseMenuController;
+import java.util.Scanner;
+import java.util.regex.Matcher;
 import models.App;
 import models.enums.Menu;
 import models.enums.commands.GameMenu;
-
-import java.util.Scanner;
-import java.util.regex.Matcher;
 
 public class HouseMenu extends AppMenu {
     HouseMenuController controller = new HouseMenuController();
@@ -36,4 +35,4 @@ public class HouseMenu extends AppMenu {
     }
 
     }
-}
+

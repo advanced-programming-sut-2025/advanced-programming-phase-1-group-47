@@ -145,6 +145,7 @@ public class AllTheItemsInTheGame {
         tempItems.put(27, new Item("Sugar",27,2,0,1));
         tempItems.put(28, new Item("Wheat Flour",28,2,0,1));
         tempItems.put(29, new Item("Trout Soup",29,2,0,1));
+        tempItems.put(30, new Item("Hay",30,20,0,1));
         tempItems.put(36, new Item("Wood",36,2,0,1));
         tempItems.put(37, new Item("Iron Bar",37,2,0,1));
         tempItems.put(40, new Item("Iridium Sprinkler",40,2,0,1));
