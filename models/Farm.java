@@ -21,7 +21,7 @@ public class Farm {
     public ArrayList<Point> FarmDors = new ArrayList<>();
     public TileType lastTileType = TileType.COTTAGE;
     public HashMap<Point,Plant> plantMap = new HashMap<>();
-
+    public HashMap<Point,Building> BuildingMap = new HashMap<>();
     public void setPlants(ArrayList<Plant> plants) {
         this.plants = plants;
     }

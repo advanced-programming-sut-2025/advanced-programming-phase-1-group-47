@@ -1,4 +1,5 @@
 package models.enums;
+
 public enum TileType {
     EMPTY("⬜"),
     TREE("🌲"),
@@ -23,7 +24,7 @@ public enum TileType {
     PERSON("🧑‍🌾"),
     THUNDERED("🌩️"),
 
-    // فروشگاه ها
+    // فروشگاه‌ها
     BLACKSMITH("⚒️"),
     JOJAMART("🛒"),
     PIERRESSTORE("🏪"),
@@ -50,9 +51,16 @@ public enum TileType {
     PLANT("🪴"),
     GROWN_PLANT("🥬"),
 
-    // موارد جدید
-    CHEST("📦"),
+    // سازه‌ها و امکانات
     BARN("🛖"),
+    BIG_BARN("🏚️"),
+    DELUXE_BARN("🏠"),
+    COOP("🐓"),
+    BIG_COOP("🏡"),
+    DELUXE_COOP("🏤"),
+    WELL("🚰"),
+    SHIPPING_BIN("📤"),
+
     CAGE("🪤"),
     COAL("🪨");
 

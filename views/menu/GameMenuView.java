@@ -137,7 +137,7 @@ public class GameMenuView extends AppMenu {
             App.currentMenu = Menu.TraderMenu;
         }
         else if ((matcher = models.enums.commands.GameMenu.build.getMatcher(input)) != null) {
-            // handleBuild(matcher);
+            System.out.println(controller.BuildBuilding(matcher).getData());
         }else if ((matcher = models.enums.commands.GameMenu.meetNPC.getMatcher(input)) != null) {
             System.out.println(controller.TalkToNPC(matcher.group("npcName")).getData());
         }else if ((matcher = GameMenu.giftNPC.getMatcher(input)) != null) {

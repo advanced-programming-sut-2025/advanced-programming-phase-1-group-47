@@ -134,6 +134,16 @@ public class AllTheItemsInTheGame {
                 tempItems.put(i + 1100,p.harvestPlant().getJuice());
             }
         }
+        tempItems.put(FarmBuilding.BARN.getId(), new Building(FarmBuilding.BARN));
+        tempItems.put(FarmBuilding.BIG_BARN.getId(), new Building(FarmBuilding.BIG_BARN));
+        tempItems.put(FarmBuilding.COOP.getId(), new Building(FarmBuilding.COOP));
+        tempItems.put(FarmBuilding.BIG_COOP.getId(), new Building(FarmBuilding.BIG_COOP));
+        tempItems.put(FarmBuilding.DELUXE_BARN.getId(), new Building(FarmBuilding.DELUXE_BARN));
+        tempItems.put(FarmBuilding.DELUXE_COOP.getId(), new Building(FarmBuilding.DELUXE_BARN));
+        tempItems.put(FarmBuilding.SHIPPING_BIN.getId(), new Building(FarmBuilding.SHIPPING_BIN));
+        tempItems.put(FarmBuilding.SHIPPING_BIN.getId(), new Building(FarmBuilding.SHIPPING_BIN));
+        tempItems.put(FarmBuilding.WELL.getId(), new Building(FarmBuilding.WELL));
+
         tempItems.put(0,  new Item("null",0,0,0,1));
         tempItems.put(2,  new Item("Stone",2,20,0,1));
         tempItems.put(3,  new Item("Wool",3,20,0,1));
