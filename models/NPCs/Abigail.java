@@ -27,14 +27,14 @@ public class Abigail {
     private ArrayList<Item> favoriteBuilder() {
         ArrayList<Item> favorites = new ArrayList<>();
         favorites.add(new Item("Stone", 2, 2, 0, 1));
-        favorites.add(new Item("Iron Ore", 1, 10, 0, 1));
+        favorites.add(new Item("Iron Ore", 393, 10, 0, 1));
         favorites.add(new Item("Coffee", 6, 150, 0, 1));
         return favorites;
     }
     private ArrayList<Item> giftBuilder() {
         ArrayList<Item> possibleGifts = new ArrayList<>();
         possibleGifts.add(new Item("Stone", 2, 2, 0, 40));
-        possibleGifts.add(new Item("Pumpkin Pie", 4, 385, 0, 1));
+        possibleGifts.add(new Item("Pumpkin Pie", 4, 385, 0, 1)); //Update
         possibleGifts.add(new Item("Coffee", 6, 150, 0, 1));
         return possibleGifts;
     }

@@ -4,8 +4,16 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import models.enums.AnimalType;
+import models.enums.RodType;
 import models.enums.Season;
 import models.things.Item;
+import models.things.tools.Axe;
+import models.things.tools.FishingPole;
+import models.things.tools.Hoe;
+import models.things.tools.Pickaxe;
+import models.things.tools.Scythe;
+import models.things.tools.Type;
+import models.things.tools.WateringCan;
 
 public class AllTheItemsInTheGame {
 
@@ -113,12 +121,66 @@ public class AllTheItemsInTheGame {
 
         // اضافه کردن همه حیوان‌ها به مپ آیتم‌ها
         tempItems.putAll(allAnimals);
+        //اضافه کردن همه پلنت ها
         for (int i = 302; i < 380; i++) {
             Plant p = getPlantById(i);
             if (p != null) {
                 tempItems.put(i, p.harvestPlant());
             }
         }
+        tempItems.put(2, new Item("Stone",2,20,0,1));
+        tempItems.put(3, new Item("Wool",3,20,0,1));
+        tempItems.put(4, new Item("BARN",4,20,0,1));
+        tempItems.put(5, new Item("COOP",5,20,0,1));
+        tempItems.put(6, new Item("Coffee",2,20,0,1));
+        tempItems.put(21, new Item("Iridium Bar",2,20,0,1));
+        tempItems.put(24, new Item("Joja Cola",2,20,0,1));
+        tempItems.put(25, new Item("Grass Starter",2,20,0,1));
+        tempItems.put(26, new Item("Beer",26,2,0,1));
+        tempItems.put(27, new Item("Sugar",27,2,0,1));
+        tempItems.put(28, new Item("Wheat Flour",28,2,0,1));
+        tempItems.put(29, new Item("Trout Soup",29,2,0,1));
+        tempItems.put(36, new Item("Wood",36,2,0,1));
+        tempItems.put(37, new Item("Iron Bar",37,2,0,1));
+        tempItems.put(40, new Item("Iridium Sprinkler",40,2,0,1));
+        tempItems.put(41, new Item("Deluxe Scarecrow",41,2,0,1));
+        tempItems.put(42, new Item("Scarecrow",42,2,0,1));
+        tempItems.put(43, new Item("BeeHouse",43,2,0,1));
+        tempItems.put(44, new Item("Gold Bar",44,2,0,1));
+        tempItems.put(46, new Item("HardWood",46,2,0,1));
+        tempItems.put(48, new Item("Rice",48,2,0,1));
+        tempItems.put(52, new Axe(Type.REGULAR));
+        tempItems.put(53, new Item("BackPack type" , 53 , 2 ,0 , 1));
+        tempItems.put(54, new FishingPole(RodType.TRAININGROD));
+        tempItems.put(55, new Item("Milk pail",55 ,-1 ,0 , 1));
+        tempItems.put(56, new Pickaxe(Type.REGULAR));
+        tempItems.put(57, new Scythe());
+        tempItems.put(58, new Item("Shears", 58, 2, 0, 1));
+       // tempItems.put(59, new  ) nemidanam
+        tempItems.put(60, new WateringCan(Type.REGULAR));
+        tempItems.put(61, new Hoe(Type.REGULAR));
+        tempItems.put(151, new Item("Salmon",151,2,0,1));
+        tempItems.put(201, new Item("Friendship Level",201,2,0,1));
+        tempItems.put(202, new Item("Bouquet",202,2,0,1));
+        tempItems.put(203, new Item("Wedding Ring",203,2,0,1));
+        tempItems.put(380, new Item("Quartz",380,2,0,1));
+        tempItems.put(381, new Item("Earth Crystal",381,2,0,1));    
+        tempItems.put(382, new Item("Frozen Tear",382,2,0,1));    
+        tempItems.put(383, new Item("Fire Quartz",383,2,0,1));    
+        tempItems.put(384, new Item("Emerald",384,2,0,1));    
+        tempItems.put(385, new Item("Aquamarine",385,2,0,1));    
+        tempItems.put(386, new Item("Ruby",386,2,0,1));    
+        tempItems.put(387, new Item("Amethyst",387,2,0,1));    
+        tempItems.put(388, new Item("Topaz",388,2,0,1));    
+        tempItems.put(389, new Item("Jade",389,2,0,1));    
+        tempItems.put(390, new Item("Diamond",390,2,0,1));    
+        tempItems.put(391, new Item("Prismatic Shard",391,2,0,1));    
+        tempItems.put(392, new Item("Copper Ore",392,2,0,1));    
+        tempItems.put(393, new Item("Iron Ore",393,2,0,1));    
+        tempItems.put(394, new Item("Gold Ore",394,2,0,1));    
+        tempItems.put(395, new Item("Iridium Ore",395,2,0,1));    
+        tempItems.put(396, new Item("Coal",396,2,0,1));    
+
         allItems = Collections.unmodifiableMap(tempItems);
         }
 

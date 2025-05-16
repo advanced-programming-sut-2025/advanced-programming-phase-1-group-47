@@ -27,32 +27,32 @@ public class Sebastion {
     private ArrayList<Item> favoriteBuilder() {
         ArrayList<Item> favorites = new ArrayList<>();
         favorites.add(new Item("Wool", 3, 340, 0, 1));
-        favorites.add(new Item("Pumpkin Pie", 4, 385, 0, 1));
-        favorites.add(new Item("Pizza", 5, 300, 0, 1));
+        favorites.add(new Item("Pumpkin Pie", 4, 385, 0, 1)); //update
+        favorites.add(new Item("Pizza", 5, 300, 0, 1)); //update
         return favorites;
     }
     private ArrayList<Item> giftBuilder() {
         ArrayList<Item> possibleGifts = new ArrayList<>();
-        possibleGifts.add(new Item("Frozen Tear", 47, 75, 0, 1));
-        possibleGifts.add(new Item("Pumpkin Pie", 4, 385, 0, 1));
+        possibleGifts.add(new Item("Frozen Tear", 382, 75, 0, 1));
+        possibleGifts.add(new Item("Pumpkin Pie", 4, 385, 0, 1)); //update
         possibleGifts.add(new Item("Coffee", 6, 150, 0, 1));
         return possibleGifts;
     }
     private Quest questBuilder1() {
-        Item requieredItems = new Item("Iron Ore", 1, 10, 0, 50);
-        Item rewards = new Item("Diamond", 39, 750, 0, 1);
+        Item requieredItems = new Item("Iron Ore", 393, 10, 0, 50);
+        Item rewards = new Item("Diamond", 390, 750, 0, 1);
         Quest quest = new Quest(requieredItems, rewards , 0 ,13,true);
         return quest;
     }
     private Quest questBuilder2() {
-        Item requieredItems = new Item("Pumpkin Pie", 4, 385, 0, 1);
+        Item requieredItems = new Item("Pumpkin Pie", 4, 385, 0, 1); //update
         Item rewards = new Item("null item", 0, 0, 0, 1);
         Quest quest = new Quest(requieredItems, rewards , 500 ,14,false);
         return quest;
     }
     private Quest questBuilder3() {
         Item requieredItems = new Item("Stone", 2, 2, 0, 150);
-        Item rewards = new Item("Quartz", 38, 25, 0, 50);
+        Item rewards = new Item("Quartz", 380, 25, 0, 50);
         Quest quest = new Quest(requieredItems, rewards , 0 ,15,false);
         return quest;
     }
