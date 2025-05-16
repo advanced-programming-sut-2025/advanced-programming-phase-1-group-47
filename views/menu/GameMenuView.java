@@ -1,13 +1,11 @@
 package views.menu;
 
 import controllers.GameMenuController;
-import models.*;
-import models.enums.Menu;
-import models.enums.TileType;
-import models.enums.commands.GameMenu;
-
 import java.util.Scanner;
 import java.util.regex.Matcher;
+import models.*;
+import models.enums.Menu;
+import models.enums.commands.GameMenu;
 
 public class GameMenuView extends AppMenu {
     private final GameMenuController controller = new GameMenuController();
@@ -27,7 +25,7 @@ public class GameMenuView extends AppMenu {
         } else if ((matcher = models.enums.commands.GameMenu.nextturn.getMatcher(input)) != null) {
             App.currentGame.currentPlayer = App.getCurrentGame().getPlayers().get((App.currentGame.turn + 1)%(App.currentGame.players.size()));
             App.currentGame.turn = (App.currentGame.turn + 1)%(App.currentGame.players.size());
-            App.getCurrentGame().currentPlayer.printNotifications();
+            System.out.println(App.getCurrentGame().currentPlayer.printNotifications());
             App.getCurrentGame().currentPlayer.resetNotifications();
 
         } else if ((matcher = models.enums.commands.GameMenu.showtime.getMatcher(input)) != null) {
@@ -130,7 +128,7 @@ public class GameMenuView extends AppMenu {
             // handleEatFood(matcher);
         } else if ((matcher = models.enums.commands.GameMenu.respondmarriagereject.getMatcher(input)) != null) {
             // handleEatFood(matcher);
-        }else if ((matcher = models.enums.commands.GameMenu.starttrade.getMatcher(input)) != null) {
+        } else if ((matcher = models.enums.commands.GameMenu.starttrade.getMatcher(input)) != null) {
             System.out.println("Walcome to Trade Menu");
             App.currentMenu = Menu.TraderMenu;
         }
