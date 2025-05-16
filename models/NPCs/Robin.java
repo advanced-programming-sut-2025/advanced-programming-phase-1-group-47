@@ -29,14 +29,14 @@ public class Robin {
         ArrayList<Item> favorites = new ArrayList<>();
         favorites.add(new Item("Wood", 36, 2, 0, 1));
         favorites.add(new Item("Iron Bar", 37, 120, 0, 1));
-        favorites.add(new Item("Spaghetti", 47, 120, 0, 1));
+        favorites.add(new Item("Spaghetti", 47, 120, 0, 1)); //Update 
         return favorites;
     }
     private ArrayList<Item> giftBuilder() {
         ArrayList<Item> possibleGifts = new ArrayList<>();
         possibleGifts.add(new Item("Wood", 36, 2, 0, 50));
         possibleGifts.add(new Item("Iron Bar", 37, 120, 0, 2));
-        possibleGifts.add(new Item("Spaghetti", 47, 120, 0, 1));
+        possibleGifts.add(new Item("Spaghetti", 47, 120, 0, 1)); //Update
         return possibleGifts;
     }
     private Quest questBuilder1() {

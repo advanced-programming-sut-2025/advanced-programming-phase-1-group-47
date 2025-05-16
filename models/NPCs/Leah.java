@@ -27,15 +27,15 @@ public class Leah {
     }
     private ArrayList<Item> favoriteBuilder() {
         ArrayList<Item> favorites = new ArrayList<>();
-        favorites.add(new Item("Salad", 35, 110, 0, 1));
+        favorites.add(new Item("Salad", 35, 110, 0, 1)); //Update
         favorites.add(new Item("Grape", 337, 80, 301, 1));
-        favorites.add(new Item("WINE", 34, 0, 0, 1));
+        favorites.add(new Item("WINE", 34, 0, 0, 1)); //Update
         return favorites;
     }
     private ArrayList<Item> giftBuilder() {
         ArrayList<Item> possibleGifts = new ArrayList<>();
-        possibleGifts.add(new Item("Salad", 35, 110, 0, 1));
-        possibleGifts.add(new Item("Pumpkin Pie", 4, 385, 0, 1));
+        possibleGifts.add(new Item("Salad", 35, 110, 0, 1)); //Update
+        possibleGifts.add(new Item("Pumpkin Pie", 4, 385, 0, 1)); //Update
         possibleGifts.add(new Item("Grape", 337, 80, 301, 1));
         return possibleGifts;
     }

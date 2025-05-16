@@ -2,6 +2,7 @@ package models;
 
 import models.enums.ProductQuality;
 import models.enums.Season;
+import models.things.Item;
 import models.things.products.Product;
 
 
@@ -78,6 +79,10 @@ public class Plant {
         //figure out quality with skills and rand here @amoojoey
         return new Product(name , plantID ,baseValue , 301 ,amount ,isEdible , energy ,health , quality ,isFruit , !isFruit );
     }
+    public Item getSeed() {
+        return new Item(source,plantID + 100 ,2 , 401 ,1);
+    }
+
     public void grow() {
         if(currentStage == -1)
             return;

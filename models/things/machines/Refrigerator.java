@@ -2,13 +2,14 @@ package models.things.machines;
 
 import java.util.ArrayList;
 import models.things.Item;
+import models.things.products.Product;
 
 public abstract class Refrigerator extends Machine {
     private int capacity;
     private ArrayList<Item> items;
 
-    public Refrigerator(String name, int itemID, int value, int parentItemID, int amount, int capacity) {
-        super(name, itemID, value, parentItemID, amount);
+    public Refrigerator(String name, int itemID, int value, int parentItemID, int amount, int capacity , Product returnProduct) {
+        super(name, itemID, value, parentItemID, amount,returnProduct);
         this.capacity = capacity;
         this.items = new ArrayList<>();
     }

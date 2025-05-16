@@ -18,10 +18,10 @@ public class Blacksmith {
 
     private ArrayList<Item> permaStockBuilder() {
         ArrayList<Item> returnvalue = new ArrayList<>();
-        returnvalue.add(new Item("Copper Ore", 21, 75, 0, 1000000));
-        returnvalue.add(new Item("Iron Ore", 1, 150, 0, 1000000));
-        returnvalue.add(new Item("Gold Ore", 21, 400, 0, 1000000));
-        returnvalue.add(new Item("Coal", 21, 150, 0, 1000000));
+        returnvalue.add(new Item("Copper Ore", 392, 75, 0, 1000000));
+        returnvalue.add(new Item("Iron Ore", 393, 150, 0, 1000000));
+        returnvalue.add(new Item("Gold Ore", 394, 400, 0, 1000000));
+        returnvalue.add(new Item("Coal", 396, 150, 0, 1000000));
         return returnvalue;
     }
 
