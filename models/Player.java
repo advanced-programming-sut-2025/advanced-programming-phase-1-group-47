@@ -176,6 +176,9 @@ public class Player extends User {
     public void gainXP(SkillType type , int xp) {
 
     }
+    public void reduceMoney(int amount) {
+        money-=amount;
+    }
 
     public void setId(int id) {
         this.id = id;
