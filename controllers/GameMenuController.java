@@ -1042,7 +1042,6 @@ public class GameMenuController {
     public Result<String> cheatItem(Matcher matcher) {
         String itemName = matcher.group("itemName");
         int amount;
-
         try {
             amount = Integer.parseInt(matcher.group("count"));
             if (amount <= 0) {
@@ -1053,17 +1052,13 @@ public class GameMenuController {
         }
         for (HashMap.Entry<Integer, Item> entry : AllTheItemsInTheGame.allItems.entrySet()) {
             Item item = entry.getValue();
-            System.out.println(item.getItemID() + " " + item.getName() + " " + item.getAmount());
+            Item x = item;
+            x.setAmount(amount);
+//            System.out.println(item.getItemID() + " " + item.getName() + " " + item.getAmount());
             if (item.getName().equalsIgnoreCase(itemName)) {
-                // ساخت نسخه‌ی جدید از آیتم
-                Item copiedItem = item;
-                copiedItem.setAmount(amount);
-
                 App.getCurrentGame()
                         .getCurrentPlayer()
-                        .getInvetory()
-                        .getItems()
-                        .add(copiedItem);
+                        .getInvetory().addItem(x);
 
                 return new Result<>(true, amount + " × " + itemName + " added to inventory.");
             }
