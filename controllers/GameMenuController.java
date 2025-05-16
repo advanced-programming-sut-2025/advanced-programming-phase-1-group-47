@@ -624,7 +624,8 @@ public class GameMenuController {
         int[][] grid = new int[160][120];
         Set<TileType> walkable = Set.of(
                 TileType.EMPTY, TileType.STONE, TileType.TREE,
-                TileType.PERSON, TileType.DOOR, TileType.FARMWALL
+                TileType.PERSON, TileType.DOOR, TileType.FARMWALL,
+                TileType.GRASS
         );
 
         Game game = App.currentGame;
@@ -1007,6 +1008,7 @@ public class GameMenuController {
                     return new Result<>(false, "You are attempting to plant in a not tilled Ground!");
                 App.currentGame.map.tiles[target.x][target.y].type = TileType.PLANT;
                 putPlantInGround(new Plant(basePlant, target));
+                App.currentGame.map.farms[App.currentGame.turn].plantMap.put(target, basePlant);
                 return new Result<>(true, "Plant " + item.getName() + " is now planted in (" + target.x + ", " + target.y +") cordinates !");
             }
         }
@@ -1341,5 +1343,15 @@ public class GameMenuController {
             App.currentGame.time.setHour(App.currentGame.time.getHour() + 1);
         }
     }
+    public Result<String> CheatGrowPlant(String x ,String y) {
+        for (Plant plant : App.getCurrentGame().getPlants()) {
+            if(plant.getPoint().getX() == Integer.parseInt(x) && plant.getPoint().getY() == Integer.parseInt(y)) {
+                plant.grow();
+                return new Result<String>(true, "plant grew once!");
+            }
+        }
+        return new Result<String>(false, "Plant not found");
+    }
+
 }
 //

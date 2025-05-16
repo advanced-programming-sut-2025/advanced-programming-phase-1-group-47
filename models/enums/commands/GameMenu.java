@@ -40,6 +40,7 @@ public enum GameMenu {
     tooluse("^\\s*tools\\s+use\\s+-d\\s+(?<direction>\\S+)\\s*$"),
     craftinfo("^\\s*craftinfo\\s+-n\\s+(?<craftName>\"[^\"]+\"|\\S+)\\s*$"),
     plant("^\\s*plant\\s+-s\\s+(?<seed>.+?)\\s+-d\\s+(?<direction>\\S+)\\s*$"),
+    chearGrown("\\s*grow\\s+(?<x>\\d+),(?<y>\\d+)\\s*$"),
     showplant("^\\s*showplant\\s+-l\\s+(?<x>\\d+),(?<y>\\d+)\\s*$"),
     fertilize("^\\s*fertilize\\s+-f\\s+(?<fertilizer>\\S+)\\s+-d\\s+(?<direction>\\S+)\\s*$"),
     water("^\\s*howmuch\\s+water\\s*$"),

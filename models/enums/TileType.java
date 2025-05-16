@@ -43,7 +43,7 @@ public enum TileType {
     SHEEP("🐑"),
 
     // کشاورزی
-    TILLED("░"),
+    TILLED("░░"),
     SEED("🌱"),
     PLANT("🪴"),
     GROWN_PLANT("🥬"),

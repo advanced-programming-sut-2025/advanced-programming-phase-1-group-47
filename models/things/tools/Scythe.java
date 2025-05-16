@@ -6,6 +6,7 @@ import models.enums.Season;
 import models.enums.TileType;
 import models.things.Item;
 
+import java.util.HashMap;
 import java.util.Random;
 
 public class Scythe extends Item {
@@ -59,12 +60,19 @@ public class Scythe extends Item {
         }
         else if (tileType.equals(TileType.PLANT)){
             GameMenuController controller = new GameMenuController();
-            builder.append(controller.harvestPlant(App.currentGame.map.farms[App.currentGame.turn].plantMap.get(point)).getData());
+            for (HashMap.Entry<Point, Plant> entry : App.currentGame.map.farms[App.getCurrentGame().turn].plantMap.entrySet()) {
+                Point plantpoint = entry.getKey();
+                Plant plant = entry.getValue();
+                if (plantpoint.x == point.x && plantpoint.y == point.y) {
+                    builder.append(controller.harvestPlant(plant).getData());
+                }
+            }
             App.currentGame.map.tiles[point.getX()][point.getY()].type = TileType.EMPTY;
         }
         else if (tileType.equals(TileType.GRASS)){
             App.currentGame.currentPlayer.getInvetory().addItem(AllTheItemsInTheGame.getItemById(30));
             App.currentGame.map.tiles[point.getX()][point.getY()].type = TileType.EMPTY;
+            builder.append("You got a hay at ").append(point.getX()).append(", ").append(point.getY());
         }
         else {
             builder.append("The point you selected is a ")
