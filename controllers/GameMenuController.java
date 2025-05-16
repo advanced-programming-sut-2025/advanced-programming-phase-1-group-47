@@ -1313,19 +1313,20 @@ public class GameMenuController {
         for(int i=0; i < playerNUmber; i++){
             Map map = App.currentGame.map;
             Random rand = new Random();
-            for (int j=0;i<rand.nextInt(400,500);i++){
+            for (int j=0;i<rand.nextInt(10,20);i++){
                 int x = rand.nextInt(App.farmStart[i%playerNUmber].x , App.farmStart[i%playerNUmber].x + 49);
                 int y = rand.nextInt(App.farmStart[i%playerNUmber].y,App.farmStart[i%playerNUmber].y + 39);
                 int t = rand.nextInt(Map.farmHeight);
                 if (map.tiles[x][y].type == TileType.EMPTY){
-                    if (t%6 == 0){
+                    int mod = t % 8;
+                    if (mod == 0) {
                         map.tiles[x][y].type = TileType.FORAGING;
-                    }
-                    else if ((t%3)%2 == 0){
+                    } else if (mod == 1 || mod == 2) {
                         map.tiles[x][y].type = TileType.TREE;
-                    }
-                    else if ((t % 3)%2 == 1){
+                    } else if (mod == 3 || mod == 4) {
                         map.tiles[x][y].type = TileType.STONE;
+                    } else {
+                        map.tiles[x][y].type = TileType.GRASS;
                     }
                 }
             }
