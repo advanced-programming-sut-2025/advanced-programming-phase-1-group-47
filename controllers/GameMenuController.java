@@ -1006,7 +1006,6 @@ public class GameMenuController {
         return new Result<>(false, "You don't have that seed/Item!");
     }
 
-
     public Point getOffsetFromDirection(String direction) {
         switch (direction.toUpperCase()) {
             case "NORTH": return new Point(-1, 0);

@@ -31,7 +31,6 @@ public class Hoe extends Item {
     @Override
     public String useTool(Point point) {
         StringBuilder builder = new StringBuilder();
-        builder.append("\"Hoe used at point \" + point");
         if ((App.currentGame.map.tiles[point.getX()][point.getY()].type.equals(TileType.EMPTY))){
             builder.append("the ground got tilled at " + point.x + ", " + point.y);
             App.currentGame.map.tiles[point.getX()][point.getY()].type = TileType.TILLED;
