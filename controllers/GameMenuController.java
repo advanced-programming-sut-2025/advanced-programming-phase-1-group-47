@@ -73,6 +73,40 @@ public class GameMenuController {
         Player player = App.currentGame.currentPlayer;
         player.EnergyObject.setEnergyCap(999999999);
     }
+    private void CrowAttack() {
+        ArrayList<Plant> plants = new ArrayList<>(App.getCurrentGame().getPlants());
+        int totalPlants = plants.size();
+
+        if (totalPlants < 16)
+            return;
+
+        Random random = new Random();
+        int chance = (totalPlants / 16) * 25;
+
+        while (chance >= 100 && !plants.isEmpty()) {
+            int index = random.nextInt(plants.size());
+            CrowAttackPlant(plants.get(index));
+            plants.remove(index);
+            chance -= 100;
+        }
+
+        int randomRoll = random.nextInt(4) + 1;
+        if (randomRoll <= (chance / 25) && !plants.isEmpty()) {
+            int index = random.nextInt(plants.size());
+            CrowAttackPlant(plants.get(index));
+        }
+    }
+    private void CrowAttackPlant(Plant plant) {
+        if(plant.isIsReUsable()){
+            if(plant.getCurrentStage() == -1)
+                plant.setCurrentStage(-2);
+            plant.setCurrentStageCount(0);
+        }
+        else{
+            App.getCurrentGame().getPlants().remove(plant);
+            //remove plant from Farm too @sarsar
+        }
+    }
     public Result<String> InventoryTrashTotal(Matcher matcher) {
         Player player = App.currentGame.currentPlayer;
         String itemName = matcher.group("itemName");
@@ -1260,16 +1294,17 @@ public class GameMenuController {
         System.out.println(showSpecificCraftInfo(plant));
         if(plant.getCurrentStage() != -1)
             return new Result<>(false, "Plant not ready to harvest yet!");
-        if(!plant.isIsReUsable())
+        if(!plant.isIsReUsable()){
             App.getCurrentGame().getPlants().remove(plant);
+            App.currentGame.map.tiles[plant.getPoint().x][plant.getPoint().y].type = TileType.EMPTY;
+            //@sarsar remove plant from hashmap
+        }
         else{
             plant.setCurrentStage(-2);
             plant.setCurrentStageCount(0);
         }
         App.getCurrentGame().getCurrentPlayer().getInvetory().addItem(plant.harvestPlant());
 
-        //@sarsar change tiltype back (Point at plant.getpoint)
-        App.currentGame.map.tiles[plant.getPoint().x][plant.getPoint().y].type = TileType.EMPTY;
 
         App.currentGame.currentPlayer.skillProgress(0,5);
         //@amoojoey give player 5XP skill in farming
@@ -1341,6 +1376,7 @@ public class GameMenuController {
 
     //har chi mikhaid update she too shab barai farda ro bezanid inja 
     public void setUpNextDay() {
+        crowAttack();
         Random random = new Random();
         int randomNumber = random.nextInt(10) + 1;
         for (Plant plant : App.getCurrentGame().getPlants()) {
