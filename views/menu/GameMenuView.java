@@ -1,6 +1,8 @@
 package views.menu;
 
 import controllers.GameMenuController;
+
+import java.util.HashMap;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import models.*;
@@ -14,6 +16,15 @@ public class GameMenuView extends AppMenu {
         System.out.println("You are now in Game menu");
         String input = scanner.nextLine();
         Matcher matcher;
+        if (input.equalsIgnoreCase("x")) {
+
+            for (HashMap.Entry<Point, Plant> entry : App.currentGame.map.farms[App.getCurrentGame().turn].plantMap.entrySet()) {
+                Point point = entry.getKey();
+                Plant plant = entry.getValue();
+                System.out.println(point.x + " " + point.y + " " + plant.getName());
+                // کاری که می‌خوای با point و plant انجام بدی...
+            }
+        }
         if ((matcher = models.enums.commands.GameMenu.newgame.getMatcher(input)) != null) {
             System.out.println(controller.handleNewGame(matcher,scanner).getData());
         } else if ((matcher = models.enums.commands.GameMenu.loadgame.getMatcher(input)) != null) {
@@ -84,13 +95,18 @@ public class GameMenuView extends AppMenu {
         } else if ((matcher = models.enums.commands.GameMenu.fertilize.getMatcher(input)) != null) {
         } else if ((matcher = models.enums.commands.GameMenu.water.getMatcher(input)) != null) {
 //            System.out.println(controller);
-        } else if ((matcher = models.enums.commands.GameMenu.craftingrecipes.getMatcher(input)) != null) {
+        }
+        else if ((matcher = GameMenu.chearGrown.getMatcher(input)) != null) {
+            System.out.println(controller.CheatGrowPlant(matcher.group("x"), matcher.group("y")).getData());
+        }
+        else if ((matcher = models.enums.commands.GameMenu.craftingrecipes.getMatcher(input)) != null) {
 //            System.out.println(controller.showCraftInfo(matcher.group("seed")).getData());
         } else if ((matcher = models.enums.commands.GameMenu.craftingcraft.getMatcher(input)) != null) {
 //            System.out.println(controller.);
         } else if ((matcher = models.enums.commands.GameMenu.placeitem.getMatcher(input)) != null) {
             // handlePlaceItem(matcher);
-        } else if ((matcher = models.enums.commands.GameMenu.cheatadditem.getMatcher(input)) != null) {
+        }
+        else if ((matcher = models.enums.commands.GameMenu.cheatadditem.getMatcher(input)) != null) {
             System.out.println(controller.cheatItem(matcher).getData());
         } else if ((matcher = models.enums.commands.GameMenu.friendships.getMatcher(input)) != null) {
             System.out.println(controller.showFriendships().getData());

@@ -34,5 +34,4 @@ public class HouseMenu extends AppMenu {
             System.out.println("Invalid Command");
     }
 
-    }
-
+}

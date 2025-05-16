@@ -624,7 +624,8 @@ public class GameMenuController {
         int[][] grid = new int[160][120];
         Set<TileType> walkable = Set.of(
                 TileType.EMPTY, TileType.STONE, TileType.TREE,
-                TileType.PERSON, TileType.DOOR, TileType.FARMWALL
+                TileType.PERSON, TileType.DOOR, TileType.FARMWALL,
+                TileType.GRASS
         );
 
         Game game = App.currentGame;
@@ -1007,6 +1008,7 @@ public class GameMenuController {
                     return new Result<>(false, "You are attempting to plant in a not tilled Ground!");
                 App.currentGame.map.tiles[target.x][target.y].type = TileType.PLANT;
                 putPlantInGround(new Plant(basePlant, target));
+                App.currentGame.map.farms[App.currentGame.turn].plantMap.put(target, basePlant);
                 return new Result<>(true, "Plant " + item.getName() + " is now planted in (" + target.x + ", " + target.y +") cordinates !");
             }
         }
@@ -1202,7 +1204,7 @@ public class GameMenuController {
         App.getCurrentGame().getCurrentPlayer().getInvetory().addItem(plant.harvestPlant());
 
         //@sarsar change tiltype back (Point at plant.getpoint)
-
+        App.currentGame.map.tiles[plant.getPoint().x][plant.getPoint().y].type = TileType.EMPTY;
 
         App.currentGame.currentPlayer.skillProgress(0,5);
         //@amoojoey give player 5XP skill in farming
@@ -1322,19 +1324,20 @@ public class GameMenuController {
         for(int i=0; i < playerNUmber; i++){
             Map map = App.currentGame.map;
             Random rand = new Random();
-            for (int j=0;i<rand.nextInt(400,500);i++){
+            for (int j=0;i<rand.nextInt(10,20);i++){
                 int x = rand.nextInt(App.farmStart[i%playerNUmber].x , App.farmStart[i%playerNUmber].x + 49);
                 int y = rand.nextInt(App.farmStart[i%playerNUmber].y,App.farmStart[i%playerNUmber].y + 39);
                 int t = rand.nextInt(Map.farmHeight);
                 if (map.tiles[x][y].type == TileType.EMPTY){
-                    if (t%6 == 0){
+                    int mod = t % 8;
+                    if (mod == 0) {
                         map.tiles[x][y].type = TileType.FORAGING;
-                    }
-                    else if ((t%3)%2 == 0){
+                    } else if (mod == 1 || mod == 2) {
                         map.tiles[x][y].type = TileType.TREE;
-                    }
-                    else if ((t % 3)%2 == 1){
+                    } else if (mod == 3 || mod == 4) {
                         map.tiles[x][y].type = TileType.STONE;
+                    } else {
+                        map.tiles[x][y].type = TileType.GRASS;
                     }
                 }
             }
@@ -1349,5 +1352,15 @@ public class GameMenuController {
             App.currentGame.time.setHour(App.currentGame.time.getHour() + 1);
         }
     }
+    public Result<String> CheatGrowPlant(String x ,String y) {
+        for (Plant plant : App.getCurrentGame().getPlants()) {
+            if(plant.getPoint().getX() == Integer.parseInt(x) && plant.getPoint().getY() == Integer.parseInt(y)) {
+                plant.grow();
+                return new Result<String>(true, "plant grew once!");
+            }
+        }
+        return new Result<String>(false, "Plant not found");
+    }
+
 }
 //
