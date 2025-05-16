@@ -1193,7 +1193,7 @@ public class GameMenuController {
         App.getCurrentGame().getCurrentPlayer().getInvetory().addItem(plant.harvestPlant());
 
         //@sarsar change tiltype back (Point at plant.getpoint)
-
+        App.currentGame.map.tiles[plant.getPoint().x][plant.getPoint().y].type = TileType.EMPTY;
 
         App.currentGame.currentPlayer.skillProgress(0,5);
         //@amoojoey give player 5XP skill in farming
