@@ -7,7 +7,7 @@ public class Energy {
     public int getEnergyCap() {
         return energyCap;
     }
-    Energy(int energyCap, int currentEnergy) {
+    public Energy(int energyCap, int currentEnergy) {
         this.energyCap = energyCap;
         this.currentEnergy = currentEnergy;
     }
@@ -22,4 +22,8 @@ public class Energy {
     public void setCurrentEnergy(int currentEnergy) {
         this.currentEnergy = Math.min(energyCap, currentEnergy);
     }
+
+
+
+
 }

@@ -1,10 +1,13 @@
 package models.things.tools;
 
-import models.App;
-import models.Point;
-import models.Result;
+import controllers.GameMenuController;
+import models.*;
 import models.enums.SkillType;
+import models.enums.TileType;
 import models.things.Item;
+
+import java.util.HashMap;
+import java.util.Random;
 
 public class Pickaxe extends Item {
 
@@ -25,7 +28,7 @@ public class Pickaxe extends Item {
             fraction++;
         }
 
-        if(App.getCurrentGame().getCurrentPlayer().getBuff().getSkill().getType().equals(SkillType.MINING)) {
+        if(App.getCurrentGame().getCurrentPlayer().getBuff().getType().equals(SkillType.MINING)) {
             fraction++;
         }
 
@@ -33,7 +36,25 @@ public class Pickaxe extends Item {
     }
 
     public String useTool(Point point) {
-        return "\"PickAxe used at point \" + point";
+        StringBuilder builder = new StringBuilder();
+        TileType tileType = App.currentGame.map.tiles[point.getX()][point.getY()].type;
+        Player player = App.getCurrentGame().getCurrentPlayer();
+        player.EnergyObject.setCurrentEnergy(player.EnergyObject.getCurrentEnergy() - energyCost());
+        if (tileType.equals(TileType.TILLED)){
+            App.currentGame.map.tiles[point.getX()][point.getY()].type = TileType.EMPTY;
+            builder.append("the ground " + point.x + ", " + point.y + " got UnTilled");
+        }
+//        else if (tileType.equals(TileType.MACHINE)){
+//            App.currentGame.currentPlayer.getInvetory().addItem(AllTheItemsInTheGame.getItemById(30));
+//            App.currentGame.map.tiles[point.getX()][point.getY()].type = TileType.EMPTY;
+//            builder.append("You got a hay at ").append(point.getX()).append(", ").append(point.getY());
+//        }
+        else {
+            builder.append("The point you selected is a ")
+                    .append(tileType.toString().toLowerCase());
+        }
+
+        return builder.toString();
     }
 
 
