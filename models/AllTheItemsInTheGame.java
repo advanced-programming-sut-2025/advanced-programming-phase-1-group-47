@@ -126,6 +126,7 @@ public class AllTheItemsInTheGame {
             Plant p = getPlantById(i);
             if (p != null) {
                 tempItems.put(i, p.harvestPlant());
+                tempItems.put(i + 100, p.getSeed());
             }
         }
         tempItems.put(2, new Item("Stone",2,20,0,1));
