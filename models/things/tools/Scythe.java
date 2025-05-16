@@ -64,10 +64,10 @@ public class Scythe extends Item {
                 Point plantpoint = entry.getKey();
                 Plant plant = entry.getValue();
                 if (plantpoint.x == point.x && plantpoint.y == point.y) {
+
                     builder.append(controller.harvestPlant(plant).getData());
                 }
             }
-            App.currentGame.map.tiles[point.getX()][point.getY()].type = TileType.EMPTY;
         }
         else if (tileType.equals(TileType.GRASS)){
             App.currentGame.currentPlayer.getInvetory().addItem(AllTheItemsInTheGame.getItemById(30));

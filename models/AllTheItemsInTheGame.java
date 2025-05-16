@@ -4,9 +4,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import models.enums.AnimalType;
+import models.enums.ProductQuality;
 import models.enums.RodType;
 import models.enums.Season;
 import models.things.Item;
+import models.things.products.Product;
 import models.things.tools.Axe;
 import models.things.tools.FishingPole;
 import models.things.tools.Hoe;
@@ -137,6 +139,7 @@ public class AllTheItemsInTheGame {
         tempItems.put(9, new Item("DELUXE BARN",9,20,0,1));
         tempItems.put(10,new Item("DELUXE COOP",10,20,0,1));
         tempItems.put(11,new Item("SHIPPING BIN", 11 ,20 , 0 ,1));
+        tempItems.put(13,new Item("Raisins", 13, 600, 0, 1));
         tempItems.put(6, new Item("Coffee",6,20,0,1));
         tempItems.put(21, new Item("Iridium Bar",21,20,0,1));
         tempItems.put(24, new Item("Joja Cola",24,20,0,1));
@@ -186,7 +189,7 @@ public class AllTheItemsInTheGame {
         tempItems.put(394, new Item("Gold Ore",394,2,0,1));    
         tempItems.put(395, new Item("Iridium Ore",395,2,0,1));    
         tempItems.put(396, new Item("Coal",396,2,0,1));    
-
+        tempItems.put(557, new Product("Dried Mushrooms", 557, 325, 0, 1, true, 50, 20, ProductQuality.NORMAL, false, false));
         allItems = Collections.unmodifiableMap(tempItems);
         }
 

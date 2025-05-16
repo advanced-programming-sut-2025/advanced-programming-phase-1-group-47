@@ -1,17 +1,34 @@
 package models.things.machines;
 
+import java.util.ArrayList;
 import models.Point;
 import models.things.Item;
-import models.things.products.Product;
-
 public class Machine extends Item {
-    Point point;
-    Product returnProduct;
-    int readyTime;
-    int currentTime;
+    private Point point;
+    private ArrayList<Operation> operations;
+    private Operation currentOperation;
 
-    public Machine(String name, int itemID, int value, int parentItemID, int amount , Product returnProduct) {
+    public Machine(String name, int itemID, int value, int parentItemID, int amount,ArrayList<Operation> operations) {
         super(name, itemID, value, parentItemID, amount);
-        this.returnProduct = returnProduct;
+        point = new Point(0, 0);
+        this.operations = operations;
+    }
+    public Item getOutput() {
+        return currentOperation.getOutput();
+    }
+
+    public Point getPoint() {
+        return point;
+    }
+
+    public void setPoint(Point point) {
+        this.point = point;
+    }
+
+    public ArrayList<Operation> getOperations() {
+        return operations;
+    }
+    public void addOperation(Operation operation) {
+        operations.add(operation);
     }
 }

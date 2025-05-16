@@ -1034,7 +1034,7 @@ public class GameMenuController {
         App.getCurrentGame().addPlantInPlants(plant);
         Point placeInMap = plant.getPoint();
         //Change tileType In Map @sarsar
-
+        
 
         return new Result<>(true, "You have Planted the Plant!");
     }

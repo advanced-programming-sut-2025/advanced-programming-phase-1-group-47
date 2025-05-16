@@ -1,12 +1,8 @@
 package models;
-import models.AnimalProduct;
-import models.Map;
-import models.Player;
+import java.util.HashMap;
 import models.enums.AnimalProductType;
 import models.enums.AnimalType;
 import models.things.Item;
-
-import java.util.HashMap;
 
 public class Animal extends Item {
     private final AnimalType animalType;
@@ -14,7 +10,7 @@ public class Animal extends Item {
     private AnimalProductType productType;
 
     public Animal(AnimalType animalType) {
-        super(animalType.getName(), animalType.getItemId(), animalType.getPrice(), 7, 200000);
+        super(animalType.getName(), animalType.getItemId(), animalType.getPrice(), 700, 200000);
         this.animalType = animalType;
     }
 
