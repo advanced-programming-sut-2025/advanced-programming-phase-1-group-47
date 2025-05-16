@@ -23,6 +23,7 @@ import models.enums.Weather;
 import models.things.Item;
 import models.things.relations.Gift;
 import models.things.relations.Quest;
+import models.things.tools.*;
 
 public class GameMenuController {
 
@@ -42,7 +43,7 @@ public class GameMenuController {
         return null;
     }
     public Result<String> BuildGreenHouse() {
-        Player player = App.currentGame.getPlayers().get((App.getCurrentGame().turn + 1) % 4);
+        Player player = App.currentGame.currentPlayer;
         // check the inventory and do the buy
         {
             if (false)
@@ -52,11 +53,11 @@ public class GameMenuController {
         return new Result<>(true,"The Green House has been Repaired!");
     }
     public Result<String> showEnergy() {
-        Player player = App.currentGame.getPlayers().get((App.getCurrentGame().turn + 1) % 4);
+        Player player = App.currentGame.currentPlayer;
         return new Result<>(false,String.valueOf(player.EnergyObject.getCurrentEnergy()));
     }
     public Result<String> setEnergy(Matcher matcher) {
-        Player player = App.currentGame.getPlayers().get((App.getCurrentGame().turn + 1) % 4);
+        Player player = App.currentGame.currentPlayer;
         try{
             player.EnergyObject.setCurrentEnergy(Integer.parseInt(matcher.group("value")));
         }
@@ -66,11 +67,11 @@ public class GameMenuController {
         return new Result<>(true,"new Energy: " + String.valueOf(player.EnergyObject.getCurrentEnergy()));
     }
     public void setEnergyCapacity() {
-        Player player = App.currentGame.getPlayers().get((App.getCurrentGame().turn + 1) % 4);
+        Player player = App.currentGame.currentPlayer;
         player.EnergyObject.setEnergyCap(999999999);
     }
     public Result<String> InventoryTrashTotal(Matcher matcher) {
-        Player player = App.currentGame.getPlayers().get((App.getCurrentGame().turn + 1) % 4);
+        Player player = App.currentGame.currentPlayer;
         String itemName = matcher.group("itemName");
         Item item = player.getInvetory().findItemFromName(itemName);
         if (item == null)
@@ -79,7 +80,7 @@ public class GameMenuController {
         return new Result<>(true,"Item removed");
     }
     public Result<String> InventoryTrash(Matcher matcher) {
-        Player player = App.currentGame.getPlayers().get((App.getCurrentGame().turn + 1) % 4);
+        Player player = App.currentGame.currentPlayer;
         String itemName = matcher.group("itemName");
         int number;
         try{
@@ -100,7 +101,7 @@ public class GameMenuController {
         return new Result<>(true,"Item removed");
     }
     public Result<String> EquipTool(Matcher matcher) {
-        Player player = App.currentGame.getPlayers().get((App.getCurrentGame().turn + 1) % 4);
+        Player player = App.currentGame.currentPlayer;
         String toolName = matcher.group("toolName");
         Item tool = player.getInvetory().findItemFromName(toolName);
         if (tool == null)
@@ -109,13 +110,13 @@ public class GameMenuController {
         return new Result<>(true,"You Equped the tool " + toolName);
     }
     public Result<String> showCurrentTool() {
-        Player player = App.currentGame.getPlayers().get((App.getCurrentGame().turn + 1) % 4);
+        Player player = App.currentGame.currentPlayer;
         if (player.currentToll == null)
             return new Result<>(false,"no Current Toll");
         return new Result<>(true,"Current Toll: " + player.currentToll.getName());
     }
     public Result<String> showAvailableTools(){
-        Player player = App.currentGame.getPlayers().get((App.getCurrentGame().turn + 1) % 4);
+        Player player = App.currentGame.currentPlayer;
         StringBuilder result = new StringBuilder();
         for(Item item : player.getInvetory().getItems()){
             if ((item.getItemID() >=54 && item.getItemID() <=58) || item.getItemID() == 61 || item.getItemID() == 52){
@@ -996,11 +997,10 @@ public class GameMenuController {
                 }
                 Point current = App.currentGame.map.farms[App.currentGame.turn].personPoint;
                 Point target = new Point(current.getX() + offset.getX(), current.getY() + offset.getY());
-                //check if target point is شخم type @sarsars
+                if (!App.currentGame.map.tiles[target.x][target.y].type.equals(TileType.TILLED))
+                    return new Result<>(false, "You are attempting to plant in a not tilled Ground!");
                 App.currentGame.map.tiles[target.x][target.y].type = TileType.PLANT;
                 return new Result<>(true, "Plant " + item.getName() + " is now planted in (" + target.x + ", " + target.y +") cordinates !");
-
-                //                return putPlantInGround(new Plant(basePlant, target));
             }
         }
         return new Result<>(false, "You don't have that seed/Item!");
@@ -1123,8 +1123,21 @@ public class GameMenuController {
         String direction = matcher.group("direction");
         Point offset = getOffsetFromDirection(direction);
         Player player = App.currentGame.currentPlayer;
-        Item item = player.currentToll;
-        return null;
+
+        int turn = App.currentGame.turn;
+        int baseX = App.currentGame.map.farms[turn].personPoint.x;
+        int baseY = App.currentGame.map.farms[turn].personPoint.y;
+
+        int offsetX = App.farmStart[turn].x + offset.x;
+        int offsetY = App.farmStart[turn].y + offset.y;
+
+        int targetX = baseX + offsetX;
+        int targetY = baseY + offsetY;
+
+        Point targetPoint = new Point(targetX, targetY);
+
+        return new Result<>(true,player.currentToll.useTool(targetPoint));
+
     }
     /*@amoojoey need  the Use Sⅽythe method to lead into harvestPlant with this code in it:
     for (Plant plant : App.getCurrentGame().getPlants()) {

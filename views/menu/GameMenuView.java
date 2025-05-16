@@ -79,7 +79,7 @@ public class GameMenuView extends AppMenu {
         } else if ((matcher = models.enums.commands.GameMenu.upgradetool.getMatcher(input)) != null) {
             // handleUpgradeTool(matcher);
         } else if ((matcher = models.enums.commands.GameMenu.tooluse.getMatcher(input)) != null) {
-
+            System.out.println(controller.toolUse(matcher).getData());
             // handleToolUse(matcher);
         } else if ((matcher = models.enums.commands.GameMenu.craftinfo.getMatcher(input)) != null) {
             // handleCraftInfo(matcher);

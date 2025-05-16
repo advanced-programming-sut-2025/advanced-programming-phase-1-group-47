@@ -31,8 +31,8 @@ public class FishingPole extends Item {
 
         return (int) (rodType.getEnergyCost() * App.getCurrentGame().getWeather().getIntensity() - fraction);
     }
-
-    public Result<String> useTool(Point point) {
-        return new Result<>(true, "Fishing with rod: " + rodType.getName() + " at point " + point);
+    @Override
+    public String useTool(Point point) {
+        return "Fishing with rod: " + rodType.getName() + " at point " + point;
     }
 }

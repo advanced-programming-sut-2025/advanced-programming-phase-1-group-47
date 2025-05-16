@@ -1,5 +1,6 @@
 package models.things;
 
+import models.Point;
 import models.things.tools.Type;
 
 public class Item {
@@ -8,7 +9,9 @@ public class Item {
     private int ParentItemID; //for wine/pickled vegtables/fruit jam /fish /plant /i hate NPCs
     private int value;
     private int amount = 0;
-
+    public String useTool(Point point) {
+        return "";
+    }
     public Item(String name ,int ItemID , int value , int ParentItemID , int amount) {
         this.name = name;
         this.ItemID = ItemID;

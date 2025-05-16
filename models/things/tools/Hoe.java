@@ -4,6 +4,7 @@ import models.App;
 import models.Point;
 import models.Result;
 import models.enums.SkillType;
+import models.enums.TileType;
 import models.things.Item;
 
 public class Hoe extends Item {
@@ -27,8 +28,16 @@ public class Hoe extends Item {
 
         return (int) (type.getEnergyCost() * App.getCurrentGame().getWeather().getIntensity() - fraction);
     }
-
-    public Result<String> useTool(Point point) {
-        return new Result<>(true, "Hoe used at point " + point);
+    @Override
+    public String useTool(Point point) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("\"Hoe used at point \" + point");
+        if ((App.currentGame.map.tiles[point.getX()][point.getY()].type.equals(TileType.EMPTY))){
+            builder.append("the ground got tilled at " + point.x + ", " + point.y);
+            App.currentGame.map.tiles[point.getX()][point.getY()].type = TileType.TILLED;
+        }
+        else
+            builder.append("the point You want it its a " + String.valueOf(App.currentGame.map.tiles[point.getX()][point.getY()].type.toString()).toLowerCase());
+        return builder.toString();
     }
 }

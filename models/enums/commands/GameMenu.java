@@ -33,7 +33,7 @@ public enum GameMenu {
     showinventory("^\\s*inventory\\s+show\\s*$"),
     inventorytrashtotal("^\\s*inventory\\s+trash\\s+-i\\s+(?<itemName>\\S+)\\s+-n\\s+(?<number>\\d+)\\s*$"),
     inventorytrash("^\\s*inventory\\s+trash\\s+-i\\s+(?<itemName>\\S+)\\s*$"),
-    equiptool("^\\s*tools\\s+equip\\s+(?<toolName>\\S+)\\s*$"),
+    equiptool("^\\s*tools\\s+equip\\s+(?<toolName>.+?)\\s*$"),
     currenttool("^\\s*tools\\s+show\\s+current\\s*$"),
     availabletool("^\\s*tools\\s+show\\s+available\\s*$"),
     upgradetool("^\\s*tools\\s+upgrade\\s+(?<toolName>\\S+)\\s*$"),

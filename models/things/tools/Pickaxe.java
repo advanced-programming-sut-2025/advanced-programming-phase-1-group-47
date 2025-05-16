@@ -32,8 +32,8 @@ public class Pickaxe extends Item {
         return (int) (type.getEnergyCost() * App.getCurrentGame().getWeather().getIntensity() - fraction);
     }
 
-    public Result<String> useTool(Point point) {
-        return new Result<>(true, "Pickaxe used at point " + point);
+    public String useTool(Point point) {
+        return "\"PickAxe used at point \" + point";
     }
 
 

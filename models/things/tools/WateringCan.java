@@ -1,9 +1,11 @@
 package models.things.tools;
 
 import models.App;
+import models.Plant;
 import models.Point;
 import models.Result;
 import models.enums.SkillType;
+import models.enums.TileType;
 import models.things.Item;
 
 public class WateringCan extends Item {
@@ -26,6 +28,9 @@ public class WateringCan extends Item {
         }
     }
 
+    public void ToolUsed(Point point) {
+        System.out.println(App.currentGame.map.tiles[point.getX()][point.getY()].type.getSticker());
+    }
     public int getEnergyCost() {
         int fraction = 0;
         if(App.getCurrentGame().getCurrentPlayer().getSkills()[0].getLevel() == 4) {
@@ -38,8 +43,19 @@ public class WateringCan extends Item {
 
         return (int) (type.getEnergyCost() * App.getCurrentGame().getWeather().getIntensity() - fraction);
     }
-
-    public Result<String> useTool(Point point) {
-        return new Result<>(true, "Watering can used at point " + point);
+    @Override
+    public String useTool(Point point) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("\"Wathering can used at point \" + point");
+        if ((App.currentGame.map.tiles[point.getX()][point.getY()].type.equals(TileType.PLANT))){
+            builder.append("the plant got wather in  " + point.x + ", " + point.y);
+            Plant plant =  App.currentGame.map.farms[App.currentGame.turn].plantMap.get(point);
+            plant.setHasBeenWatered(true);
+            App.currentGame.map.farms[App.currentGame.turn].plantMap.put(point, plant);
+            App.currentGame.map.tiles[point.getX()][point.getY()].type = TileType.TILLED;
+        }
+        else
+            builder.append("the point You want it its a " + String.valueOf(App.currentGame.map.tiles[point.getX()][point.getY()].type.toString()).toLowerCase());
+        return builder.toString();
     }
 }
