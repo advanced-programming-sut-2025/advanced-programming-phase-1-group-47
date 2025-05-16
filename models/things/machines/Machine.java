@@ -4,7 +4,7 @@ import models.Point;
 import models.things.Item;
 import models.things.products.Product;
 
-public abstract class Machine extends Item {
+public class Machine extends Item {
     Point point;
     Product returnProduct;
     int readyTime;
