@@ -92,6 +92,7 @@ public enum GameMenu {
     tradehistory("^\\s*trade\\s+history\\s*$"),
     meetNPC("^\\s*meet\\s+NPC\\s+(?<npcName>\\S+)\\s*$"),
     giftNPC("^\\s*gift\\s+NPC\\s+(?<npcName>\\S+)\\s+-i\\s+(?<item>\\S+)\\s*$"),
+    Back("back"),
     friendshipNPClist("^\\s*friendship\\s+NPC\\s+list\\s*$"),
     questslist("^\\s*quests\\s+list\\s*$"),
     questsfinish("^\\s*quests\\s+finish\\s+-i\\s+(?<index>\\d+)\\s*$")

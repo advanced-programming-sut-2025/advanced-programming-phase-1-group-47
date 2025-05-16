@@ -29,9 +29,10 @@ public class TradeMenuController {
 
                     if (item.getAmount() < Integer.parseInt(amount))
                         return new Result<>(false, "You don't have enough of that item!");
-
+                    if (player.getMoney() < Integer.parseInt(price))
+                        return new Result<>(false , "the other player does not have enough money!");
                     item.reduceAmount(Integer.parseInt(amount));
-
+                    player.reduceMoney(Integer.parseInt(price));
                     if (item.getAmount() == 0)
                         currentPlayer.getInvetory().removeItem(item);
 
@@ -65,7 +66,7 @@ public class TradeMenuController {
                         return new Result<>(false, "Player does not have enough of that Item!");
 
                     item.reduceAmount(Integer.parseInt(amount));
-
+                    currentPlayer.reduceMoney(Integer.parseInt(price));
                     if (item.getAmount() == 0)
                         player.getInvetory().removeItem(item);
 
@@ -236,5 +237,28 @@ public class TradeMenuController {
         }
 
         return new Result<>(false, "Trade ID invalid");
+    }
+    public Result<String> tradeList() {
+        StringBuilder output = new StringBuilder();
+        for (Player player : App.getCurrentGame().getPlayers()) {
+            ArrayList<Trade> tradeList = App.getCurrentGame().getCurrentPlayer().getPendingTrades().get(player);
+            if (tradeList == null || tradeList.isEmpty()) continue;
+            for (Trade trade : tradeList) {
+                output.append("tradeID:")
+                      .append(trade.getId())
+                      .append("\nPlayerUser:")
+                      .append(player.getUsername())
+                      .append("\nItem:")
+                      .append(trade.getItem().getName())
+                      .append("\ntargetItem:")
+                      .append(trade.getTargetItem().getName())
+                      .append("\nPrice:")
+                      .append(trade.getPrice())
+                      .append("\ntargetPrice:")
+                      .append(trade.getTargetPrice())
+                      .append("\n");
+            }
+        }
+        return new Result<String>(true,output.toString());
     }
 }
