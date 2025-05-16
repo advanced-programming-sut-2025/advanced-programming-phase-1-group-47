@@ -4,7 +4,7 @@ import models.*;
 import models.enums.Recipe;
 import models.things.Food.Food;
 
-import static models.enums.Recipe.canMakeTheFood;
+import static models.enums.Recipe.canMakeRecipe;
 import static models.enums.Recipe.recipeByName;
 
 public class HouseMenuController {
@@ -12,7 +12,7 @@ public class HouseMenuController {
         Recipe recipe = recipeByName(recipeName);
         if(recipe == null)
             return new Result<>(false, "Recipe name is incorrect");
-        if(canMakeTheFood(App.getCurrentGame().getCurrentPlayer(), recipe)) {
+        if(canMakeRecipe(App.getCurrentGame().getCurrentPlayer(), recipe)) {
             // have to remove ingredients from inventory
             App.getCurrentGame().getCurrentPlayer().getInvetory().addItem(new Food(recipe.getFoodType()));
         }

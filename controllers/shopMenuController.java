@@ -11,12 +11,13 @@ import models.things.Item;
 public class shopMenuController {
     public Result<String> showAvailableProducts(Shop store) {
         StringBuilder result = new StringBuilder();
+        if (getSeasonalStock(store) != null)
+            for (Item i : getSeasonalStock(store)) {
+                if (i.getAmount() == 0) continue;
+                result.append(i.getName()).append(" - ").append(i.getValue()).append("$\n");
+            }
 
-        for (Item i : getSeasonalStock(store)) {
-            if (i.getAmount() == 0) continue;
-            result.append(i.getName()).append(" - ").append(i.getValue()).append("$\n");
-        }
-
+        if(store.getPermaStock() != null && store.getPermaStock().size() > 0){}
         result.append("Permanent stock:\n");
         for (Item i : store.getPermaStock()) {
             if (i.getAmount() == 0) continue;
@@ -126,7 +127,7 @@ public class shopMenuController {
             case "WINTER":
                 return store.getWinterStock();
             default:
-                return new ArrayList<>(); // اگر فصل ناشناخته بود، لیست خالی برمی‌گرده
+                return null; // اگر فصل ناشناخته بود، لیست خالی برمی‌گرده
         }
     }
 

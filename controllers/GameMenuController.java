@@ -57,8 +57,7 @@ public class GameMenuController {
         return new Result<>(true,"The Green House has been Repaired!");
     }
     public Result<String> showEnergy() {
-        Player player = App.currentGame.currentPlayer;
-        return new Result<>(false,String.valueOf(player.EnergyObject.getCurrentEnergy()));
+        return new Result<>(false,String.valueOf(App.currentGame.currentPlayer.EnergyObject.getCurrentEnergy()));
     }
     public Result<String> setEnergy(Matcher matcher) {
         Player player = App.currentGame.currentPlayer;
@@ -629,7 +628,7 @@ public class GameMenuController {
         Set<TileType> walkable = Set.of(
                 TileType.EMPTY, TileType.STONE, TileType.TREE,
                 TileType.PERSON, TileType.DOOR, TileType.FARMWALL,
-                TileType.GRASS
+                TileType.GRASS,TileType.MACHINE,TileType.TILLED
         );
 
         Game game = App.currentGame;
@@ -660,7 +659,8 @@ public class GameMenuController {
         List<int[]> turns = getTurns(fullPath);
         int energyCost = fullPath.size() + 10 * turns.size();
         int energyUnits = (int) Math.ceil(energyCost / 20.0);
-        Player player = App.currentGame.getPlayers().get((turn + 1) % 4);
+        Player player = App.currentGame.currentPlayer; // استفاده از بازیکن فعلی
+        int currentEnergy = player.EnergyObject.getCurrentEnergy();
 
         System.out.println("You need " + energyUnits + " energy to get there. Do you want to go? (yes/no)");
         String input = scanner.nextLine();
@@ -679,26 +679,28 @@ public class GameMenuController {
             );
 
             usedEnergy += isTurn ? 11 : 1;
-            if (usedEnergy > player.EnergyObject.getCurrentEnergy() * 20) {
+
+            if (Math.ceil(usedEnergy / 20.0) > currentEnergy) {
                 System.out.printf("Energy ran out before reaching destination. Stopped at (%d, %d)%n", curr[0], curr[1]);
-                break;
+
+                int reducedEnergy = (player.EnergyObject.getEnergyCap() * 3) / 4;
+                player.EnergyObject.setCurrentEnergy(reducedEnergy);
+                nextTurn();
+                return;
             }
 
-            // حذف شخصیت از جای قبلی و بازیابی نوع قبلی
+            // آپدیت نقشه و جایگاه شخصیت
             game.map.tiles[lastAbs.x][lastAbs.y].type = game.map.farms[turn].lastTileType;
-
-            // ذخیره‌ی tile جدید
-            TileType newType = game.map.tiles[curr[0]][curr[1]].type;
-            game.map.farms[turn].lastTileType = newType;
-
-            // قرار دادن شخصیت در مکان جدید
+            game.map.farms[turn].lastTileType = game.map.tiles[curr[0]][curr[1]].type;
             game.map.tiles[curr[0]][curr[1]].type = TileType.PERSON;
-
-            // به‌روزرسانی مکان نسبی در مزرعه (برای سازگاری با سیستم)
             game.map.farms[turn].personPoint = new Point(curr[0] - offset.x, curr[1] - offset.y);
-
             lastAbs = new Point(curr[0], curr[1]);
         }
+
+// انرژی نهایی پس از رسیدن به مقصد
+        int finalUnitsUsed = (int) Math.ceil(usedEnergy / 20.0);
+        player.EnergyObject.setCurrentEnergy(currentEnergy - finalUnitsUsed);
+        System.out.println("Used energy: " + finalUnitsUsed + " units.");
 
         // بررسی همسایگی در مقصد اگر روی DOOR ایستاده‌ایم
         if (game.map.farms[turn].lastTileType == TileType.DOOR) {
@@ -752,11 +754,6 @@ public class GameMenuController {
                 }
             }
         }
-
-        // کاهش انرژی به تعداد صحیح واحد انرژی مصرف‌شده
-        int energyUnitsUsed = (int) Math.ceil(usedEnergy / 20.0);
-        player.EnergyObject.setCurrentEnergy(player.EnergyObject.getCurrentEnergy() - energyUnitsUsed);
-        System.out.println("Used energy: " + energyUnitsUsed + " units.");
     }
 
     private Point getAbsolutePlayerPoint() {
@@ -1118,18 +1115,18 @@ public class GameMenuController {
             if (amount <= 0) {
                 return new Result<>(false, "Amount must be greater than zero.");
             }
-        } catch (NumberFormatException e) {
+        }
+        catch (NumberFormatException e) {
             return new Result<>(false, "Invalid amount.");
         }
         for (HashMap.Entry<Integer, Item> entry : AllTheItemsInTheGame.allItems.entrySet()) {
             Item item = entry.getValue();
-            Item x = item;
-            x.setAmount(amount);
-//            System.out.println(item.getItemID() + " " + item.getName() + " " + item.getAmount());
+            item = new Item(item,amount);
+
             if (item.getName().equalsIgnoreCase(itemName)) {
                 App.getCurrentGame()
                         .getCurrentPlayer()
-                        .getInvetory().addItem(x);
+                        .getInvetory().addItem(item);
 
                 return new Result<>(true, amount + " × " + itemName + " added to inventory.");
             }

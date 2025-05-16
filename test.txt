@@ -13,6 +13,16 @@ game map 2
 game map 3
 game map 4
 print map -l 12,34 -s 5
+walk -l 20,20
+yes
+cheat advance day 5d
+cheat advance day 5d
+cheat advance day 5d
+cheat advance day 5d
+cheat advance day 5d
+tools equip Regular-pickaxe
+tools show current
+tools use -d NORTH
 time
 date
 season
@@ -20,7 +30,7 @@ datetime
 day of the week
 cheat advance time -12h
 cheat advance time 12h
-cheat advance day -5d
+cheat advance day 5d
 cheat advance day 5d
 time
 date

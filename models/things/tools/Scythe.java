@@ -54,6 +54,7 @@ public class Scythe extends Item {
             int randomId = rand.nextInt(Math.abs(range[1] - range[0])) + range[0];
 
             Item item = AllTheItemsInTheGame.getItemById(randomId);
+            item = new Item(item,rand.nextInt(1));
             builder.append("You got a foraging ").append(item.getName())
                     .append(" at ").append(point.x).append(", ").append(point.y);
 
