@@ -1034,7 +1034,6 @@ public class GameMenuController {
         Point placeInMap = plant.getPoint();
         //Change tileType In Map @sarsar
 
-
         return new Result<>(true, "You have Planted the Plant!");
     }
     public Result<String> cheatItem(Matcher matcher) {
@@ -1184,6 +1183,7 @@ public class GameMenuController {
 */
 
     public Result<String> harvestPlant(Plant plant) {
+        System.out.println(showSpecificCraftInfo(plant));
         if(plant.getCurrentStage() != -1)
             return new Result<>(false, "Plant not ready to harvest yet!");
         if(!plant.isIsReUsable())
