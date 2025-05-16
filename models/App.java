@@ -15,10 +15,14 @@ public class App {
     public static Menu currentMenu = Menu.LoginMenu;
 
     public static int giftIdCounter = 0;
+    public static int tradeIdCounter = 0;
 
 
     public static void addGiftIdCounter() {
         giftIdCounter++;
+    }
+    public static void addTradeIdCounter() {
+        tradeIdCounter++;
     }
     public static Game getCurrentGame() {
         return currentGame;
@@ -69,6 +73,10 @@ public class App {
             }
         }
         return null;
+    }
+
+    public static int getTradeIdCounter() {
+        return tradeIdCounter;
     }
     //when user wants to logOut or change turn, this should be runned to reset all features like current game,
     //current menu, loggedInUser and...

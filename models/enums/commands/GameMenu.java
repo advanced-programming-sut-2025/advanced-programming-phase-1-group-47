@@ -3,8 +3,6 @@ package models.enums.commands;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static java.util.regex.Pattern.compile;
-
 public enum GameMenu {
     newgame("^\\s*game\\s+new\\s+-u\\s+(?<player1>\\S+)(\\s+(?<player2>\\S+))?(\\s+(?<player3>\\S+))?\\s*$"),
     gamemap("^\\s*game\\s+map\\s+(?<mapNumber>\\S+)\\s*$"),
@@ -35,13 +33,14 @@ public enum GameMenu {
     showinventory("^\\s*inventory\\s+show\\s*$"),
     inventorytrashtotal("^\\s*inventory\\s+trash\\s+-i\\s+(?<itemName>\\S+)\\s+-n\\s+(?<number>\\d+)\\s*$"),
     inventorytrash("^\\s*inventory\\s+trash\\s+-i\\s+(?<itemName>\\S+)\\s*$"),
-    equiptool("^\\s*tools\\s+equip\\s+(?<toolName>\\S+)\\s*$"),
+    equiptool("^\\s*tools\\s+equip\\s+(?<toolName>.+?)\\s*$"),
     currenttool("^\\s*tools\\s+show\\s+current\\s*$"),
     availabletool("^\\s*tools\\s+show\\s+available\\s*$"),
     upgradetool("^\\s*tools\\s+upgrade\\s+(?<toolName>\\S+)\\s*$"),
     tooluse("^\\s*tools\\s+use\\s+-d\\s+(?<direction>\\S+)\\s*$"),
-    craftinfo("^\\s*craftinfo\\s+-n\\s+(?<craftName>\\S+)\\s*$"),
+    craftinfo("^\\s*craftinfo\\s+-n\\s+(?<craftName>\"[^\"]+\"|\\S+)\\s*$"),
     plant("^\\s*plant\\s+-s\\s+(?<seed>.+?)\\s+-d\\s+(?<direction>\\S+)\\s*$"),
+    chearGrown("\\s*grow\\s+(?<x>\\d+),(?<y>\\d+)\\s*$"),
     showplant("^\\s*showplant\\s+-l\\s+(?<x>\\d+),(?<y>\\d+)\\s*$"),
     fertilize("^\\s*fertilize\\s+-f\\s+(?<fertilizer>\\S+)\\s+-d\\s+(?<direction>\\S+)\\s*$"),
     water("^\\s*howmuch\\s+water\\s*$"),
@@ -86,16 +85,19 @@ public enum GameMenu {
     respondmarriageaccept("^\\s*respond\\s+-accept\\s+-u\\s+(?<username>\\S+)\\s*$"),
     respondmarriagereject("^\\s*respond\\s+-reject\\s+-u\\s+(?<username>\\S+)\\s*$"),
     starttrade("^\\s*start\\s+trade\\s*$"),
-    trade("^\\s*trade\\s*$"),
+    tradewithmoney("^trade\\s+-u\\s+(?<username>\\S+)\\s+-t\\s+(?<type>\\S+)\\s+-i\\s+(?<item>\\S+)\\s+-a\\s+(?<amount>\\d+)(?:\\s+-p\\s+(?<price>\\d+))?$"),
+    tradewithitem("^trade\\s+-u\\s+(?<username>\"[^\"]+\"|\\S+)\\s+-t\\s+(?<type>\"[^\"]+\"|\\S+)\\s+-i\\s+(?<item>\"[^\"]+\"|\\S+)\\s+-a\\s+(?<amount>\\d+)(?:\\s+-ti\\s+(?<targetItem>\"[^\"]+\"|\\S+)\\s+-ta\\s+(?<targetAmount>\\d+))?$"),
     tradelist("^\\s*trade\\s+list\\s*$"),
     traderesponseaccept("^\\s*trade\\s+response\\s+-accept\\s+-i\\s+(?<id>\\d+)\\s*$"),
     traderesponsereject("^\\s*trade\\s+response\\s+-reject\\s+-i\\s+(?<id>\\d+)\\s*$"),
     tradehistory("^\\s*trade\\s+history\\s*$"),
     meetNPC("^\\s*meet\\s+NPC\\s+(?<npcName>\\S+)\\s*$"),
     giftNPC("^\\s*gift\\s+NPC\\s+(?<npcName>\\S+)\\s+-i\\s+(?<item>\\S+)\\s*$"),
+    Back("back"),
     friendshipNPClist("^\\s*friendship\\s+NPC\\s+list\\s*$"),
     questslist("^\\s*quests\\s+list\\s*$"),
-    questsfinish("^\\s*quests\\s+finish\\s+-i\\s+(?<index>\\d+)\\s*$");
+    questsfinish("^\\s*quests\\s+finish\\s+-i\\s+(?<index>\\d+)\\s*$")
+    ;
 
     private final String command;
 

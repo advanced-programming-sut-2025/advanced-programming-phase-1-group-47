@@ -27,7 +27,11 @@ public class Axe extends Item {
         if(App.getCurrentGame().getCurrentPlayer().getBuff().getSkill().getType().equals(SkillType.FORAGING)) {
             fraction++;
         }
-
         return (int) (type.getEnergyCost() * App.getCurrentGame().getWeather().getIntensity() - fraction);
     }
+    @Override
+    public String useTool(Point point) {
+        return "Axe with rod: " + type.getName() + " at point " + point;
+    }
+
 }

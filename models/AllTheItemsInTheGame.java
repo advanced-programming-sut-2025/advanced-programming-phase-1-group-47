@@ -3,16 +3,23 @@ package models;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
 import models.enums.AnimalType;
+import models.enums.RodType;
 import models.enums.Season;
 import models.things.Item;
+import models.things.tools.Axe;
+import models.things.tools.FishingPole;
+import models.things.tools.Hoe;
+import models.things.tools.Pickaxe;
+import models.things.tools.Scythe;
+import models.things.tools.Type;
+import models.things.tools.WateringCan;
 
 public class AllTheItemsInTheGame {
 
     public static final Map<Integer, Plant> allPlants;
     public static final Map<Integer, Item> allItems;
-    private static Map<Integer, Animal> allAnimals;
+    public static final Map<Integer, Animal> allAnimals;
 
     static {
         // اول allPlants را مقداردهی می‌کنیم
@@ -96,26 +103,96 @@ public class AllTheItemsInTheGame {
         tempPlants.put(377, new foragingCrop(new Point(0, 0), 377, "Holly", Season.WINTER, 80, -37, 30));
         tempPlants.put(378, new foragingCrop(new Point(0, 0), 378, "Snow Yam", Season.WINTER, 100, 30, 30));
         tempPlants.put(379, new foragingCrop(new Point(0, 0), 379, "Winter Root", Season.WINTER, 70, 25, 30));
+        allPlants = Collections.unmodifiableMap(tempPlants);
 
-        tempAnimal.put(AnimalType.COW.getItemId(), new Animal(AnimalType.COW));
+        tempAnimal.put(AnimalType.DINOSAUR.getItemId(), new Animal(AnimalType.DINOSAUR));
         tempAnimal.put(AnimalType.HEN.getItemId(), new Animal(AnimalType.HEN));
         tempAnimal.put(AnimalType.DUCK.getItemId(), new Animal(AnimalType.DUCK));
         tempAnimal.put(AnimalType.PIG.getItemId(), new Animal(AnimalType.PIG));
         tempAnimal.put(AnimalType.GOAT.getItemId(), new Animal(AnimalType.GOAT));
         tempAnimal.put(AnimalType.COW.getItemId(), new Animal(AnimalType.COW));
-        allPlants = Collections.unmodifiableMap(tempPlants);
-        // بعد از مقداردهی allPlants حالا می‌تونیم ازش استفاده کنیم
+        tempAnimal.put(AnimalType.RABBIT.getItemId(), new Animal(AnimalType.RABBIT));
+        tempAnimal.put(AnimalType.SHEEP.getItemId(), new Animal(AnimalType.SHEEP));
+
+        allAnimals = Collections.unmodifiableMap(tempAnimal);
+        // 3. ساخت مپ کلی همه آیتم‌ها (حیوان + گیاه)
         Map<Integer, Item> tempItems = new HashMap<>();
+
+        // اضافه کردن همه حیوان‌ها به مپ آیتم‌ها
+        tempItems.putAll(allAnimals);
+        //اضافه کردن همه پلنت ها
         for (int i = 302; i < 380; i++) {
             Plant p = getPlantById(i);
             if (p != null) {
                 tempItems.put(i, p.harvestPlant());
+                tempItems.put(i + 100, p.getSeed());
             }
         }
+        tempItems.put(2, new Item("Stone",2,20,0,1));
+        tempItems.put(3, new Item("Wool",3,20,0,1));
+        tempItems.put(4, new Item("BARN",4,20,0,1));
+        tempItems.put(5, new Item("COOP",5,20,0,1));
+        tempItems.put(7, new Item("BIG BARN",7,20,0,1));
+        tempItems.put(8, new Item("BIG COOP",8,20,0,1));
+        tempItems.put(9, new Item("DELUXE BARN",9,20,0,1));
+        tempItems.put(10,new Item("DELUXE COOP",10,20,0,1));
+        tempItems.put(11,new Item("SHIPPING BIN", 11 ,20 , 0 ,1));
+        tempItems.put(6, new Item("Coffee",6,20,0,1));
+        tempItems.put(21, new Item("Iridium Bar",21,20,0,1));
+        tempItems.put(24, new Item("Joja Cola",24,20,0,1));
+        tempItems.put(25, new Item("Grass Starter",25,20,0,1));
+        tempItems.put(26, new Item("Beer",26,2,0,1));
+        tempItems.put(27, new Item("Sugar",27,2,0,1));
+        tempItems.put(28, new Item("Wheat Flour",28,2,0,1));
+        tempItems.put(29, new Item("Trout Soup",29,2,0,1));
+        tempItems.put(30, new Item("Hay",30,20,0,1));
+        tempItems.put(36, new Item("Wood",36,2,0,1));
+        tempItems.put(37, new Item("Iron Bar",37,2,0,1));
+        tempItems.put(40, new Item("Iridium Sprinkler",40,2,0,1));
+        tempItems.put(41, new Item("Deluxe Scarecrow",41,2,0,1));
+        tempItems.put(42, new Item("Scarecrow",42,2,0,1));
+        tempItems.put(43, new Item("BeeHouse",43,2,0,1));
+        tempItems.put(44, new Item("Gold Bar",44,2,0,1));
+        tempItems.put(46, new Item("HardWood",46,2,0,1));
+        tempItems.put(48, new Item("Rice",48,2,0,1));
+        tempItems.put(52, new Axe(Type.REGULAR));
+        tempItems.put(53, new Item("BackPack type" , 53 , 2 ,0 , 1));
+        tempItems.put(54, new FishingPole(RodType.TRAININGROD));
+        tempItems.put(55, new Item("Milk pail",55 ,-1 ,0 , 1));
+        tempItems.put(56, new Pickaxe(Type.REGULAR));
+        tempItems.put(57, new Scythe());
+        tempItems.put(58, new Item("Shears", 58, 2, 0, 1));
+       // tempItems.put(59, new  ) nemidanam
+        tempItems.put(60, new WateringCan(Type.REGULAR));
+        tempItems.put(61, new Hoe(Type.REGULAR));
+        tempItems.put(151, new Item("Salmon",151,2,0,1));
+        tempItems.put(201, new Item("Friendship Level",201,2,0,1));
+        tempItems.put(202, new Item("Bouquet",202,2,0,1));
+        tempItems.put(203, new Item("Wedding Ring",203,2,0,1));
+        tempItems.put(380, new Item("Quartz",380,2,0,1));
+        tempItems.put(381, new Item("Earth Crystal",381,2,0,1));    
+        tempItems.put(382, new Item("Frozen Tear",382,2,0,1));    
+        tempItems.put(383, new Item("Fire Quartz",383,2,0,1));    
+        tempItems.put(384, new Item("Emerald",384,2,0,1));    
+        tempItems.put(385, new Item("Aquamarine",385,2,0,1));    
+        tempItems.put(386, new Item("Ruby",386,2,0,1));    
+        tempItems.put(387, new Item("Amethyst",387,2,0,1));    
+        tempItems.put(388, new Item("Topaz",388,2,0,1));    
+        tempItems.put(389, new Item("Jade",389,2,0,1));    
+        tempItems.put(390, new Item("Diamond",390,2,0,1));    
+        tempItems.put(391, new Item("Prismatic Shard",391,2,0,1));    
+        tempItems.put(392, new Item("Copper Ore",392,2,0,1));    
+        tempItems.put(393, new Item("Iron Ore",393,2,0,1));    
+        tempItems.put(394, new Item("Gold Ore",394,2,0,1));    
+        tempItems.put(395, new Item("Iridium Ore",395,2,0,1));    
+        tempItems.put(396, new Item("Coal",396,2,0,1));    
 
         allItems = Collections.unmodifiableMap(tempItems);
-    }
+        }
 
+    public static Item getItemById(int id) {
+        return allItems.get(id);
+    }
     public static Plant getPlantById(int id) {
         return allPlants.get(id);
     }

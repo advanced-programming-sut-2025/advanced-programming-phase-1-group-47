@@ -29,32 +29,32 @@ public class Robin {
         ArrayList<Item> favorites = new ArrayList<>();
         favorites.add(new Item("Wood", 36, 2, 0, 1));
         favorites.add(new Item("Iron Bar", 37, 120, 0, 1));
-        favorites.add(new Item("Spaghetti", 47, 120, 0, 1));
+        favorites.add(new Item("Spaghetti", 47, 120, 0, 1)); //Update 
         return favorites;
     }
     private ArrayList<Item> giftBuilder() {
         ArrayList<Item> possibleGifts = new ArrayList<>();
         possibleGifts.add(new Item("Wood", 36, 2, 0, 50));
         possibleGifts.add(new Item("Iron Bar", 37, 120, 0, 2));
-        possibleGifts.add(new Item("Spaghetti", 47, 120, 0, 1));
+        possibleGifts.add(new Item("Spaghetti", 47, 120, 0, 1)); //Update
         return possibleGifts;
     }
     private Quest questBuilder1() {
         Item requieredItems = new Item("Wood", 36, 2, 0, 80);
         Item rewards = new Item("null item", 0, 0, 0, 1);
-        Quest quest = new Quest(requieredItems, rewards , 1000 , 10);
+        Quest quest = new Quest(requieredItems, rewards , 1000 , 10,true);
         return quest;
     }
     private Quest questBuilder2() {
         Item requieredItems = new Item("Iron Bar", 37, 120, 0, 10);
         Item rewards = new Item("Bee House", 43, -1, 0, 3);
-        Quest quest = new Quest(requieredItems, rewards , 500 ,11);
+        Quest quest = new Quest(requieredItems, rewards , 500 ,11,false);
         return quest;
     }
     private Quest questBuilder3() {
         Item requieredItems = new Item("Wood", 36, 2, 0, 1000);
         Item rewards = new Item("null item", 0, 0, 0, 1);
-        Quest quest = new Quest(requieredItems, rewards , 25000 ,12);
+        Quest quest = new Quest(requieredItems, rewards , 25000 ,12,false);
         return quest;
     }
  

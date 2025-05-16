@@ -59,14 +59,15 @@ public class FishingFarm {
             int y = rand.nextInt(Map.farmHeight);
             int t = rand.nextInt(Map.farmHeight);
             if (this.temp[x][y].type == TileType.EMPTY){
-                if (t%6 == 0){
+                int mod = t % 8;
+                if (mod == 0) {
                     this.temp[x][y].type = TileType.FORAGING;
-                }
-                else if ((t%3)%2 == 0){
+                } else if (mod == 1 || mod == 2) {
                     this.temp[x][y].type = TileType.TREE;
-                }
-                else if ((t % 3)%2 == 1){
+                } else if (mod == 3 || mod == 4) {
                     this.temp[x][y].type = TileType.STONE;
+                } else {
+                    this.temp[x][y].type = TileType.GRASS;
                 }
             }
         }

@@ -27,14 +27,14 @@ public class Harvey {
     }
     private ArrayList<Item> favoriteBuilder() {
         ArrayList<Item> favorites = new ArrayList<>();
-        favorites.add(new Item("PICKLED", 19, 0, 0, 1));
-        favorites.add(new Item("WINE", 34, 0, 0, 1));
+        favorites.add(new Item("PICKLED", 19, 0, 0, 1)); //update
+        favorites.add(new Item("WINE", 34, 0, 0, 1)); //update
         favorites.add(new Item("Coffee", 6, 150, 0, 1));
         return favorites;
     }
     private ArrayList<Item> giftBuilder() {
         ArrayList<Item> possibleGifts = new ArrayList<>();
-        possibleGifts.add(new Item("Cranberry Wine", 20, 225, 0, 1));
+        possibleGifts.add(new Item("Cranberry Wine", 20, 225, 0, 1)); //update
         possibleGifts.add(new Item("Pickled Potato", 10, 210, 0, 1));
         possibleGifts.add(new Item("Coffee", 6, 150, 0, 1));
         return possibleGifts;
@@ -42,19 +42,19 @@ public class Harvey {
     private Quest questBuilder1() {
         Item requieredItems = new Item("PLANT", 301, 0, 0, 12);
         Item rewards = new Item("null item", 0, 0, 0, 1);
-        Quest quest = new Quest(requieredItems, rewards , 750 ,4 );
+        Quest quest = new Quest(requieredItems, rewards , 750 ,4 ,true);
         return quest;
     }
     private Quest questBuilder2() {
         Item requieredItems = new Item("Salmon", 151, 75, 0, 1);
         Item rewards = new Item("Friendship Level", 201, 0, 0, 1);
-        Quest quest = new Quest(requieredItems, rewards , 0 , 5);
+        Quest quest = new Quest(requieredItems, rewards , 0 , 5,false);
         return quest;
     }
     private Quest questBuilder3() {
         Item requieredItems = new Item("WINE", 34, 0, 0, 1);
-        Item rewards = new Item("Salad", 35, 110, 0, 5);
-        Quest quest = new Quest(requieredItems, rewards , 0, 6);
+        Item rewards = new Item("Salad", 35, 110, 0, 5); //Update
+        Quest quest = new Quest(requieredItems, rewards , 0, 6,false);
         return quest;
     }
  

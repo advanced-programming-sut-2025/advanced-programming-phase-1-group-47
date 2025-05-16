@@ -16,7 +16,7 @@ public class Quest {
 
 
 
-    public Quest (Item requiermentItems ,Item rewards , int rewardMoney , int questID) {
+    public Quest (Item requiermentItems ,Item rewards , int rewardMoney , int questID , boolean isActiveState) {
         this.requiermentItems = requiermentItems;
         this.rewards = rewards;
         this.rewardMoney = rewardMoney;
@@ -24,7 +24,7 @@ public class Quest {
         isDone = false;
         isActive = new HashMap<>();
         for (Player player : App.getCurrentGame().getPlayers())
-            isActive.put(player, false);
+            isActive.put(player, isActiveState);
            
     }
 

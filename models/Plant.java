@@ -2,6 +2,7 @@ package models;
 
 import models.enums.ProductQuality;
 import models.enums.Season;
+import models.things.Item;
 import models.things.products.Product;
 
 
@@ -78,9 +79,20 @@ public class Plant {
         //figure out quality with skills and rand here @amoojoey
         return new Product(name , plantID ,baseValue , 301 ,amount ,isEdible , energy ,health , quality ,isFruit , !isFruit );
     }
+    public Item getSeed() {
+        return new Item(source,plantID + 100 ,2 , 401 ,1);
+    }
+
     public void grow() {
         if(currentStage == -1)
             return;
+        if (currentStage == -2) {
+            if (currentStageCount == regrowthTime - 1)
+                currentStage = -1;
+            else
+                currentStageCount++;
+            return;
+        }
         int currentCap = growStages[currentStage];
         if ( growStages.length - 1 == currentStage && growStages[growStages.length - 1] - 1 ==currentStageCount){
             currentStage = -1;
@@ -177,5 +189,13 @@ public class Plant {
 
     public void setHasBeenFertilized(boolean hasBeenFertilized) {
         this.hasBeenFertilized = hasBeenFertilized;
+    }
+
+    public void setCurrentStage(int currentStage) {
+        this.currentStage = currentStage;
+    }
+
+    public void setCurrentStageCount(int currentStageCount) {
+        this.currentStageCount = currentStageCount;
     }
 }

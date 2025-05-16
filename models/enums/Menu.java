@@ -12,6 +12,7 @@ public enum Menu {
     GreenHouseMenu(new FarmingMenu()),
     StoreMenu(new ShopMenu()),
     cottageMenu(new HouseMenu()),
+    TraderMenu(new TradeMenu()),
     ExitMenu(new ExitMenu());
     private final AppMenu menu;
 

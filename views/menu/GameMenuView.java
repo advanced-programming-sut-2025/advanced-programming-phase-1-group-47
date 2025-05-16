@@ -1,12 +1,13 @@
 package views.menu;
 
 import controllers.GameMenuController;
-import models.*;
-import models.enums.TileType;
-import models.enums.commands.GameMenu;
 
+import java.util.HashMap;
 import java.util.Scanner;
 import java.util.regex.Matcher;
+import models.*;
+import models.enums.Menu;
+import models.enums.commands.GameMenu;
 
 public class GameMenuView extends AppMenu {
     private final GameMenuController controller = new GameMenuController();
@@ -15,6 +16,15 @@ public class GameMenuView extends AppMenu {
         System.out.println("You are now in Game menu");
         String input = scanner.nextLine();
         Matcher matcher;
+        if (input.equalsIgnoreCase("x")) {
+
+            for (HashMap.Entry<Point, Plant> entry : App.currentGame.map.farms[App.getCurrentGame().turn].plantMap.entrySet()) {
+                Point point = entry.getKey();
+                Plant plant = entry.getValue();
+                System.out.println(point.x + " " + point.y + " " + plant.getName());
+                // کاری که می‌خوای با point و plant انجام بدی...
+            }
+        }
         if ((matcher = models.enums.commands.GameMenu.newgame.getMatcher(input)) != null) {
             System.out.println(controller.handleNewGame(matcher,scanner).getData());
         } else if ((matcher = models.enums.commands.GameMenu.loadgame.getMatcher(input)) != null) {
@@ -24,8 +34,7 @@ public class GameMenuView extends AppMenu {
         } else if ((matcher = models.enums.commands.GameMenu.deletecurrentgame.getMatcher(input)) != null) {
             // handleDeleteCurrentGame(matcher);
         } else if ((matcher = models.enums.commands.GameMenu.nextturn.getMatcher(input)) != null) {
-            App.currentGame.currentPlayer = App.getCurrentGame().getPlayers().get((App.currentGame.turn + 1)%4);
-            App.currentGame.turn = (App.currentGame.turn + 1)%4;
+            controller.nextTurn();
         } else if ((matcher = models.enums.commands.GameMenu.showtime.getMatcher(input)) != null) {
             System.out.println(controller.showTime().getData());
         } else if ((matcher = models.enums.commands.GameMenu.showdate.getMatcher(input)) != null) {
@@ -75,32 +84,30 @@ public class GameMenuView extends AppMenu {
         } else if ((matcher = models.enums.commands.GameMenu.upgradetool.getMatcher(input)) != null) {
             // handleUpgradeTool(matcher);
         } else if ((matcher = models.enums.commands.GameMenu.tooluse.getMatcher(input)) != null) {
+            System.out.println(controller.toolUse(matcher).getData());
             // handleToolUse(matcher);
         } else if ((matcher = models.enums.commands.GameMenu.craftinfo.getMatcher(input)) != null) {
-            // handleCraftInfo(matcher);
+            System.out.println(controller.showCraftInfo(matcher.group("craftName")));
         } else if ((matcher = models.enums.commands.GameMenu.plant.getMatcher(input)) != null) {
             System.out.println(controller.plantPlant(matcher.group("seed"), matcher.group("direction")).getData());
         } else if ((matcher = models.enums.commands.GameMenu.showplant.getMatcher(input)) != null) {
+            System.out.println(controller.showPlant(matcher.group("x"), matcher.group("y")).getData());
         } else if ((matcher = models.enums.commands.GameMenu.fertilize.getMatcher(input)) != null) {
-            // handleFertilize(matcher);
         } else if ((matcher = models.enums.commands.GameMenu.water.getMatcher(input)) != null) {
-            // handleWater(matcher);
-        } else if ((matcher = models.enums.commands.GameMenu.craftingrecipes.getMatcher(input)) != null) {
-            // handleCraftingRecipes(matcher);
+//            System.out.println(controller);
+        }
+        else if ((matcher = GameMenu.chearGrown.getMatcher(input)) != null) {
+            System.out.println(controller.CheatGrowPlant(matcher.group("x"), matcher.group("y")).getData());
+        }
+        else if ((matcher = models.enums.commands.GameMenu.craftingrecipes.getMatcher(input)) != null) {
+//            System.out.println(controller.showCraftInfo(matcher.group("seed")).getData());
         } else if ((matcher = models.enums.commands.GameMenu.craftingcraft.getMatcher(input)) != null) {
-            // handleCraftingCraft(matcher);
+//            System.out.println(controller.);
         } else if ((matcher = models.enums.commands.GameMenu.placeitem.getMatcher(input)) != null) {
             // handlePlaceItem(matcher);
-        } else if ((matcher = models.enums.commands.GameMenu.cheatadditem.getMatcher(input)) != null) {
-            // handleCheatAddItem(matcher);
-        } else if ((matcher = models.enums.commands.GameMenu.cookingrefrigeratorput.getMatcher(input)) != null) {
-            // handleCookingRefrigeratorPut(matcher);
-        } else if ((matcher = models.enums.commands.GameMenu.cookingrefrigeratorpick.getMatcher(input)) != null) {
-            // handleCookingRefrigeratorPick(matcher);
-        } else if ((matcher = models.enums.commands.GameMenu.cookingreciepe.getMatcher(input)) != null) {
-            // handleCookingRecipe(matcher);
-        } else if ((matcher = models.enums.commands.GameMenu.cookingprepare.getMatcher(input)) != null) {
-            // handleCookingPrepare(matcher);
+        }
+        else if ((matcher = models.enums.commands.GameMenu.cheatadditem.getMatcher(input)) != null) {
+            System.out.println(controller.cheatItem(matcher).getData());
         } else if ((matcher = models.enums.commands.GameMenu.friendships.getMatcher(input)) != null) {
             System.out.println(controller.showFriendships().getData());
         } else if ((matcher = models.enums.commands.GameMenu.talk.getMatcher(input)) != null) {
@@ -126,17 +133,8 @@ public class GameMenuView extends AppMenu {
         } else if ((matcher = models.enums.commands.GameMenu.respondmarriagereject.getMatcher(input)) != null) {
             // handleEatFood(matcher);
         } else if ((matcher = models.enums.commands.GameMenu.starttrade.getMatcher(input)) != null) {
-//            System.out.println(controller.);
-        } else if ((matcher = models.enums.commands.GameMenu.trade.getMatcher(input)) != null) {
-            // handleEatFood(matcher);
-        } else if ((matcher = models.enums.commands.GameMenu.tradelist.getMatcher(input)) != null) {
-            // handleEatFood(matcher);
-        } else if ((matcher = models.enums.commands.GameMenu.traderesponseaccept.getMatcher(input)) != null) {
-            // handleEatFood(matcher);
-        } else if ((matcher = models.enums.commands.GameMenu.traderesponsereject.getMatcher(input)) != null) {
-            // handleEatFood(matcher);
-        } else if ((matcher = models.enums.commands.GameMenu.tradehistory.getMatcher(input)) != null) {
-            // handleEatFood(matcher);
+            System.out.println("Walcome to Trade Menu");
+            App.currentMenu = Menu.TraderMenu;
         }
         else if ((matcher = models.enums.commands.GameMenu.build.getMatcher(input)) != null) {
             // handleBuild(matcher);
@@ -146,6 +144,10 @@ public class GameMenuView extends AppMenu {
             System.out.println(controller.GiveGiftToNPC(matcher.group("npcName"),matcher.group("item")).getData());
         }else if ((matcher = GameMenu.friendshipNPClist.getMatcher(input)) != null) {
             System.out.println(controller.showNpcs().getData());
+        }else if ((matcher = GameMenu.questslist.getMatcher(input)) != null) {
+            System.out.println(controller.listQuests().getData());
+        }else if ((matcher = GameMenu.questsfinish.getMatcher(input)) != null) {
+            System.out.println(controller.FinishQuest(Integer.parseInt(matcher.group("index"))).getData());
         }
         else if ((matcher = GameMenu.Guide.getMatcher(input)) != null) {
             System.out.println("=== 🏪 فروشگاه‌ها و مکان‌های عمومی ===");

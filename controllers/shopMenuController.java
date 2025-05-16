@@ -79,7 +79,7 @@ public class shopMenuController {
                     return new Result<>(false, "the Store doesnt have this amount \nAmount : " + i.getAmount());
                 }
                 i.reduceAmount(amount);
-                //player.setInvetory(i,amount);
+                player.getInvetory().addItem(new Item(i, amount));
                 return new Result<>(true, ((amount > 1)?amount:1) + " number  of product " + productName + " has been purchased");
             }
         }
@@ -89,7 +89,7 @@ public class shopMenuController {
                     return new Result<>(false, "the Store doesnt have this amount \nAmount : " + i.getAmount());
                 }
                 i.reduceAmount(amount);
-                player.setInvetory(i,amount);
+                player.getInvetory().addItem(new Item(i, amount));
                 return new Result<>(true, amount + " number  of product " + productName + " has been purchased");
             }
         }

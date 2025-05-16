@@ -3,7 +3,7 @@ package models.things.machines;
 import java.util.ArrayList;
 import models.things.Item;
 
-public abstract class Refrigerator extends Machine {
+public abstract class Refrigerator extends Item {
     private int capacity;
     private ArrayList<Item> items;
 

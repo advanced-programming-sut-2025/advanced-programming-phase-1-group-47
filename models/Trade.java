@@ -6,20 +6,14 @@ public class Trade {
     int id;
     Item item;
     Item targetItem;
-    int amount;
-    int targetAmount;
     int price;
-    Player player1;
-    Player player2;
-    public Trade(int id,Item item , Item targetItem , int amount, int targetAmount , int price , Player player1, Player player2) {
+    int targetPrice;
+    public Trade(int id,Item item , Item targetItem , int price , int targetPrice) {
         this.id = id;
         this.item = item;
         this.targetItem = targetItem;
-        this.amount = amount;
-        this.targetAmount = targetAmount;
-        this.player1 = player1;
-        this.player2 = player2;
         this.price = price;
+        this.targetPrice = targetPrice;
     }
 
     public int getId() {
@@ -30,25 +24,12 @@ public class Trade {
         return item;
     }
 
-    public int getAmount() {
-        return amount;
-    }
 
-    public int getTargetAmount() {
-        return targetAmount;
-    }
-
-    public Player getPlayer1() {
-        return player1;
-    }
 
     public Item getTargetItem() {
         return targetItem;
     }
 
-    public Player getPlayer2() {
-        return player2;
-    }
 
     public int getPrice() {
         return price;
@@ -56,5 +37,9 @@ public class Trade {
 
     public void setPrice(int price) {
         this.price = price;
+    }
+
+    public int getTargetPrice() {
+        return targetPrice;
     }
 }

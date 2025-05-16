@@ -12,6 +12,7 @@ public enum TileType {
     WALL("🧱"),
     FARMWALL("🌾"),
     QUARRY("⛏️"),
+    GRASS("🌿"),
 
     ABIGEL("👩‍🦰"),
     SEBASTIAN("👨‍🦱"),
@@ -21,6 +22,7 @@ public enum TileType {
     NPCHOUSE("🏰"),
     PERSON("🧑‍🌾"),
     THUNDERED("🌩️"),
+
     // فروشگاه ها
     BLACKSMITH("⚒️"),
     JOJAMART("🛒"),
@@ -41,10 +43,16 @@ public enum TileType {
     SHEEP("🐑"),
 
     // کشاورزی
-    TILLED("🟫"),
+    TILLED("░░"),
     SEED("🌱"),
-    PLANT("🌿"),
-    GROWN_PLANT("🥬");
+    PLANT("🪴"),
+    GROWN_PLANT("🥬"),
+
+    // موارد جدید
+    CHEST("📦"),
+    BARN("🛖"),
+    CAGE("🪤"),
+    COAL("🪨");
 
     private final String sticker;
 
