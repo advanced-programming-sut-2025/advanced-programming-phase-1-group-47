@@ -1280,7 +1280,6 @@ public class GameMenuController {
                 npc.getHasBeenGiftedTo().put(player, false);
                 npc.getHasBeenTalkedTo().put(player, false);
                 if (npc.getFriendship().get(player) >= 200)
-                if (npc.getFriendship().get(player) >= 200)
                     npc.getQuest2().getIsActive().put(player, true);
             }
         }
