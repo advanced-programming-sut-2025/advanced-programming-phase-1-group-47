@@ -80,7 +80,7 @@ public class GameMenuView extends AppMenu {
             System.out.println(controller.toolUse(matcher).getData());
             // handleToolUse(matcher);
         } else if ((matcher = models.enums.commands.GameMenu.craftinfo.getMatcher(input)) != null) {
-            // handleCraftInfo(matcher);
+            System.out.println(controller.showCraftInfo(matcher.group("craftName")));
         } else if ((matcher = models.enums.commands.GameMenu.plant.getMatcher(input)) != null) {
             System.out.println(controller.plantPlant(matcher.group("seed"), matcher.group("direction")).getData());
         } else if ((matcher = models.enums.commands.GameMenu.showplant.getMatcher(input)) != null) {
