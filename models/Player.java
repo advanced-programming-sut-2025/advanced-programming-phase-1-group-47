@@ -66,9 +66,9 @@ public class Player extends User {
         invetory.addItem(new FishingPole(RodType.TRAININGROD));
         invetory.addItem(new Scythe());
         invetory.addItem(new Item("Wood", 36, 2, 0, 1000));
-        Item x = AllTheItemsInTheGame.getItemById(338);
-        x.setAmount(45);
-        invetory.addItem(x);
+//        Item x = AllTheItemsInTheGame.getItemById(338);
+//        x.setAmount(45);
+//        invetory.addItem(x);
     }
 
 
