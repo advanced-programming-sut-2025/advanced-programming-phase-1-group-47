@@ -24,7 +24,7 @@ public class Axe extends Item {
             fraction++;
         }
 
-        if(App.getCurrentGame().getCurrentPlayer().getBuff().getSkill().getType().equals(SkillType.FORAGING)) {
+        if(App.getCurrentGame().getCurrentPlayer().getBuff().getType().equals(SkillType.FORAGING)) {
             fraction++;
         }
         return (int) (type.getEnergyCost() * App.getCurrentGame().getWeather().getIntensity() - fraction);

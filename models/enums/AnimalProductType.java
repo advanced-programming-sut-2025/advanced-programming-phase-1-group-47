@@ -3,12 +3,12 @@ package models.enums;
 
 public enum AnimalProductType {
     HEN_EGG("hen egg",50),
-    HEN_BIG_EGG("big hen egg",95),
-    DUCK_EGG("duck egg",95),
-    DUCK_FEATHER("duck feather",250),
-    RABBIT_WOOL("rabbit wool",340),
-    RABBIT_LEG("rabbit leg",565),
-    DINOSAUR_EGG("dinosaur egg",350),
+    HEN_BIG_EGG("big hen egg", 95),
+    DUCK_EGG("duck egg",  95),
+    DUCK_FEATHER("duck feather", 250),
+    RABBIT_WOOL("rabbit wool", 340),
+    RABBIT_LEG("rabbit leg", 565),
+    DINOSAUR_EGG("dinosaur egg", 350),
     MILK("milk",125),
     BIG_MILK("big milk",190),
     GOAT_MILK("goat milk",225),
