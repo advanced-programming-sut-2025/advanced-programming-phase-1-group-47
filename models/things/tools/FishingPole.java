@@ -1,6 +1,7 @@
 package models.things.tools;
 
 import models.App;
+import models.Player;
 import models.Point;
 import models.Result;
 import models.enums.RodType;
@@ -33,6 +34,8 @@ public class FishingPole extends Item {
     }
     @Override
     public String useTool(Point point) {
+        Player player = App.getCurrentGame().getCurrentPlayer();
+        player.EnergyObject.setCurrentEnergy(player.EnergyObject.getCurrentEnergy() - energyCost());
         return "Fishing with rod: " + rodType.getName() + " at point " + point;
     }
 }

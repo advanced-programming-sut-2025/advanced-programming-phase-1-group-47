@@ -1,6 +1,7 @@
 package models.things.tools;
 
 import models.App;
+import models.Player;
 import models.Point;
 import models.Result;
 import models.enums.SkillType;
@@ -11,7 +12,7 @@ public class Hoe extends Item {
     private Type type;
 
     public Hoe(Type type) {
-        super(type.getName() + "hoe", 61, type.getPrice(), 0, 1);
+        super(type.getName() + "-hoe", 61, type.getPrice(), 0, 1);
         this.type = type;
     }
 
@@ -31,6 +32,8 @@ public class Hoe extends Item {
     @Override
     public String useTool(Point point) {
         StringBuilder builder = new StringBuilder();
+        Player player = App.getCurrentGame().getCurrentPlayer();
+        player.EnergyObject.setCurrentEnergy(player.EnergyObject.getCurrentEnergy() - energyCost());
         if ((App.currentGame.map.tiles[point.getX()][point.getY()].type.equals(TileType.EMPTY))){
             builder.append("the ground got tilled at " + point.x + ", " + point.y);
             App.currentGame.map.tiles[point.getX()][point.getY()].type = TileType.TILLED;

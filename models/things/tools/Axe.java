@@ -1,17 +1,15 @@
 package models.things.tools;
 
-import models.App;
-import models.Point;
-import models.Result;
-import models.Skill;
+import models.*;
 import models.enums.SkillType;
+import models.enums.TileType;
 import models.things.Item;
 
 public class Axe extends Item {
     private Type type;
 
     public Axe(Type type) {
-        super(type.getName() + "Regular-axe", 52, type.getPrice(), 0, 1);
+        super(type.getName() + "-axe", 52, type.getPrice(), 0, 1);
         this.type = type;
     }
     public Type getType(){
@@ -31,7 +29,26 @@ public class Axe extends Item {
     }
     @Override
     public String useTool(Point point) {
-        return "Axe with rod: " + type.getName() + " at point " + point;
+        Player player = App.getCurrentGame().getCurrentPlayer();
+        player.EnergyObject.setCurrentEnergy(player.EnergyObject.getCurrentEnergy() - energyCost());
+        StringBuilder builder = new StringBuilder();
+        TileType tileType = App.currentGame.map.tiles[point.getX()][point.getY()].type;
+        if (tileType.equals(TileType.TREE)){
+            App.currentGame.map.tiles[point.getX()][point.getY()].type = TileType.EMPTY;
+            builder.append("Derakht ro Ghat kardi dar  (" + point.x + ", " + point.y + ")");
+            App.currentGame.currentPlayer.getInvetory().addItem(AllTheItemsInTheGame.getItemById(36));
+        }
+//        else if (tileType.equals(TileType.MACHINE)){
+//            App.currentGame.currentPlayer.getInvetory().addItem(AllTheItemsInTheGame.getItemById(30));
+//            App.currentGame.map.tiles[point.getX()][point.getY()].type = TileType.EMPTY;
+//            builder.append("You got a hay at ").append(point.getX()).append(", ").append(point.getY());
+//        }
+        else {
+            builder.append("The point you selected is a ")
+                    .append(tileType.toString().toLowerCase());
+        }
+
+        return builder.toString();
     }
 
 }

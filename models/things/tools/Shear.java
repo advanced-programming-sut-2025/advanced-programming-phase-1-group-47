@@ -1,6 +1,7 @@
 package models.things.tools;
 
 import models.App;
+import models.Player;
 import models.Point;
 import models.Result;
 import models.things.Item;
@@ -16,6 +17,8 @@ public class Shear extends Item {
     }
 
     public Result<String> useTool(){
+        Player player = App.getCurrentGame().getCurrentPlayer();
+        player.EnergyObject.setCurrentEnergy(player.EnergyObject.getCurrentEnergy() - energyCost());
         return null;
     }
 }
