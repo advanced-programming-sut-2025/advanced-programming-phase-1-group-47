@@ -1,7 +1,9 @@
 package models.things;
 
-import models.Result;
 import models.Point;
+import models.Result;
+import models.enums.ProductQuality;
+import models.things.products.Product;
 import models.things.tools.Type;
 
 public class Item {
@@ -36,7 +38,15 @@ public class Item {
     public void reduceAmount(int minus) {
         amount-=minus;
     }
-
+    public Product getDriedFruit() {
+        return new Product("Dried " + name,  ItemID + 300, (int) Math.floor( 7.5 * value + 25), 0,1, true, 75, 50,ProductQuality.NORMAL, false, false);
+    }
+    public Product getJuice() {
+        return new Product(name + " Juice",  ItemID + 1000, (int) Math.floor( 2.25 * value), 0,1, true, 80, 70,ProductQuality.NORMAL, false, false);
+    }
+    public Product getWine() {
+      return new Product(name + " Wine",  ItemID + 1100, (int) Math.floor( 3 * value), 0,1, true, 70, 50,ProductQuality.NORMAL, false, false);
+    }
 
     public void setAmount(int amount) {
         this.amount = amount;
