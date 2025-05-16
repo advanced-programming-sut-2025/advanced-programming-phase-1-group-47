@@ -1,6 +1,7 @@
 package models.things.Food;
 
 import models.App;
+import models.Energy;
 import models.Result;
 import models.things.Item;
 
@@ -18,16 +19,12 @@ public class Food extends Item {
 
     @Override
     public Result<String> eat() {
+        App.getCurrentGame().getCurrentPlayer().setBuff(foodType.getBuff());
+        int nEnergy = Math.min(App.getCurrentGame().getCurrentPlayer().getEnergy().getEnergyCap() + foodType.getBuff().isIncreaseMaximumEnergy(), App.getCurrentGame().getCurrentPlayer().getEnergy().getCurrentEnergy() + foodType.getEnergy());
+        Energy newEnergy = new Energy(App.getCurrentGame().getCurrentPlayer().getEnergy().getEnergyCap() + foodType.getBuff().isIncreaseMaximumEnergy(), nEnergy);
+        App.getCurrentGame().getCurrentPlayer().setEnergy(newEnergy);
 
-        for(Item item : App.getCurrentGame().getCurrentPlayer().getInvetory().getItems()) {
-            if(item instanceof Food) {
-                Food food =  Food(item);
-
-                if(food.getFoodType().equals(foodType)) {
-                    //want to remive item from App.getCurrentGame().getCurrentPlayer().getInvetory().getItems()
-                }
-            }
-        }
+        return new Result<>(true, "You ate " + foodType.getName());
 
     }
 

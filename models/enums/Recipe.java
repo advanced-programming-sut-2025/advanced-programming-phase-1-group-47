@@ -51,6 +51,16 @@ public enum Recipe {
         return price;
     }
 
-    public static Result<String> canMakeTheFood(Player player, Recipe recipe) { return null;};
+    public static boolean canMakeTheFood(Player player, Recipe recipe) { return false;};
+
+    public static Recipe recipeByName(String recipeName) {
+        for (Recipe recipe : Recipe.values()) {
+            if (recipe.getDisplayName().equalsIgnoreCase(recipeName)) {
+                return recipe;
+            }
+        }
+        return null;
+    }
+
 }
 

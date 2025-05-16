@@ -12,7 +12,6 @@ import models.things.tools.*;
 
 public class Player extends User {
     private Point Coordinates;
-    private int Energy = 200;
     private Invetory invetory;
     public Item currentToll;
     ArrayList<Animal> animals = new ArrayList<>();
@@ -153,12 +152,12 @@ public class Player extends User {
         return id;
     }
 
-    public int getEnergy() {
-        return Energy;
+    public Energy getEnergy() {
+        return EnergyObject;
     }
 
-    public void setEnergy(int Energy) {
-        this.Energy = Energy;
+    public void setEnergy(Energy Energy) {
+        this.EnergyObject = Energy;
     }
 
     public Skill[] getSkills() {

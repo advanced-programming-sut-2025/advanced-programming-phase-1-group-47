@@ -69,5 +69,20 @@ public class Invetory {
         }
     }
 
+    public void reduceAmount(Item item, int amount) {
+        for (Item invItem : items) {
+            if (invItem.getItemID() == item.getItemID()) {
+                invItem.setAmount(invItem.getAmount() - amount);
+
+                // If amount reaches zero or below, remove the item from inventory
+                if (invItem.getAmount() <= 0) {
+                    items.remove(invItem);
+                }
+                return;
+            }
+        }
+    }
+
+
 
 }
