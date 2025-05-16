@@ -77,20 +77,21 @@ public class GameMenuView extends AppMenu {
         } else if ((matcher = models.enums.commands.GameMenu.upgradetool.getMatcher(input)) != null) {
             // handleUpgradeTool(matcher);
         } else if ((matcher = models.enums.commands.GameMenu.tooluse.getMatcher(input)) != null) {
+
             // handleToolUse(matcher);
         } else if ((matcher = models.enums.commands.GameMenu.craftinfo.getMatcher(input)) != null) {
             // handleCraftInfo(matcher);
         } else if ((matcher = models.enums.commands.GameMenu.plant.getMatcher(input)) != null) {
             System.out.println(controller.plantPlant(matcher.group("seed"), matcher.group("direction")).getData());
         } else if ((matcher = models.enums.commands.GameMenu.showplant.getMatcher(input)) != null) {
+            System.out.println(controller.showPlant(matcher.group("x"), matcher.group("y")).getData());
         } else if ((matcher = models.enums.commands.GameMenu.fertilize.getMatcher(input)) != null) {
-            // handleFertilize(matcher);
         } else if ((matcher = models.enums.commands.GameMenu.water.getMatcher(input)) != null) {
-            // handleWater(matcher);
+//            System.out.println(controller);
         } else if ((matcher = models.enums.commands.GameMenu.craftingrecipes.getMatcher(input)) != null) {
-            // handleCraftingRecipes(matcher);
+//            System.out.println(controller.showCraftInfo(matcher.group("seed")).getData());
         } else if ((matcher = models.enums.commands.GameMenu.craftingcraft.getMatcher(input)) != null) {
-            // handleCraftingCraft(matcher);
+//            System.out.println(controller.);
         } else if ((matcher = models.enums.commands.GameMenu.placeitem.getMatcher(input)) != null) {
             // handlePlaceItem(matcher);
         } else if ((matcher = models.enums.commands.GameMenu.cheatadditem.getMatcher(input)) != null) {
