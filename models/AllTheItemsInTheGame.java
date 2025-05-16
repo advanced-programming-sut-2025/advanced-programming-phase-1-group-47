@@ -106,6 +106,7 @@ public class AllTheItemsInTheGame {
         tempAnimal.put(AnimalType.COW.getItemId(), new Animal(AnimalType.COW));
         tempAnimal.put(AnimalType.RABBIT.getItemId(), new Animal(AnimalType.RABBIT));
         tempAnimal.put(AnimalType.SHEEP.getItemId(), new Animal(AnimalType.SHEEP));
+
         allAnimals = Collections.unmodifiableMap(tempAnimal);
         // 3. ساخت مپ کلی همه آیتم‌ها (حیوان + گیاه)
         Map<Integer, Item> tempItems = new HashMap<>();
