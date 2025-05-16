@@ -26,7 +26,7 @@ public class FishingPole extends Item {
             fraction++;
         }
 
-        if(App.getCurrentGame().getCurrentPlayer().getBuff().getSkill().getType().equals(SkillType.FISHING)) {
+        if(App.getCurrentGame().getCurrentPlayer().getBuff().getType().equals(SkillType.FISHING)) {
             fraction++;
         }
 

@@ -23,7 +23,7 @@ public class Hoe extends Item {
             fraction++;
         }
 
-        if(App.getCurrentGame().getCurrentPlayer().getBuff().getSkill().getType().equals(SkillType.FARMING)) {
+        if(App.getCurrentGame().getCurrentPlayer().getBuff().getType().equals(SkillType.FARMING)) {
             fraction++;
         }
 
