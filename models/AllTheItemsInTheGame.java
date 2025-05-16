@@ -3,6 +3,8 @@ package models;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+
+import models.enums.AnimalProductType;
 import models.enums.AnimalType;
 import models.enums.RodType;
 import models.enums.Season;
@@ -165,10 +167,28 @@ public class AllTheItemsInTheGame {
        // tempItems.put(59, new  ) nemidanam
         tempItems.put(60, new WateringCan(Type.REGULAR));
         tempItems.put(61, new Hoe(Type.REGULAR));
+
+        tempItems.put(AnimalProductType.HEN_EGG.getId(), new AnimalProduct(AnimalProductType.HEN_EGG));
+        tempItems.put(AnimalProductType.HEN_BIG_EGG.getId(), new AnimalProduct(AnimalProductType.HEN_BIG_EGG));
+        tempItems.put(AnimalProductType.DUCK_EGG.getId(), new AnimalProduct(AnimalProductType.DUCK_EGG));
+        tempItems.put(AnimalProductType.DUCK_FEATHER.getId(), new AnimalProduct(AnimalProductType.DUCK_FEATHER));
+        tempItems.put(AnimalProductType.RABBIT_WOOL.getId(), new AnimalProduct(AnimalProductType.RABBIT_WOOL));
+        tempItems.put(AnimalProductType.RABBIT_LEG.getId(), new AnimalProduct(AnimalProductType.RABBIT_LEG));
+        tempItems.put(AnimalProductType.DINOSAUR_EGG.getId(), new AnimalProduct(AnimalProductType.DINOSAUR_EGG));
+        tempItems.put(AnimalProductType.MILK.getId(), new AnimalProduct(AnimalProductType.MILK));
+        tempItems.put(AnimalProductType.BIG_MILK.getId(), new AnimalProduct(AnimalProductType.BIG_MILK));
+        tempItems.put(AnimalProductType.GOAT_MILK.getId(), new AnimalProduct(AnimalProductType.GOAT_MILK));
+        tempItems.put(AnimalProductType.BIG_GOAT_MILK.getId(), new AnimalProduct(AnimalProductType.BIG_GOAT_MILK));
+        tempItems.put(AnimalProductType.SHEEP_WOOL.getId(), new AnimalProduct(AnimalProductType.SHEEP_WOOL));
+        tempItems.put(AnimalProductType.TRUFFLE.getId(), new AnimalProduct(AnimalProductType.TRUFFLE))
+        ;
+
+
         tempItems.put(151, new Item("Salmon",151,2,0,1));
         tempItems.put(201, new Item("Friendship Level",201,2,0,1));
         tempItems.put(202, new Item("Bouquet",202,2,0,1));
         tempItems.put(203, new Item("Wedding Ring",203,2,0,1));
+
         tempItems.put(380, new Item("Quartz",380,2,0,1));
         tempItems.put(381, new Item("Earth Crystal",381,2,0,1));    
         tempItems.put(382, new Item("Frozen Tear",382,2,0,1));    
