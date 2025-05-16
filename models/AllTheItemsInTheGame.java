@@ -97,7 +97,6 @@ public class AllTheItemsInTheGame {
         tempPlants.put(379, new foragingCrop(new Point(0, 0), 379, "Winter Root", Season.WINTER, 70, 25, 30));
         allPlants = Collections.unmodifiableMap(tempPlants);
 
-
         tempAnimal.put(AnimalType.DINOSAUR.getItemId(), new Animal(AnimalType.DINOSAUR));
         tempAnimal.put(AnimalType.HEN.getItemId(), new Animal(AnimalType.HEN));
         tempAnimal.put(AnimalType.DUCK.getItemId(), new Animal(AnimalType.DUCK));

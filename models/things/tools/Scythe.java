@@ -42,16 +42,26 @@ public class Scythe extends Item {
     @Override
     public String useTool(Point point) {
         StringBuilder builder = new StringBuilder();
-        if ((App.currentGame.map.tiles[point.getX()][point.getY()].type.equals(TileType.FORAGING))){
+        TileType tileType = App.currentGame.map.tiles[point.getX()][point.getY()].type;
+
+        if (tileType.equals(TileType.FORAGING)) {
             Random rand = new Random();
-            int randomId = rand.nextInt(getRangeBySeason()[0]) + getRangeBySeason()[1];
+
+            int[] range = getRangeBySeason();
+            int randomId = rand.nextInt(Math.abs(range[1] - range[0])) + range[0];
+
             Item item = AllTheItemsInTheGame.getItemById(randomId);
-            builder.append("You got a Forgaging " + item.getName() + " at " + point.x + ", " + point.y);
+            builder.append("You got a foraging ").append(item.getName())
+                    .append(" at ").append(point.x).append(", ").append(point.y);
+
             App.currentGame.map.tiles[point.getX()][point.getY()].type = TileType.EMPTY;
             App.currentGame.currentPlayer.getInvetory().addItem(item);
+        } else {
+            builder.append("The point you selected is a ")
+                    .append(tileType.toString().toLowerCase());
         }
-        else
-            builder.append("the point You want it its a " + String.valueOf(App.currentGame.map.tiles[point.getX()][point.getY()].type.toString()).toLowerCase());
+
         return builder.toString();
     }
+
 }
