@@ -915,6 +915,9 @@ public class GameMenuController {
         if(hour<0)
             return new Result<>(false, "Invalid hour format (Time | Time > 0");
         Time.hour += hour;
+        for (int i=0; i< hour/24; i++) {
+            setUpNextDay();
+        }
         return new Result<>(false, "new Time: " + Time.getHour());
     }
 
@@ -923,6 +926,9 @@ public class GameMenuController {
         if(day < 0 )
             return new Result<>(false, "Invalid Day format (Day | Day > 0");
         Time.hour += day;
+        for (int i=0; i< day; i++) {
+            setUpNextDay();
+        }
         return new Result<>(false, "new Day: " + App.currentGame.time.getDayOfSeason());
     }
     public Result<String> GiveGiftToNPC(NPC npc , Item gift) {
@@ -1274,6 +1280,7 @@ public class GameMenuController {
                 npc.getHasBeenGiftedTo().put(player, false);
                 npc.getHasBeenTalkedTo().put(player, false);
                 if (npc.getFriendship().get(player) >= 200)
+                if (npc.getFriendship().get(player) >= 200)
                     npc.getQuest2().getIsActive().put(player, true);
             }
         }
@@ -1289,8 +1296,10 @@ public class GameMenuController {
                 player1.setHasHuggedPlayer(player2, false);
                 player2.setHasHuggedPlayer(player1, false);
             }
+        setMap();
         setShops();
     }
+
     private void setShops() {
         App.getCurrentGame().BlacksmithStore = new Blacksmith().blacksmithBulider();
         App.getCurrentGame().JojaMartStore = new JojaMart().jojaBuilder();
@@ -1299,6 +1308,29 @@ public class GameMenuController {
         App.getCurrentGame().MarniesRanchStore = new MarniesRanch().MarnieRanchBuilder();
         App.getCurrentGame().TheSaloonStore = new TheSaloon().theSaloonBuilder();
         App.getCurrentGame().pierresStore = new pierres().pierresBuilder();
+    }
+    public void setMap(){
+        int playerNUmber = App.getCurrentGame().getPlayers().size();
+        for(int i=0; i < playerNUmber; i++){
+            Map map = App.currentGame.map;
+            Random rand = new Random();
+            for (int j=0;i<rand.nextInt(400,500);i++){
+                int x = rand.nextInt(App.farmStart[i%playerNUmber].x , App.farmStart[i%playerNUmber].x + 49);
+                int y = rand.nextInt(App.farmStart[i%playerNUmber].y,App.farmStart[i%playerNUmber].y + 39);
+                int t = rand.nextInt(Map.farmHeight);
+                if (map.tiles[x][y].type == TileType.EMPTY){
+                    if (t%6 == 0){
+                        map.tiles[x][y].type = TileType.FORAGING;
+                    }
+                    else if ((t%3)%2 == 0){
+                        map.tiles[x][y].type = TileType.TREE;
+                    }
+                    else if ((t % 3)%2 == 1){
+                        map.tiles[x][y].type = TileType.STONE;
+                    }
+                }
+            }
+        }
     }
 }
 //
