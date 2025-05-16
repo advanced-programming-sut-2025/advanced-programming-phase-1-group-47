@@ -3,7 +3,6 @@ package models;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
 import models.enums.AnimalType;
 import models.enums.Season;
 import models.things.Item;
