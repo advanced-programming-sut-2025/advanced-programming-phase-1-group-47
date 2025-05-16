@@ -2,11 +2,10 @@ package models;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import models.enums.Gender;
-import models.enums.RodType;
-import models.enums.SkillType;
-import models.enums.TrashCanType;
+
+import models.enums.*;
 import models.things.Item;
 import models.things.relations.Gift;
 import models.things.tools.*;
@@ -39,6 +38,12 @@ public class Player extends User {
     private Map <Player, Boolean> hasBeenGiftedTo;
     private Map <Player, Boolean> hasbeenHugged;
     private Player partner;
+    private final ArrayList<Recipe> recipes = new ArrayList<>(List.of(
+            Recipe.FRIED_EGG_RECIPE,
+            Recipe.BAKED_FISH_RECIPE,
+            Recipe.SALAD_RECIPE
+    ));
+
     //friendships
     public Player(String username, String password, String email, String nickname, Gender gender, String securityQuestion, String securityAnswer) {
 
@@ -227,4 +232,15 @@ public class Player extends User {
     public Map<Player, ArrayList<Gift>> getGiftHistory() {
         return giftHistory;
     }
+
+    public List<Recipe> getRecipes() {
+        return new ArrayList<>(recipes);
+    }
+
+    public void addRecipe(Recipe recipe) {
+        if (!recipes.contains(recipe)) {
+            recipes.add(recipe);
+        }
+    }
+
 }

@@ -1,5 +1,6 @@
 package models.things;
 
+import models.Result;
 import models.things.tools.Type;
 
 public class Item {
@@ -81,5 +82,5 @@ public class Item {
         return item.getAmount() <= this.amount;
     }
 
-    public void eat() {};
+    public Result<String> eat() { return null; };
 }  

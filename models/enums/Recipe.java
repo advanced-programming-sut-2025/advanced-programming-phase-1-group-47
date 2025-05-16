@@ -1,6 +1,7 @@
 package models.enums;
 
-import models.Buff;
+import models.Player;
+import models.Result;
 import models.things.Food.FoodType;
 
 public enum Recipe {
@@ -49,5 +50,7 @@ public enum Recipe {
     public int getPrice() {
         return price;
     }
+
+    public static Result<String> canMakeTheFood(Player player, Recipe recipe) { return null;};
 }
 
