@@ -1,25 +1,27 @@
 package models;
 
-public class Buff {
-    private Skill skill;
-    private int hour;
-    private boolean increaseMaximumEnergy;
+import models.enums.SkillType;
 
-    public Buff(Skill skill, int hour, boolean increaseMaximumEnergy) {
-        this.skill = skill;
+public class Buff {
+    private SkillType skillType;
+    private int hour;
+    private int increaseMaximumEnergy;
+
+    public Buff(SkillType skillType, int hour, int increaseMaximumEnergy) {
+        this.skillType = skillType;
         this.hour = hour;
         this.increaseMaximumEnergy = increaseMaximumEnergy;
     }
 
-    public Skill getSkill() {
-        return skill;
+    public SkillType getType() {
+        return skillType;
     }
 
     public int getHour() {
         return hour;
     }
 
-    public boolean isIncreaseMaximumEnergy() {
+    public int isIncreaseMaximumEnergy() {
         return increaseMaximumEnergy;
     }
 

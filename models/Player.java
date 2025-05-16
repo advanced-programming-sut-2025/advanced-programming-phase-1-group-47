@@ -2,18 +2,16 @@ package models;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import models.enums.Gender;
-import models.enums.RodType;
-import models.enums.SkillType;
-import models.enums.TrashCanType;
+
+import models.enums.*;
 import models.things.Item;
 import models.things.relations.Gift;
 import models.things.tools.*;
 
 public class Player extends User {
     private Point Coordinates;
-    private int Energy = 200;
     private Invetory invetory;
     public Item currentToll;
     ArrayList<Animal> animals = new ArrayList<>();
@@ -40,8 +38,16 @@ public class Player extends User {
     private Map <Player, Boolean> hasbeenHugged;
     private Map <Player, ArrayList<Trade>> pendingTrades;
     private Player partner;
+    private final ArrayList<Recipe> recipes = new ArrayList<>(List.of(
+            Recipe.FRIED_EGG_RECIPE,
+            Recipe.BAKED_FISH_RECIPE,
+            Recipe.SALAD_RECIPE
+    ));
+
+    //friendships
     private ArrayList<String> notifications;
     //friendships & trade
+
     public Player(String username, String password, String email, String nickname, Gender gender, String securityQuestion, String securityAnswer) {
 
         super(username, password, email, nickname, gender, securityQuestion, securityAnswer);
@@ -191,12 +197,12 @@ public class Player extends User {
         return id;
     }
 
-    public int getEnergy() {
-        return Energy;
+    public Energy getEnergy() {
+        return EnergyObject;
     }
 
-    public void setEnergy(int Energy) {
-        this.Energy = Energy;
+    public void setEnergy(Energy Energy) {
+        this.EnergyObject = Energy;
     }
 
     public Skill[] getSkills() {
@@ -271,6 +277,18 @@ public class Player extends User {
         return giftHistory;
     }
 
+
+    public List<Recipe> getRecipes() {
+        return new ArrayList<>(recipes);
+    }
+
+    public void addRecipe(Recipe recipe) {
+        if (!recipes.contains(recipe)) {
+            recipes.add(recipe);
+        }
+    }
+
+
     public Map<Player, ArrayList<String>> getTalkHistory() {
         return talkHistory;
     }
@@ -290,4 +308,5 @@ public class Player extends User {
     public Map<Player, Boolean> getHasBeenGiftedTo() {
         return hasBeenGiftedTo;
     }
+
 }
