@@ -6,6 +6,7 @@ import java.util.Random;
 import models.NPCs.*;
 import models.Shops.*;
 import models.enums.Weather;
+import models.things.machines.Machine;
 
 public class Game {
     public ArrayList<Player> players;
@@ -28,6 +29,7 @@ public class Game {
     public int turn = 0;
     private ArrayList<Shop> shops;
     private ArrayList<Plant> plants;
+    private ArrayList<Machine> machines;
 
     // ✅ Constructor با لیست بازیکن
     public Game(List<Player> players) {
@@ -40,6 +42,7 @@ public class Game {
         this.weather = Weather.SUNNY;
         this.tomarrowsWeather = Weather.SUNNY;
         this.plants = new ArrayList<>();
+        machines = new ArrayList<>();
     }
 
     public void nextDayWeather() {
@@ -93,6 +96,9 @@ public class Game {
 
     public void addPlantInPlants(Plant plant) {
         plants.add(plant);
+    }
+    public void addMachineInMachines(Machine machine) {
+        machines.add(machine);
     }
 
     public ArrayList<NPC> getNpcs() {

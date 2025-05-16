@@ -17,11 +17,13 @@ import models.Shops.pierres;
 import models.buildings.Building;
 import models.enums.Gender;
 import models.enums.Menu;
+import models.enums.ProductQuality;
 import models.enums.Season;
 import models.enums.TileType;
 import models.enums.Weather;
 import models.things.Food.Food;
 import models.things.Item;
+import models.things.machines.Machine;
 import models.things.products.Product;
 import models.things.relations.Gift;
 import models.things.relations.Quest;
@@ -1017,6 +1019,33 @@ public class GameMenuController {
         }
         return new Result<>(false, "You don't have that seed/Item!");
     }
+    public Result<String> placeItem(String itemName , String direction) {
+        System.out.println("PlaceItem " + itemName + " " + direction);
+        Player currentPlayer = App.getCurrentGame().getCurrentPlayer();
+        for(Item item : currentPlayer.getInvetory().getItems()){
+            if (item.getName().equalsIgnoreCase(itemName)) {
+                item.reduceAmount(1);
+                if(item.getAmount() == 0)
+                    currentPlayer.getInvetory().getItems().remove(item);
+                Point offset = getOffsetFromDirection(direction);
+                if (offset == null) {
+                    return new Result<>(false, "Invalid direction!");
+                }
+                Point current = App.currentGame.map.farms[App.currentGame.turn].personPoint;
+                Point target = new Point(current.getX() + offset.getX(), current.getY() + offset.getY());
+                if (!App.currentGame.map.tiles[target.x][target.y].type.equals(TileType.EMPTY))
+                    return new Result<>(false, "You are attempting to put an item into a occupied space");
+                App.currentGame.map.tiles[target.x][target.y].type = TileType.MACHINE;
+                return new Result<>(true, "machine : " + item.getName() + " is now put in (" + target.x + ", " + target.y +") coordinates !");
+            }
+        }
+        return new Result<>(false, "You don't have that Item!");
+    }
+    
+    public Result<String> putMachineOnGround(Machine machine) {
+        App.getCurrentGame().addMachineInMachines(machine);
+        return new Result<>(false, "You have Placed down the Machine!");
+    }
 
     public Point getOffsetFromDirection(String direction) {
         switch (direction.toUpperCase()) {
@@ -1024,10 +1053,10 @@ public class GameMenuController {
             case "SOUTH": return new Point(1, 0);
             case "EAST": return new Point(0, 1);
             case "WEST": return new Point(0, -1);
-            case "NORTH_EAST": return new Point(-1, 1);
-            case "NORTH_WEST": return new Point(-1, -1);
-            case "SOUTH_EAST": return new Point(1, 1);
-            case "SOUTH_WEST": return new Point(1, -1);
+            case "NORTHEAST": return new Point(-1, 1);
+            case "NORTHWEST": return new Point(-1, -1);
+            case "SOUTHEAST": return new Point(1, 1);
+            case "SOUTHWEST": return new Point(1, -1);
             default: return null;
         }
     }
@@ -1039,6 +1068,47 @@ public class GameMenuController {
         
 
         return new Result<>(true, "You have Planted the Plant!");
+    }
+    //public Result<String> useArtisan() {
+    //    
+    //}
+    public Result<String> fertilizeGround(String fertilizer , String direction){
+        boolean playerHasFertilizer = false;
+        for (Item item : App.getCurrentGame().getCurrentPlayer().getInvetory().getItems())
+            if(item.getName().equalsIgnoreCase(fertilizer)){
+                playerHasFertilizer = true;
+                break;
+            }
+        int fertilizerId = 0;
+        if(fertilizer.equalsIgnoreCase("basicRetainingSoil"))
+            fertilizerId = 176 ;
+        if(fertilizer.equalsIgnoreCase("improvedRetainingSoil"))
+            fertilizerId = 177;
+        if(fertilizer.equalsIgnoreCase("deluxeRetainingSoil"))
+            fertilizerId = 178;
+        if(fertilizer.equalsIgnoreCase("SpeedGro"))
+            fertilizerId = 179;
+        if(fertilizerId == 0)
+            return new Result<>(false, "That fertilizer is not real");
+        if(!playerHasFertilizer)
+            return new Result<>(false, "You Don't have that fertilizer!");
+        for (Plant plant : App.getCurrentGame().getPlants()) {
+                Point offset = getOffsetFromDirection(direction);
+                if (offset == null) {
+                    return new Result<>(false, "Invalid direction!");
+                }
+                Point current = App.currentGame.map.farms[App.currentGame.turn].personPoint;
+                Point target = new Point(current.getX() + offset.getX(), current.getY() + offset.getY());
+                if(plant.getPoint().getX() == target.getX() && plant.getPoint().getY() == target.getY()) {
+                    if(plant.isHasBeenFertilized())
+                        return new Result<>(false, "Plant already fertilized");
+                    plant.setHasBeenFertilized(true);
+                    plant.setFertilizerId(fertilizerId);
+                    return new Result<>(true, "Plant Fertilized!");
+
+                }
+        }
+        return new Result<>(false, "No plant there!");
     }
     public Result<String> cheatItem(Matcher matcher) {
         String itemName = matcher.group("itemName");
@@ -1067,7 +1137,6 @@ public class GameMenuController {
 
         return new Result<>(false, "Item not found: " + itemName);
     }
-
     public String showSpecificCraftInfo(Plant plant) {
         int daysPast = 0;
         for (int i = 0 ; i <plant.getGrowStages().length; i++) {
@@ -1275,12 +1344,26 @@ public class GameMenuController {
 
     //har chi mikhaid update she too shab barai farda ro bezanid inja 
     public void setUpNextDay() {
+        Random random = new Random();
+        int randomNumber = random.nextInt(10) + 1;
         for (Plant plant : App.getCurrentGame().getPlants()) {
+            if(plant.getFertilizerId() ==179){
+                plant.grow();
+                plant.setFertilizerId(0);
+            }
+
             if (plant.isHasBeenWatered())  plant.grow();
             if (App.getCurrentGame().tomarrowsWeather.equals(Weather.RAINY))
                 plant.setHasBeenWatered(true);
             else
                 plant.setHasBeenWatered(false);
+            if(plant.getFertilizerId() == 176 && randomNumber <4)
+                plant.setHasBeenWatered(true);
+
+            if(plant.getFertilizerId() == 177 && randomNumber <8)
+                plant.setHasBeenWatered(true);
+            if(plant.getFertilizerId() == 178)
+                plant.setHasBeenWatered(true);
         }
         //CHANGE WEATHER INTO TOMARROWS WEATHER AND CREATE NEW TOMARROWS WEATHER HERE
         App.currentGame.nextDayWeather();

@@ -26,6 +26,7 @@ public class Plant {
     private final boolean isFruit;
     private boolean hasBeenWatered;
     private boolean hasBeenFertilized;
+    private int fertilizerId;
 
     public Plant(int plantID, Point point, String name, int baseValue, boolean isEdible, int energy, int health,
                  String source, int currentStage, int currentStageCount, int totalHarvestTime, Season seasonOfGrowth,
@@ -197,5 +198,13 @@ public class Plant {
 
     public void setCurrentStageCount(int currentStageCount) {
         this.currentStageCount = currentStageCount;
+    }
+
+    public int getFertilizerId() {
+        return fertilizerId;
+    }
+
+    public void setFertilizerId(int fertilizerId) {
+        this.fertilizerId = fertilizerId;
     }
 }

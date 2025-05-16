@@ -1,13 +1,15 @@
 package models.things.machines;
 import models.things.Item;
 public class Operation {
+    int id;
     int readyTime;
     int currentTime;
     Item input;
     Item output;
     boolean isReadyTomarrow;
 
-    public Operation(int readyTime , Item input , Item output , boolean isReadyTomarrow){
+    public Operation(int id ,int readyTime , Item input , Item output , boolean isReadyTomarrow){
+        this.id = id;
         this.readyTime = readyTime;
         this.currentTime = 0;
         this.input = input;
@@ -53,5 +55,9 @@ public class Operation {
 
     public void setIsReadyTomarrow(boolean isReadyTomarrow) {
         this.isReadyTomarrow = isReadyTomarrow;
+    }
+
+    public int getId() {
+        return id;
     }
 }

@@ -8,7 +8,7 @@ public class Kiln extends Machine{
     
     private static final ArrayList<Operation> kilnOperations = new ArrayList<>();
     static {
-        kilnOperations.add(new Operation(1, new Item(AllTheItemsInTheGame.getItemById(36) , 10),
+        kilnOperations.add(new Operation(1,1, new Item(AllTheItemsInTheGame.getItemById(36) , 10),
           new Item(AllTheItemsInTheGame.getItemById(396) , 1), false));
     }
 

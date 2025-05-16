@@ -6,7 +6,7 @@ import models.things.Item;
 public class Machine extends Item {
     private Point point;
     private ArrayList<Operation> operations;
-    private Operation currentOperation;
+    protected Operation currentOperation;
 
     public Machine(String name, int itemID, int value, int parentItemID, int amount,ArrayList<Operation> operations) {
         super(name, itemID, value, parentItemID, amount);

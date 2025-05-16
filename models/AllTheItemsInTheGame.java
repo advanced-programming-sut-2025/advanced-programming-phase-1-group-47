@@ -3,7 +3,6 @@ package models;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
 import models.enums.AnimalProductType;
 import models.enums.AnimalType;
 import models.enums.ProductQuality;
@@ -130,27 +129,39 @@ public class AllTheItemsInTheGame {
             if (p != null) {
                 tempItems.put(i, p.harvestPlant());
                 tempItems.put(i + 100, p.getSeed());
+                tempItems.put(i + 300, p.harvestPlant().getDriedFruit());
+                tempItems.put(i + 1000,p.harvestPlant().getJuice());
+                tempItems.put(i + 1100,p.harvestPlant().getJuice());
             }
         }
-        tempItems.put(2, new Item("Stone",2,20,0,1));
-        tempItems.put(3, new Item("Wool",3,20,0,1));
-        tempItems.put(4, new Item("BARN",4,20,0,1));
-        tempItems.put(5, new Item("COOP",5,20,0,1));
-        tempItems.put(7, new Item("BIG BARN",7,20,0,1));
-        tempItems.put(8, new Item("BIG COOP",8,20,0,1));
-        tempItems.put(9, new Item("DELUXE BARN",9,20,0,1));
-        tempItems.put(10,new Item("DELUXE COOP",10,20,0,1));
-        tempItems.put(11,new Item("SHIPPING BIN", 11 ,20 , 0 ,1));
-        tempItems.put(13,new Item("Raisins", 13, 600, 0, 1));
-        tempItems.put(6, new Item("Coffee",6,20,0,1));
+        tempItems.put(0,  new Item("null",0,0,0,1));
+        tempItems.put(2,  new Item("Stone",2,20,0,1));
+        tempItems.put(3,  new Item("Wool",3,20,0,1));
+        tempItems.put(4,  new Item("BARN",4,20,0,1));
+        tempItems.put(5,  new Item("COOP",5,20,0,1));
+        tempItems.put(7,  new Item("BIG BARN",7,20,0,1));
+        tempItems.put(8,  new Item("BIG COOP",8,20,0,1));
+        tempItems.put(9,  new Item("DELUXE BARN",9,20,0,1));
+        tempItems.put(10, new Item("DELUXE COOP",10,20,0,1));
+        tempItems.put(11, new Item("SHIPPING BIN", 11 ,20 , 0 ,1));
+        tempItems.put(13, new Item("Raisins", 13, 600, 0, 1));
+        tempItems.put(15, new Item("Cheese", 15, 230, 0, 1));
+        tempItems.put(16, new Item("Large Cheese", 16, 345, 0, 1));
+        tempItems.put(17, new Item("Goat Cheese", 17, 400, 0, 1));
+        tempItems.put(18, new Item("Large Goat Cheese", 18, 600, 0, 1));
+        tempItems.put(6,  new Item("Coffee",6,150,0,1));
         tempItems.put(21, new Item("Iridium Bar",21,20,0,1));
+        tempItems.put(22, new Item("Honey",22,350,0,1));
+        tempItems.put(23, new Item("Mead", 23, 300, 0, 1));
         tempItems.put(24, new Item("Joja Cola",24,20,0,1));
         tempItems.put(25, new Item("Grass Starter",25,20,0,1));
-        tempItems.put(26, new Item("Beer",26,2,0,1));
+        tempItems.put(26, new Item("Beer",26,200,0,1));
         tempItems.put(27, new Item("Sugar",27,2,0,1));
         tempItems.put(28, new Item("Wheat Flour",28,2,0,1));
         tempItems.put(29, new Item("Trout Soup",29,2,0,1));
         tempItems.put(30, new Item("Hay",30,20,0,1));
+        tempItems.put(31, new Item("Vinegar", 31, 100, 0, 1));
+        tempItems.put(32, new Item("Pale ale", 32, 300, 0, 1));
         tempItems.put(36, new Item("Wood",36,2,0,1));
         tempItems.put(37, new Item("Iron Bar",37,2,0,1));
         tempItems.put(40, new Item("Iridium Sprinkler",40,2,0,1));
@@ -183,11 +194,17 @@ public class AllTheItemsInTheGame {
         tempItems.put(AnimalProductType.GOAT_MILK.getId(), new AnimalProduct(AnimalProductType.GOAT_MILK));
         tempItems.put(AnimalProductType.BIG_GOAT_MILK.getId(), new AnimalProduct(AnimalProductType.BIG_GOAT_MILK));
         tempItems.put(AnimalProductType.SHEEP_WOOL.getId(), new AnimalProduct(AnimalProductType.SHEEP_WOOL));
-        tempItems.put(AnimalProductType.TRUFFLE.getId(), new AnimalProduct(AnimalProductType.TRUFFLE))
-        ;
+        tempItems.put(AnimalProductType.TRUFFLE.getId(), new AnimalProduct(AnimalProductType.TRUFFLE));
 
 
         tempItems.put(151, new Item("Salmon",151,2,0,1));
+        tempItems.put(176, new Item("BasicRetainingSoil",176,2,0,1));
+        tempItems.put(177, new Item("improvedRetainingSoil",177,2,0,1));
+        tempItems.put(178, new Item("deluxeRetainingSoil",178,2,0,1));
+        tempItems.put(179, new Item("SpeedGro",179,2,0,1));
+        // tempItems.put(151, new Item("Salmon",151,2,0,1));
+        // tempItems.put(151, new Item("Salmon",151,2,0,1));
+        // tempItems.put(151, new Item("Salmon",151,2,0,1));
         tempItems.put(201, new Item("Friendship Level",201,2,0,1));
         tempItems.put(202, new Item("Bouquet",202,2,0,1));
         tempItems.put(203, new Item("Wedding Ring",203,2,0,1));
