@@ -1331,5 +1331,14 @@ public class GameMenuController {
             }
         }
     }
+    public void nextTurn(){
+        App.currentGame.currentPlayer = App.getCurrentGame().getPlayers().get((App.currentGame.turn + 1)%(App.currentGame.players.size()));
+        App.currentGame.turn = (App.currentGame.turn + 1)%(App.currentGame.players.size());
+        System.out.println(App.getCurrentGame().currentPlayer.printNotifications());
+        App.getCurrentGame().currentPlayer.resetNotifications();
+        if ((App.currentGame.turn) == 0) {
+            App.currentGame.time.setHour(App.currentGame.time.getHour() + 1);
+        }
+    }
 }
 //

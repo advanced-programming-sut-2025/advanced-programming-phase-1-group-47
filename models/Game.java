@@ -37,7 +37,8 @@ public class Game {
         this.players.add(lastPlayer);
         this.currentPlayer = lastPlayer;
         this.time = new Time();
-        this.weather = setWeather();
+        this.weather = Weather.SUNNY;
+        this.tomarrowsWeather = Weather.SUNNY;
         this.plants = new ArrayList<>();
     }
 

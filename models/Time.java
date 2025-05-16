@@ -8,7 +8,7 @@ public class Time {
 
     public static int hour = 9;
 
-    public static void setHour(int hour) {
+    public void setHour(int hour) {
         Time.hour = hour;
     }
 

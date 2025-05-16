@@ -23,11 +23,7 @@ public class GameMenuView extends AppMenu {
         } else if ((matcher = models.enums.commands.GameMenu.deletecurrentgame.getMatcher(input)) != null) {
             // handleDeleteCurrentGame(matcher);
         } else if ((matcher = models.enums.commands.GameMenu.nextturn.getMatcher(input)) != null) {
-            App.currentGame.currentPlayer = App.getCurrentGame().getPlayers().get((App.currentGame.turn + 1)%(App.currentGame.players.size()));
-            App.currentGame.turn = (App.currentGame.turn + 1)%(App.currentGame.players.size());
-            System.out.println(App.getCurrentGame().currentPlayer.printNotifications());
-            App.getCurrentGame().currentPlayer.resetNotifications();
-
+            controller.nextTurn();
         } else if ((matcher = models.enums.commands.GameMenu.showtime.getMatcher(input)) != null) {
             System.out.println(controller.showTime().getData());
         } else if ((matcher = models.enums.commands.GameMenu.showdate.getMatcher(input)) != null) {
@@ -96,14 +92,6 @@ public class GameMenuView extends AppMenu {
             // handlePlaceItem(matcher);
         } else if ((matcher = models.enums.commands.GameMenu.cheatadditem.getMatcher(input)) != null) {
             System.out.println(controller.cheatItem(matcher).getData());
-        } else if ((matcher = models.enums.commands.GameMenu.cookingrefrigeratorput.getMatcher(input)) != null) {
-            // handleCookingRefrigeratorPut(matcher);
-        } else if ((matcher = models.enums.commands.GameMenu.cookingrefrigeratorpick.getMatcher(input)) != null) {
-            // handleCookingRefrigeratorPick(matcher);
-        } else if ((matcher = models.enums.commands.GameMenu.cookingreciepe.getMatcher(input)) != null) {
-            // handleCookingRecipe(matcher);
-        } else if ((matcher = models.enums.commands.GameMenu.cookingprepare.getMatcher(input)) != null) {
-            // handleCookingPrepare(matcher);
         } else if ((matcher = models.enums.commands.GameMenu.friendships.getMatcher(input)) != null) {
             System.out.println(controller.showFriendships().getData());
         } else if ((matcher = models.enums.commands.GameMenu.talk.getMatcher(input)) != null) {
