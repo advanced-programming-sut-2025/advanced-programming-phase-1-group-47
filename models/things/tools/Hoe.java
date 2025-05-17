@@ -27,9 +27,9 @@ public class Hoe extends Item {
             fraction++;
         }
 
-//        if(App.getCurrentGame().getCurrentPlayer().getBuff().getType().equals(SkillType.FARMING)) {
-//            fraction++;
-//        }
+        if(App.getCurrentGame().getCurrentPlayer().getBuff().getType().equals(SkillType.FARMING)) {
+            fraction++;
+        }
 
         return (int) (type.getEnergyCost() * App.getCurrentGame().getWeather().getIntensity() - fraction);
     }
