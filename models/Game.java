@@ -124,4 +124,8 @@ public class Game {
     public ArrayList<Plant> getPlants() {
         return plants;
     }
+
+    public ArrayList<Machine> getMachines() {
+        return machines;
+    }
 }

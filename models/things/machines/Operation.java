@@ -16,7 +16,19 @@ public class Operation {
         this.output = output;
         this.isReadyTomarrow = isReadyTomarrow;
     }
+    public Operation(Operation operation ,Item input) {
+        this.id = operation.getId();
+        this.readyTime = operation.getReadyTime();
+        this.currentTime = 0;
+        this.input = input;
+        this.output = operation.getOutput();
+        this.isReadyTomarrow = operation.isReadyTomarrow;
+    }
 
+    public void increaseCurrentTime(int amount) {
+        currentTime+=amount;
+    }
+    
     public int getReadyTime() {
         return readyTime;
     }
