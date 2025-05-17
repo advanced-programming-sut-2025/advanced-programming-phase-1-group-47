@@ -994,7 +994,7 @@ public class GameMenuController {
         if(day < 0 )
             return new Result<>(false, "Invalid Day format (Day | Day > 0");
         Time.hour += day;
-        for (int i=0; i< day; i++) {
+        for (int i=0; i< (day / 24) + 1; i++) {
             setUpNextDay();
         }
         return new Result<>(false, "new Day: " + App.currentGame.time.getDayOfSeason());
