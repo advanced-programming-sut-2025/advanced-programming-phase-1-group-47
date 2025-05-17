@@ -1162,7 +1162,6 @@ public class GameMenuController {
                 Point target = new Point(current.getX() + offset.getX(), current.getY() + offset.getY());
                 if (!App.currentGame.map.tiles[target.x][target.y].type.equals(TileType.TILLED))
                     return new Result<>(false, "You are attempting to plant in a not tilled Ground!");
-                App.currentGame.map.tiles[target.x][target.y].type = TileType.PLANT;
                 Plant targetPlant = new Plant(basePlant, target);
                 putPlantInGround(targetPlant);
                 App.currentGame.map.farms[App.currentGame.turn].plantMap.put(target, targetPlant);
@@ -1238,6 +1237,9 @@ public class GameMenuController {
     public Result<String> putPlantInGround (Plant plant) {
         App.getCurrentGame().addPlantInPlants(plant);
         Point placeInMap = plant.getPoint();
+        App.currentGame.map.tiles[plant.getPoint().getX()][plant.getPoint().getX()].type = TileType.PLANT;
+        if(plant instanceof Tree)
+            App.currentGame.map.tiles[plant.getPoint().getX()][plant.getPoint().getX()].type = TileType.TREE;
         return new Result<>(true, "You have Planted the Plant!");
     }
 
