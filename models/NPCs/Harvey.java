@@ -27,14 +27,14 @@ public class Harvey {
     }
     private ArrayList<Item> favoriteBuilder() {
         ArrayList<Item> favorites = new ArrayList<>();
-        favorites.add(new Item("PICKLED", 19, 0, 0, 1)); //update
-        favorites.add(new Item("WINE", 34, 0, 0, 1)); //update
+        favorites.add(new Item("PICKLED", 1201, 0, 0, 1)); //update
+        favorites.add(new Item("WINE", 1101, 0, 0, 1)); //update
         favorites.add(new Item("Coffee", 6, 150, 0, 1));
         return favorites;
     }
     private ArrayList<Item> giftBuilder() {
         ArrayList<Item> possibleGifts = new ArrayList<>();
-        possibleGifts.add(new Item("Cranberry Wine", 20, 225, 0, 1)); //update
+        possibleGifts.add(new Item("Cranberry Wine", 1434, 225, 0, 1)); //update
         possibleGifts.add(new Item("Pickled Potato", 10, 210, 0, 1));
         possibleGifts.add(new Item("Coffee", 6, 150, 0, 1));
         return possibleGifts;
@@ -53,7 +53,7 @@ public class Harvey {
     }
     private Quest questBuilder3() {
         Item requieredItems = new Item("WINE", 34, 0, 0, 1);
-        Item rewards = new Item("Salad", 35, 110, 0, 5); //Update
+        Item rewards = new Item("Salad", 252, 110, 0, 5); //Update
         Quest quest = new Quest(requieredItems, rewards , 0, 6,false);
         return quest;
     }
