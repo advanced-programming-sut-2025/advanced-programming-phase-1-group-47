@@ -47,4 +47,20 @@ public  class Product extends Item {
     public void setHealth(int health) {
         this.health = health;
     }
+
+    public boolean isIsFruit() {
+        return isFruit;
+    }
+
+    public void setIsFruit(boolean isFruit) {
+        this.isFruit = isFruit;
+    }
+
+    public boolean isIsVegetable() {
+        return isVegetable;
+    }
+
+    public void setIsVegetable(boolean isVegetable) {
+        this.isVegetable = isVegetable;
+    }
 }

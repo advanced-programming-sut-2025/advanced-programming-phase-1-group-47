@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import models.enums.*;
 import models.things.Item;
 import models.things.relations.Gift;
@@ -38,7 +37,9 @@ public class Player extends User {
     private Map <Player, Boolean> hasBeenGiftedTo;
     private Map <Player, Boolean> hasbeenHugged;
     private Map <Player, ArrayList<Trade>> pendingTrades;
+    private Map <Player, ArrayList<String>> tradeHistory;
     private Player partner;
+    private Player pendingPartner;
     private final ArrayList<Recipe> recipes = new ArrayList<>(List.of(
             Recipe.FRIED_EGG_RECIPE,
             Recipe.BAKED_FISH_RECIPE,
@@ -68,6 +69,7 @@ public class Player extends User {
         pendingTrades = new HashMap<>();
         notifications = new ArrayList<>();
         partner = null;
+        pendingPartner = null;
         invetory.addItem(new Axe(Type.REGULAR));
         invetory.addItem(new Hoe(Type.REGULAR));
         invetory.addItem(new Pickaxe(Type.REGULAR));
@@ -102,6 +104,11 @@ public class Player extends User {
             hasBeenTalkedTo.put(player, false);
             hasbeenHugged.put(player, false);
         }
+    }
+    public void addTradeToTradeHistory(Player player ,String tradeMessege) {
+        ArrayList<String> oldTradeHistory = tradeHistory.get(player);
+        oldTradeHistory.add(tradeMessege);
+        tradeHistory.put(player,oldTradeHistory);
     }
     public void addNotifToNotifications(String messege) {
         notifications.add(messege);
@@ -323,6 +330,22 @@ public class Player extends User {
 
     public Refrigerator getRefrigerator() {
         return refrigerator;
+    }
+
+    public Player getPendingPartner() {
+        return pendingPartner;
+    }
+
+    public void setPendingPartner(Player pendingPartner) {
+        this.pendingPartner = pendingPartner;
+    }
+
+    public Map<Player, ArrayList<String>> getTradeHistory() {
+        return tradeHistory;
+    }
+
+    public void setTradeHistory(Map<Player, ArrayList<String>> tradeHistory) {
+        this.tradeHistory = tradeHistory;
     }
 
 }

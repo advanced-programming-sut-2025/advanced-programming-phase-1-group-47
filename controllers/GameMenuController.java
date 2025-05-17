@@ -44,9 +44,6 @@ public class GameMenuController {
     public Result<String> SetUpNextDay() {
         return null;
     }
-    public Result<String> crowAttack() {
-        return null;
-    }
     public Result<String> BuildGreenHouse() {
         Player player = App.currentGame.currentPlayer;
         // check the inventory and do the buy
@@ -478,24 +475,47 @@ public class GameMenuController {
                     return new Result<String>(false, "You are not Close enough friends to do that!");
                 for (Item item : currentPlayer.getInvetory().getItems()) {
                     if(item.getItemID() == 203){
-                        player.getInvetory().addItem(item);
                         currentPlayer.getInvetory().getItems().remove(item);
-                        player.setFriendshipLevel(currentPlayer , 4);
-                        currentPlayer.setFriendshipLevel(player , 4);
-                        player.setFriendshipXP(currentPlayer , 0);
-                        currentPlayer.setFriendshipXP(player , 0);
-                        currentPlayer.setPartner(player);
-                        player.setPartner(currentPlayer);
-                        player.addNotifToNotifications("You are now married to " + currentPlayer.getUsername() + "!!!!!!");
-                        return new Result<String>(true, "You are now married!");
+                        player.setPendingPartner(currentPlayer);
+                        player.addNotifToNotifications("someone asked you to marry them : " + currentPlayer.getUsername() + "!!!!!!");
+                        return new Result<String>(true, "proposal made");
                     }
                 }
-                return new Result<String>(false, "No ring!");
+                return new Result<String>(false, "No Wedding ring!");
             }
         }
         return new Result<String>(false, "player not found!");
     }
-//    public Result<String>()
+    public Result<String> respondMarriage(String response , String username) {
+        Player currentPlayer = App.getCurrentGame().getCurrentPlayer();
+        if (currentPlayer.getPendingPartner() == null)  
+            return new Result<>(false, "You have no marriage Requests!");
+        if (!currentPlayer.getPendingPartner().getUsername().equals(username))
+           return new Result<>(false,"This person is not your marriage partner!");
+        if (response.equalsIgnoreCase("accept")) {
+            currentPlayer.getInvetory().addItem(new Item(AllTheItemsInTheGame.getItemById(203),1));
+            currentPlayer.getPendingPartner().setFriendshipLevel(currentPlayer , 4);
+            currentPlayer.setFriendshipLevel(currentPlayer.getPendingPartner() , 4);
+            currentPlayer.getPendingPartner().setFriendshipXP(currentPlayer , 0);
+            currentPlayer.setFriendshipXP(currentPlayer.getPendingPartner() , 0);
+            currentPlayer.setPartner(currentPlayer.getPendingPartner());
+            currentPlayer.getPendingPartner().setPartner(currentPlayer);
+            currentPlayer.getPendingPartner().addNotifToNotifications("She Accepted!!! You are now married!");
+            currentPlayer.setPendingPartner(null);
+            return new Result<String>(true, "You are now married!");
+        }
+        if (response.equalsIgnoreCase("reject")) {
+            currentPlayer.getPendingPartner().getInvetory().addItem(new Item(AllTheItemsInTheGame.getItemById(203),1));
+            currentPlayer.getPendingPartner().setFriendshipLevel(currentPlayer , 0);
+            currentPlayer.setFriendshipLevel(currentPlayer.getPendingPartner() , 0);
+            currentPlayer.getPendingPartner().setFriendshipXP(currentPlayer , 0);
+            currentPlayer.setFriendshipXP(currentPlayer.getPendingPartner() , 0);
+            currentPlayer.getPendingPartner().addNotifToNotifications("She did not accept.");
+            currentPlayer.setPendingPartner(null);
+            return new Result<String>(true , "You declined the marriage proposal!");
+        }
+        return new Result<String>(false, "response invalid!");
+    }
 
     public Result<String> listQuests() {
         StringBuilder output = new StringBuilder();
@@ -1132,7 +1152,7 @@ public class GameMenuController {
                 else{
                     basePlant = getPlantFromMixedSeed();
                 }
-                if (!basePlant.getSeasonOfGrowth().equals(App.currentGame.time.getSeason()))
+                if (!isPlantInSeason(basePlant))
                     return new Result<>(false, "its not the perfect time to plant. come back in " + basePlant.getSeasonOfGrowth() + " for planting");
                 item.reduceAmount(1);
                 if(item.getAmount() == 0)
@@ -1154,14 +1174,34 @@ public class GameMenuController {
         }
         return new Result<>(false, "You don't have that seed/Item!");
     }
+    public boolean isPlantInSeason(Plant plant) {
+        Season plantSeason = plant.getSeasonOfGrowth();
+        Season currentSeason = App.getCurrentGame().getTime().getSeason();
+    
+        if (plantSeason == currentSeason) return true;
+        if (plantSeason == Season.OTHER_THAN_WINER && currentSeason != Season.WINTER) return true;
+        if (plantSeason == Season.SPECIAL) return true;
+        if (plantSeason == Season.SUMMER_FALL && (currentSeason == Season.SUMMER || currentSeason == Season.FALL)) return true;
+        if (plantSeason == Season.SPRING_SUMMER && (currentSeason == Season.SPRING || currentSeason == Season.SUMMER)) return true;
+    
+        return false;
+    }
+
+
+
+
+
     public Result<String> placeItem(String itemName , String direction) {
         System.out.println("PlaceItem " + itemName + " " + direction);
         Player currentPlayer = App.getCurrentGame().getCurrentPlayer();
         for(Item item : currentPlayer.getInvetory().getItems()){
             if (item.getName().equalsIgnoreCase(itemName)) {
+                if(!(item instanceof Machine))
+                    return new Result<String>(false, "This Item can not be placed!");
                 item.reduceAmount(1);
                 if(item.getAmount() == 0)
                     currentPlayer.getInvetory().getItems().remove(item);
+                
                 Point offset = getOffsetFromDirection(direction);
                 if (offset == null) {
                     return new Result<>(false, "Invalid direction!");
@@ -1170,13 +1210,15 @@ public class GameMenuController {
                 Point target = new Point(current.getX() + offset.getX(), current.getY() + offset.getY());
                 if (!App.currentGame.map.tiles[target.x][target.y].type.equals(TileType.EMPTY))
                     return new Result<>(false, "You are attempting to put an item into a occupied space");
+                Machine originalMachine = (Machine) item;
+                Machine machineToPlace = new Machine(originalMachine, 1, target);
                 App.currentGame.map.tiles[target.x][target.y].type = TileType.MACHINE;
-                return new Result<>(true, "machine : " + item.getName() + " is now put in (" + target.x + ", " + target.y +") coordinates !");
+                return putMachineOnGround(machineToPlace);
             }
         }
         return new Result<>(false, "You don't have that Item!");
     }
-
+    
     public Result<String> putMachineOnGround(Machine machine) {
         App.getCurrentGame().addMachineInMachines(machine);
         return new Result<>(false, "You have Placed down the Machine!");
@@ -1205,16 +1247,22 @@ public class GameMenuController {
     public Result<String> useArtisan(String itemName, String artisanName) {
         for (Item item : App.getCurrentGame().getCurrentPlayer().getInvetory().getItems()) {
             if (item.getName().equalsIgnoreCase(itemName)) {
+                boolean isItemFruit = false;
+                boolean isItemVegtable = false;
                 Point current = App.currentGame.map.farms[App.currentGame.turn].personPoint;
-
+                if(item instanceof Product product){
+                    isItemFruit = product.isIsFruit();
+                    isItemVegtable = product.isIsVegetable();
+                }
                 for (Machine machine : App.getCurrentGame().getMachines()) {
                     Point machinePoint = machine.getPoint();
                     if (Math.abs(machinePoint.getX() - current.getX()) <= 1 &&
                         Math.abs(machinePoint.getY() - current.getY()) <= 1 &&
                         machine.getName().equalsIgnoreCase(artisanName)) {
                         for (Operation operation : machine.getOperations()) {
-                            if (operation.getInput().getItemID() == item.getItemID() &&
-                                operation.getInput().getAmount() <= item.getAmount()) {
+                            if (operation.getInput().getAmount() <= item.getAmount() &&
+                            (operation.getInput().getItemID() == item.getItemID() || (operation.getInput().getItemID() == 300
+                             && isItemFruit) || (operation.getInput().getItemID() == 299 && isItemVegtable)) ) {
 
                                 item.reduceAmount(operation.getInput().getAmount());
                                 if (item.getAmount() == 0) {
@@ -1533,7 +1581,7 @@ public class GameMenuController {
     }
     //har chi mikhaid update she too shab barai farda ro bezanid inja
     public void setUpNextDay() {
-        crowAttack();
+        CrowAttack();
         Random random = new Random();
         int randomNumber = random.nextInt(10) + 1;
         for (Plant plant : App.getCurrentGame().getPlants()) {
@@ -1564,6 +1612,14 @@ public class GameMenuController {
                 npc.getHasBeenTalkedTo().put(player, false);
                 if (npc.getFriendship().get(player) >= 200)
                     npc.getQuest2().getIsActive().put(player, true);
+                if (npc.getFriendship().get(player) >= 600){
+                    int randomGift = random.nextInt(3);
+                    int randomChance = random.nextInt(2);
+                    if(randomChance == 1){
+                        App.getCurrentGame().getCurrentPlayer().getInvetory().addItem(npc.getPossibleGifts().get(randomGift));
+                        App.getCurrentGame().getCurrentPlayer().addNotifToNotifications(npc.getName() + " Gave you a Gift!");
+                    }
+                }
             }
         }
 

@@ -219,6 +219,8 @@ public class TradeMenuController {
                         player.addFriendshipXP(50, currentPlayer);
                         currentPlayer.addFriendshipXP(50, player);
                         tradeList.remove(trade);
+                        player.addTradeToTradeHistory(currentPlayer, trade.toString() + " State : ACCEPTED");
+                        currentPlayer.addTradeToTradeHistory(player, trade.toString() + " State : ACCEPTED");
                         return new Result<>(true, "Trade ACCEPTED!");
                     }
 
@@ -230,6 +232,8 @@ public class TradeMenuController {
                         player.reduceFriendshipXP(30, currentPlayer);
                         currentPlayer.reduceFriendshipXP(30, player);
                         tradeList.remove(trade);
+                        player.addTradeToTradeHistory(currentPlayer, trade.toString() + " State : REJECTED");
+                        currentPlayer.addTradeToTradeHistory(player, trade.toString() + " State : REJECTED");
                         return new Result<>(true, "Trade REJECTED");
                     }
                 }
@@ -260,5 +264,17 @@ public class TradeMenuController {
             }
         }
         return new Result<String>(true,output.toString());
+    }
+    public Result<String> showTradeHistory() {
+        StringBuilder output = new StringBuilder();
+        for (Player player : App.getCurrentGame().getPlayers()) {
+            if(player.equals(App.getCurrentGame().getCurrentPlayer())) continue;
+            ArrayList<String> tradeHistory = App.getCurrentGame().getCurrentPlayer().getTradeHistory().get(player);
+            if (tradeHistory == null || tradeHistory.isEmpty()) continue;
+            for (String messege : tradeHistory) {
+                output.append(messege).append("\n").append("------------------------------\n");
+            }
+        }
+        return new Result<String>(true, output.toString());
     }
 }
