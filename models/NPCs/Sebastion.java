@@ -27,14 +27,14 @@ public class Sebastion {
     private ArrayList<Item> favoriteBuilder() {
         ArrayList<Item> favorites = new ArrayList<>();
         favorites.add(new Item("Wool", 3, 340, 0, 1));
-        favorites.add(new Item("Pumpkin Pie", 4, 385, 0, 1)); //update
-        favorites.add(new Item("Pizza", 5, 300, 0, 1)); //update
+        favorites.add(new Item("Pumpkin Pie", 254, 385, 0, 1)); //update
+        favorites.add(new Item("Pizza", 256, 300, 0, 1)); //update
         return favorites;
     }
     private ArrayList<Item> giftBuilder() {
         ArrayList<Item> possibleGifts = new ArrayList<>();
         possibleGifts.add(new Item("Frozen Tear", 382, 75, 0, 1));
-        possibleGifts.add(new Item("Pumpkin Pie", 4, 385, 0, 1)); //update
+        possibleGifts.add(new Item("Pumpkin Pie", 254, 385, 0, 1)); //update
         possibleGifts.add(new Item("Coffee", 6, 150, 0, 1));
         return possibleGifts;
     }
@@ -45,7 +45,7 @@ public class Sebastion {
         return quest;
     }
     private Quest questBuilder2() {
-        Item requieredItems = new Item("Pumpkin Pie", 4, 385, 0, 1); //update
+        Item requieredItems = new Item("Pumpkin Pie", 254, 385, 0, 1); //update
         Item rewards = new Item("null item", 0, 0, 0, 1);
         Quest quest = new Quest(requieredItems, rewards , 500 ,14,false);
         return quest;

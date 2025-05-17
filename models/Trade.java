@@ -42,4 +42,19 @@ public class Trade {
     public int getTargetPrice() {
         return targetPrice;
     }
+    @Override
+    public String toString() {
+        StringBuilder output = new StringBuilder();
+        output.append("item id : ")
+              .append(id)
+              .append("\nItem : ")
+              .append(item.getName())
+              .append("\nTarget Item : ")
+              .append(targetItem.getName())
+              .append("\nprice")
+              .append(price)
+              .append("\nTarget price")
+              .append(targetPrice);
+        return output.toString();
+    }
 }

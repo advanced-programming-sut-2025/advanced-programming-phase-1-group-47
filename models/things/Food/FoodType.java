@@ -8,7 +8,7 @@ public enum FoodType {
     BAKED_FISH("Baked-Fish", 251, 75, null, 100),
     SALAD("Salad", 252,  113, null, 110),
     OMELET("Omelet", 253, 100, null, 125),
-    PUMPKIN_PIE("Pumpkin", 254, 225, null, 385),
+    PUMPKIN_PIE("Pumpkin Pie", 254, 225, null, 385),
     SPAGHETTI("Spaghetti", 255, 75, null, 120),
     PIZZA("Pizza", 256, 150, null, 300),
     TORTILLA("Tortilla", 257, 50, null, 50),

@@ -124,4 +124,12 @@ public class NPC {
     public Map<Player, Boolean> getHasBeenGiftedTo() {
         return hasBeenGiftedTo;
     }
+
+    public void setPossibleGifts(ArrayList<Item> possibleGifts) {
+        this.possibleGifts = possibleGifts;
+    }
+
+    public ArrayList<Item> getPossibleGifts() {
+        return possibleGifts;
+    }
 }
