@@ -60,6 +60,9 @@ public enum Recipe {
     }
 
     public static Result<String> makeRecipe(Player player, String recipeName) {
+        if(!player.hasRecipe(recipeName))
+            return new Result<>(false, "Player doesn't have this recipe");
+        
         Recipe recipe = recipeByName(recipeName);
         if(recipe == null)
             return new Result<>(false, "Recipe name is incorrect");

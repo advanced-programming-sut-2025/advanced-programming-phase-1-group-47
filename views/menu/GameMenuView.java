@@ -183,6 +183,8 @@ public class GameMenuView extends AppMenu {
                     (App.currentGame.map.farms[(App.currentGame.turn) % 4].personPoint.y +
                             App.farmStart[(App.currentGame.turn) % 4].y) + ")");
             System.out.println(App.currentGame.currentPlayer.getUsername());
+        } else if ((matcher = GameMenu.eatfood.getMatcher(input)) != null) {
+            System.out.println(controller.eat(matcher.group("foodName")).getData());
         }
         else {
             System.out.println("Invalid command");
