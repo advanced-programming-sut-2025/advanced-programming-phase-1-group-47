@@ -5,11 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import models.enums.*;
 import models.things.Item;
-import models.things.machines.BeeHouse;
-import models.things.machines.CheesePress;
-import models.things.machines.Dehydrator;
-import models.things.machines.Keg;
-import models.things.machines.Kiln;
+import models.things.machines.*;
 import models.things.products.Product;
 import models.things.tools.Axe;
 import models.things.tools.FishingPole;
@@ -172,7 +168,7 @@ public class AllTheItemsInTheGame {
         tempItems.put(3,  new Item("Wool",3,20,0,1));
 //        tempItems.put(4,  new Item("BARN",4,20,0,1));
 //        tempItems.put(5,  new Item("COOP",5,20,0,1));
-//        tempItems.put(6,  new Item("Coffee",6,150,0,1));
+        tempItems.put(6,  new Item("Coffee",6,150,0,1));
 //        tempItems.put(7,  new Item("BIG BARN",7,20,0,1));
 //        tempItems.put(8,  new Item("BIG COOP",8,20,0,1));
 //        tempItems.put(9,  new Item("DELUXE BARN",9,20,0,1));
@@ -229,11 +225,11 @@ public class AllTheItemsInTheGame {
         tempItems.put(AnimalProductType.SHEEP_WOOL.getId(), new AnimalProduct(AnimalProductType.SHEEP_WOOL));
         tempItems.put(AnimalProductType.TRUFFLE.getId(), new AnimalProduct(AnimalProductType.TRUFFLE));
         
-        tempItems.put(12, new Kiln());
-        tempItems.put(43, new BeeHouse());
-        tempItems.put(19, new CheesePress());
-        tempItems.put(20, new Keg());
-        tempItems.put(14, new Dehydrator());
+         tempItems.put(12, new Kiln());
+         tempItems.put(43, new BeeHouse());
+         tempItems.put(19, new CheesePress());
+         tempItems.put(20, new Keg());
+         tempItems.put(14, new Dehydrator());
         tempItems.put(151, new Item("Salmon",151,2,0,1));
         tempItems.put(176, new Item("BasicRetainingSoil",176,2,0,1));
         tempItems.put(177, new Item("improvedRetainingSoil",177,2,0,1));
