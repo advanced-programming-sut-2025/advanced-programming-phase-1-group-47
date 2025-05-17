@@ -37,7 +37,7 @@ public class HouseMenuController {
                         return new Result<>(false, product.getName() + " is not edible!");
                     App.getCurrentGame().getCurrentPlayer().getRefrigerator().addItem(product);
                     App.getCurrentGame().getCurrentPlayer().getInvetory().removeItem(item);
-                    return new Result<>(true, item.getName() + " is now in your inventory!");
+                    return new Result<>(true, item.getName() + " is now in your fridge!");
                 }
 
                 return new Result<>(false, itemName + " is not edible!");
