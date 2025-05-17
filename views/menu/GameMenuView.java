@@ -50,7 +50,7 @@ public class GameMenuView extends AppMenu {
         } else if ((matcher = models.enums.commands.GameMenu.showseason.getMatcher(input)) != null) {
             System.out.println(controller.showSeason().getData());
         } else if ((matcher = models.enums.commands.GameMenu.cheatthor.getMatcher(input)) != null) {
-            // handleCheatThor(matcher);
+            System.out.println(controller.Tunder(new Point(Integer.parseInt(matcher.group("x")), Integer.parseInt(matcher.group("y")))).getData());
         } else if ((matcher = models.enums.commands.GameMenu.showweather.getMatcher(input)) != null) {
             System.out.println(controller.showWeather().getData());
         } else if ((matcher = models.enums.commands.GameMenu.weatherforecast.getMatcher(input)) != null) {
@@ -72,9 +72,9 @@ public class GameMenuView extends AppMenu {
         } else if ((matcher = models.enums.commands.GameMenu.showinventory.getMatcher(input)) != null) {
             controller.showInventory();
         } else if ((matcher = models.enums.commands.GameMenu.inventorytrashtotal.getMatcher(input)) != null) {
-            System.out.println(controller.InventoryTrashTotal(matcher).getData());
-        } else if ((matcher = models.enums.commands.GameMenu.inventorytrash.getMatcher(input)) != null) {
             System.out.println(controller.InventoryTrash(matcher).getData());
+        } else if ((matcher = models.enums.commands.GameMenu.inventorytrash.getMatcher(input)) != null) {
+            System.out.println(controller.InventoryTrashTotal(matcher).getData());
         } else if ((matcher = models.enums.commands.GameMenu.equiptool.getMatcher(input)) != null) {
             System.out.println(controller.EquipTool(matcher).getData());
         } else if ((matcher = models.enums.commands.GameMenu.currenttool.getMatcher(input)) != null) {
@@ -103,8 +103,12 @@ public class GameMenuView extends AppMenu {
 //            System.out.println(controller.showCraftInfo(matcher.group("seed")).getData());
         } else if ((matcher = models.enums.commands.GameMenu.craftingcraft.getMatcher(input)) != null) {
 //            System.out.println(controller.);
+        } else if ((matcher = models.enums.commands.GameMenu.sellproduct.getMatcher(input)) != null) {
+            System.out.println(controller.SellItem(matcher).getData());
         } else if ((matcher = models.enums.commands.GameMenu.placeitem.getMatcher(input)) != null) {
-            // handlePlaceItem(matcher);
+
+        } else if ((matcher = models.enums.commands.GameMenu.plants.getMatcher(input)) != null) {
+            controller.farmPlantPrint();
         }
         else if ((matcher = models.enums.commands.GameMenu.cheatadditem.getMatcher(input)) != null) {
             System.out.println(controller.cheatItem(matcher).getData());
@@ -171,6 +175,7 @@ public class GameMenuView extends AppMenu {
             }
         }
         else if ((matcher = GameMenu.showPoint.getMatcher(input)) != null) {
+            System.out.println("Player Money: " + App.currentGame.currentPlayer.getMoney() + " $");
             System.out.println("Player turn :" + App.currentGame.turn);
             System.out.println("Player Point : (" +
                     (App.currentGame.map.farms[(App.currentGame.turn) % 4].personPoint.x +

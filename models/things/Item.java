@@ -3,6 +3,7 @@ package models.things;
 import models.Point;
 import models.Result;
 import models.enums.ProductQuality;
+import models.enums.Season;
 import models.things.products.Product;
 import models.things.tools.Type;
 
@@ -81,6 +82,9 @@ public class Item {
         this.value = value;
     }
 
+    public Season getSeason() {
+        return null;
+    }
     public String getName() {
         return name;
     }

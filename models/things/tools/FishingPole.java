@@ -1,12 +1,11 @@
 package models.things.tools;
 
-import models.App;
-import models.Player;
-import models.Point;
-import models.Result;
-import models.enums.RodType;
-import models.enums.SkillType;
+import models.*;
+import models.enums.*;
+import models.enums.Weather;
 import models.things.Item;
+
+import java.util.Random;
 
 public class FishingPole extends Item {
     private final RodType rodType; // Made final to ensure immutability
@@ -26,16 +25,89 @@ public class FishingPole extends Item {
             fraction++;
         }
 
-        if(App.getCurrentGame().getCurrentPlayer().getBuff().getType().equals(SkillType.FISHING)) {
-            fraction++;
-        }
+//        if(App.getCurrentGame().getCurrentPlayer().getBuff().getType().equals(SkillType.FISHING)) {
+//            fraction++;
+//        }
 
         return (int) (rodType.getEnergyCost() * App.getCurrentGame().getWeather().getIntensity() - fraction);
     }
+    public Double fishimgWeather(){
+        Weather weather = App.getCurrentGame().getWeather();
+        if (weather.equals(Weather.SUNNY))
+            return 1.5;
+        else if (weather.equals(Weather.RAINY))
+            return 1.2;
+        else if (weather.equals(Weather.STORMY))
+            return 0.5;
+        return 1.0;
+    }
+    public Fish CheepestFish(){
+        Season season = App.getCurrentGame().time.getSeason();
+        if (season.equals(Season.SUMMER)) {
+            return new Fish(FishType.SUNFISH);
+        }
+        else if (season.equals(Season.FALL)) {
+            return new Fish(FishType.SARDINE);
+        }
+        else if (season.equals(Season.WINTER)){
+            return new Fish(FishType.PERCH);
+        }
+        else if (season.equals(Season.SPRING)){
+            return new Fish(FishType.GHOSTFISH);
+        }
+        return new Fish(FishType.SUNFISH);
+    }
+    public Fish randomSeasonall(){
+        Random rand = new Random();
+        for(int i=0; i < 300; i++){
+            int a = rand.nextInt(19) + 1050;
+            if(AllTheItemsInTheGame.getItemById(a).getSeason().equals(App.currentGame.time.getSeason())){
+               if (a >=1066 && a <=1069){
+                   if (App.getCurrentGame().getCurrentPlayer().getSkills()[1].getLevel() != 4) {
+                        continue;
+                   }
+               }
+                return (Fish)AllTheItemsInTheGame.getItemById(a);
+            }
+        }
+        return null;
+    }
     @Override
     public String useTool(Point point) {
+        TileType tileType = App.currentGame.map.tiles[point.getX()][point.getY()].type;
+        StringBuilder builder = new StringBuilder();
         Player player = App.getCurrentGame().getCurrentPlayer();
         player.EnergyObject.setCurrentEnergy(player.EnergyObject.getCurrentEnergy() - energyCost());
-        return "Fishing with rod: " + rodType.getName() + " at point " + point;
+        Random rand = new Random();
+        int random = rand.nextInt(10);
+        double fishCountRaw = ((double) random / 10.0) * fishimgWeather() * (player.getSkills()[1].getLevel() + 2);
+        int fishCount = (int) fishCountRaw;
+        double fishQuality = ((random) * (player.getSkills()[1].getLevel() + 2) * rodType.getEnergyCost()) / (7 - fishimgWeather());
+        if ((tileType.equals(TileType.LAKE))){
+            Fish fish = new Fish(FishType.SUNFISH);
+            if (rodType.getName().equals("TrainingRod")){
+                fish = CheepestFish();
+                player.getInvetory().addItem(fish);
+            }
+            else if (rodType.getName().equals("BambooPole")){
+                fish = randomSeasonall();
+                player.getInvetory().addItem(randomSeasonall());
+            }
+            else if (rodType.getName().equals("FiberglassRod")){
+                fish = randomSeasonall();
+                player.getInvetory().addItem(randomSeasonall());
+            }
+            else if (rodType.getName().equals("IridiumRod")){
+                fish = randomSeasonall();
+                player.getInvetory().addItem(randomSeasonall());
+            }
+            builder.append("You got a " + fish.getName() + " that worth " + fish.getSellPrice() + "\n");
+            player.getInvetory().addItem(fish);
+        }
+        else {
+            builder.append("The point you selected is a ")
+                    .append(tileType.toString().toLowerCase());
+        }
+        return builder.toString();
     }
 }

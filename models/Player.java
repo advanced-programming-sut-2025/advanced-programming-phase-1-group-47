@@ -23,7 +23,8 @@ public class Player extends User {
             new Skill(SkillType.MINING),
             new Skill(SkillType.FORAGING)
     };
-
+    public int trashCanLevel = 0;
+    public ArrayList<Item> playerShipping_bin = new ArrayList<>();
     public Energy EnergyObject = new Energy(200,200);
     private int money;
     private int id;
@@ -76,7 +77,16 @@ public class Player extends User {
 //        x.setAmount(45);
 //        invetory.addItem(x);
     }
-
+    public void addToShippingBin(Item item) {
+        for(Item item2 : playerShipping_bin){
+            if(item2.getItemID() == item.getItemID()) {
+                item2.addAmount(item.getAmount());
+                return;
+            }
+        }
+        if(item.getItemID() != 0)
+            playerShipping_bin.add(item);
+    }
 
     public void setupRelations() {
         for (Player player : App.getCurrentGame().getPlayers()) {

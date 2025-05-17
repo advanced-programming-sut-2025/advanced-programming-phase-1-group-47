@@ -3,11 +3,8 @@ package models;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import models.enums.AnimalProductType;
-import models.enums.AnimalType;
-import models.enums.ProductQuality;
-import models.enums.RodType;
-import models.enums.Season;
+
+import models.enums.*;
 import models.things.Item;
 import models.things.products.Product;
 import models.things.tools.Axe;
@@ -143,6 +140,28 @@ public class AllTheItemsInTheGame {
         tempItems.put(FarmBuilding.SHIPPING_BIN.getId(), new Building(FarmBuilding.SHIPPING_BIN));
         tempItems.put(FarmBuilding.SHIPPING_BIN.getId(), new Building(FarmBuilding.SHIPPING_BIN));
         tempItems.put(FarmBuilding.WELL.getId(), new Building(FarmBuilding.WELL));
+
+        //Fishes 1050 , 1069
+        tempItems.put(FishType.SALMON.getId(), new Fish(FishType.SALMON));
+        tempItems.put(FishType.SARDINE.getId(), new Fish(FishType.SARDINE));
+        tempItems.put(FishType.SHAD.getId(), new Fish(FishType.SHAD));
+        tempItems.put(FishType.BLUE_DISCUS.getId(), new Fish(FishType.BLUE_DISCUS));
+        tempItems.put(FishType.MIDNIGHT_CARP.getId(), new Fish(FishType.MIDNIGHT_CARP));
+        tempItems.put(FishType.SQUID.getId(), new Fish(FishType.SQUID));
+        tempItems.put(FishType.TUNA.getId(), new Fish(FishType.TUNA));
+        tempItems.put(FishType.PERCH.getId(), new Fish(FishType.PERCH));
+        tempItems.put(FishType.FLOUNDER.getId(), new Fish(FishType.FLOUNDER));
+        tempItems.put(FishType.LIONFISH.getId(), new Fish(FishType.LIONFISH));
+        tempItems.put(FishType.HERRING.getId(), new Fish(FishType.HERRING));
+        tempItems.put(FishType.GHOSTFISH.getId(), new Fish(FishType.GHOSTFISH));
+        tempItems.put(FishType.TILAPIA.getId(), new Fish(FishType.TILAPIA));
+        tempItems.put(FishType.DORADO.getId(), new Fish(FishType.DORADO));
+        tempItems.put(FishType.SUNFISH.getId(), new Fish(FishType.SUNFISH));
+        tempItems.put(FishType.RAINBOW_TROUT.getId(), new Fish(FishType.RAINBOW_TROUT));
+        tempItems.put(FishType.LEGEND.getId(), new Fish(FishType.LEGEND));
+        tempItems.put(FishType.GLACIERFISH.getId(), new Fish(FishType.GLACIERFISH));
+        tempItems.put(FishType.ANGLER.getId(), new Fish(FishType.ANGLER));
+        tempItems.put(FishType.CRIMSONFISH.getId(), new Fish(FishType.CRIMSONFISH));
 
         tempItems.put(0,  new Item("null",0,0,0,1));
         tempItems.put(2,  new Item("Stone",2,20,0,1));

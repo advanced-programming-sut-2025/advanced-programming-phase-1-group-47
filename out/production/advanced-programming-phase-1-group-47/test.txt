@@ -13,8 +13,19 @@ game map 2
 game map 3
 game map 4
 print map -l 12,34 -s 5
+walk -l 9,27
+yes
+tools equip TrainingRod-fishing pole
+tools use -d SOUTH
 walk -l 20,20
 yes
+cheat advance day 5d
+cheat advance day 5d
+cheat advance day 5d
+cheat Thor -l 5,0
+cheat add item -n shipping_bin -c 2
+build -a shipping_bin -l 21,20
+sell Carrot Seeds -n 12
 cheat advance day 5d
 cheat advance day 5d
 cheat advance day 5d

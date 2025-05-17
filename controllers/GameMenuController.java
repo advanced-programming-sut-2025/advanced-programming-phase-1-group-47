@@ -115,6 +115,7 @@ public class GameMenuController {
         if (item == null)
             return new Result<>(false,"Item not found");
         player.getInvetory().removeItem(item);
+        player.addMoney(item.getValue() * item.getAmount() * (player.trashCanLevel * 15)/100);
         return new Result<>(true,"Item removed");
     }
     public Result<String> InventoryTrash(Matcher matcher) {
@@ -136,6 +137,8 @@ public class GameMenuController {
             player.getInvetory().removeItem(item);
         else
             item.setAmount(item.getAmount() - number);
+        player.addMoney(item.getValue() * number * (player.trashCanLevel * 15)/100);
+
         return new Result<>(true,"Item removed");
     }
     public Result<String> EquipTool(Matcher matcher) {
@@ -167,6 +170,7 @@ public class GameMenuController {
     public Result<String> BuyAnimal() {
         return null;
     }
+
     public Result<String> EatFood() {
         return null;
     }
@@ -1030,6 +1034,61 @@ public class GameMenuController {
 
         return new Result<>(false, "Item does not Exist!");
     }
+    public Result<String> Tunder(Point point){
+        TileType type = App.currentGame.map.tiles[point.x][point.y].type;
+        System.out.println(type.getSticker());
+        if (type.equals(TileType.TREE)) {
+            App.currentGame.map.tiles[point.x][point.y].type = TileType.COAL;
+            return new Result<>(false, "Tunder Hitted the tree and Becomed Coal at point " + point.x + " " + point.y);
+        }
+        else if (type.equals(TileType.PLANT)) {
+            App.currentGame.map.tiles[point.x][point.y].type = TileType.TILLED;
+            for (int i =0;i < App.currentGame.players.size();i++) {
+                for (HashMap.Entry<Point, Plant> entry : App.currentGame.map.farms[i].plantMap.entrySet()) {
+                    Point temp = entry.getKey();
+                    Plant plant = entry.getValue();
+                    if (point.x == temp.x && point.y == temp.y) {
+                        App.currentGame.map.farms[i].plantMap.remove(temp);
+                        return new Result<>(true, "Plant Removed from PLayer " +
+                                App.currentGame.players.get((i)).getUsername() + " farm at point " + point.x + ", " + point.y);
+                    }
+                }
+            }
+
+        }
+        return new Result<>(true, "Tunder at " + point.x + ", " + point.y);
+    }
+    public Result<String> SellItem(Matcher matcher){
+        String ItemName = matcher.group("productName");
+        Player player = App.getCurrentGame().getCurrentPlayer();
+        int amount;
+        try{
+            amount = Integer.parseInt(matcher.group("count"));
+        }
+        catch (NumberFormatException e){
+            return new Result<>(false, "Invalid amount");
+        }
+        if (!isNear(TileType.SHIPPING_BIN)) {
+            return new Result<>(false, "You arent Near a Shipping Bin a shipping bin");
+        }
+        for(Item i : player.getInvetory().getItems()){
+            if (i.getName().equals(ItemName)){
+                if (i.getAmount() < amount){
+                    return new Result<>(false, "You do not have enough of this item");
+                }
+                else if (i.getAmount() == amount){
+                    player.getInvetory().getItems().remove(i);
+                }
+                else{
+                    i = new Item(i,i.getAmount() - amount);
+                }
+                i = new Item(i,amount);
+                player.addToShippingBin(i);
+                return new Result<>(true, "You selled the " + i.getName() + " item Successfully");
+            }
+        }
+        return new Result<>(false, "Item does not Exist or You dont Have it");
+    }
 
     public Result<String> plantPlant (String seedName , String direction) {
         System.out.println("plantPlant " + seedName + " " + direction);
@@ -1054,7 +1113,7 @@ public class GameMenuController {
                     return new Result<>(false, "You are attempting to plant in a not tilled Ground!");
                 App.currentGame.map.tiles[target.x][target.y].type = TileType.PLANT;
                 Plant targetPlant = new Plant(basePlant, target);
-                putPlantInGround(targetPlant);
+//                putPlantInGround(targetPlant);
                 App.currentGame.map.farms[App.currentGame.turn].plantMap.put(target, targetPlant);
                 return new Result<>(true, "Plant " + item.getName() + " is now planted in (" + target.x + ", " + target.y +") cordinates !");
             }
@@ -1103,14 +1162,12 @@ public class GameMenuController {
         }
     }
 
-    public Result<String> putPlantInGround (Plant plant) {
-        App.getCurrentGame().addPlantInPlants(plant);
-        Point placeInMap = plant.getPoint();
-        //Change tileType In Map @sarsar
+//    public Result<String> putPlantInGround (Plant plant) {
+//        App.getCurrentGame().addPlantInPlants(plant);
+//        Point placeInMap = plant.getPoint();
+//        return new Result<>(true, "You have Planted the Plant!");
+//    }
 
-
-        return new Result<>(true, "You have Planted the Plant!");
-    }
     //public Result<String> useArtisan() {
     //
     //}
@@ -1315,14 +1372,22 @@ public class GameMenuController {
             plant.setCurrentStageCount(0);
         }
         App.getCurrentGame().getCurrentPlayer().getInvetory().addItem(plant.harvestPlant());
-
-
         App.currentGame.currentPlayer.skillProgress(0,5);
-        //@amoojoey give player 5XP skill in farming
-        return new Result<>(true, "Plant harvested");
-        //@sarsar change tiltype back (Point at plant.getpoint)
+        App.currentGame.map.tiles[plant.getPoint().x][plant.getPoint().y].type = TileType.TILLED;
+        for (HashMap.Entry<Point, Plant> entry : App.currentGame.map.farms[App.currentGame.turn].plantMap.entrySet()) {
+            Plant temp = entry.getValue();
+            if (plant.getName().equals(temp.getName())) {
+                App.currentGame.map.farms[App.currentGame.turn].plantMap.remove(entry.getKey());
+            }
+        }
+            return new Result<>(true, "Plant harvested");
     }
-
+    public void farmPlantPrint(){
+        for (HashMap.Entry<Point, Plant> entry : App.currentGame.map.farms[App.currentGame.turn].plantMap.entrySet()) {
+            Plant temp = entry.getValue();
+            System.out.println(showPlant(String.valueOf(entry.getKey().x),String.valueOf(entry.getKey().y)).getData()) ;
+        }
+    }
     public Result<String> showWeather(){
         if (App.currentGame != null) {
             return new Result<>(true, App.getCurrentGame().weather.toString());
@@ -1384,7 +1449,12 @@ public class GameMenuController {
             System.out.println(i.getName() + " " + i.getAmount());
         }
     }
-
+    public void showShippingBin() {
+        Player player = App.getCurrentGame().getCurrentPlayer();
+        for(Item i : player.playerShipping_bin){
+            System.out.println(i.getName() + " " + i.getAmount());
+        }
+    }
     //har chi mikhaid update she too shab barai farda ro bezanid inja
     public void setUpNextDay() {
         crowAttack();
@@ -1530,6 +1600,11 @@ public class GameMenuController {
         if ((App.currentGame.turn) == 0) {
             App.currentGame.time.setHour(App.currentGame.time.getHour() + 1);
         }
+        if (App.currentGame.time.getHour() == 22){
+            App.currentGame.time.setHour(App.currentGame.time.getHour() + 11);
+            setUpNextDay();
+        }
+
     }
 
 }
