@@ -3,7 +3,7 @@ import java.util.*;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
-
+import models.things.machines.Operation;
 import models.*;
 import models.Map;
 import models.NPCs.*;
@@ -1090,6 +1090,35 @@ public class GameMenuController {
         return new Result<>(false, "Item does not Exist or You dont Have it");
     }
 
+
+    public Plant getPlantFromMixedSeed() {
+        int[] springIds = {304, 309, 310, 302, 313};
+        int[] summerIds = {316, 318, 321, 328, 320, 326, 324};
+        int[] fallIds   = {316, 330, 335, 338, 336, 326};
+
+        Random random = new Random();
+        int finalId = 0;
+
+        Season currentSeason = App.getCurrentGame().getTime().getSeason();
+
+        if (null != currentSeason) switch (currentSeason) {
+            case WINTER:
+                finalId = 341;
+                break;
+            case SPRING:
+                finalId = springIds[random.nextInt(springIds.length)];
+                break;
+            case SUMMER:
+                finalId = summerIds[random.nextInt(summerIds.length)];
+                break;
+            case FALL:
+                finalId = fallIds[random.nextInt(fallIds.length)];
+                break;
+            default:
+                break;
+        }
+        return AllTheItemsInTheGame.getPlantById(finalId);
+    }
     public Result<String> plantPlant (String seedName , String direction) {
         System.out.println("plantPlant " + seedName + " " + direction);
         Player currentPlayer = App.getCurrentGame().getCurrentPlayer();
@@ -1097,7 +1126,12 @@ public class GameMenuController {
             if (item.getName().equalsIgnoreCase(seedName)) {
                 if(item.getItemID() > 456 || item.getItemID() < 402)
                     return new Result<>(false, "the Item you are attempting to plant is not a Seed!");
-                Plant basePlant = AllTheItemsInTheGame.getPlantById(item.getItemID() - 100);
+                Plant basePlant = null;
+                if(item.getItemID() !=397)
+                    basePlant = AllTheItemsInTheGame.getPlantById(item.getItemID() - 100);
+                else{
+                    basePlant = getPlantFromMixedSeed();
+                }
                 if (!basePlant.getSeasonOfGrowth().equals(App.currentGame.time.getSeason()))
                     return new Result<>(false, "its not the perfect time to plant. come back in " + basePlant.getSeasonOfGrowth() + " for planting");
                 item.reduceAmount(1);
@@ -1113,7 +1147,7 @@ public class GameMenuController {
                     return new Result<>(false, "You are attempting to plant in a not tilled Ground!");
                 App.currentGame.map.tiles[target.x][target.y].type = TileType.PLANT;
                 Plant targetPlant = new Plant(basePlant, target);
-//                putPlantInGround(targetPlant);
+                putPlantInGround(targetPlant);
                 App.currentGame.map.farms[App.currentGame.turn].plantMap.put(target, targetPlant);
                 return new Result<>(true, "Plant " + item.getName() + " is now planted in (" + target.x + ", " + target.y +") cordinates !");
             }
@@ -1162,15 +1196,59 @@ public class GameMenuController {
         }
     }
 
-//    public Result<String> putPlantInGround (Plant plant) {
-//        App.getCurrentGame().addPlantInPlants(plant);
-//        Point placeInMap = plant.getPoint();
-//        return new Result<>(true, "You have Planted the Plant!");
-//    }
+    public Result<String> putPlantInGround (Plant plant) {
+        App.getCurrentGame().addPlantInPlants(plant);
+        Point placeInMap = plant.getPoint();
+        return new Result<>(true, "You have Planted the Plant!");
+    }
 
-    //public Result<String> useArtisan() {
-    //
-    //}
+    public Result<String> useArtisan(String itemName, String artisanName) {
+        for (Item item : App.getCurrentGame().getCurrentPlayer().getInvetory().getItems()) {
+            if (item.getName().equalsIgnoreCase(itemName)) {
+                Point current = App.currentGame.map.farms[App.currentGame.turn].personPoint;
+
+                for (Machine machine : App.getCurrentGame().getMachines()) {
+                    Point machinePoint = machine.getPoint();
+                    if (Math.abs(machinePoint.getX() - current.getX()) <= 1 &&
+                        Math.abs(machinePoint.getY() - current.getY()) <= 1 &&
+                        machine.getName().equalsIgnoreCase(artisanName)) {
+                        for (Operation operation : machine.getOperations()) {
+                            if (operation.getInput().getItemID() == item.getItemID() &&
+                                operation.getInput().getAmount() <= item.getAmount()) {
+
+                                item.reduceAmount(operation.getInput().getAmount());
+                                if (item.getAmount() == 0) {
+                                    App.getCurrentGame().getCurrentPlayer().getInvetory().removeItem(item);
+                                }
+                                machine.setCurrentOperation(new Operation(operation, item));
+                                return new Result<>(true, "Artisan operation has started!");
+                            }
+                        }
+                        return new Result<>(false, "Invalid item for that machine!");
+                    }
+                }
+                return new Result<>(false, "There is no artisan machine nearby.");
+            }
+        }
+        return new Result<>(false, "You don't have that item!");
+    }
+    public Result<String> artisanGet(String artisanName) {
+        Point current = App.currentGame.map.farms[App.currentGame.turn].personPoint;
+        for (Machine machine : App.getCurrentGame().getMachines()) {
+            Point machinePoint = machine.getPoint();
+            if (Math.abs(machinePoint.getX() - current.getX()) <= 1 &&
+                Math.abs(machinePoint.getY() - current.getY()) <= 1 &&
+                machine.getName().equalsIgnoreCase(artisanName)) {
+                    if(machine.getCurrentOperation().getReadyTime() != machine.getCurrentOperation().getCurrentTime())
+                        return new Result<String>(false,"Product Not ready!");
+                    App.getCurrentGame().getCurrentPlayer().getInvetory().addItem(machine.getOutput());
+                    machine.setCurrentOperation(new Operation(0, 0, AllTheItemsInTheGame.getItemById(0), AllTheItemsInTheGame.getItemById(0), false));
+                    return new Result<String>(true, "Product Collected!");
+            }
+        }
+        return new Result<String>(false, "Artisan Not Nearby!");
+    }
+
     public Result<String> fertilizeGround(String fertilizer , String direction){
         boolean playerHasFertilizer = false;
         for (Item item : App.getCurrentGame().getCurrentPlayer().getInvetory().getItems())
@@ -1378,7 +1456,6 @@ public class GameMenuController {
         }
         App.getCurrentGame().getCurrentPlayer().getInvetory().addItem(plant.harvestPlant());
         App.currentGame.currentPlayer.skillProgress(0,5);
-        App.currentGame.map.tiles[plant.getPoint().x][plant.getPoint().y].type = TileType.TILLED;
             return new Result<>(true, "Plant harvested");
     }
     public void farmPlantPrint(){
@@ -1698,6 +1775,12 @@ public class GameMenuController {
         App.getCurrentGame().currentPlayer.resetNotifications();
         if ((App.currentGame.turn) == 0) {
             App.currentGame.time.setHour(App.currentGame.time.getHour() + 1);
+            for (Machine machine : App.getCurrentGame().getMachines()) {
+                if(machine.getCurrentOperation().getInput().getItemID() != 0 &&
+                 machine.getCurrentOperation().getCurrentTime() != machine.getCurrentOperation().getReadyTime()) {
+                    machine.getCurrentOperation().increaseCurrentTime(1);
+                 }
+            }
         }
         if (App.currentGame.time.getHour() == 22){
             App.currentGame.time.setHour(App.currentGame.time.getHour() + 11);
