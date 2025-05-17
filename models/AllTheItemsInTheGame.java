@@ -172,6 +172,7 @@ public class AllTheItemsInTheGame {
         tempItems.put(3,  new Item("Wool",3,20,0,1));
         tempItems.put(4,  new Item("BARN",4,20,0,1));
         tempItems.put(5,  new Item("COOP",5,20,0,1));
+        tempItems.put(6,  new Item("Coffee",6,150,0,1));
         tempItems.put(7,  new Item("BIG BARN",7,20,0,1));
         tempItems.put(8,  new Item("BIG COOP",8,20,0,1));
         tempItems.put(9,  new Item("DELUXE BARN",9,20,0,1));
@@ -182,7 +183,6 @@ public class AllTheItemsInTheGame {
         tempItems.put(16, new Item("Large Cheese", 16, 345, 0, 1));
         tempItems.put(17, new Item("Goat Cheese", 17, 400, 0, 1));
         tempItems.put(18, new Item("Large Goat Cheese", 18, 600, 0, 1));
-        tempItems.put(6,  new Item("Coffee",6,150,0,1));
         tempItems.put(21, new Item("Iridium Bar",21,20,0,1));
         tempItems.put(22, new Item("Honey",22,350,0,1));
         tempItems.put(23, new Item("Mead", 23, 300, 0, 1));
@@ -265,6 +265,15 @@ public class AllTheItemsInTheGame {
         tempItems.put(396, new Item("Coal",396,2,0,1));
         tempItems.put(397, new Item("Mixed seeds", 397, 20 , 0 , 1));   
         tempItems.put(557, new Product("Dried Mushrooms", 557, 325, 0, 1, true, 50, 20, ProductQuality.NORMAL, false, false));
+        tempItems.put(300, new Item("FRUIT", 300,1,1,1));
+        tempItems.put(299, new Item("VEGETABLE", 299,1,1,1));
+        tempItems.put(1001, new Item("JUICE", 1001,1,1,1));
+        tempItems.put(1101, new Item("Wine", 1101,1,1,1));
+        tempItems.put(1201, new Item("PICKLED", 1201,1,1,1));
+        tempItems.put(601, new Item("DRIED", 601,1,1,1));
+
+
+
         allItems = Collections.unmodifiableMap(tempItems);
         }
 

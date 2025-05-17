@@ -24,7 +24,6 @@ public class Carpenter {
         returnvalue.add(new Item("Stone",2 ,20 , 0 , 1000000));
         returnvalue.add(AllTheItemsInTheGame.getItemById(4));
         returnvalue.add(AllTheItemsInTheGame.getItemById(5));
-        returnvalue.add(AllTheItemsInTheGame.getItemById(6));
         returnvalue.add(AllTheItemsInTheGame.getItemById(7));
         returnvalue.add(AllTheItemsInTheGame.getItemById(8));
         returnvalue.add(AllTheItemsInTheGame.getItemById(9));
