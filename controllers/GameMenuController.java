@@ -1631,6 +1631,13 @@ public class GameMenuController {
         }
 
         for(Player player1 : App.getCurrentGame().getPlayers()){
+            ArrayList<Item> bufferItemCopy = new ArrayList<>(player1.getInvetory().getBufferInvetory());
+            player1.getInvetory().getBufferInvetory().clear();
+            for (Item bufferItem : bufferItemCopy){
+                player1.getInvetory().addItem(bufferItem);
+            }
+            bufferItemCopy.clear();
+            //shipping bin calclations
             ArrayList<Item> soldItems = player1.getPlayerShipping_bin();
             if(!(soldItems == null || soldItems.isEmpty()))
                 for (Item item : soldItems) {
@@ -1639,6 +1646,8 @@ public class GameMenuController {
                     else 
                         player1.addMoney(item.getAmount() * item.getValue());
                 } 
+            //shipping bin calculations
+            //friendship reset
             for(Player player2 : App.getCurrentGame().getPlayers()) {
                 if (!player1.GetHasTalkedToPlayer(player2) && !player1.getHasbeenHugged().get(player2) && !player1.getHasBeenGiftedTo().get(player2))
                     player1.reduceFriendshipXP(10, player2);
