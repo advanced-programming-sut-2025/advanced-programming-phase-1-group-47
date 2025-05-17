@@ -1,15 +1,14 @@
 package models.things.machines;
 
 import java.util.ArrayList;
-import models.AllTheItemsInTheGame;
 import models.things.Item;
 
 public class Kiln extends Machine{
     
     private static final ArrayList<Operation> kilnOperations = new ArrayList<>();
     static {
-        kilnOperations.add(new Operation(1,1, new Item(AllTheItemsInTheGame.getItemById(36) , 10),
-          new Item(AllTheItemsInTheGame.getItemById(396) , 1), false));
+        kilnOperations.add(new Operation(1,1, new Item("Wood",36,2,0,10),
+          new Item("Coal",396,2,0,1), false));
     }
 
     public Kiln() {

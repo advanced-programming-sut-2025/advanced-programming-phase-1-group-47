@@ -1,26 +1,25 @@
 package models.things.machines;
 
 import java.util.ArrayList;
-import models.AllTheItemsInTheGame;
 import models.things.Item;
 
 public class Keg extends Machine {
     private static final ArrayList<Operation> kegOperations = new ArrayList<>(); 
     static {
-        kegOperations.add(new Operation(1,24, new Item(AllTheItemsInTheGame.getItemById(328) , 1),
-        new Item(AllTheItemsInTheGame.getItemById(26) , 1), false));
-        kegOperations.add(new Operation(2,10, new Item(AllTheItemsInTheGame.getItemById(48) , 1),
-        new Item(AllTheItemsInTheGame.getItemById(31) , 1), false));
-        kegOperations.add(new Operation(3,2, new Item(AllTheItemsInTheGame.getItemById(305) , 5),
-        new Item(AllTheItemsInTheGame.getItemById(6) , 1), false));
-        kegOperations.add(new Operation(4,96, new Item(AllTheItemsInTheGame.getItemById(299) , 1),
-        new Item(AllTheItemsInTheGame.getItemById(0) , 1), false));
-        kegOperations.add(new Operation(5,10, new Item(AllTheItemsInTheGame.getItemById(22) , 1),
-        new Item(AllTheItemsInTheGame.getItemById(23) , 1), false));
-        kegOperations.add(new Operation(6,72, new Item(AllTheItemsInTheGame.getItemById(317) , 1),
-        new Item(AllTheItemsInTheGame.getItemById(32) , 1), false));
-        kegOperations.add(new Operation(7,168, new Item(AllTheItemsInTheGame.getItemById(300) , 1),
-        new Item(AllTheItemsInTheGame.getItemById(0) , 1), false));
+        kegOperations.add(new Operation(1,24, new Item("Wheat",328,2,0 ,1),
+        new Item("Beer",26,200,0,1), false));
+        kegOperations.add(new Operation(2,10,  new Item("Rice",48,2,0,1),
+        new Item("Vinegar", 31, 100, 0, 1), false));
+        kegOperations.add(new Operation(3,2, new Item("Coffee Bean",305,2,0, 5),
+         new Item("Coffee",6,150,0,1), false));
+        kegOperations.add(new Operation(4,96, new Item("Vegatable",299,0,0, 1),
+        new Item("null",0,0,0, 1), false));
+        kegOperations.add(new Operation(5,10, new Item("Honey",22,350,0,1),
+        new Item("Mead", 23, 300, 0, 1), false));
+        kegOperations.add(new Operation(6,72, new Item("Hops",317,2,0, 1),
+        new Item("Pale ale", 32, 300, 0, 1), false));
+        kegOperations.add(new Operation(7,168, new Item("Fruit",300,1,0,1),
+        new Item("null",0,0,0, 1), false));
     }
 
     public Keg() {
