@@ -19,7 +19,7 @@ public class Invetory {
         this.capacity = 20;
     }
     public void removeItem(Item item) {
-        items.remove(item);
+        items.removeIf(item1 -> item1.getItemID() == item.getItemID());
     }
     public void addItem(Item item) {
         for(Item item2 : items){
@@ -81,6 +81,15 @@ public class Invetory {
                 return;
             }
         }
+    }
+
+    public int remainingSpace() {
+        int amount = 0;
+        for(Item item : items) {
+            amount += item.getAmount();
+        }
+
+        return capacity - amount;
     }
 
 }
