@@ -10,6 +10,7 @@ import models.*;
 import models.Shops.*;
 import models.enums.Menu;
 import models.enums.TileType;
+import models.enums.commands.GameMenu;
 import models.enums.commands.ShopMenuCommands;
 
 public class ShopMenu extends AppMenu{
@@ -53,6 +54,9 @@ public class ShopMenu extends AppMenu{
         }
         else if ((matcher = ShopMenuCommands.PURCHASE_PRODUCT.getMatcher(input)) != null){
             System.out.println(controller.buy(store, matcher).getData());
+        }
+        else if ((matcher = GameMenu.upgradetool.getMatcher(input)) != null){
+            System.out.println(controller.upgradeTool(store,matcher.group("toolName")).getData());
         }
 
     }

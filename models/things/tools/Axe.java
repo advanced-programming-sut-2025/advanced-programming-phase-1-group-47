@@ -15,8 +15,9 @@ public class Axe extends Item {
         super(type.getName() + "-axe", 52, type.getPrice(), 0, 1);
         this.type = type;
     }
+    @Override
     public Type getType(){
-        return type;
+        return this.type;
     }
 
     public int energyCost() {

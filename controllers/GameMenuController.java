@@ -812,13 +812,13 @@ public class GameMenuController {
                     if (counts[i] > counts[maxIndex]) maxIndex = i;
                 }
 
-                if (counts[maxIndex] == 5) {
+                if (counts[maxIndex] >= 3) {
                     String menu = types[maxIndex].toString();
                     switch (menu) {
                         case "BLACKSMITH", "JOJAMART", "PIERRESSTORE", "CARPENTER",
                              "FISHSHOP", "MARNIESRANCH", "STARDROPSALOON" -> App.currentMenu = Menu.StoreMenu;
                         case "GREENHOUSE" -> App.currentMenu = Menu.GreenHouseMenu;
-                        case "COTTTAGE" -> App.currentMenu = Menu.cottageMenu;
+                        case "COTTAGE" -> App.currentMenu = Menu.cottageMenu;
                     }
                 }
             }
@@ -1722,6 +1722,106 @@ public class GameMenuController {
                 }
             }
         }
+        if (buildingName.toLowerCase().equals("shipping_bin")){
+            Building building = new Building(FarmBuilding.SHIPPING_BIN);
+            for (Item item : App.getCurrentGame().getCurrentPlayer().getInvetory().getItems()) {
+                if (item.getName().equals(building.getName())) {
+                    App.currentGame.map.tiles[x][y].type = TileType.SHIPPING_BIN;
+                    App.currentGame.map.farms[App.currentGame.turn].BuildingMap.put(new Point(x,y), building);
+                    item = new Item(item, item.getAmount() -1);
+                    return new Result<>(true, "new building " + buildingName + " got Build at (" + x + ", " + y + ")");
+                }
+            }
+        }
+        else if (buildingName.toLowerCase().equals("deluxe_barn")){
+            Building building = new Building(FarmBuilding.DELUXE_BARN);
+            for (Item item : App.getCurrentGame().getCurrentPlayer().getInvetory().getItems()) {
+                if (item.getName().equals(building.getName())) {
+                    App.currentGame.map.tiles[x][y].type = TileType.DELUXE_BARN;
+                    App.currentGame.map.farms[App.currentGame.turn].BuildingMap.put(new Point(x,y), building);
+                    item = new Item(item, item.getAmount() -1);
+                    return new Result<>(true, "new building " + buildingName + " got Build at (" + x + ", " + y + ")");
+                }
+            }
+        }
+        else if (buildingName.toLowerCase().equals("barn")){
+            Building building = new Building(FarmBuilding.BARN);
+            for (Item item : App.getCurrentGame().getCurrentPlayer().getInvetory().getItems()) {
+                if (item.getName().equals(building.getName())) {
+                    App.currentGame.map.tiles[x][y].type = TileType.BARN;
+                    App.currentGame.map.farms[App.currentGame.turn].BuildingMap.put(new Point(x,y), building);
+                    item = new Item(item, item.getAmount() -1);
+                    return new Result<>(true, "new building " + buildingName + " got Build at (" + x + ", " + y + ")");
+                }
+            }
+        }
+        else if (buildingName.toLowerCase().equals("big_barn")){
+            Building building = new Building(FarmBuilding.BIG_BARN);
+            for (Item item : App.getCurrentGame().getCurrentPlayer().getInvetory().getItems()) {
+                if (item.getName().equals(building.getName())) {
+                    App.currentGame.map.tiles[x][y].type = TileType.BIG_BARN;
+                    App.currentGame.map.farms[App.currentGame.turn].BuildingMap.put(new Point(x,y), building);
+                    item = new Item(item, item.getAmount() -1);
+                    return new Result<>(true, "new building " + buildingName + " got Build at (" + x + ", " + y + ")");
+                }
+            }
+        }
+        else if (buildingName.toLowerCase().equals("coop")){
+            Building building = new Building(FarmBuilding.COOP);
+            for (Item item : App.getCurrentGame().getCurrentPlayer().getInvetory().getItems()) {
+                if (item.getName().equals(building.getName())) {
+                    App.currentGame.map.tiles[x][y].type = TileType.COOP;
+                    App.currentGame.map.farms[App.currentGame.turn].BuildingMap.put(new Point(x,y), building);
+                    item = new Item(item, item.getAmount() -1);
+                    return new Result<>(true, "new building " + buildingName + " got Build at (" + x + ", " + y + ")");
+                }
+            }
+        }
+        else if (buildingName.toLowerCase().equals("big_coop")){
+            Building building = new Building(FarmBuilding.BIG_COOP);
+            for (Item item : App.getCurrentGame().getCurrentPlayer().getInvetory().getItems()) {
+                if (item.getName().equals(building.getName())) {
+                    App.currentGame.map.tiles[x][y].type = TileType.BIG_COOP;
+                    App.currentGame.map.farms[App.currentGame.turn].BuildingMap.put(new Point(x,y), building);
+                    item = new Item(item, item.getAmount() -1);
+                    return new Result<>(true, "new building " + buildingName + " got Build at (" + x + ", " + y + ")");
+                }
+            }
+        }
+        else if (buildingName.toLowerCase().equals("deluxe_coop")){
+            Building building = new Building(FarmBuilding.DELUXE_COOP);
+            for (Item item : App.getCurrentGame().getCurrentPlayer().getInvetory().getItems()) {
+                if (item.getName().equals(building.getName())) {
+                    App.currentGame.map.tiles[x][y].type = TileType.DELUXE_COOP;
+                    App.currentGame.map.farms[App.currentGame.turn].BuildingMap.put(new Point(x,y), building);
+                    item = new Item(item, item.getAmount() -1);
+                    return new Result<>(true, "new building " + buildingName + " got Build at (" + x + ", " + y + ")");
+                }
+            }
+        }
+        else if (buildingName.toLowerCase().equals("well")){
+            Building building = new Building(FarmBuilding.WELL);
+            for (Item item : App.getCurrentGame().getCurrentPlayer().getInvetory().getItems()) {
+                if (item.getName().equals(building.getName())) {
+                    App.currentGame.map.tiles[x][y].type = TileType.WELL;
+                    App.currentGame.map.farms[App.currentGame.turn].BuildingMap.put(new Point(x,y), building);
+                    item = new Item(item, item.getAmount() -1);
+                    return new Result<>(true, "new building " + buildingName + " got Build at (" + x + ", " + y + ")");
+                }
+            }
+        }
+        else if (buildingName.toLowerCase().equals("big_barn")){
+            Building building = new Building(FarmBuilding.BIG_BARN);
+            for (Item item : App.getCurrentGame().getCurrentPlayer().getInvetory().getItems()) {
+                if (item.getName().equals(building.getName())) {
+                    App.currentGame.map.tiles[x][y].type = TileType.BIG_BARN;
+                    App.currentGame.map.farms[App.currentGame.turn].BuildingMap.put(new Point(x,y), building);
+                    item = new Item(item, item.getAmount() -1);
+                    return new Result<>(true, "new building " + buildingName + " got Build at (" + x + ", " + y + ")");
+                }
+            }
+        }
+
         return new Result<>(false, "You dont have that BUilding");
     }
     public void nextTurn(){

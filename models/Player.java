@@ -77,6 +77,16 @@ public class Player extends User {
         invetory.addItem(new FishingPole(RodType.TRAININGROD));
         invetory.addItem(new Scythe());
         invetory.addItem(new Item("Carrot Seeds", 403, 2, 0, 1000));
+        invetory.addItem(new Building(FarmBuilding.BARN));
+        invetory.addItem(new Building(FarmBuilding.BIG_BARN));
+        invetory.addItem(new Building(FarmBuilding.COOP));
+        invetory.addItem(new Building(FarmBuilding.BIG_COOP));
+        invetory.addItem(new Building(FarmBuilding.DELUXE_BARN));
+        invetory.addItem(new Building(FarmBuilding.DELUXE_BARN));
+        invetory.addItem(new Building(FarmBuilding.SHIPPING_BIN));
+        invetory.addItem(new Building(FarmBuilding.SHIPPING_BIN));
+        invetory.addItem(new Building(FarmBuilding.WELL));
+
 //        Item x = AllTheItemsInTheGame.getItemById(338);
 //        x.setAmount(45);
 //        invetory.addItem(x);
@@ -347,5 +357,12 @@ public class Player extends User {
     public void setTradeHistory(Map<Player, ArrayList<String>> tradeHistory) {
         this.tradeHistory = tradeHistory;
     }
+    public boolean hasRecipe(String recipeName) {
+        for(Recipe recipe : this.getRecipes()) {
+            if(recipe.getDisplayName().equals(recipeName))
+                return  true;
+        }
 
+        return false;
+    }
 }

@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import models.*;
+import models.enums.Menu;
 import models.enums.ShopType;
 import models.enums.TileType;
 import models.things.Item;
+import models.things.tools.*;
 
 public class shopMenuController {
     public Result<String> showAvailableProducts(Shop store) {
@@ -40,6 +42,52 @@ public class shopMenuController {
         }
 
         return new Result<>(true, result.toString());
+    }
+    public Result<String> upgradeTool(Shop store, String toolName) {
+        StringBuilder result = new StringBuilder();
+        if (store.getType().equals(ShopType.BlackSmith)) {
+            Player player = App.currentGame.currentPlayer;
+
+            List<Item> items = player.getInvetory().getItems();
+            for (int i = 0; i < items.size(); i++) {
+                Item item = items.get(i);
+                int id = item.getItemID();
+
+                Type current = null;
+                Type next = null;
+
+                if (id == 52 || id == 56 || id == 59 || id == 60 || id == 61) {
+                    current = Type.valueOf(item.getName().split("-")[0].toUpperCase());
+                    next = current.ordinal() < Type.values().length - 1
+                            ? Type.values()[current.ordinal() + 1]
+                            : null;
+
+                    if (next == null) {
+                        return new Result<>(false, "Already at max level.");
+                    }
+
+                    Item upgraded = null;
+                    switch (id) {
+                        case 52 -> upgraded = new Axe(next);
+                        case 56 -> upgraded = new Pickaxe(next);
+                        case 59 -> {
+                            player.trashCanLevel = Math.min(player.trashCanLevel + 1, 4);
+                            return new Result<>(true, "Trash can upgraded to level " + player.trashCanLevel);
+                        }
+                        case 60 -> upgraded = new WateringCan(next);
+                        case 61 -> upgraded = new Hoe(next);
+                    }
+
+                    if (upgraded != null) {
+                        items.set(i, upgraded);  // جایگزین کردن ابزار در لیست
+                        return new Result<>(true, toolName + " got upgraded to " + next.getName());
+                    }
+                }
+            }
+            return new Result<>(false, "Tool not found.");
+        }
+
+        return new Result<>(false, "You should be at blacksmith for this offer.");
     }
 
     private void appendItemList(StringBuilder result, List<Item> items, String label) {
@@ -81,6 +129,7 @@ public class shopMenuController {
                 }
                 i.reduceAmount(amount);
                 player.getInvetory().addItem(new Item(i, amount));
+                player.addMoney(-1  * amount * i.getAmount());
                 return new Result<>(true, ((amount > 1)?amount:1) + " number  of product " + productName + " has been purchased");
             }
         }
@@ -91,6 +140,7 @@ public class shopMenuController {
                 }
                 i.reduceAmount(amount);
                 player.getInvetory().addItem(new Item(i, amount));
+                player.addMoney(-1  * amount * i.getAmount());
                 return new Result<>(true, amount + " number  of product " + productName + " has been purchased");
             }
         }

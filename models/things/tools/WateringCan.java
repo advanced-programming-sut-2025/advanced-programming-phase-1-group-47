@@ -13,7 +13,7 @@ public class WateringCan extends Item {
     private int capacity;
 
     public WateringCan(Type type) {
-        super(type.getName() + "watering can", 60, type.getPrice(), 0, 1);
+        super(type.getName() + "-wateringCan", 60, type.getPrice(), 0, 1);
 
         if(type.getName().equals("Regular")) {
             capacity = 40;
@@ -26,6 +26,11 @@ public class WateringCan extends Item {
         } else {
             capacity = 100;
         }
+    }
+
+    @Override
+    public Type getType() {
+        return type;
     }
 
     public void ToolUsed(Point point) {
