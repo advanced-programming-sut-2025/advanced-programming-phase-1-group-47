@@ -96,6 +96,7 @@ public class GameMenuView extends AppMenu {
         } else if ((matcher = models.enums.commands.GameMenu.showplant.getMatcher(input)) != null) {
             System.out.println(controller.showPlant(matcher.group("x"), matcher.group("y")).getData());
         } else if ((matcher = models.enums.commands.GameMenu.fertilize.getMatcher(input)) != null) {
+            System.out.println(controller.fertilizeGround(matcher.group("fertilizer"), matcher.group("direction")));
         } else if ((matcher = models.enums.commands.GameMenu.water.getMatcher(input)) != null) {
             for (Item i : App.currentGame.currentPlayer.getInvetory().getItems()) {
                 if (i.getItemID() == 60) {
