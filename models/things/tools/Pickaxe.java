@@ -39,6 +39,8 @@ public class Pickaxe extends Item {
         StringBuilder builder = new StringBuilder();
         TileType tileType = App.currentGame.map.tiles[point.getX()][point.getY()].type;
         Player player = App.getCurrentGame().getCurrentPlayer();
+        if(player.EnergyObject.getCurrentEnergy() - energyCost() <= 0)
+            return ("Not enough energy!");
         player.EnergyObject.setCurrentEnergy(player.EnergyObject.getCurrentEnergy() - energyCost());
         if (tileType.equals(TileType.TILLED)){
             App.currentGame.map.tiles[point.getX()][point.getY()].type = TileType.EMPTY;
