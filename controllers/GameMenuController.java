@@ -1364,8 +1364,13 @@ public class GameMenuController {
             return new Result<>(false, "Plant not ready to harvest yet!");
         if(!plant.isIsReUsable()){
             App.getCurrentGame().getPlants().remove(plant);
-            App.currentGame.map.tiles[plant.getPoint().x][plant.getPoint().y].type = TileType.EMPTY;
-            //@sarsar remove plant from hashmap
+            App.currentGame.map.tiles[plant.getPoint().x][plant.getPoint().y].type = TileType.TILLED;
+            for (HashMap.Entry<Point, Plant> entry : App.currentGame.map.farms[App.currentGame.turn].plantMap.entrySet()) {
+                Plant temp = entry.getValue();
+                if (plant.getName().equals(temp.getName())) {
+                    App.currentGame.map.farms[App.currentGame.turn].plantMap.remove(entry.getKey());
+                }
+            }
         }
         else{
             plant.setCurrentStage(-2);
@@ -1374,12 +1379,6 @@ public class GameMenuController {
         App.getCurrentGame().getCurrentPlayer().getInvetory().addItem(plant.harvestPlant());
         App.currentGame.currentPlayer.skillProgress(0,5);
         App.currentGame.map.tiles[plant.getPoint().x][plant.getPoint().y].type = TileType.TILLED;
-        for (HashMap.Entry<Point, Plant> entry : App.currentGame.map.farms[App.currentGame.turn].plantMap.entrySet()) {
-            Plant temp = entry.getValue();
-            if (plant.getName().equals(temp.getName())) {
-                App.currentGame.map.farms[App.currentGame.turn].plantMap.remove(entry.getKey());
-            }
-        }
             return new Result<>(true, "Plant harvested");
     }
     public void farmPlantPrint(){
