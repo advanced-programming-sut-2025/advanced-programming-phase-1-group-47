@@ -1161,17 +1161,19 @@ public class GameMenuController {
                 else{
                     basePlant = getPlantFromMixedSeed();
                 }
-                if (!isPlantInSeason(basePlant))
-                    return new Result<>(false, "its not the perfect time to plant. come back in " + basePlant.getSeasonOfGrowth() + " for planting");
-                item.reduceAmount(1);
-                if(item.getAmount() == 0)
-                    currentPlayer.getInvetory().getItems().remove(item);
                 Point offset = getOffsetFromDirection(direction);
+                Point current = App.currentGame.map.farms[App.currentGame.turn].personPoint;
+                Point target = new Point(current.getX() + offset.getX(), current.getY() + offset.getY());
+                if (!App.currentGame.map.tiles[target.x][target.y].type.equals(TileType.GREENHOUSE) && !isPlantInSeason(basePlant)) {
+                    return new Result<>(false, "its not the perfect time to plant. come back in " + basePlant.getSeasonOfGrowth() + " for planting");
+                }
+                item.reduceAmount(1);
+                if(item.getAmount() == 0) {
+                    currentPlayer.getInvetory().getItems().remove(item);
+                }
                 if (offset == null) {
                     return new Result<>(false, "Invalid direction!");
                 }
-                Point current = App.currentGame.map.farms[App.currentGame.turn].personPoint;
-                Point target = new Point(current.getX() + offset.getX(), current.getY() + offset.getY());
                 if (!App.currentGame.map.tiles[target.x][target.y].type.equals(TileType.TILLED) && !App.currentGame.map.tiles[target.x][target.y].type.equals(TileType.GREENHOUSE))
                     return new Result<>(false, "You are attempting to plant in a not tilled Ground!");
                 Plant targetPlant = new Plant(basePlant, target);
