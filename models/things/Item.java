@@ -23,6 +23,9 @@ public class Item {
         this.ParentItemID = ParentItemID;
         this.amount = amount;
     }
+    public int getCapacity() {
+        return 25;
+    }
     public Type getType(){
         return Type.REGULAR;
     }

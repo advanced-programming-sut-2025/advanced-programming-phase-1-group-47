@@ -15,13 +15,13 @@ public class WateringCan extends Item {
     public WateringCan(Type type) {
         super(type.getName() + "-wateringCan", 60, type.getPrice(), 0, 1);
 
-        if(type.getName().equals("Regular")) {
+        if(String.valueOf(type).toUpperCase().equals("Regular".toUpperCase())) {
             capacity = 40;
-        } if(type.getName().equals("Copper")) {
+        } if(String.valueOf(type).toUpperCase().equals("Copper".toUpperCase())) {
             capacity = 55;
-        } if (type.getName().equals("Silver")) {
+        } if (String.valueOf(type).toUpperCase().equals("Silver".toUpperCase())) {
             capacity = 70;
-        } else if(type.getName().equals("Golden")) {
+        } else if(String.valueOf(type).toUpperCase().equals("Golden".toUpperCase())) {
             capacity = 85;
         } else {
             capacity = 100;
@@ -36,6 +36,15 @@ public class WateringCan extends Item {
     public void ToolUsed(Point point) {
         System.out.println(App.currentGame.map.tiles[point.getX()][point.getY()].type.getSticker());
     }
+    @Override
+    public int getCapacity() {
+        return capacity;
+    }
+
+    public void setCapacity(int capacity) {
+        this.capacity = capacity;
+    }
+
     public int energyCost() {
         int fraction = 0;
         if(App.getCurrentGame().getCurrentPlayer().getSkills()[0].getLevel() == 4) {

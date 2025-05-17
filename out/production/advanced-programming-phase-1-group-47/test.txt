@@ -14,6 +14,7 @@ game map 2
 game map 3
 game map 4
 print map -l 12,34 -s 5
+cheat add item -m JUICE -c 12
 walk -l 64,112
 yes
 tools upgrade Regular-hoe

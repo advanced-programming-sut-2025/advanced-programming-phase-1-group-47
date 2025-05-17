@@ -127,6 +127,8 @@ public class shopMenuController {
     }
 
     public Result<String> buy(Shop store, Matcher matcher) {
+        if (!(App.currentGame.time.getHourOfDay() > store.getStartingHour() &&  App.currentGame.time.getHourOfDay() < store.getStoppingHour()))
+            return new Result<>(false, "the Store is closed!");
         int amount;
         store = returnStoreToApp(store);
         StringBuilder result = new StringBuilder();
@@ -142,17 +144,6 @@ public class shopMenuController {
             else
                 return new Result<>(false, "Invalid amount.");
         }
-        for (Item i : getSeasonalStock(store)) {
-            if (i.getName().equals(productName)) {
-                if (amount > i.getAmount()) {
-                    return new Result<>(false, "the Store doesnt have this amount \nAmount : " + i.getAmount());
-                }
-                i.reduceAmount(amount);
-                player.getInvetory().addItem(new Item(i, amount));
-                player.addMoney(-1  * amount * i.getAmount());
-                return new Result<>(true, ((amount > 1)?amount:1) + " number  of product " + productName + " has been purchased");
-            }
-        }
         for (Item i : store.getPermaStock()) {
             if (i.getName().equals(productName)) {
                 if (amount > i.getAmount()) {
@@ -162,6 +153,17 @@ public class shopMenuController {
                 player.getInvetory().addItem(new Item(i, amount));
                 player.addMoney(-1  * amount * i.getAmount());
                 return new Result<>(true, amount + " number  of product " + productName + " has been purchased");
+            }
+        }
+        for (Item i : getSeasonalStock(store)) {
+            if (i.getName().equals(productName)) {
+                if (amount > i.getAmount()) {
+                    return new Result<>(false, "the Store doesnt have this amount \nAmount : " + i.getAmount());
+                }
+                i.reduceAmount(amount);
+                player.getInvetory().addItem(new Item(i, amount));
+                player.addMoney(-1  * amount * i.getAmount());
+                return new Result<>(true, ((amount > 1)?amount:1) + " number  of product " + productName + " has been purchased");
             }
         }
         return new Result<>(false, "no such product: " + productName);
