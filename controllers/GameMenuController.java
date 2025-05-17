@@ -1,4 +1,5 @@
 package controllers;
+import models.things.machines.Operation;
 import java.util.*;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
@@ -1030,7 +1031,34 @@ public class GameMenuController {
 
         return new Result<>(false, "Item does not Exist!");
     }
+    public Plant getPlantFromMixedSeed() {
+        int[] springIds = {304, 309, 310, 302, 313};
+        int[] summerIds = {316, 318, 321, 328, 320, 326, 324};
+        int[] fallIds   = {316, 330, 335, 338, 336, 326};
 
+        Random random = new Random();
+        int finalId = 0;
+
+        Season currentSeason = App.getCurrentGame().getTime().getSeason();
+
+        if (null != currentSeason) switch (currentSeason) {
+            case WINTER:
+                finalId = 341;
+                break;
+            case SPRING:
+                finalId = springIds[random.nextInt(springIds.length)];
+                break;
+            case SUMMER:
+                finalId = summerIds[random.nextInt(summerIds.length)];
+                break;
+            case FALL:
+                finalId = fallIds[random.nextInt(fallIds.length)];
+                break;
+            default:
+                break;
+        }
+        return AllTheItemsInTheGame.getPlantById(finalId);
+    }
     public Result<String> plantPlant (String seedName , String direction) {
         System.out.println("plantPlant " + seedName + " " + direction);
         Player currentPlayer = App.getCurrentGame().getCurrentPlayer();
@@ -1038,7 +1066,12 @@ public class GameMenuController {
             if (item.getName().equalsIgnoreCase(seedName)) {
                 if(item.getItemID() > 456 || item.getItemID() < 402)
                     return new Result<>(false, "the Item you are attempting to plant is not a Seed!");
-                Plant basePlant = AllTheItemsInTheGame.getPlantById(item.getItemID() - 100);
+                Plant basePlant = null;
+                if(item.getItemID() !=397)
+                    basePlant = AllTheItemsInTheGame.getPlantById(item.getItemID() - 100);
+                else{
+                    basePlant = getPlantFromMixedSeed();
+                }
                 if (!basePlant.getSeasonOfGrowth().equals(App.currentGame.time.getSeason()))
                     return new Result<>(false, "its not the perfect time to plant. come back in " + basePlant.getSeasonOfGrowth() + " for planting");
                 item.reduceAmount(1);
@@ -1066,9 +1099,12 @@ public class GameMenuController {
         Player currentPlayer = App.getCurrentGame().getCurrentPlayer();
         for(Item item : currentPlayer.getInvetory().getItems()){
             if (item.getName().equalsIgnoreCase(itemName)) {
+                if(!(item instanceof Machine))
+                    return new Result<String>(false, "This Item can not be placed!");
                 item.reduceAmount(1);
                 if(item.getAmount() == 0)
                     currentPlayer.getInvetory().getItems().remove(item);
+                
                 Point offset = getOffsetFromDirection(direction);
                 if (offset == null) {
                     return new Result<>(false, "Invalid direction!");
@@ -1077,8 +1113,10 @@ public class GameMenuController {
                 Point target = new Point(current.getX() + offset.getX(), current.getY() + offset.getY());
                 if (!App.currentGame.map.tiles[target.x][target.y].type.equals(TileType.EMPTY))
                     return new Result<>(false, "You are attempting to put an item into a occupied space");
+                Machine originalMachine = (Machine) item;
+                Machine machineToPlace = new Machine(originalMachine, 1, target);
                 App.currentGame.map.tiles[target.x][target.y].type = TileType.MACHINE;
-                return new Result<>(true, "machine : " + item.getName() + " is now put in (" + target.x + ", " + target.y +") coordinates !");
+                return putMachineOnGround(machineToPlace);
             }
         }
         return new Result<>(false, "You don't have that Item!");
@@ -1339,6 +1377,53 @@ public class GameMenuController {
         }
     }
 
+    public Result<String> useArtisan(String itemName, String artisanName) {
+        for (Item item : App.getCurrentGame().getCurrentPlayer().getInvetory().getItems()) {
+            if (item.getName().equalsIgnoreCase(itemName)) {
+                Point current = App.currentGame.map.farms[App.currentGame.turn].personPoint;
+
+                for (Machine machine : App.getCurrentGame().getMachines()) {
+                    Point machinePoint = machine.getPoint();
+                    if (Math.abs(machinePoint.getX() - current.getX()) <= 1 &&
+                        Math.abs(machinePoint.getY() - current.getY()) <= 1 &&
+                        machine.getName().equalsIgnoreCase(artisanName)) {
+                        for (Operation operation : machine.getOperations()) {
+                            if (operation.getInput().getItemID() == item.getItemID() &&
+                                operation.getInput().getAmount() <= item.getAmount()) {
+
+                                item.reduceAmount(operation.getInput().getAmount());
+                                if (item.getAmount() == 0) {
+                                    App.getCurrentGame().getCurrentPlayer().getInvetory().removeItem(item);
+                                }
+                                machine.setCurrentOperation(new Operation(operation, item));
+                                return new Result<>(true, "Artisan operation has started!");
+                            }
+                        }
+                        return new Result<>(false, "Invalid item for that machine!");
+                    }
+                }
+                return new Result<>(false, "There is no artisan machine nearby.");
+            }
+        }
+        return new Result<>(false, "You don't have that item!");
+    }
+    public Result<String> artisanGet(String artisanName) {
+        Point current = App.currentGame.map.farms[App.currentGame.turn].personPoint;
+        for (Machine machine : App.getCurrentGame().getMachines()) {
+            Point machinePoint = machine.getPoint();
+            if (Math.abs(machinePoint.getX() - current.getX()) <= 1 &&
+                Math.abs(machinePoint.getY() - current.getY()) <= 1 &&
+                machine.getName().equalsIgnoreCase(artisanName)) {
+                    if(machine.getCurrentOperation().getReadyTime() != machine.getCurrentOperation().getCurrentTime())
+                        return new Result<String>(false,"Product Not ready!");
+                    App.getCurrentGame().getCurrentPlayer().getInvetory().addItem(machine.getOutput());
+                    machine.setCurrentOperation(new Operation(0, 0, AllTheItemsInTheGame.getItemById(0), AllTheItemsInTheGame.getItemById(0), false));
+                    return new Result<String>(true, "Product Collected!");
+            }
+        }
+        return new Result<String>(false, "Artisan Not Nearby!");
+    }
+
     public Result<String> showWeatherForecast(){
         if (App.currentGame != null) {
             return new Result<>(true, App.getCurrentGame().setWeather().toString());
@@ -1418,6 +1503,15 @@ public class GameMenuController {
                 npc.getHasBeenTalkedTo().put(player, false);
                 if (npc.getFriendship().get(player) >= 200)
                     npc.getQuest2().getIsActive().put(player, true);
+            }
+        }
+        for (Machine machine : App.getCurrentGame().getMachines()) {
+            if(machine.getCurrentOperation().getInput().getItemID() != 0 &&
+             machine.getCurrentOperation().getCurrentTime() != machine.getCurrentOperation().getReadyTime()) {
+                if (machine.getCurrentOperation().isIsReadyTomarrow())
+                    machine.getCurrentOperation().setCurrentTime(machine.getCurrentOperation().getReadyTime());
+                else
+                    machine.getCurrentOperation().increaseCurrentTime(11);
             }
         }
 
@@ -1529,6 +1623,12 @@ public class GameMenuController {
         App.getCurrentGame().currentPlayer.resetNotifications();
         if ((App.currentGame.turn) == 0) {
             App.currentGame.time.setHour(App.currentGame.time.getHour() + 1);
+            for (Machine machine : App.getCurrentGame().getMachines()) {
+                if(machine.getCurrentOperation().getInput().getItemID() != 0 &&
+                 machine.getCurrentOperation().getCurrentTime() != machine.getCurrentOperation().getReadyTime()) {
+                    machine.getCurrentOperation().increaseCurrentTime(1);  
+                }
+            }
         }
     }
 

@@ -235,7 +235,8 @@ public class AllTheItemsInTheGame {
         tempItems.put(393, new Item("Iron Ore",393,2,0,1));    
         tempItems.put(394, new Item("Gold Ore",394,2,0,1));    
         tempItems.put(395, new Item("Iridium Ore",395,2,0,1));    
-        tempItems.put(396, new Item("Coal",396,2,0,1));    
+        tempItems.put(396, new Item("Coal",396,2,0,1));
+        tempItems.put(397, new Item("Mixed seeds", 397, 20 , 0 , 1));   
         tempItems.put(557, new Product("Dried Mushrooms", 557, 325, 0, 1, true, 50, 20, ProductQuality.NORMAL, false, false));
         allItems = Collections.unmodifiableMap(tempItems);
         }
