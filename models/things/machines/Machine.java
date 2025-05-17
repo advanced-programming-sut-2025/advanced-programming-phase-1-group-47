@@ -1,6 +1,7 @@
 package models.things.machines;
 
 import java.util.ArrayList;
+import models.AllTheItemsInTheGame;
 import models.Point;
 import models.things.Item;
 public class Machine extends Item {
@@ -12,6 +13,12 @@ public class Machine extends Item {
         super(name, itemID, value, parentItemID, amount);
         point = new Point(0, 0);
         this.operations = operations;
+        currentOperation = new Operation(0, 0,AllTheItemsInTheGame.getItemById(0), AllTheItemsInTheGame.getItemById(0), false);
+    }
+    public Machine(Machine machine , int amount ,Point point){
+        super(machine.getName(),machine.getItemID(),machine.getValue(),machine.getParentItemID(),amount);
+        this.point = point;
+        this.operations = machine.operations;
     }
     public Item getOutput() {
         return currentOperation.getOutput();
@@ -30,5 +37,13 @@ public class Machine extends Item {
     }
     public void addOperation(Operation operation) {
         operations.add(operation);
+    }
+
+    public void setCurrentOperation(Operation currentOperation) {
+        this.currentOperation = currentOperation;
+    }
+
+    public Operation getCurrentOperation() {
+        return currentOperation;
     }
 }
