@@ -1,5 +1,6 @@
 package models;
 
+import java.util.Random;
 import models.enums.ProductQuality;
 import models.enums.Season;
 import models.things.Item;
@@ -74,10 +75,16 @@ public class Plant {
     }
 
     public Product harvestPlant() {
-        ProductQuality quality = null;
+        ProductQuality quality = ProductQuality.NORMAL;
         int amount = 1;
-        //figure out amount (might be potatoes yk) @mehrshad
-        //figure out quality with skills and rand here @amoojoey
+        Random random = new Random();
+        int randomNumber = random.nextInt(100) + 1;
+        if (randomNumber < 11 )
+            quality = ProductQuality.IRIDIUM;
+        else if (randomNumber < 31)
+            quality = ProductQuality.GOLD;
+        else if (randomNumber < 61)
+            quality = ProductQuality.SILVER;
         return new Product(name , plantID ,baseValue , 301 ,amount ,isEdible , energy ,health , quality ,isFruit , !isFruit );
     }
     public Item getSeed() {

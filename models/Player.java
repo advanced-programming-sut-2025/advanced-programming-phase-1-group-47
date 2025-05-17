@@ -365,4 +365,8 @@ public class Player extends User {
 
         return false;
     }
+
+    public ArrayList<Item> getPlayerShipping_bin() {
+        return playerShipping_bin;
+    }
 }

@@ -63,4 +63,8 @@ public  class Product extends Item {
     public void setIsVegetable(boolean isVegetable) {
         this.isVegetable = isVegetable;
     }
+
+    public ProductQuality getQuality() {
+        return quality;
+    }
 }
