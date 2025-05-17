@@ -1194,10 +1194,6 @@ public class GameMenuController {
             if (item.getName().equalsIgnoreCase(itemName)) {
                 if(!(item instanceof Machine))
                     return new Result<String>(false, "This Item can not be placed!");
-                item.reduceAmount(1);
-                if(item.getAmount() == 0)
-                    currentPlayer.getInvetory().getItems().remove(item);
-                
                 Point offset = getOffsetFromDirection(direction);
                 if (offset == null) {
                     return new Result<>(false, "Invalid direction!");
@@ -1206,6 +1202,10 @@ public class GameMenuController {
                 Point target = new Point(current.getX() + offset.getX(), current.getY() + offset.getY());
                 if (!App.currentGame.map.tiles[target.x][target.y].type.equals(TileType.EMPTY))
                     return new Result<>(false, "You are attempting to put an item into a occupied space");
+                item.reduceAmount(1);
+                if(item.getAmount() == 0)
+                    currentPlayer.getInvetory().getItems().remove(item);
+                
                 Machine originalMachine = (Machine) item;
                 Machine machineToPlace = new Machine(originalMachine, 1, target);
                 App.currentGame.map.tiles[target.x][target.y].type = TileType.MACHINE;
@@ -1286,6 +1286,8 @@ public class GameMenuController {
             if (Math.abs(machinePoint.getX() - current.getX()) <= 1 &&
                 Math.abs(machinePoint.getY() - current.getY()) <= 1 &&
                 machine.getName().equalsIgnoreCase(artisanName)) {
+                    if(machine.getCurrentOperation().getId() == 0)
+                        return new Result<String>(false, "There's nothing in there!");
                     if(machine.getCurrentOperation().getReadyTime() != machine.getCurrentOperation().getCurrentTime())
                         return new Result<String>(false,"Product Not ready!");
                     App.getCurrentGame().getCurrentPlayer().getInvetory().addItem(machine.getOutput());
@@ -1348,7 +1350,13 @@ public class GameMenuController {
         }
         for (HashMap.Entry<Integer, Item> entry : AllTheItemsInTheGame.allItems.entrySet()) {
             Item item = entry.getValue();
-            item = new Item(item,amount);
+            if (item instanceof Machine machine1)
+                item = new Machine(machine1, amount, new Point(0, 0));
+            else if (item instanceof  Product product1)
+                item = new Product(product1.getName(),product1.getItemID(),product1.getValue(),product1.getParentItemID()
+                ,product1.getAmount(),product1.isIsEdible(),product1.getEnergy(),product1.getHealth(),product1.getQuality(),product1.isIsFruit(),product1.isIsVegetable());
+            else
+                item = new Item(item,amount);
 
             if (item.getName().equalsIgnoreCase(itemName)) {
                 App.getCurrentGame()
