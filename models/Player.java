@@ -335,4 +335,12 @@ public class Player extends User {
         return refrigerator;
     }
 
+    public boolean hasRecipe(String recipeName) {
+        for(Recipe recipe : this.getRecipes()) {
+            if(recipe.getDisplayName().equals(recipeName))
+                return  true;
+        }
+
+        return false;
+    }
 }
