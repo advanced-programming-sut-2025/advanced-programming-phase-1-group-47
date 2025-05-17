@@ -792,13 +792,13 @@ public class GameMenuController {
                     if (counts[i] > counts[maxIndex]) maxIndex = i;
                 }
 
-                if (counts[maxIndex] == 5) {
+                if (counts[maxIndex] >= 3) {
                     String menu = types[maxIndex].toString();
                     switch (menu) {
                         case "BLACKSMITH", "JOJAMART", "PIERRESSTORE", "CARPENTER",
                              "FISHSHOP", "MARNIESRANCH", "STARDROPSALOON" -> App.currentMenu = Menu.StoreMenu;
                         case "GREENHOUSE" -> App.currentMenu = Menu.GreenHouseMenu;
-                        case "COTTTAGE" -> App.currentMenu = Menu.cottageMenu;
+                        case "COTTAGE" -> App.currentMenu = Menu.cottageMenu;
                     }
                 }
             }

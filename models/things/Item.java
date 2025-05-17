@@ -24,7 +24,7 @@ public class Item {
         this.amount = amount;
     }
     public Type getType(){
-        return null;
+        return Type.REGULAR;
     }
     public Item(Item item , int amount) {
         this.name = item.getName();

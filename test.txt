@@ -13,6 +13,9 @@ game map 2
 game map 3
 game map 4
 print map -l 12,34 -s 5
+walk -l 64,112
+yes
+tools upgrade Regular-hoe
 walk -l 9,27
 yes
 tools equip TrainingRod-fishing pole

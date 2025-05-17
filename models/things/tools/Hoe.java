@@ -16,6 +16,10 @@ public class Hoe extends Item {
         this.type = type;
     }
 
+    @Override
+    public Type getType() {
+        return type;
+    }
 
     public int energyCost() {
         int fraction = 0;

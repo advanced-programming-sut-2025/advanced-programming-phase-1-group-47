@@ -36,7 +36,7 @@ public enum GameMenu {
     equiptool("^\\s*tools\\s+equip\\s+(?<toolName>.+?)\\s*$"),
     currenttool("^\\s*tools\\s+show\\s+current\\s*$"),
     availabletool("^\\s*tools\\s+show\\s+available\\s*$"),
-    upgradetool("^\\s*tools\\s+upgrade\\s+(?<toolName>\\S+)\\s*$"),
+    upgradetool("^\\s*tools\\s+upgrade\\s+(?<toolName>.+?)\\s*$"),
     tooluse("^\\s*tools\\s+use\\s+-d\\s+(?<direction>\\S+)\\s*$"),
     craftinfo("^\\s*craftinfo\\s+-n\\s+(?<craftName>\"[^\"]+\"|\\S+)\\s*$"),
     plant("^\\s*plant\\s+-s\\s+(?<seed>.+?)\\s+-d\\s+(?<direction>\\S+)\\s*$"),
