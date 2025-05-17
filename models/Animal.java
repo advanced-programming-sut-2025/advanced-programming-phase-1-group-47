@@ -6,7 +6,7 @@ import models.things.Item;
 
 public class Animal extends Item {
     private final AnimalType animalType;
-    private HashMap<Player, Integer> friendship = new HashMap<>();
+    public HashMap<Player, Integer> friendship = new HashMap<>();
     private AnimalProductType productType;
 
     public Animal(AnimalType animalType) {

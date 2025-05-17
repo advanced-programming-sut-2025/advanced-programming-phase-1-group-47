@@ -76,7 +76,6 @@ public class SignUpTest {
         if (!(questionNumber.matches("\\d+"))) {
             return new Result(false, "invalid format of questionNumber!");
         }
-
         if (!answer.equals(answerConfirm)) {
             return new Result(false, "answerConfirm is not same as answer!");
         }

@@ -57,7 +57,7 @@ public enum GameMenu {
     build("^\\s*build\\s+-a\\s+(?<buildingNme>\\S+)\\s+-l\\s+(?<x>\\d+),(?<y>\\d+)\\s*$"),
     buyanimal("^\\s*buy\\s+animal\\s+-a\\s+(?<animal>\\S+)\\s+-n\\s+(?<name>\\S+)\\s*$"),
     pet("^\\s*pet\\s+-n\\s+(?<name>\\S+)\\s*$"),
-    cheatsetanimalfriendship("^\\s*cheat\\s+set\\s+friendship\\s+-n\\s+(?<animalName>\\S+)\\s+-c\\s+(?<amount>\\d+)\\s*$"),
+    cheatsetanimalfriendship("^\\s*cheat\\s+set\\s+friendship\\s+-n\\s+(?<animalName>.+?)\\s+-c\\s+(?<amount>\\d+)\\s*$"),
     showanimals("^\\s*animals\\s*$"),
     shepherdanimals("^\\s*shepherd\\s+animals\\s+-n\\s+(?<animalName>\\S+)\\s+-l\\s+(?<x>\\d+),(?<y>\\d+)\\s*$"),
     feedhay("^\\s*feed\\s+hay\\s+-n\\s+(?<animalName>\\S+)\\s*$"),

@@ -52,6 +52,9 @@ public class ShopMenu extends AppMenu{
         else if ((matcher = ShopMenuCommands.SHOW_AVAILABLE_PRODUCTS.getMatcher(input)) != null){
             System.out.println(controller.showAvailableProducts(store).getData());
         }
+        else if ((matcher = ShopMenuCommands.BUYANIMAL.getMatcher(input)) != null){
+            System.out.println(controller.buyAnimals(store,matcher).getData());
+        }
         else if ((matcher = ShopMenuCommands.PURCHASE_PRODUCT.getMatcher(input)) != null){
             System.out.println(controller.buy(store, matcher).getData());
         }

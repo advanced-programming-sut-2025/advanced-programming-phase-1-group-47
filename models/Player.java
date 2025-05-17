@@ -13,7 +13,7 @@ public class Player extends User {
     private Point Coordinates;
     private Invetory invetory;
     public Item currentToll;
-    ArrayList<Animal> animals = new ArrayList<>();
+    public HashMap<String,Animal> animalHashMap = new HashMap<>();
     TrashCanType trashCanType = TrashCanType.REGULARTRASHCAN;
     private Buff buff = null;
     private final Skill[] skills = new Skill[]{
@@ -38,6 +38,7 @@ public class Player extends User {
     private Map <Player, Boolean> hasbeenHugged;
     private Map <Player, ArrayList<Trade>> pendingTrades;
     private Map <Player, ArrayList<String>> tradeHistory;
+
     private Player partner;
     private Player pendingPartner;
     private final ArrayList<Recipe> recipes = new ArrayList<>(List.of(

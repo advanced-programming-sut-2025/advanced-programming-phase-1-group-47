@@ -2,6 +2,7 @@ package controllers;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.regex.Matcher;
 import models.*;
 import models.enums.Menu;
@@ -13,8 +14,9 @@ import models.things.tools.*;
 public class shopMenuController {
 
     public Result<String> showAvailableProducts(Shop store) {
+        if (!(App.currentGame.time.getHourOfDay() >= store.getStartingHour() &&  App.currentGame.time.getHourOfDay() <= store.getStoppingHour()))
+            return new Result<>(false, "the Store is closed!");
         StringBuilder result = new StringBuilder();
-
         List<Item> seasonal = getSeasonalStock(store);
         if (seasonal != null) {
             for (Item i : seasonal) {
@@ -36,10 +38,34 @@ public class shopMenuController {
 
         return new Result<>(true, result.toString());
     }
-
+    public Result<String> buyAnimals(Shop store, Matcher matcher) {
+//        if (!(App.currentGame.time.getHourOfDay() >= store.getStartingHour() &&  App.currentGame.time.getHourOfDay() <= store.getStoppingHour()))
+//            return new Result<>(false, "the Store is closed!");
+        store = returnStoreToApp(store);
+        String animal = matcher.group("animal").replace(" ", "").toLowerCase();
+        String animalName = matcher.group("name");
+        Player player = App.currentGame.getPlayers().get(((App.currentGame.turn - 1) < 0)? 4 + (App.currentGame.turn-1)%4 : (App.currentGame.turn)%4);
+        for (Item i : store.getPermaStock()) {
+            if (i.getName().equals(animal)) {
+                i.reduceAmount(1);
+                player.animalHashMap.put(animalName,(Animal)i);
+                player.addMoney(-1  * 1 * i.getAmount());
+                Random random = new Random();
+                Point point = new Point(App.farmStart[App.currentGame.turn].x + random.nextInt(49)
+                        , App.farmStart[App.currentGame.turn].y + random.nextInt(39));
+                try{
+                    App.currentGame.map.tiles[point.x][point.y].type = TileType.valueOf(animal.toUpperCase());
+                }
+                catch(Exception e){
+                    return new Result<>(false, "Invalid animal name!");
+                }
+                return new Result<>(true, "the animal " + i.getName() + " has been PLaced in " + point.x + ", " + point.y + " !");
+            }
+        }
+        return new Result<>(false, "no such product: " + animal);
+    }
     public Result<String> showAllProducts(Shop store) {
         StringBuilder result = new StringBuilder();
-
         appendItemList(result, store.getSpringStock(), "Spring");
         appendItemList(result, store.getSummerStock(), "Summer");
         appendItemList(result, store.getFallStock(), "Fall");
@@ -57,7 +83,8 @@ public class shopMenuController {
         if (!store.getType().equals(ShopType.BlackSmith)) {
             return new Result<>(false, "You should be at blacksmith for this offer.");
         }
-
+        if (!(App.currentGame.time.getHourOfDay() >= store.getStartingHour() &&  App.currentGame.time.getHourOfDay() <= store.getStoppingHour()))
+            return new Result<>(false, "the Store is closed!");
         Player player = App.currentGame.currentPlayer;
         List<Item> items = player.getInvetory().getItems();
         if (items == null) return new Result<>(false, "Inventory is empty.");
@@ -110,6 +137,7 @@ public class shopMenuController {
     }
 
     private void appendItemList(StringBuilder result, List<Item> items, String label) {
+
         if (items == null || items.isEmpty()) return;
         result.append(label).append(" stock:\n");
 
@@ -127,7 +155,7 @@ public class shopMenuController {
     }
 
     public Result<String> buy(Shop store, Matcher matcher) {
-        if (!(App.currentGame.time.getHourOfDay() > store.getStartingHour() &&  App.currentGame.time.getHourOfDay() < store.getStoppingHour()))
+        if (!(App.currentGame.time.getHourOfDay() >= store.getStartingHour() &&  App.currentGame.time.getHourOfDay() <= store.getStoppingHour()))
             return new Result<>(false, "the Store is closed!");
         int amount;
         store = returnStoreToApp(store);

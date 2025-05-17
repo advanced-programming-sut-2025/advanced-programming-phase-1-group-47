@@ -575,6 +575,18 @@ public class GameMenuController {
         }
         return false;
     }
+    private boolean isAnimalHere() {
+        Point playerPOint = App.currentGame.map.farms[App.currentGame.turn].personPoint;
+        TileType[] Neighbers = getSurroundingTiles(playerPOint);
+        for (TileType type : Neighbers) {
+            if (type.equals(TileType.COW) ||  type.equals(TileType.DINOSAUR) || type.equals(TileType.DUCK)
+                    || type.equals(TileType.SHEEP ) || type.equals(TileType.RABBIT) || type.equals(TileType.HEN) || type.equals(TileType.GOAT)
+                    || type.equals(TileType.HEN)) {
+                return true;
+            }
+        }
+        return false;
+    }
     private boolean isNear(TileType isType) {
         Point playerPOint = App.currentGame.map.farms[App.currentGame.turn].personPoint;
         TileType[] Neighbers = getSurroundingTiles(playerPOint);
@@ -994,7 +1006,7 @@ public class GameMenuController {
         if(day < 0 )
             return new Result<>(false, "Invalid Day format (Day | Day > 0");
         Time.hour += day;
-        for (int i=0; i< (day/24); i++) {
+        for (int i=0; i< day/24; i++) {
             setUpNextDay();
         }
         return new Result<>(false, "new Day: " + App.currentGame.time.getDayOfSeason());
@@ -1160,7 +1172,7 @@ public class GameMenuController {
                 }
                 Point current = App.currentGame.map.farms[App.currentGame.turn].personPoint;
                 Point target = new Point(current.getX() + offset.getX(), current.getY() + offset.getY());
-                if (!App.currentGame.map.tiles[target.x][target.y].type.equals(TileType.TILLED))
+                if (!App.currentGame.map.tiles[target.x][target.y].type.equals(TileType.TILLED) && !App.currentGame.map.tiles[target.x][target.y].type.equals(TileType.GREENHOUSE))
                     return new Result<>(false, "You are attempting to plant in a not tilled Ground!");
                 Plant targetPlant = new Plant(basePlant, target);
                 putPlantInGround(targetPlant);
@@ -1354,7 +1366,7 @@ public class GameMenuController {
                 item = new Machine(machine1, amount, new Point(0, 0));
             else if (item instanceof  Product product1)
                 item = new Product(product1.getName(),product1.getItemID(),product1.getValue(),product1.getParentItemID()
-                ,product1.getAmount(),product1.isIsEdible(),product1.getEnergy(),product1.getHealth(),product1.getQuality(),product1.isIsFruit(),product1.isIsVegetable());
+                ,product1.getAmount(),product1.isEdible(),product1.getEnergy(),product1.getHealth(),product1.getQuality(),product1.isIsFruit(),product1.isIsVegetable());
             else
                 item = new Item(item,amount);
 
@@ -1586,6 +1598,76 @@ public class GameMenuController {
             System.out.println(i.getName() + " " + i.getAmount());
         }
     }
+    public Result<String> pet(Matcher matcher) {
+        String name = matcher.group("name");
+        Player player = App.getCurrentGame().getCurrentPlayer();
+        Point point = App.currentGame.map.farms[App.currentGame.turn].personPoint;
+
+        // 8 جهت اطراف
+        int[][] directions = {
+                {-1, -1}, {-1, 0}, {-1, 1},
+                {0, -1},          {0, 1},
+                {1, -1},  {1, 0}, {1, 1}
+        };
+
+        for (int[] dir : directions) {
+            int nx = point.x + dir[0];
+            int ny = point.y + dir[1];
+
+            // بررسی محدوده‌ی نقشه
+            if (nx < 0 || ny < 0 || nx >= App.currentGame.map.tiles.length || ny >= App.currentGame.map.tiles[0].length)
+                continue;
+
+            Point neighbor = new Point(nx, ny);
+
+            for (HashMap.Entry<String, Animal> entry : App.currentGame.currentPlayer.animalHashMap.entrySet()) {
+                String animalPos = entry.getKey();
+                Animal animal = entry.getValue();
+                // چک کردن اینکه مختصات حیوان برابر همسایه فعلی هست یا نه
+                if (animalPos.equals(name)) {
+                    animal.friendship.put(player,animal.friendship.get(player) + 15);
+                    return new Result<>(true, name + " was petted successfully!");
+                }
+            }
+
+        }
+        return new Result<>(false, "No animal named " + name + " found around you.");
+    }
+    public Result<String> setAnimalFriendShip(Matcher matcher) {
+        String name = matcher.group("name");
+        int amount = Integer.parseInt(matcher.group("amount"));
+        Player player = App.getCurrentGame().getCurrentPlayer();
+        for (HashMap.Entry<String, Animal> entry : App.currentGame.currentPlayer.animalHashMap.entrySet()) {
+            String animalPos = entry.getKey();
+            Animal animal = entry.getValue();
+            if (animalPos.equals(name)) {
+                animal.friendship.put(player,animal.friendship.get(player) + 15);
+                return new Result<>(true, name + " Friendship added " + amount +" level !");
+            }
+            // چک کردن اینکه مختصات حیوان برابر همسایه فعلی هست یا نه
+        }
+        return new Result<>(false,"no animal named " + name + " found");
+    }
+    public Result<String> animalShow(Matcher matcher) {
+        StringBuilder result = new StringBuilder();
+        String name = matcher.group("name");
+        int amount = Integer.parseInt(matcher.group("amount"));
+        Player player = App.getCurrentGame().getCurrentPlayer();
+        for (HashMap.Entry<String, Animal> entry : App.currentGame.currentPlayer.animalHashMap.entrySet()) {
+            String animalPos = entry.getKey();
+            Animal animal = entry.getValue();
+            if (animalPos.equals(name)) {
+                result.append("Animal Name: " + animalPos + "\n Animal Type: " + animal.getAnimalType().toString() + "\n");
+                result.append("Friendship: " + animal.friendship.get(player) + "\n");
+                result.append(animal.friendship.get(player) + "\n");
+            }
+        }
+        return new Result<>(false,"Animal Not Found");
+    }
+    public Result<String> shepherdanimals(Matcher matcher) {
+        return null;
+    }
+
     //har chi mikhaid update she too shab barai farda ro bezanid inja
     public void setUpNextDay() {
         CrowAttack();
@@ -1596,7 +1678,6 @@ public class GameMenuController {
                 plant.grow();
                 plant.setFertilizerId(0);
             }
-
             if (plant.isHasBeenWatered())  plant.grow();
             if (App.getCurrentGame().tomarrowsWeather.equals(Weather.RAINY))
                 plant.setHasBeenWatered(true);
@@ -1610,9 +1691,12 @@ public class GameMenuController {
             if(plant.getFertilizerId() == 178)
                 plant.setHasBeenWatered(true);
         }
-        //CHANGE WEATHER INTO TOMARROWS WEATHER AND CREATE NEW TOMARROWS WEATHER HERE
-        App.currentGame.nextDayWeather();
 
+        App.currentGame.nextDayWeather();
+        for(int i =0;i<App.currentGame.players.size();i++){
+            for (int j =0 ; j< 3;j++)
+                System.out.println(Tunder(new Point(App.farmStart[i].x,App.farmStart[i].x)).getData());
+        }
         for (NPC npc : App.getCurrentGame().getNpcs()) {
             for(Player player : App.getCurrentGame().getPlayers()) {
                 npc.getHasBeenGiftedTo().put(player, false);
@@ -1631,13 +1715,6 @@ public class GameMenuController {
         }
 
         for(Player player1 : App.getCurrentGame().getPlayers()){
-            ArrayList<Item> bufferItemCopy = new ArrayList<>(player1.getInvetory().getBufferInvetory());
-            player1.getInvetory().getBufferInvetory().clear();
-            for (Item bufferItem : bufferItemCopy){
-                player1.getInvetory().addItem(bufferItem);
-            }
-            bufferItemCopy.clear();
-            //shipping bin calclations
             ArrayList<Item> soldItems = player1.getPlayerShipping_bin();
             if(!(soldItems == null || soldItems.isEmpty()))
                 for (Item item : soldItems) {
@@ -1646,8 +1723,6 @@ public class GameMenuController {
                     else 
                         player1.addMoney(item.getAmount() * item.getValue());
                 } 
-            //shipping bin calculations
-            //friendship reset
             for(Player player2 : App.getCurrentGame().getPlayers()) {
                 if (!player1.GetHasTalkedToPlayer(player2) && !player1.getHasbeenHugged().get(player2) && !player1.getHasBeenGiftedTo().get(player2))
                     player1.reduceFriendshipXP(10, player2);
@@ -1858,7 +1933,7 @@ public class GameMenuController {
                     player.setBuff(null);
             }
         }
-
+        
         App.currentGame.currentPlayer = App.getCurrentGame().getPlayers().get((App.currentGame.turn + 1)%(App.currentGame.players.size()));
         App.currentGame.turn = (App.currentGame.turn + 1)%(App.currentGame.players.size());
         System.out.println(App.getCurrentGame().currentPlayer.printNotifications());

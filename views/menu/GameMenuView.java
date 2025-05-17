@@ -75,6 +75,14 @@ public class GameMenuView extends AppMenu {
             controller.setEnergyCapacity();
         } else if ((matcher = models.enums.commands.GameMenu.showinventory.getMatcher(input)) != null) {
             controller.showInventory();
+        }  else if ((matcher = models.enums.commands.GameMenu.pet.getMatcher(input)) != null) {
+            System.out.println(controller.pet(matcher).getData());
+        }  else if ((matcher = GameMenu.showanimals.getMatcher(input)) != null) {
+            System.out.println(controller.animalShow(matcher).getData());
+        }   else if ((matcher = GameMenu.shepherdanimals.getMatcher(input)) != null) {
+            System.out.println(controller.animalShow(matcher).getData());
+        }  else if ((matcher = models.enums.commands.GameMenu.cheatsetanimalfriendship.getMatcher(input)) != null) {
+            System.out.println(controller.setAnimalFriendShip(matcher).getData());
         } else if ((matcher = models.enums.commands.GameMenu.inventorytrashtotal.getMatcher(input)) != null) {
             System.out.println(controller.InventoryTrash(matcher).getData());
         } else if ((matcher = models.enums.commands.GameMenu.inventorytrash.getMatcher(input)) != null) {
