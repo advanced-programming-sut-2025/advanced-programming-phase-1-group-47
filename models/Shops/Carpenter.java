@@ -2,6 +2,8 @@ package models.Shops;
 
 import java.util.ArrayList;
 import models.AllTheItemsInTheGame;
+import models.Building;
+import models.FarmBuilding;
 import models.Shop;
 import models.enums.ShopType;
 import models.things.Item;
@@ -22,13 +24,15 @@ public class Carpenter {
         ArrayList<Item> returnvalue = new ArrayList<>();
         returnvalue.add(new Item("Wood",36 , 10 , 0 , 1000000));
         returnvalue.add(new Item("Stone",2 ,20 , 0 , 1000000));
-        returnvalue.add(AllTheItemsInTheGame.getItemById(4));
-        returnvalue.add(AllTheItemsInTheGame.getItemById(5));
-        returnvalue.add(AllTheItemsInTheGame.getItemById(7));
-        returnvalue.add(AllTheItemsInTheGame.getItemById(8));
-        returnvalue.add(AllTheItemsInTheGame.getItemById(9));
-        returnvalue.add(AllTheItemsInTheGame.getItemById(10));
-        returnvalue.add(AllTheItemsInTheGame.getItemById(11));
+        returnvalue.add(new Building(FarmBuilding.BARN));
+        returnvalue.add(new Building(FarmBuilding.BIG_BARN));
+        returnvalue.add(new Building(FarmBuilding.COOP));
+        returnvalue.add(new Building(FarmBuilding.BIG_COOP));
+        returnvalue.add(new Building(FarmBuilding.DELUXE_BARN));
+        returnvalue.add(new Building(FarmBuilding.DELUXE_BARN));
+        returnvalue.add(new Building(FarmBuilding.SHIPPING_BIN));
+        returnvalue.add(new Building(FarmBuilding.SHIPPING_BIN));
+        returnvalue.add(new Building(FarmBuilding.WELL));
         return returnvalue;
     }
 
