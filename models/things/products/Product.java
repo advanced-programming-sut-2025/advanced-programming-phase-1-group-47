@@ -67,4 +67,8 @@ public  class Product extends Item {
     public ProductQuality getQuality() {
         return quality;
     }
+
+    public boolean isIsEdible() {
+        return isEdible;
+    }
 }

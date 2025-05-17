@@ -9,6 +9,7 @@ public class Invetory {
     private ArrayList<Item> items = new ArrayList<>();
     private ArrayList<Tool> tools = new ArrayList<>();
     private  int capacity = 20;
+    private ArrayList<Item> bufferInvetory = new ArrayList<>();
     public Item findItemFromName(String name){
         for(Item i : items)
             if (i.getName().equals(name))
@@ -22,6 +23,20 @@ public class Invetory {
         items.removeIf(item1 -> item1.getItemID() == item.getItemID());
     }
     public void addItem(Item item) {
+        if(items.size() >= capacity){
+            if((bufferInvetory == null || bufferInvetory.isEmpty()) && item.getItemID() != 0){
+                bufferInvetory = new ArrayList<>();
+                bufferInvetory.add(item);
+                return;
+            }
+            for(Item item2 : bufferInvetory)
+                if(item2.getItemID() == item.getItemID()) {
+                    item2.addAmount(item.getAmount());
+                    return;
+                }
+            if (item.getItemID() != 0)
+                bufferInvetory.add(item);
+        }
         for(Item item2 : items){
             if(item2.getItemID() == item.getItemID()) {
                 item2.addAmount(item.getAmount());
@@ -90,6 +105,14 @@ public class Invetory {
         }
 
         return capacity - amount;
+    }
+
+    public void setBufferInvetory(ArrayList<Item> bufferInvetory) {
+        this.bufferInvetory = bufferInvetory;
+    }
+
+    public ArrayList<Item> getBufferInvetory() {
+        return bufferInvetory;
     }
 
 }
