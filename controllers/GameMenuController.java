@@ -41,9 +41,6 @@ public class GameMenuController {
     public Result<String> showMenu() {
         return null;
     }
-    public Result<String> SetUpNextDay() {
-        return null;
-    }
     public Result<String> BuildGreenHouse() {
         Player player = App.currentGame.currentPlayer;
         // check the inventory and do the buy
@@ -1623,7 +1620,15 @@ public class GameMenuController {
             }
         }
 
-        for(Player player1 : App.getCurrentGame().getPlayers())
+        for(Player player1 : App.getCurrentGame().getPlayers()){
+            ArrayList<Item> soldItems = player1.getPlayerShipping_bin();
+            if(!(soldItems == null || soldItems.isEmpty()))
+                for (Item item : soldItems) {
+                    if (item instanceof Product product)
+                        player1.addMoney( (int) Math.floor(product.getAmount() * product.getValue() * product.getQuality().getPriceCoefficient()));
+                    else 
+                        player1.addMoney(item.getAmount() * item.getValue());
+                } 
             for(Player player2 : App.getCurrentGame().getPlayers()) {
                 if (!player1.GetHasTalkedToPlayer(player2) && !player1.getHasbeenHugged().get(player2) && !player1.getHasBeenGiftedTo().get(player2))
                     player1.reduceFriendshipXP(10, player2);
@@ -1634,6 +1639,7 @@ public class GameMenuController {
                 player1.setHasHuggedPlayer(player2, false);
                 player2.setHasHuggedPlayer(player1, false);
             }
+        }
         setMap();
         setShops();
     }

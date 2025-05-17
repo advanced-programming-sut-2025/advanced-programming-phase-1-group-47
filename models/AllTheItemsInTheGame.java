@@ -5,6 +5,11 @@ import java.util.HashMap;
 import java.util.Map;
 import models.enums.*;
 import models.things.Item;
+import models.things.machines.BeeHouse;
+import models.things.machines.CheesePress;
+import models.things.machines.Dehydrator;
+import models.things.machines.Keg;
+import models.things.machines.Kiln;
 import models.things.products.Product;
 import models.things.tools.Axe;
 import models.things.tools.FishingPole;
@@ -223,8 +228,12 @@ public class AllTheItemsInTheGame {
         tempItems.put(AnimalProductType.BIG_GOAT_MILK.getId(), new AnimalProduct(AnimalProductType.BIG_GOAT_MILK));
         tempItems.put(AnimalProductType.SHEEP_WOOL.getId(), new AnimalProduct(AnimalProductType.SHEEP_WOOL));
         tempItems.put(AnimalProductType.TRUFFLE.getId(), new AnimalProduct(AnimalProductType.TRUFFLE));
-
-
+        
+        tempItems.put(12, new Kiln());
+        tempItems.put(43, new BeeHouse());
+        tempItems.put(19, new CheesePress());
+        tempItems.put(20, new Keg());
+        tempItems.put(14, new Dehydrator());
         tempItems.put(151, new Item("Salmon",151,2,0,1));
         tempItems.put(176, new Item("BasicRetainingSoil",176,2,0,1));
         tempItems.put(177, new Item("improvedRetainingSoil",177,2,0,1));
