@@ -1,12 +1,10 @@
 package models.things.tools;
 
-import controllers.GameMenuController;
 import models.*;
+
 import models.enums.SkillType;
 import models.enums.TileType;
 import models.things.Item;
-
-import java.util.HashMap;
 import java.util.Random;
 
 public class Pickaxe extends Item {
@@ -28,7 +26,7 @@ public class Pickaxe extends Item {
             fraction++;
         }
 
-        if(App.currentGame.currentPlayer.getBuff().getType().equals(SkillType.MINING)) {
+        if(App.getCurrentGame().getCurrentPlayer().getBuff() != null && App.currentGame.currentPlayer.getBuff().getType().equals(SkillType.MINING)) {
             fraction++;
         }
 
