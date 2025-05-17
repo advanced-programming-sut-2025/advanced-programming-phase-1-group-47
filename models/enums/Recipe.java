@@ -2,6 +2,7 @@ package models.enums;
 
 import models.Player;
 import models.Result;
+import models.things.Food.Food;
 import models.things.Food.FoodType;
 import models.things.Item;
 
@@ -58,26 +59,34 @@ public enum Recipe {
         return price;
     }
 
-    public static boolean canMakeRecipe(Player player, Recipe recipe) {
+    public static Result<String> makeRecipe(Player player, String recipeName) {
+        Recipe recipe = recipeByName(recipeName);
+        if(recipe == null)
+            return new Result<>(false, "Recipe name is incorrect");
         for (Map.Entry<Integer, Integer> entry : recipe.items.entrySet()) {
-            int itemId = entry.getKey();      // Get the item ID
-            int requiredAmount = entry.getValue(); // Get the required quantity
+            int itemId = entry.getKey();
+            int requiredAmount = entry.getValue();
 
             boolean hasItem = false;
             for(Item item : player.getInvetory().getItems()) {
                 if(item.getItemID() == itemId) {
+                    hasItem = true;
                     if(item.getAmount() >= requiredAmount) {
-                        hasItem = true;
+                        player.getInvetory().reduceAmount(item, requiredAmount);
+                    } else {
+                        return new Result<>(false, "Do not have enough " + item.getName());
                     }
                 }
             }
 
             if(!hasItem) {
-                return false;
+                return new Result<>(false, "Do not have requirements for recipe");
             }
         }
 
-        return true;
+        Food food = new Food(recipe.getFoodType());
+        player.getInvetory().addItem(food);
+        return new Result<>(true, "You made " + food.getName() + " it is now in your inventory");
     }
 
 

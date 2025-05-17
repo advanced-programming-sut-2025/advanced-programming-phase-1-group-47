@@ -48,6 +48,8 @@ public class Player extends User {
     private ArrayList<String> notifications;
     //friendships & trade
 
+    private Refrigerator refrigerator = new Refrigerator();
+
     public Player(String username, String password, String email, String nickname, Gender gender, String securityQuestion, String securityAnswer) {
 
         super(username, password, email, nickname, gender, securityQuestion, securityAnswer);
@@ -307,6 +309,10 @@ public class Player extends User {
 
     public Map<Player, Boolean> getHasBeenGiftedTo() {
         return hasBeenGiftedTo;
+    }
+
+    public Refrigerator getRefrigerator() {
+        return refrigerator;
     }
 
 }

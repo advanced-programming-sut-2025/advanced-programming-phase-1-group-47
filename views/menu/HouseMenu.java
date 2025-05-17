@@ -16,16 +16,16 @@ public class HouseMenu extends AppMenu {
         String input = scanner.nextLine();
         Matcher matcher;
         if ((matcher = models.enums.commands.GameMenu.cookingrefrigeratorput.getMatcher(input)) != null) {
-            // handleCookingRefrigeratorPut(matcher);
+            System.out.println(controller.putToFridge(matcher.group("item")).getData());
         }
         else if ((matcher = models.enums.commands.GameMenu.cookingrefrigeratorpick.getMatcher(input)) != null) {
-            // handleCookingRefrigeratorPick(matcher);
+            System.out.println(controller.pickFromFridge(matcher.group("item")).getData());
         }
         else if ((matcher = models.enums.commands.GameMenu.cookingreciepe.getMatcher(input)) != null) {
-            // handleCookingRecipe(matcher);
+            System.out.println(controller.showRecipes().getData());
         }
         else if ((matcher = models.enums.commands.GameMenu.cookingprepare.getMatcher(input)) != null) {
-            // handleCookingPrepare(matcher);
+            System.out.println(controller.makeRecipe(matcher.group("recipeName")).getData());
         }
         else if ((matcher = GameMenu.Back.getMatcher(input)) != null) {
             App.currentMenu = Menu.GameMenu;
