@@ -13,6 +13,8 @@ import java.security.SecureRandom;
 import java.util.regex.Matcher;
 
 import static models.enums.Gender.getGenderEnum;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 public class LoginMenuController {
 
@@ -46,12 +48,12 @@ public class LoginMenuController {
             return new Result<>(false, "Password must be at least 8 characters long, containing uppercase, lowercase, number, and special character.");
         }
 
-
+        String newPassword = " ";
         if(!password.equals(passwordConfirm)){
             System.out.println("password-confirm doesn't match!");
             System.out.println("Enter password again: (Enter Random for random password!)");
 
-            String newPassword = scanner.nextLine();
+            newPassword = scanner.nextLine();
             if(newPassword.equals("Random")){
                 newPassword = generatePassword(12);
                 System.out.println("Your password is : " + newPassword + "\n");
@@ -90,18 +92,21 @@ public class LoginMenuController {
         int i = Integer.parseInt(matcher.group("questionNumber"));
         SecurityQuestion question = SecurityQuestion.getByIndex(i - 1);
         String answer = matcher.group("answer");
+        if(!newPassword.equals(" "))
+            password = newPassword;
+        String userPassword = convertToHash(password);
 
-        User newUser = new User(username, password, email, nickname, getGenderEnum(gender), question.getQuestion(), answer);
+        User newUser = new User(username, userPassword, email, nickname, getGenderEnum(gender), question.getQuestion(), answer);
 
         App.addUser(newUser);
-        App.setLoggedInUser(newUser);
+        //App.setLoggedInUser(newUser);
         return new Result<>(true, "User added successfully!");
     }
 
     public Result<String> LogIn(String username, String password, Scanner scanner) {
 
         if(App.getUserByUsername(username) != null){
-            if(!App.getUserByUsername(username).getPassword().equals(password)){
+            if(!App.getUserByUsername(username).getPassword().equals(convertToHash(password))){
                 System.out.println("Password is not correct! please answer to the security question:");
                 System.out.println(App.getUserByUsername(username).getSecurityQuestion());
 
@@ -179,7 +184,35 @@ public class LoginMenuController {
         return new String(chars);
     }
     public Result<String> goMenu(Matcher matcher) {
+        if(App.getLoggedInUser() == null)
+            return new Result<>(false, "Please login first");
+
         App.setCurrentMenu(Menu.valueOf(matcher.group("menu")));
         return new Result<>(true, "you are now in " +  matcher.group("menu") + "!");
+    }
+
+    public static String convertToHash(String input) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hashBytes = digest.digest(input.getBytes());
+
+            StringBuilder hexString = new StringBuilder();
+            for (byte b : hashBytes) {
+                String hex = Integer.toHexString(0xff & b);
+                if (hex.length() == 1) hexString.append('0');
+                hexString.append(hex);
+            }
+
+            return hexString.toString();
+
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("SHA-256 algorithm not found.", e);
+        }
+    }
+
+    public static boolean validateHash(String input, String hash) {
+        String generatedHash = convertToHash(input);
+
+        return generatedHash.equals(hash);
     }
 }

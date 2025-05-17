@@ -25,9 +25,9 @@ public class FishingPole extends Item {
             fraction++;
         }
 
-//        if(App.getCurrentGame().getCurrentPlayer().getBuff().getType().equals(SkillType.FISHING)) {
-//            fraction++;
-//        }
+        if(App.getCurrentGame().getCurrentPlayer().getBuff().getType().equals(SkillType.FISHING)) {
+            fraction++;
+        }
 
         return (int) (rodType.getEnergyCost() * App.getCurrentGame().getWeather().getIntensity() - fraction);
     }
