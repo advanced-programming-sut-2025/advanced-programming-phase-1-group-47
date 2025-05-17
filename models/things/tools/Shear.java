@@ -18,6 +18,8 @@ public class Shear extends Item {
 
     public Result<String> useTool(){
         Player player = App.getCurrentGame().getCurrentPlayer();
+        if(player.EnergyObject.getCurrentEnergy() - energyCost() <= 0)
+            return new Result<>(false, "Not enough energy!");
         player.EnergyObject.setCurrentEnergy(player.EnergyObject.getCurrentEnergy() - energyCost());
         return null;
     }

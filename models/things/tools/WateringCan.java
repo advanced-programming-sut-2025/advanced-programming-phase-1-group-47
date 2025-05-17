@@ -36,7 +36,7 @@ public class WateringCan extends Item {
     public void ToolUsed(Point point) {
         System.out.println(App.currentGame.map.tiles[point.getX()][point.getY()].type.getSticker());
     }
-    public int getEnergyCost() {
+    public int energyCost() {
         int fraction = 0;
         if(App.getCurrentGame().getCurrentPlayer().getSkills()[0].getLevel() == 4) {
             fraction++;
@@ -50,6 +50,9 @@ public class WateringCan extends Item {
     }
     @Override
     public String useTool(Point point) {
+        if(App.getCurrentGame().getCurrentPlayer().EnergyObject.getCurrentEnergy() - energyCost() <= 0)
+            return ("Not enough energy!");
+        App.getCurrentGame().getCurrentPlayer().getEnergy().setCurrentEnergy(App.getCurrentGame().getCurrentPlayer().EnergyObject.getCurrentEnergy() - energyCost());
         StringBuilder builder = new StringBuilder();
         builder.append("\"Wathering can used at point \" + point");
         if ((App.currentGame.map.tiles[point.getX()][point.getY()].type.equals(TileType.PLANT))){

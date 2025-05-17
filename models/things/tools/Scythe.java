@@ -46,6 +46,8 @@ public class Scythe extends Item {
         StringBuilder builder = new StringBuilder();
         TileType tileType = App.currentGame.map.tiles[point.getX()][point.getY()].type;
         Player player = App.getCurrentGame().getCurrentPlayer();
+        if(player.EnergyObject.getCurrentEnergy() - energyCost() <= 0)
+            return ("Not enough energy!");
         player.EnergyObject.setCurrentEnergy(player.EnergyObject.getCurrentEnergy() - energyCost());
         Random rand = new Random();
         if (tileType.equals(TileType.FORAGING)) {
