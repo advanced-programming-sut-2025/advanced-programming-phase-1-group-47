@@ -37,6 +37,8 @@ public class Hoe extends Item {
     public String useTool(Point point) {
         StringBuilder builder = new StringBuilder();
         Player player = App.getCurrentGame().getCurrentPlayer();
+        if(player.EnergyObject.getCurrentEnergy() - energyCost() <= 0)
+            return ("Not enough energy!");
         player.EnergyObject.setCurrentEnergy(player.EnergyObject.getCurrentEnergy() - energyCost());
         if ((App.currentGame.map.tiles[point.getX()][point.getY()].type.equals(TileType.EMPTY))){
             builder.append("the ground got tilled at " + point.x + ", " + point.y);

@@ -77,6 +77,8 @@ public class FishingPole extends Item {
         TileType tileType = App.currentGame.map.tiles[point.getX()][point.getY()].type;
         StringBuilder builder = new StringBuilder();
         Player player = App.getCurrentGame().getCurrentPlayer();
+        if(player.EnergyObject.getCurrentEnergy() - energyCost() <= 0)
+            return ("Not enough energy!");
         player.EnergyObject.setCurrentEnergy(player.EnergyObject.getCurrentEnergy() - energyCost());
         Random rand = new Random();
         int random = rand.nextInt(10);

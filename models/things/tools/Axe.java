@@ -51,6 +51,8 @@ public class Axe extends Item {
     @Override
     public String useTool(Point point) {
         Player player = App.getCurrentGame().getCurrentPlayer();
+        if(player.EnergyObject.getCurrentEnergy() - energyCost() <= 0)
+            return ("Not enough energy!");
         player.EnergyObject.setCurrentEnergy(player.EnergyObject.getCurrentEnergy() - energyCost());
         StringBuilder builder = new StringBuilder();
         TileType tileType = App.currentGame.map.tiles[point.getX()][point.getY()].type;
