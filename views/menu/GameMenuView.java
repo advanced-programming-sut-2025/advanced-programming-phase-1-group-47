@@ -113,6 +113,10 @@ public class GameMenuView extends AppMenu {
 //            System.out.println(controller.showCraftInfo(matcher.group("seed")).getData());
         } else if ((matcher = models.enums.commands.GameMenu.craftingcraft.getMatcher(input)) != null) {
 //            System.out.println(controller.);
+        } else if ((matcher = models.enums.commands.GameMenu.artisanuse.getMatcher(input)) != null) {
+            System.out.println(controller.useArtisan(matcher.group("artisanName"), matcher.group("itemOneName")));
+        } else if ((matcher = models.enums.commands.GameMenu.artisanget.getMatcher(input)) != null) {
+            System.out.println(controller.artisanGet(matcher.group("artisanName")));
         } else if ((matcher = models.enums.commands.GameMenu.sellproduct.getMatcher(input)) != null) {
             System.out.println(controller.SellItem(matcher).getData());
         } else if ((matcher = models.enums.commands.GameMenu.placeitem.getMatcher(input)) != null) {
