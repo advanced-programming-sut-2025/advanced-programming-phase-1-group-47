@@ -186,6 +186,7 @@ public class LoginMenuController {
     public Result<String> goMenu(Matcher matcher) {
         if(App.getLoggedInUser() == null)
             return new Result<>(false, "Please login first");
+
         App.setCurrentMenu(Menu.valueOf(matcher.group("menu")));
         return new Result<>(true, "you are now in " +  matcher.group("menu") + "!");
     }
