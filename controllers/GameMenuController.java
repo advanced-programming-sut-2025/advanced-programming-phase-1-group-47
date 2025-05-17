@@ -1833,6 +1833,15 @@ public class GameMenuController {
         return new Result<>(false, "You dont have that BUilding");
     }
     public void nextTurn(){
+
+        for(Player player : App.getCurrentGame().getPlayers()) {
+            if(player.getBuff() != null) {
+                player.getBuff().setHour(player.getBuff().getHour() - 1);
+                if(player.getBuff().getHour() == 0)
+                    player.setBuff(null);
+            }
+        }
+        
         App.currentGame.currentPlayer = App.getCurrentGame().getPlayers().get((App.currentGame.turn + 1)%(App.currentGame.players.size()));
         App.currentGame.turn = (App.currentGame.turn + 1)%(App.currentGame.players.size());
         System.out.println(App.getCurrentGame().currentPlayer.printNotifications());
@@ -1849,7 +1858,10 @@ public class GameMenuController {
         if (App.currentGame.time.getHour() == 22){
             App.currentGame.time.setHour(App.currentGame.time.getHour() + 11);
             setUpNextDay();
+            return;
         }
+
+
 
     }
 
