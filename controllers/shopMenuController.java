@@ -11,23 +11,32 @@ import models.things.Item;
 import models.things.tools.*;
 
 public class shopMenuController {
+
     public Result<String> showAvailableProducts(Shop store) {
         StringBuilder result = new StringBuilder();
-        if (getSeasonalStock(store) != null)
-            for (Item i : getSeasonalStock(store)) {
-                if (i.getAmount() == 0) continue;
-                result.append(i.getName()).append(" - ").append(i.getValue()).append("$\n");
-            }
 
-        if(store.getPermaStock() != null && store.getPermaStock().size() > 0){}
-        result.append("Permanent stock:\n");
-        for (Item i : store.getPermaStock()) {
-            if (i.getAmount() == 0) continue;
-            result.append(i.getName()).append(" - ").append(i.getValue()).append("$\n");
+        List<Item> seasonal = getSeasonalStock(store);
+        if (seasonal != null) {
+            for (Item i : seasonal) {
+                if (i != null && i.getAmount() > 0) {
+                    result.append(i.getName()).append(" - ").append(i.getValue()).append("$\n");
+                }
+            }
+        }
+
+        List<Item> perma = store.getPermaStock();
+        if (perma != null && !perma.isEmpty()) {
+            result.append("Permanent stock:\n");
+            for (Item i : perma) {
+                if (i != null && i.getAmount() > 0) {
+                    result.append(i.getName()).append(" - ").append(i.getValue()).append("$\n");
+                }
+            }
         }
 
         return new Result<>(true, result.toString());
     }
+
     public Result<String> showAllProducts(Shop store) {
         StringBuilder result = new StringBuilder();
 
@@ -43,56 +52,67 @@ public class shopMenuController {
 
         return new Result<>(true, result.toString());
     }
+
     public Result<String> upgradeTool(Shop store, String toolName) {
-        StringBuilder result = new StringBuilder();
-        if (store.getType().equals(ShopType.BlackSmith)) {
-            Player player = App.currentGame.currentPlayer;
-
-            List<Item> items = player.getInvetory().getItems();
-            for (int i = 0; i < items.size(); i++) {
-                Item item = items.get(i);
-                int id = item.getItemID();
-
-                Type current = null;
-                Type next = null;
-
-                if (id == 52 || id == 56 || id == 59 || id == 60 || id == 61) {
-                    current = Type.valueOf(item.getName().split("-")[0].toUpperCase());
-                    next = current.ordinal() < Type.values().length - 1
-                            ? Type.values()[current.ordinal() + 1]
-                            : null;
-
-                    if (next == null) {
-                        return new Result<>(false, "Already at max level.");
-                    }
-
-                    Item upgraded = null;
-                    switch (id) {
-                        case 52 -> upgraded = new Axe(next);
-                        case 56 -> upgraded = new Pickaxe(next);
-                        case 59 -> {
-                            player.trashCanLevel = Math.min(player.trashCanLevel + 1, 4);
-                            return new Result<>(true, "Trash can upgraded to level " + player.trashCanLevel);
-                        }
-                        case 60 -> upgraded = new WateringCan(next);
-                        case 61 -> upgraded = new Hoe(next);
-                    }
-
-                    if (upgraded != null) {
-                        items.set(i, upgraded);  // جایگزین کردن ابزار در لیست
-                        return new Result<>(true, toolName + " got upgraded to " + next.getName());
-                    }
-                }
-            }
-            return new Result<>(false, "Tool not found.");
+        if (!store.getType().equals(ShopType.BlackSmith)) {
+            return new Result<>(false, "You should be at blacksmith for this offer.");
         }
 
-        return new Result<>(false, "You should be at blacksmith for this offer.");
+        Player player = App.currentGame.currentPlayer;
+        List<Item> items = player.getInvetory().getItems();
+        if (items == null) return new Result<>(false, "Inventory is empty.");
+
+        for (int i = 0; i < items.size(); i++) {
+            Item item = items.get(i);
+            if (item == null) continue;
+            int id = item.getItemID();
+
+            Type current = null;
+            Type next = null;
+
+            if (id == 52 || id == 56 || id == 59 || id == 60 || id == 61) {
+                try {
+                    current = Type.valueOf(item.getName().split("-")[0].toUpperCase());
+                } catch (Exception e) {
+                    continue;  // Skip invalid tool name
+                }
+
+                next = current.ordinal() < Type.values().length - 1
+                        ? Type.values()[current.ordinal() + 1]
+                        : null;
+
+                if (next == null) {
+                    return new Result<>(false, "Already at max level.");
+                }
+
+                Item upgraded = switch (id) {
+                    case 52 -> new Axe(next);
+                    case 56 -> new Pickaxe(next);
+                    case 59 -> {
+                        player.trashCanLevel = Math.min(player.trashCanLevel + 1, 4);
+                        yield null;
+                    }
+                    case 60 -> new WateringCan(next);
+                    case 61 -> new Hoe(next);
+                    default -> null;
+                };
+
+                if (upgraded != null) {
+                    items.set(i, upgraded);
+                    return new Result<>(true, toolName + " got upgraded to " + next.getName());
+                } else if (id == 59) {
+                    return new Result<>(true, "Trash can upgraded to level " + player.trashCanLevel);
+                }
+            }
+        }
+
+        return new Result<>(false, "Tool not found.");
     }
 
     private void appendItemList(StringBuilder result, List<Item> items, String label) {
         if (items == null || items.isEmpty()) return;
         result.append(label).append(" stock:\n");
+
         boolean hasItem = false;
         for (Item i : items) {
             if (i != null && i.getAmount() > 0) {
@@ -146,116 +166,105 @@ public class shopMenuController {
         }
         return new Result<>(false, "no such product: " + productName);
     }
+
     public Shop returnStoreToApp(Shop store) {
+        if (store == null) return null;
         ShopType type = store.getType();
-        if (type.equals(ShopType.FishShop)) {
-            return App.currentGame.FishShopStore;
-        } else if (type.equals(ShopType.Marnies)) {
-            return App.currentGame.MarniesRanchStore;
-        } else if (type.equals(ShopType.JojaMart)) {
-            return App.currentGame.JojaMartStore;
-        } else if (type.equals(ShopType.Carpenters)) {
-            return App.currentGame.CarpenterStore;
-        } else if (type.equals(ShopType.BlackSmith)) {
-            return App.currentGame.BlacksmithStore;
-        } else if (type.equals(ShopType.TheSaloon)) {
-            return App.currentGame.TheSaloonStore;
-        }
-        else
-            return null;
+
+        return switch (type) {
+            case FishShop -> App.currentGame.FishShopStore;
+            case Marnies -> App.currentGame.MarniesRanchStore;
+            case JojaMart -> App.currentGame.JojaMartStore;
+            case Carpenters -> App.currentGame.CarpenterStore;
+            case BlackSmith -> App.currentGame.BlacksmithStore;
+            case TheSaloon -> App.currentGame.TheSaloonStore;
+            default -> null;
+        };
     }
 
     public ArrayList<Item> getSeasonalStock(Shop store) {
+        if (store == null || App.currentGame == null || App.currentGame.time == null) return null;
+
         String season = App.currentGame.time.getSeason().toString();
-        switch (season) {
-            case "SPRING":
-                return store.getSpringStock();
-            case "SUMMER":
-                return store.getSummerStock();
-            case "FALL":
-                return store.getFallStock();
-            case "WINTER":
-                return store.getWinterStock();
-            default:
-                return null; // اگر فصل ناشناخته بود، لیست خالی برمی‌گرده
-        }
+        return switch (season) {
+            case "SPRING" -> store.getSpringStock();
+            case "SUMMER" -> store.getSummerStock();
+            case "FALL" -> store.getFallStock();
+            case "WINTER" -> store.getWinterStock();
+            default -> null;
+        };
     }
 
-    public TileType whatIsTileType(){
-        if (App.currentGame == null)
-            return null;
+    public TileType whatIsTileType() {
+        if (App.currentGame == null) return null;
+
         int turn = App.currentGame.turn;
-        Point playerPont = App.currentGame.map.farms[turn].personPoint;
-        if (App.currentGame.map.farms[turn].lastTileType == TileType.DOOR) {
-            Map map = App.currentGame.map;
-            Point farmOffset = App.farmStart[turn];
-            Point relPerson = map.farms[turn].personPoint;
-            Point absPerson = new Point(farmOffset.x + relPerson.x, farmOffset.y + relPerson.y);
+        if (App.currentGame.map == null || App.currentGame.map.farms == null) return null;
 
-            int[] dx = {-1, -1, -1, 0, 0, 1, 1, 1};
-            int[] dy = {-1,  0,  1, -1, 1, -1, 0, 1};
+        Point playerPoint = App.currentGame.map.farms[turn].personPoint;
+        if (App.currentGame.map.farms[turn].lastTileType != TileType.DOOR) return null;
 
-            TileType[] types = new TileType[8];
-            int[] counts = new int[8];
-            int uniqueCount = 0;
+        Map map = App.currentGame.map;
+        Point farmOffset = App.farmStart[turn];
+        Point relPerson = playerPoint;
+        Point absPerson = new Point(farmOffset.x + relPerson.x, farmOffset.y + relPerson.y);
 
-            for (int i = 0; i < 8; i++) {
-                int nx = absPerson.x + dx[i];
-                int ny = absPerson.y + dy[i];
+        int[] dx = {-1, -1, -1, 0, 0, 1, 1, 1};
+        int[] dy = {-1,  0,  1, -1, 1, -1, 0, 1};
 
-                if (nx >= 0 && nx < map.tiles.length && ny >= 0 && ny < map.tiles[0].length) {
-                    Tile neighbor = map.tiles[nx][ny];
-                    if (neighbor != null && neighbor.type != null) {
-                        boolean found = false;
-                        for (int j = 0; j < uniqueCount; j++) {
-                            if (types[j] == neighbor.type) {
-                                counts[j]++;
-                                found = true;
-                                break;
-                            }
-                        }
-                        if (!found) {
-                            types[uniqueCount] = neighbor.type;
-                            counts[uniqueCount] = 1;
-                            uniqueCount++;
+        TileType[] types = new TileType[8];
+        int[] counts = new int[8];
+        int uniqueCount = 0;
+
+        for (int i = 0; i < 8; i++) {
+            int nx = absPerson.x + dx[i];
+            int ny = absPerson.y + dy[i];
+
+            if (nx >= 0 && nx < map.tiles.length && ny >= 0 && ny < map.tiles[0].length) {
+                Tile neighbor = map.tiles[nx][ny];
+                if (neighbor != null && neighbor.type != null) {
+                    boolean found = false;
+                    for (int j = 0; j < uniqueCount; j++) {
+                        if (types[j] == neighbor.type) {
+                            counts[j]++;
+                            found = true;
+                            break;
                         }
                     }
-                }
-            }
-            if (uniqueCount == 0) {
-                System.out.println("No valid surrounding tiles found.");
-            } else {
-                int maxIndex = 0;
-                for (int i = 1; i < uniqueCount; i++) {
-                    if (counts[i] > counts[maxIndex]) {
-                        maxIndex = i;
+                    if (!found) {
+                        types[uniqueCount] = neighbor.type;
+                        counts[uniqueCount] = 1;
+                        uniqueCount++;
                     }
                 }
-                if (counts[maxIndex] == 5 ) {
-                    return types[maxIndex];
-                }
-//                System.out.println("Most common TileType around player: " +  + " (" + counts[maxIndex] + " times)");
             }
         }
-        return null;
+
+        if (uniqueCount == 0) return null;
+
+        int maxIndex = 0;
+        for (int i = 1; i < uniqueCount; i++) {
+            if (counts[i] > counts[maxIndex]) {
+                maxIndex = i;
+            }
+        }
+
+        return (counts[maxIndex] >= 5) ? types[maxIndex] : null;
     }
 
     public ShopType getShop() {
-        if(whatIsTileType().equals(TileType.BLACKSMITH)) {
-            return ShopType.BlackSmith;
-        } else if(whatIsTileType().equals(TileType.JOJAMART)) {
-            return ShopType.JojaMart;
-        } else if(whatIsTileType().equals(TileType.PIERRESSTORE)) {
-            return ShopType.Pierres;
-        } else if(whatIsTileType().equals(TileType.CARPENTER)) {
-            return ShopType.Carpenters;
-        } else if(whatIsTileType().equals(TileType.FISHSHOP)) {
-            return ShopType.FishShop;
-        } else if(whatIsTileType().equals(TileType.MARNIESRANCH)) {
-            return ShopType.Marnies;
-        } else if(whatIsTileType().equals(TileType.STARDROPSALOON)) {
-            return ShopType.TheSaloon;
-        }
-        return null;
+        TileType type = whatIsTileType();
+        if (type == null) return null;
+
+        return switch (type) {
+            case BLACKSMITH -> ShopType.BlackSmith;
+            case JOJAMART -> ShopType.JojaMart;
+            case PIERRESSTORE -> ShopType.Pierres;
+            case CARPENTER -> ShopType.Carpenters;
+            case FISHSHOP -> ShopType.FishShop;
+            case MARNIESRANCH -> ShopType.Marnies;
+            case STARDROPSALOON -> ShopType.TheSaloon;
+            default -> null;
+        };
     }
 }
