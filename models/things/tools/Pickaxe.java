@@ -28,9 +28,9 @@ public class Pickaxe extends Item {
             fraction++;
         }
 
-//        if(App.currentGame.currentPlayer.getBuff().getType().equals(SkillType.MINING)) {
-//            fraction++;
-//        }
+        if(App.currentGame.currentPlayer.getBuff().getType().equals(SkillType.MINING)) {
+            fraction++;
+        }
 
         return (int) (type.getEnergyCost() * App.getCurrentGame().getWeather().getIntensity() - fraction);
     }

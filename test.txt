@@ -6,7 +6,8 @@ register -u reza99 -p Reza@9999 Reza@9999 -n Reza -e reza99@example.com -g male
 pick question -q 3 -a CatName -c CatName
 register -u tina77 -p Tina@0000 Tina@0000 -n Tina -e tina77@example.com -g female
 pick question -q 1 -a 123Street -c 123Street
-menu enter GameMenu
+login -u ali123 -p Ali@1234
+menu enter gameMenu
 game new -u ali123 sara88 reza99
 game map 1
 game map 2
