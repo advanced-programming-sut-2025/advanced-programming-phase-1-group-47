@@ -3,9 +3,11 @@ package models.Shops;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
+import models.Animal;
 import models.Building;
 import models.FarmBuilding;
 import models.Shop;
+import models.enums.AnimalType;
 import models.enums.ShopType;
 import models.things.Item;
 
@@ -25,15 +27,15 @@ public class MarniesRanch {
         ArrayList<Item> returnvalue = new ArrayList<>();
         returnvalue.add(new Item("Hay",30 , 50 , 0 , 1000000));
         returnvalue.add(new Item("Milk Pail",55 ,1000 , 0 , 1));
-        returnvalue.add(new Building(FarmBuilding.BARN));
-        returnvalue.add(new Building(FarmBuilding.BIG_BARN));
-        returnvalue.add(new Building(FarmBuilding.COOP));
-        returnvalue.add(new Building(FarmBuilding.BIG_COOP));
-        returnvalue.add(new Building(FarmBuilding.DELUXE_BARN));
-        returnvalue.add(new Building(FarmBuilding.DELUXE_BARN));
-        returnvalue.add(new Building(FarmBuilding.SHIPPING_BIN));
-        returnvalue.add(new Building(FarmBuilding.SHIPPING_BIN));
-        returnvalue.add(new Building(FarmBuilding.WELL));
+
+        returnvalue.add(new Animal(AnimalType.DINOSAUR));
+        returnvalue.add(new Animal(AnimalType.HEN));
+        returnvalue.add(new Animal(AnimalType.DUCK));
+        returnvalue.add(new Animal(AnimalType.PIG));
+        returnvalue.add(new Animal(AnimalType.GOAT));
+        returnvalue.add(new Animal(AnimalType.COW));
+        returnvalue.add(new Animal(AnimalType.RABBIT));
+        returnvalue.add(new Animal(AnimalType.SHEEP));
         return returnvalue;
     }
 
