@@ -8,6 +8,8 @@ import models.enums.Menu;
 import models.enums.SecurityQuestion;
 import models.enums.commands.LoginMenuCommands;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Scanner;
 import java.security.SecureRandom;
 import java.util.regex.Matcher;
@@ -125,7 +127,30 @@ public class LoginMenuController {
     }
 
     public Result<String> LogInStayLoggedIn(String username, String password) {
-        return null;
+        User loggedInUser = App.getUserByUsername(username);
+        if(loggedInUser == null)
+            return new Result<>(false, "Username is not correct");
+
+        if(!convertToHash(password).equals(loggedInUser.getPassword())){
+            return new Result<>(false, "Password is not correct");
+        }
+
+        String filePath = "output.txt";
+        String content = "1\n" + loggedInUser.getUsername() + "\n" + loggedInUser.getPassword() + "\n" + loggedInUser.getEmail() + "\n"
+                + loggedInUser.getSecurityQuestion() + "\n" + loggedInUser.getSecurityAnswer() + "\n" + loggedInUser.getNickname() + "\n"
+                    + loggedInUser.getGender() + "\n" + loggedInUser.getGoldMax();
+
+        try {
+            FileWriter writer = new FileWriter(filePath);
+            writer.write(content);
+            writer.close();
+            System.out.println("File written to: " + filePath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        App.setLoggedInUser(App.getUserByUsername(username));
+        App.setCurrentMenu(Menu.MainMenu);
+        return new Result<>(true, "User logged in successfully, You are now in MainMenu!");
     }
 
     public Result<String> ForgetPassword(String username, Scanner scanner) {

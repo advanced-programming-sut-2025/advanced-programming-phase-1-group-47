@@ -15,17 +15,19 @@ public class WateringCan extends Item {
     public WateringCan(Type type) {
         super(type.getName() + "-wateringCan", 60, type.getPrice(), 0, 1);
 
-        if(String.valueOf(type).toUpperCase().equals("Regular".toUpperCase())) {
+        if(String.valueOf(type).equalsIgnoreCase("Regular")) {
             capacity = 40;
-        } if(String.valueOf(type).toUpperCase().equals("Copper".toUpperCase())) {
+        } if(String.valueOf(type).equalsIgnoreCase("Copper")) {
             capacity = 55;
-        } if (String.valueOf(type).toUpperCase().equals("Silver".toUpperCase())) {
+        } if (String.valueOf(type).equalsIgnoreCase("Silver")) {
             capacity = 70;
-        } else if(String.valueOf(type).toUpperCase().equals("Golden".toUpperCase())) {
+        } else if(String.valueOf(type).equalsIgnoreCase("Golden")) {
             capacity = 85;
         } else {
             capacity = 100;
         }
+
+        this.type = type;
     }
 
     @Override
