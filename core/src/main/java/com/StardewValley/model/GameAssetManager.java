@@ -35,8 +35,7 @@ public class GameAssetManager {
         }
         return gameAssetManager;
     }
-
-    // دسترسی به Skin
+    
     public Skin getSkin() {
         return skin;
     }

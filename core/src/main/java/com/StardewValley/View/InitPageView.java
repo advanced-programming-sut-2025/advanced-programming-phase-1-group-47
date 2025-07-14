@@ -74,7 +74,6 @@ public class InitPageView implements Screen {
         addClickListenerWithSound(exitButton, () -> controller.exit());
     }
 
-    // متد عمومی برای افزودن کلیک‌لیستنر همراه با پخش صدا
     private void addClickListenerWithSound(TextButton button, Runnable action) {
         button.addListener(new ClickListener() {
             @Override
@@ -85,12 +84,11 @@ public class InitPageView implements Screen {
     }
 
 
-    // متد اضافه‌کردن hover به دکمه
     private void addHoverEffect(final TextButton button) {
         button.addListener(new InputListener() {
             @Override
             public boolean mouseMoved(InputEvent event, float x, float y) {
-                button.setColor(0.7f, 0.85f, 1f, 1f); // آبی روشن
+                button.setColor(0.7f, 0.65f, 0.5f, 1f);
                 return true;
             }
 
