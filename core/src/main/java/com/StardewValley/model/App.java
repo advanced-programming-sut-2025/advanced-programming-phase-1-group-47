@@ -1,11 +1,13 @@
 package com.StardewValley.model;
 
 import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
-import com.badlogic.gdx.scenes.scene2d.ui.Container;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 
 import java.util.ArrayList;
@@ -108,7 +110,23 @@ public class App {
         Random rand = new Random();
         return "Avatars/avatar" + (rand.nextInt(2) + 1) + ".png";
     }
+    static{
 
+    }
+    public static void addHoverEffect(final TextButton button) {
+        button.addListener(new InputListener() {
+            @Override
+            public boolean mouseMoved(InputEvent event, float x, float y) {
+                button.setColor(0.7f, 0.65f, 0.5f, 1f);
+                return true;
+            }
+
+            @Override
+            public void exit(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                button.setColor(1f, 1f, 1f, 1f); // رنگ پیش‌فرض
+            }
+        });
+    }
     public static void addFlashingTitleLabel(Stage stage, Skin skin, String message) {
         Label titleLabel = new Label(message, skin);
         titleLabel.setFontScale(1.5f);
@@ -138,5 +156,19 @@ public class App {
                 Actions.delay(0.7f)
             )
         ));
+    }
+    public static void addClickListenerWithSound(TextButton button, Runnable action) {
+        button.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                action.run();
+            }
+        });
+    }
+    public static void addFieldWithPlaceholder(Table table, TextField field, Label placeholder) {
+        Stack stack = new Stack();
+        stack.add(field);
+        stack.add(placeholder);
+        table.add(stack).left();
     }
 }

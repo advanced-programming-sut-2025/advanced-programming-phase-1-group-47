@@ -16,6 +16,9 @@ import com.StardewValley.Main;
 import com.StardewValley.model.App;
 import com.StardewValley.model.User;
 
+import static com.StardewValley.model.App.addClickListenerWithSound;
+import static com.StardewValley.model.App.addHoverEffect;
+
 public class LoginView implements Screen{
     private Stage stage;
     private Table rootTable;
@@ -95,41 +98,22 @@ public class LoginView implements Screen{
 
         rootTable.defaults().pad(8).width(w).height(h);
 
-// افزودن فیلد نام کاربری
         addFieldWithPlaceholder(rootTable, usernameField, usernamePlaceholder);
         rootTable.row().padTop(10);
-
-// افزودن فیلد رمز عبور
         addFieldWithPlaceholder(rootTable, passwordField, passwordPlaceholder);
         rootTable.row().padTop(15);
-
-// گزینه ماندن در سیستم
         rootTable.add(stayLoggedInCheckBox).colspan(2).left();
         rootTable.row().padTop(8);
-
-// دکمه فراموشی رمز
         rootTable.add(forgetPasswordButton).colspan(2).left().width(w).height(h);
         rootTable.row().padTop(10);
-
-// پیام‌ها (پیام خطا یا وضعیت)
         rootTable.add(messageLabel).colspan(2).center().width(w).height(h);
         rootTable.row().padTop(15);
-
-// ساخت جدول دکمه‌ها (ورود / بازگشت)
         Table buttonTable = new Table();
         buttonTable.defaults().pad(6).height(h * 1.1f);
-
-// دکمه ورود
         buttonTable.add(loginButton).width(w * 0.6f).padRight(10);
-
-// دکمه بازگشت
         buttonTable.add(backButton).width(w * 0.3f);
-
-// افزودن جدول دکمه‌ها به جدول اصلی
         rootTable.add(buttonTable).colspan(2).left();
         rootTable.row().padTop(20);
-
-// افزودن کل جدول به صحنه
         stage.addActor(rootTable);
 
         setupPlaceholderLogic();
@@ -148,7 +132,6 @@ public class LoginView implements Screen{
             usernamePlaceholder.setVisible(usernameField.getText().isEmpty());
             passwordPlaceholder.setVisible(passwordField.getText().isEmpty());
         })));
-
         usernamePlaceholder.addListener(clickToFocus(usernameField));
         passwordPlaceholder.addListener(clickToFocus(passwordField));
     }
@@ -178,34 +161,6 @@ public class LoginView implements Screen{
         addHoverEffect(loginButton);
         addHoverEffect(backButton);
         addHoverEffect(forgetPasswordButton);
-    }
-
-    private void addClickListenerWithSound(TextButton button, Runnable action) {
-        button.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                button.addAction(Actions.sequence(
-                    Actions.scaleTo(0.95f, 0.95f, 0.05f),
-                    Actions.scaleTo(1f, 1f, 0.05f)
-                ));
-                action.run();
-            }
-        });
-    }
-
-    private void addHoverEffect(final TextButton button) {
-        button.addListener(new InputListener() {
-            @Override
-            public boolean mouseMoved(InputEvent event, float x, float y) {
-                button.setColor(0.7f, 0.85f, 1f, 1f);
-                return true;
-            }
-
-            @Override
-            public void exit(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                button.setColor(1f, 1f, 1f, 1f);
-            }
-        });
     }
 
     public void fogetPassWindow(User user) {

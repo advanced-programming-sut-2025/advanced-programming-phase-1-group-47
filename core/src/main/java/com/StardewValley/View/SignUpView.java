@@ -16,6 +16,8 @@
     import com.StardewValley.Main;
     import com.StardewValley.model.App;
 
+    import static com.StardewValley.model.App.*;
+
     public class SignUpView implements Screen {
         private Stage stage;
         private Table rootTable;
@@ -80,7 +82,7 @@
         }
 
         private void loadBackground() {
-            bgTexture = new Texture(Gdx.files.internal("BackGrounds/bg.png"));
+            bgTexture = new Texture(Gdx.files.internal("BackGrounds/VahidInit.jpg"));
             bgTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
             background = new Image(bgTexture);
             background.setFillParent(true);
@@ -132,13 +134,6 @@
 
             setupPlaceholderLogic();
             setupListeners();
-        }
-
-        private void addFieldWithPlaceholder(Table table, TextField field, Label placeholder) {
-            Stack stack = new Stack();
-            stack.add(field);
-            stack.add(placeholder);
-            table.add(stack).left();
         }
 
         private void setupPlaceholderLogic() {
@@ -196,35 +191,6 @@
             addHoverEffect(backButton);
             addHoverEffect(guestButton);
         }
-
-        private void addClickListenerWithSound(TextButton button, Runnable action) {
-            button.addListener(new ClickListener() {
-                @Override
-                public void clicked(InputEvent event, float x, float y) {
-                    button.addAction(Actions.sequence(
-                        Actions.scaleTo(0.95f, 0.95f, 0.05f),
-                        Actions.scaleTo(1f, 1f, 0.05f)
-                    ));
-                    action.run();
-                }
-            });
-        }
-
-        private void addHoverEffect(final TextButton button) {
-            button.addListener(new InputListener() {
-                @Override
-                public boolean mouseMoved(InputEvent event, float x, float y) {
-                    button.setColor(0.7f, 0.85f, 1f, 1f);
-                    return true;
-                }
-
-                @Override
-                public void exit(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                    button.setColor(1f, 1f, 1f, 1f);
-                }
-            });
-        }
-
         public void showMessage(boolean success, String message) {
             messageLabel.clearActions();
             messageLabel.setText(message);
