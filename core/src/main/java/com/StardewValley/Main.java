@@ -1,5 +1,6 @@
 package com.StardewValley;
 
+import com.StardewValley.View.GameScreen;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
@@ -29,8 +30,8 @@ public class Main extends Game {
         if (!grayscaleShader.isCompiled()) {
             System.err.println("Shader compile error: " + grayscaleShader.getLog());
         }
-
-        setScreen(new InitPageView(new InitPageController(), GameAssetManager.getGameAssetManager().getSkin()));
+        setScreen(new GameScreen());
+//        setScreen(new InitPageView(new InitPageController(), GameAssetManager.getGameAssetManager().getSkin()));
     }
 
     @Override

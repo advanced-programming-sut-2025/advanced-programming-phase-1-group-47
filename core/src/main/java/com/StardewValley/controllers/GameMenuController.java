@@ -667,18 +667,19 @@ public class GameMenuController {
             }
         }
 
-        Game newGame = new Game(players);
-        com.StardewValley.model.Map newMap = new Map(farmNames);
-        newGame.map = newMap;
-        App.setCurrentGame(newGame);
-
-        for (Player player : App.getCurrentGame().getPlayers()) {
-            player.setupRelations();
-        }
-
-        App.currentGame.setNpc();
-        String playerNames = players.stream().map(Player::getUsername).collect(Collectors.joining(", "));
-        return new Result<>(true, "New game started with players: " + playerNames);
+//        Game newGame = new Game(players);
+//        com.StardewValley.model.Map newMap = new Map(farmNames);
+//        newGame.map = newMap;
+//        App.setCurrentGame(newGame);
+//
+//        for (Player player : App.getCurrentGame().getPlayers()) {
+//            player.setupRelations();
+//        }
+//
+//        App.currentGame.setNpc();
+//        String playerNames = players.stream().map(Player::getUsername).collect(Collectors.joining(", "));
+//        return new Result<>(true, "New game started with players: " + playerNames);
+            return null;
     }
     public void printMap() {
         for (int i = 0; i < 160; i++) {
