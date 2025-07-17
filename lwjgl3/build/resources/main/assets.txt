@@ -3040,6 +3040,7 @@ harvey.png
 lia.png
 lia_Icon.png
 menu_bg.png
+red_pixel.png
 robin.png
 sebastian.png
 skin/font-export.fnt
@@ -3056,3 +3057,4 @@ skinMenu/pixthulhu-ui.atlas
 skinMenu/pixthulhu-ui.json
 skinMenu/pixthulhu-ui.png
 users.json
+white.png

@@ -1,9 +1,6 @@
 package com.StardewValley.View;
 
-import com.StardewValley.model.App;
-import com.StardewValley.model.Game;
-import com.StardewValley.model.Map;
-import com.StardewValley.model.Tile;
+import com.StardewValley.model.*;
 import com.StardewValley.model.enums.TileType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -11,14 +8,14 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.badlogic.gdx.scenes.scene2d.*;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 import java.util.HashMap;
 import java.util.Map.Entry;
@@ -39,31 +36,31 @@ public class GameScreen implements Screen {
     private int moveDirection = 2; // 0=up, 1=right, 2=down, 3=left
 
     private HashMap<TileType, Texture> tileTextures;
-    private Texture playerTexture;
-    private Animation<TextureRegion> walkAnimation;
-
-    // ساختمان‌ها و NPCها (جدا از tile)
     private Texture barnTexture;
     private Texture npcAbigailTexture;
     private Texture shopTexture;
 
-    // مکان‌های ویژه
     private Vector2 barnPos = new Vector2(30 * TILE_SIZE, 30 * TILE_SIZE);
     private Vector2 npcPos = new Vector2(35 * TILE_SIZE, 32 * TILE_SIZE);
     private Vector2 shopPos = new Vector2(40 * TILE_SIZE, 28 * TILE_SIZE);
+
+    // UI
+    private Stage mainStage;  // Stage بازی و نقشه اصلی
+    private Stage dialogStage; // Stage مخصوص دیالوگ (نقشه)
+    private Skin skin;
+    private Dialog mapDialog;
+    private boolean isMapDialogOpen = false;
 
     public GameScreen() {
         camera = new OrthographicCamera();
         viewport = new FitViewport(800, 400, camera);
         batch = new SpriteBatch();
-
+        skin = GameAssetManager.getGameAssetManager().getSkin();
         playerPosition = new Vector2(100, 100);
 
         loadTextures();
         setupGame();
 
-        TextureRegion[][] tmp = TextureRegion.split(playerTexture, playerTexture.getWidth() / 4, playerTexture.getHeight());
-        walkAnimation = new Animation<>(0.1f, tmp[0]);
         stateTime = 0f;
     }
 
@@ -80,7 +77,6 @@ public class GameScreen implements Screen {
             playerAnimations[dir] = new Animation<>(0.15f, walkFrames, Animation.PlayMode.LOOP);
         }
 
-        // انواع tileها
         tileTextures.put(TileType.GRASS, new Texture("Crafting/Grass_Starter.png"));
         tileTextures.put(TileType.EMPTY, new Texture("grass.png"));
         tileTextures.put(TileType.TILLED, new Texture("bar.png"));
@@ -92,10 +88,6 @@ public class GameScreen implements Screen {
         tileTextures.put(TileType.HEN, new Texture("Animals/Dinosaur.png"));
         tileTextures.put(TileType.COW, new Texture("Animals/Dinosaur.png"));
 
-        // شخصیت بازیکن
-        playerTexture = new Texture("abigel.png");
-
-        // اشیاء و شخصیت‌های خاص
         barnTexture = new Texture("Barn_Interior.png");
         npcAbigailTexture = new Texture("abigel.png");
         shopTexture = new Texture("Blacksmith_Interior.png");
@@ -121,6 +113,13 @@ public class GameScreen implements Screen {
     }
 
     private void handleInput(float delta) {
+        if (isMapDialogOpen) {
+            if (Gdx.input.isKeyJustPressed(Input.Keys.N)) {
+                closeMapDialog();
+            }
+            return;
+        }
+
         boolean moving = false;
 
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) {
@@ -144,10 +143,13 @@ public class GameScreen implements Screen {
             moving = true;
         }
 
-        if (!moving) {
-            stateTime = 0; // Stop animation when idle
+        if (Gdx.input.isKeyJustPressed(Input.Keys.N)) {
+            showMapDialog();
         }
 
+        if (!moving) {
+            stateTime = 0;
+        }
     }
 
     private Texture getTextureForTileType(TileType type) {
@@ -166,6 +168,7 @@ public class GameScreen implements Screen {
         Gdx.gl.glClearColor(0.2f, 0.3f, 0.5f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+        // اول بازی و نقشه اصلی را رسم کن
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
 
@@ -174,7 +177,6 @@ public class GameScreen implements Screen {
         int endX = (int)(camera.position.x + viewport.getWorldWidth() / 2) / TILE_SIZE + 1;
         int endY = (int)(camera.position.y + viewport.getWorldHeight() / 2) / TILE_SIZE + 1;
 
-        // 1. کشیدن کل مپ به صورت grass (EMPTY)
         Texture defaultTexture = tileTextures.get(TileType.EMPTY);
         for (int y = startY; y <= endY; y++) {
             for (int x = startX; x <= endX; x++) {
@@ -184,7 +186,6 @@ public class GameScreen implements Screen {
             }
         }
 
-        // 2. رسم tileهای خاص روی grass
         for (int y = startY; y <= endY; y++) {
             for (int x = startX; x <= endX; x++) {
                 if (x >= 0 && y >= 0 && x < tileMap[0].length && y < tileMap.length) {
@@ -197,7 +198,6 @@ public class GameScreen implements Screen {
             }
         }
 
-        // 3. ساختمان‌ها و NPCها
         batch.draw(barnTexture, barnPos.x, barnPos.y, 120, 100);
         batch.draw(npcAbigailTexture, npcPos.x, npcPos.y, 32, 48);
         batch.draw(shopTexture, shopPos.x, shopPos.y, 100, 80);
@@ -207,13 +207,106 @@ public class GameScreen implements Screen {
         batch.draw(currentFrame, playerPosition.x, playerPosition.y, TILE_SIZE, TILE_SIZE * 2);
 
         batch.end();
+
+        // حالا UI اصلی را اجرا کن
+        mainStage.act(delta);
+        mainStage.draw();
+
+        // اگر دیالوگ باز است، آن را روی صفحه رسم کن
+        if (isMapDialogOpen) {
+            dialogStage.act(delta);
+            dialogStage.draw();
+        }
     }
 
-    @Override public void resize(int width, int height) { viewport.update(width, height); }
-    @Override public void show() {}
-    @Override public void hide() {}
-    @Override public void pause() {}
-    @Override public void resume() {}
+    private void showMapDialog() {
+        if (isMapDialogOpen) return;
+
+        isMapDialogOpen = true;
+
+        if (dialogStage == null) {
+            dialogStage = new Stage(viewport, batch);
+        }
+
+        dialogStage.clear();
+
+        mapDialog = new Dialog("Farm Map", skin) {
+            @Override
+            protected void result(Object object) {
+                closeMapDialog();
+            }
+        };
+
+        mapDialog.setModal(true);
+        mapDialog.setMovable(true);
+
+        Table mapTable = new Table();
+        mapTable.top().left();
+
+        for (int y = tileMap.length - 1; y >= 0; y--) {
+            for (int x = 0; x < tileMap[0].length; x++) {
+                Tile tile = tileMap[y][x];
+                Texture tex = getTextureForTileType(tile.type);
+                Image img = new Image(new TextureRegionDrawable(new TextureRegion(tex)));
+                mapTable.add(img).size(8, 8);
+            }
+            mapTable.row();
+        }
+
+        ScrollPane scrollPane = new ScrollPane(mapTable, skin);
+        scrollPane.setFadeScrollBars(false);
+        scrollPane.setForceScroll(true, true);
+
+        mapDialog.getContentTable().add(scrollPane).width(400).height(300).pad(10);
+        mapDialog.button("Close");
+
+        mapDialog.setSize(420, 350);
+        mapDialog.setPosition(
+                (viewport.getWorldWidth() - mapDialog.getWidth()) / 2,
+                (viewport.getWorldHeight() - mapDialog.getHeight()) / 2
+        );
+
+        dialogStage.addActor(mapDialog);
+
+        Gdx.input.setInputProcessor(dialogStage);
+    }
+
+    private void closeMapDialog() {
+        isMapDialogOpen = false;
+        if (mapDialog != null) {
+            mapDialog.hide();
+            mapDialog.remove();
+            mapDialog = null;
+        }
+        if (dialogStage != null) {
+            dialogStage.clear();
+        }
+        Gdx.input.setInputProcessor(mainStage);
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        viewport.update(width, height);
+        if (mainStage != null)
+            mainStage.getViewport().update(width, height, true);
+        if (dialogStage != null)
+            dialogStage.getViewport().update(width, height, true);
+    }
+
+    @Override
+    public void show() {
+        mainStage = new Stage(viewport, batch);
+        Gdx.input.setInputProcessor(mainStage);
+    }
+
+    @Override
+    public void hide() {}
+
+    @Override
+    public void pause() {}
+
+    @Override
+    public void resume() {}
 
     @Override
     public void dispose() {
@@ -222,9 +315,11 @@ public class GameScreen implements Screen {
             entry.getValue().dispose();
         }
         playerAtlas.dispose();
-
         barnTexture.dispose();
         npcAbigailTexture.dispose();
         shopTexture.dispose();
+        if (mainStage != null) mainStage.dispose();
+        if (dialogStage != null) dialogStage.dispose();
+        skin.dispose();
     }
 }
