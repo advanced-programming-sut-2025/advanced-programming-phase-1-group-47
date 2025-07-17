@@ -20,6 +20,7 @@ public class NPC {
     private ArrayList<Item> possibleGifts;
     private int TimeUntilQuest3;
     private Point coordinates;
+    private String iconPath;
     public String getName() {
         return name;
     }
