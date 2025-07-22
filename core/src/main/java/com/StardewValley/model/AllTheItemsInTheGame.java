@@ -265,6 +265,35 @@ public class AllTheItemsInTheGame {
         tempItems.put(601, new Item("DRIED", 601,1,1,1));
 
 
+        //crafting machine...
+        tempItems.put(5000, new Item("CHERRY BOMB", 5000,50,1,1));
+        tempItems.put(5001, new Item("BOMB", 5001,50,1,1));
+        tempItems.put(5002, new Item("MEGA BOMB", 5002,50,1,1));
+        tempItems.put(5003, new Item("Sprinkler",5003,0,0,1));
+        tempItems.put(5004, new Item("Quality Sprinkler",5004,0,0,1));
+        tempItems.put(5005, new Item("Charcoal Klin",5005,0,0,1));
+        tempItems.put(5006, new Item("Furnace",5006,0,0,1));
+        tempItems.put(5007, new Item("Scarecrow",5007,0,0,1));
+        tempItems.put(5008, new Item("Deluxe Scarecrow",5008,0,0,1));
+        tempItems.put(5009, new Item("Cheese Press",5009,0,0,1));
+        tempItems.put(5010, new Item("Keg",5010,0,0,1));
+        tempItems.put(5011, new Item("Loom",5011,0,0,1));
+        tempItems.put(5012, new Item("Mayonnaise Machine",5012,0,0,1));
+        tempItems.put(5013, new Item("Oil Maker",5013,0,0,1));
+        tempItems.put(5014, new Item("Preserves Jar",5014,0,0,1));
+        tempItems.put(5015, new Item("Dehydrator",5015,0,0,1));
+        tempItems.put(5016, new Item("Fish smoker",5016,0,0,1));
+        tempItems.put(5017, new Item("Mystic Tree Seed",5017,100,0,1));
+
+        //ingredients
+        tempItems.put(6000, new Item("Copper Bar", 6000,0,1,1));
+        tempItems.put(6001, new Item("Fiber", 6001,0,1,1));
+        tempItems.put(6002, new Item("Acorn", 6002,0,1,1));
+        tempItems.put(6003, new Item("Maple Seed", 6003,0,1,1));
+        tempItems.put(6004, new Item("Pine Cone", 6004,0,1,1));
+        tempItems.put(6005, new Item("Sahogany Seed", 6005,0,1,1));
+
+
 
         allItems = Collections.unmodifiableMap(tempItems);
         }
