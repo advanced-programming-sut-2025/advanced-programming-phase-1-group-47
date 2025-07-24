@@ -7,6 +7,8 @@ import com.StardewValley.model.enums.SkillType;
 import com.StardewValley.model.enums.TileType;
 import com.StardewValley.model.things.Item;
 import com.StardewValley.model.things.tools.Type;
+import com.badlogic.gdx.graphics.Texture;
+
 import java.util.Random;
 
 public class Pickaxe extends Item {
@@ -16,6 +18,7 @@ public class Pickaxe extends Item {
     public Pickaxe(Type type) {
         super(type.getName() + "-pickaxe", 56, type.getPrice(), 0, 1);
         this.type = type;
+        image = new Texture("Tools/Pickaxe/"+ type.getName() +"_Pickaxe.png");
     }
     @Override
     public Type getType(){

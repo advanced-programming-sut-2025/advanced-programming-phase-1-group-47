@@ -6,19 +6,30 @@ import com.StardewValley.model.enums.SkillType;
 import com.StardewValley.model.enums.TileType;
 import com.StardewValley.model.things.Item;
 import com.StardewValley.model.things.tools.Type;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 
 import java.util.Random;
 
 public class Axe extends Item {
     private Type type;
-
     public Axe(Type type) {
         super(type.getName() + "-axe", 52, type.getPrice(), 0, 1);
         this.type = type;
+        image = new Texture("Tools/Axe/"+ type.getName() +"_Axe.png");
     }
     @Override
     public Type getType(){
         return this.type;
+    }
+
+    @Override
+    public Texture getImage() {
+        return image;
+    }
+
+    public void setImage() {
+        image = new Texture("Tools/Axe/"+ type.getName() +"_Axe.png");
     }
 
     public int energyCost() {
@@ -70,11 +81,11 @@ public class Axe extends Item {
 
             App.currentGame.currentPlayer.getInvetory().addItem(AllTheItemsInTheGame.getItemById(36));
         }
-//        else if (tileType.equals(TileType.MACHINE)){
-//            App.currentGame.currentPlayer.getInvetory().addItem(AllTheItemsInTheGame.getItemById(30));
-//            App.currentGame.map.tiles[point.getX()][point.getY()].type = TileType.EMPTY;
-//            builder.append("You got a hay at ").append(point.getX()).append(", ").append(point.getY());
-//        }
+        else if (tileType.equals(TileType.MACHINE)){
+            App.currentGame.currentPlayer.getInvetory().addItem(AllTheItemsInTheGame.getItemById(30));
+            App.currentGame.map.tiles[point.getX()][point.getY()].type = TileType.EMPTY;
+            builder.append("You got a hay at ").append(point.getX()).append(", ").append(point.getY());
+        }
         else {
             builder.append("The point you selected is a ")
                     .append(tileType.toString().toLowerCase());

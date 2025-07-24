@@ -2,6 +2,7 @@ package com.StardewValley.model.NPCs;
 
 import java.util.ArrayList;
 
+import com.StardewValley.model.GameAssetManager;
 import com.StardewValley.model.NPC;
 import com.StardewValley.model.Point;
 import com.StardewValley.model.things.Item;
@@ -22,7 +23,7 @@ public class Robin {
         Quest quest3 = questBuilder3();
 
         NPC abigail = new NPC("Robin" , "Carpenter" , quest1 , quest2 , quest3 , favorites , responses , possibleGifts , 5,
-                new Point(106,58));
+                new Point(106,58), GameAssetManager.ROBIN);
         return  abigail;
     }
     private ArrayList<Item> favoriteBuilder() {

@@ -6,13 +6,15 @@ import com.StardewValley.model.Point;
 import com.StardewValley.model.enums.SkillType;
 import com.StardewValley.model.enums.TileType;
 import com.StardewValley.model.things.Item;
+import com.badlogic.gdx.graphics.Texture;
 
 public class Hoe extends Item {
     private Type type;
 
     public Hoe(Type type) {
         super(type.getName() + "-hoe", 61, type.getPrice(), 0, 1);
-        this.type = type;
+        this.type = Type.COPPER;
+        image = new Texture("Tools/Hoe/" + type.getName() + ".png");
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.StardewValley.View;
 import com.StardewValley.model.*;
 import com.StardewValley.model.Game;
 import com.StardewValley.model.enums.TileType;
+import com.StardewValley.model.things.Item;
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.*;
@@ -34,15 +35,11 @@ public class GameScreen implements Screen {
     private int moveDirection = 2;
 
     private HashMap<TileType, Texture> tileTextures;
-    private Texture barnTexture, npcAbigailTexture, shopTexture,npcTexture;
-    private Vector2 barnPos = new Vector2(30 * TILE_SIZE, 30 * TILE_SIZE);
-    private Vector2 npcPos = new Vector2(35 * TILE_SIZE, 32 * TILE_SIZE);
-    private Vector2 shopPos = new Vector2(40 * TILE_SIZE, 28 * TILE_SIZE);
-
     // UI
     private Stage mainStage, dialogStage;
     private Skin skin;
     private Dialog mapDialog;
+    Texture mapTexture;
     private boolean isMapDialogOpen = false;
 
     // Toolbar
@@ -58,11 +55,18 @@ public class GameScreen implements Screen {
         batch = new SpriteBatch();
         skin = GameAssetManager.getGameAssetManager().getSkin();
         playerPosition = new Vector2(100, 100);
-
-        loadTextures();
         setupGame();
-
+        App.getCurrentGame().loadShops();
+        App.getCurrentGame().setNpc();
+        loadTextures();
         stateTime = 0f;
+    }
+    private boolean isNpcTile(TileType type) {
+        return type == TileType.ROBIN ||
+                type == TileType.ABIGEL ||
+                type == TileType.LEAH ||
+                type == TileType.SEBASTIAN ||
+                type == TileType.HARVEY;
     }
 
     private void loadTextures() {
@@ -78,28 +82,24 @@ public class GameScreen implements Screen {
             playerAnimations[dir] = new Animation<>(0.15f, walkFrames, Animation.PlayMode.LOOP);
         }
 
-        tileTextures.put(TileType.GRASS, new Texture("Crafting/Grass_Starter.png"));
-        tileTextures.put(TileType.EMPTY, new Texture("grass.png"));
-        tileTextures.put(TileType.TILLED, new Texture("bar.png"));
-        tileTextures.put(TileType.STONE, new Texture("Rock/Stone_Index32.png"));
-        tileTextures.put(TileType.PLANT, new Texture("Crops/Eggplant.png"));
-        tileTextures.put(TileType.LAKE, new Texture("Flooring/water.png"));
-        tileTextures.put(TileType.WALL, new Texture("Flooring/Flooring_52.png"));
-        tileTextures.put(TileType.TREE, new Texture("Resource/Hardwood.png"));
-        tileTextures.put(TileType.ABIGEL, new Texture("abigel.png"));
-        tileTextures.put(TileType.SEBASTIAN, new Texture("sebastian.png"));
-
-        barnTexture = new Texture("Barn_Interior.png");
-        npcAbigailTexture = new Texture("abigel.png");
-        shopTexture = new Texture("Blacksmith_Interior.png");
-        npcTexture = new Texture("Neighbor_Cabin_Stage_3.png");
-        emptySlotTexture = new Texture("Tools/Scythe.png");
-
-        toolTextures.add(new Texture("Tools/Scythe.png"));
-        toolTextures.add(new Texture("Tools/Axe/Axe.png"));
-        toolTextures.add(new Texture("Tools/Pickaxe/Pickaxe.png"));
-
-        while (toolTextures.size() < TOOLBAR_SIZE) {
+        tileTextures.put(TileType.GRASS, GameAssetManager.GRASS);
+        tileTextures.put(TileType.EMPTY, GameAssetManager.EMPTY);
+        tileTextures.put(TileType.TILLED, GameAssetManager.TILLED);
+        tileTextures.put(TileType.STONE, GameAssetManager.STONE);
+        tileTextures.put(TileType.PLANT, GameAssetManager.PLANT);
+        tileTextures.put(TileType.LAKE, GameAssetManager.WATER);
+        tileTextures.put(TileType.WALL, GameAssetManager.WALL);
+        tileTextures.put(TileType.TREE, GameAssetManager.TREE);
+        tileTextures.put(TileType.ROBIN, GameAssetManager.ROBIN);
+        tileTextures.put(TileType.ABIGEL, GameAssetManager.ABIGEL);
+        tileTextures.put(TileType.LEAH, GameAssetManager.LEAH);
+        tileTextures.put(TileType.SEBASTIAN, GameAssetManager.SEBASTIAN);
+        tileTextures.put(TileType.HARVEY, GameAssetManager.HARVEY);
+        emptySlotTexture = new Texture("bar.png");
+        for(Item x : App.getCurrentGame().getCurrentPlayer().getInvetory().getItems()){
+            if (x.getImage()!=null)
+                toolTextures.add(x.getImage());
+        }while (toolTextures.size() < TOOLBAR_SIZE) {
             toolTextures.add(null);
         }
     }
@@ -154,18 +154,9 @@ public class GameScreen implements Screen {
         if (Gdx.input.isKeyJustPressed(Input.Keys.M)) showMapDialog();
 
         for (int i = 0; i < TOOLBAR_SIZE; i++) {
-            try {
-                if (toolTextures.get(i) == null || toolTextures.get(i).equals(emptySlotTexture)) {
-                    continue;  // رد شدن از ابزارهای خالی، ولی حلقه ادامه پیدا کنه
-                }
-            } catch (NullPointerException e) {
-                Gdx.app.log("x", e.getMessage());
-                continue;  // اگر خطا هست، رد بشه ادامه بده
-            } catch (Exception b) {
-                Gdx.app.log("Y", b.getMessage());
-                continue;
+            if (toolTextures.get(i) == null || toolTextures.get(i).equals(emptySlotTexture)) {
+                continue;  // رد شدن از ابزارهای خالی، ولی حلقه ادامه پیدا کنه
             }
-
             // کلیدهای انتخاب ابزار از 1 تا 9
             if (i < 9 && Gdx.input.isKeyJustPressed(Input.Keys.NUM_1 + i)) {
                 selectedToolIndex = i;
@@ -202,7 +193,6 @@ public class GameScreen implements Screen {
             } while ((toolTextures.get(selectedToolIndex) == null ||
                     toolTextures.get(selectedToolIndex).equals(emptySlotTexture)) &&
                     selectedToolIndex != originalIndex);
-
             updateToolbarHighlight();
         }
 
@@ -246,7 +236,6 @@ public class GameScreen implements Screen {
 
         Texture defaultTexture = tileTextures.get(TileType.EMPTY);
 
-        // 1. رسم کاشی‌های پایه (زمین)
         for (int y = startY; y <= endY; y++) {
             for (int x = startX; x <= endX; x++) {
                 if (x >= 0 && y >= 0 && x < tileMap[0].length && y < tileMap.length) {
@@ -254,8 +243,6 @@ public class GameScreen implements Screen {
                 }
             }
         }
-
-        // 2. رسم کاشی‌های خاص‌تر (مثل سنگ، چمن، درخت و ...)
         for (int y = startY; y <= endY; y++) {
             for (int x = startX; x <= endX; x++) {
                 if (x >= 0 && y >= 0 && x < tileMap[0].length && y < tileMap.length) {
@@ -263,18 +250,25 @@ public class GameScreen implements Screen {
                     if (tile.type != TileType.EMPTY) {
                         Texture tileTex = getTextureForTileType(tile.type);
                         batch.draw(tileTex, x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+                        if (isNpcTile(tile.type)) {
+                            float drawX = (x-2) * TILE_SIZE ;
+                            float drawY = (y + 1) * TILE_SIZE; // بالای کاشی فعلی
+                            batch.draw(GameAssetManager.NPCHOUSE, drawX, drawY, TILE_SIZE*5, TILE_SIZE*5);
+                        }
+
+//                        if(tile.type == TileType.GREENHOUSE) {
+//                            Gdx.app.log("GameScreen", "Greenhouse");
+//                            batch.draw(GameAssetManager.BROKEN_GREENHOUSE, x, y, TILE_SIZE*5, TILE_SIZE*5);
+//                        }
                     }
                 }
             }
         }
 
-        // 3. رسم ساختمان‌ها و NPC ها — اینجا قرار می‌گیرند تا بالاتر از کاشی‌ها باشند
-        batch.draw(barnTexture, barnPos.x, barnPos.y, 120, 100);
-        batch.draw(shopTexture, shopPos.x, shopPos.y, 100, 80);
-        batch.draw(npcAbigailTexture, npcPos.x, npcPos.y, 32, 48);
-        batch.draw(npcTexture, npcPos.x + 50, npcPos.y + 10, 32, 48); // مثال یک NPC دیگر کنار اولی
-
-        // 4. رسم بازیکن
+        for (Shop shop : App.getCurrentGame().getShops()) {
+            shop.update(playerPosition);
+            shop.render(batch);
+        }
         TextureRegion currentFrame = playerAnimations[moveDirection].getKeyFrame(stateTime, true);
         batch.draw(currentFrame, playerPosition.x, playerPosition.y, TILE_SIZE, TILE_SIZE * 2);
 
@@ -333,32 +327,134 @@ public class GameScreen implements Screen {
     private void showMapDialog() {
         if (isMapDialogOpen) return;
         isMapDialogOpen = true;
+
         if (dialogStage == null) dialogStage = new Stage(viewport, batch);
         dialogStage.clear();
 
-        mapDialog = new Dialog("", skin) {
+        Dialog mapDialog = new Dialog("Map", skin) {
             @Override
             protected void result(Object object) {
                 closeMapDialog();
             }
         };
 
-        Table mapTable = new Table();
-        for (int y = tileMap.length - 1; y >= 0; y--) {
-            for (int x = 0; x < tileMap[0].length; x++) {
-                Texture tex = getTextureForTileType(tileMap[y][x].type);
-                mapTable.add(new Image(new TextureRegionDrawable(new TextureRegion(tex)))).size(8, 8);
+        final int miniTileSize = 8;
+        final int mapWidth = tileMap[0].length;
+        final int mapHeight = tileMap.length;
+        final int pixmapWidth = mapWidth * miniTileSize;
+        final int pixmapHeight = mapHeight * miniTileSize;
+
+        Pixmap pixmap = new Pixmap(pixmapWidth, pixmapHeight, Pixmap.Format.RGBA8888);
+
+        // -------- 1. ترسیم پس‌زمینه‌ی کاشی‌ها --------
+        for (int y = 0; y < mapHeight; y++) {
+            for (int x = 0; x < mapWidth; x++) {
+                TileType type = tileMap[y][x].type;
+                Texture tex = getTextureForTileType(type);
+                if (!tex.getTextureData().isPrepared()) tex.getTextureData().prepare();
+                Pixmap tilePixmap = tex.getTextureData().consumePixmap();
+
+                pixmap.drawPixmap(
+                        tilePixmap,
+                        0, 0, tilePixmap.getWidth(), tilePixmap.getHeight(),
+                        x * miniTileSize,
+                        (mapHeight - y - 1) * miniTileSize,
+                        miniTileSize,
+                        miniTileSize
+                );
+                tilePixmap.dispose();
             }
-            mapTable.row();
         }
 
-        ScrollPane scrollPane = new ScrollPane(mapTable, skin);
-        mapDialog.getContentTable().add(scrollPane).width(400).height(300).pad(10);
+        // -------- 2. رسم خانه‌های NPC (روی tileهای خاص) --------
+        Texture npcHouseTexture = GameAssetManager.NPCHOUSE;
+        if (!npcHouseTexture.getTextureData().isPrepared()) npcHouseTexture.getTextureData().prepare();
+        Pixmap npcHousePixmap = npcHouseTexture.getTextureData().consumePixmap();
+
+        for (int y = 0; y < mapHeight; y++) {
+            for (int x = 0; x < mapWidth; x++) {
+                TileType type = tileMap[y][x].type;
+                if (isNpcTile(type)) {
+                    int drawX = x * miniTileSize;
+                    int drawY = (mapHeight - y - 1) * miniTileSize;
+
+                    pixmap.drawPixmap(
+                            npcHousePixmap,
+                            0, 0, npcHousePixmap.getWidth(), npcHousePixmap.getHeight(),
+                            drawX, drawY,
+                            miniTileSize, miniTileSize
+                    );
+                }
+            }
+        }
+        npcHousePixmap.dispose();
+
+        Texture shopIconTexture = new Texture("Plank_Cabin_Stage_3.png"); // آیکون فروشگاه (مثلاً 16x16)
+        if (!shopIconTexture.getTextureData().isPrepared()) shopIconTexture.getTextureData().prepare();
+        Pixmap shopPixmap = shopIconTexture.getTextureData().consumePixmap();
+
+        for (Shop shop : App.getCurrentGame().getShops()) {
+            Vector2 loc = shop.getType().getPosition(); // پیکسل
+            int shopX = (int)(loc.x / TILE_SIZE);
+            int shopY = (int)(loc.y / TILE_SIZE);
+
+            int drawX = shopX * miniTileSize;
+            int drawY = (mapHeight - shopY - 1) * miniTileSize;
+
+            pixmap.drawPixmap(
+                    shopPixmap,
+                    0, 0, shopPixmap.getWidth(), shopPixmap.getHeight(),
+                    drawX, drawY,
+                    miniTileSize, miniTileSize
+            );
+        }
+        shopPixmap.dispose();
+        shopIconTexture.dispose();
+
+        // -------- 4. رسم بازیکن --------
+        int px = (int)(playerPosition.x / TILE_SIZE);
+        int py = (int)(playerPosition.y / TILE_SIZE);
+        Texture playerTex = GameAssetManager.ABIGEL;
+        if (!playerTex.getTextureData().isPrepared()) playerTex.getTextureData().prepare();
+        Pixmap playerPixmap = playerTex.getTextureData().consumePixmap();
+
+        pixmap.drawPixmap(
+                playerPixmap,
+                0, 0, playerPixmap.getWidth(), playerPixmap.getHeight(),
+                px * miniTileSize,
+                (mapHeight - py - 1) * miniTileSize,
+                miniTileSize,
+                miniTileSize
+        );
+        playerPixmap.dispose();
+
+        // -------- 5. نهایی‌سازی و نمایش --------
+        mapTexture = new Texture(pixmap);
+        pixmap.dispose();
+
+        Image mapImage = new Image(new TextureRegionDrawable(new TextureRegion(mapTexture)));
+        ScrollPane scrollPane = new ScrollPane(mapImage, skin);
+        scrollPane.setScrollingDisabled(false, false);
+        scrollPane.setFadeScrollBars(false);
+        scrollPane.setScrollbarsOnTop(true);
+
+        mapDialog.getContentTable().add(scrollPane)
+                .width(600)
+                .height(500)
+                .pad(10);
+
         mapDialog.button("Close");
         dialogStage.addActor(mapDialog);
         mapDialog.show(dialogStage);
-
         Gdx.input.setInputProcessor(dialogStage);
+    }
+
+    private Pixmap TextureToPixmap(Texture texture) {
+        // WARNING: only works with textures created from Pixmap or file (not FrameBuffers)
+        if (!texture.getTextureData().isPrepared()) {
+            texture.getTextureData().prepare();
+        }
+        return texture.getTextureData().consumePixmap();
     }
 
     private void closeMapDialog() {
@@ -368,6 +464,7 @@ public class GameScreen implements Screen {
             mapDialog.remove();
             mapDialog = null;
         }
+        mapTexture.dispose();
         dialogStage.clear();
         Gdx.input.setInputProcessor(mainStage);
     }
@@ -382,8 +479,6 @@ public class GameScreen implements Screen {
     @Override
     public void show() {
         mainStage = new Stage(new ScreenViewport(), batch);
-
-        // این ورودی هم برای دریافت scroll
         Gdx.input.setInputProcessor(new InputAdapter() {
             @Override
             public boolean scrolled(float amountX, float amountY) {
@@ -429,9 +524,6 @@ public class GameScreen implements Screen {
         for (Entry<TileType, Texture> entry : tileTextures.entrySet()) entry.getValue().dispose();
         for (Texture tex : toolTextures) if (tex != null) tex.dispose();
         playerAtlas.dispose();
-        barnTexture.dispose();
-        npcAbigailTexture.dispose();
-        shopTexture.dispose();
         emptySlotTexture.dispose();
         if (mainStage != null) mainStage.dispose();
         if (dialogStage != null) dialogStage.dispose();

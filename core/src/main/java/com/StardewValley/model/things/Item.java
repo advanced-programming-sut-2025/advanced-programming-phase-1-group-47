@@ -7,6 +7,7 @@ import com.StardewValley.model.enums.ProductQuality;
 import com.StardewValley.model.enums.Season;
 import com.StardewValley.model.things.products.Product;
 import com.StardewValley.model.things.tools.Type;
+import com.badlogic.gdx.graphics.Texture;
 
 public class Item {
     private String name;
@@ -14,6 +15,7 @@ public class Item {
     private int ParentItemID; //for wine/pickled vegtables/fruit jam /fish /plant /i hate NPCs
     private int value;
     private int amount = 0;
+    protected Texture image;
     public String useTool(Point point) {
         return "";
     }
@@ -24,6 +26,23 @@ public class Item {
         this.ParentItemID = ParentItemID;
         this.amount = amount;
     }
+    public Item(String name ,int ItemID , int value , int ParentItemID , int amount, Texture image) {
+        this.name = name;
+        this.ItemID = ItemID;
+        this.value = value;
+        this.ParentItemID = ParentItemID;
+        this.amount = amount;
+        this.image = image;
+    }
+
+    public void setImage(Texture image) {
+        this.image = image;
+    }
+
+    public Texture getImage() {
+        return image;
+    }
+
     public int getCapacity() {
         return 25;
     }

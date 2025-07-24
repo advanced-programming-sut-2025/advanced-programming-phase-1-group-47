@@ -196,6 +196,7 @@ public class AllTheItemsInTheGame {
         tempItems.put(44, new Item("Gold Bar",44,2,0,1));
         tempItems.put(46, new Item("HardWood",46,2,0,1));
         tempItems.put(48, new Item("Rice",48,2,0,1));
+
         tempItems.put(52, new Axe(Type.REGULAR));
         tempItems.put(53, new Item("BackPack type" , 53 , 2 ,0 , 1));
         tempItems.put(54, new FishingPole(RodType.TRAININGROD));
@@ -292,8 +293,6 @@ public class AllTheItemsInTheGame {
         tempItems.put(6003, new Item("Maple Seed", 6003,0,1,1));
         tempItems.put(6004, new Item("Pine Cone", 6004,0,1,1));
         tempItems.put(6005, new Item("Sahogany Seed", 6005,0,1,1));
-
-
 
         allItems = Collections.unmodifiableMap(tempItems);
         }

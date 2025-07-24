@@ -4,15 +4,17 @@ import com.StardewValley.model.*;
 import com.StardewValley.model.enums.*;
 import com.StardewValley.model.enums.Weather;
 import com.StardewValley.model.things.Item;
+import com.badlogic.gdx.graphics.Texture;
 
 import java.util.Random;
 
 public class FishingPole extends Item {
-    private final RodType rodType; // Made final to ensure immutability
+    private final RodType rodType;
 
     public FishingPole(RodType rodType) {
         super(rodType.getName() + "-fishing pole", 54, rodType.getPrice(), 0, 1);
         this.rodType = rodType;
+        image = new Texture("Tools/Fishing_Pole/" + rodType.getName() + ".png");
     }
 
     public RodType getRodType() {

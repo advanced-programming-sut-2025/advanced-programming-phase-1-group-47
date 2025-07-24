@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import com.StardewValley.model.enums.Season;
 import com.StardewValley.model.enums.ShopType;
 import com.StardewValley.model.things.Item;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 
 public class Shop {
     private ShopType type;
@@ -15,7 +18,11 @@ public class Shop {
     private ArrayList<Item> summerStock;
     private ArrayList<Item> fallStock;
     private ArrayList<Item> winterStock;
-
+    private boolean isPlayerInside;
+    public void render(SpriteBatch batch) {
+        Texture tex = isPlayerInside ? type.getInTexture() : type.getOutTexture();
+        batch.draw(tex, type.getPosition().x, type.getPosition().y, type.getWidth(),type.getHeight());
+    }
     // 🔹 کانستراکتور اصلی با همه پارامترها
     public Shop(ShopType type, ArrayList<Item> permastock, ArrayList<Item> springStock,
                 ArrayList<Item> summerStock, ArrayList<Item> fallStock,
@@ -29,10 +36,11 @@ public class Shop {
         this.startingHour = startingHour;
         this.stoppingHour = stoppingHour;
     }
+    public void update(Vector2 playerPos) {
+        float dist = playerPos.dst(type.getPosition());
+        isPlayerInside = dist < 100;
+    }
 
-
-
-    // 🔹 کانستراکتور دوم بدون آرگومان
     public Shop() {
         this.permaStock = new ArrayList<>();
         this.springStock = new ArrayList<>();
@@ -41,7 +49,7 @@ public class Shop {
         this.winterStock = new ArrayList<>();
         this.startingHour = 0;
         this.stoppingHour = 24;
-        this.type = null;  // می‌توان بعداً با setter تنظیم کرد
+        this.type = null;
     }
     public ArrayList<Item> getStock() {
         ArrayList<Item> combined = new ArrayList<>(permaStock);

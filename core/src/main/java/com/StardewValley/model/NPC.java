@@ -6,6 +6,7 @@ import java.util.Map;
 
 import com.StardewValley.model.things.Item;
 import com.StardewValley.model.things.relations.Quest;
+import com.badlogic.gdx.graphics.Texture;
 
 public class NPC {
     private Map <Player, Integer> friendship;
@@ -24,14 +25,15 @@ public class NPC {
     public String getName() {
         return name;
     }
-
+    private Texture NpcTexture;
     public NPC(String name , String job , Quest quest1 , Quest quest2 , Quest quest3 ,ArrayList<Item> favorites
-    ,ArrayList<String> responses , ArrayList<Item> possibleGifts , int TimeUntilQuest3 ,Point coordinates){
+    ,ArrayList<String> responses , ArrayList<Item> possibleGifts , int TimeUntilQuest3 ,Point coordinates,Texture NpcTexture) {
         this.name = name;
         this.job = job;
         this.quest1 = quest1;
         this.quest2 = quest2;
         this.quest3 = quest3;
+        this.NpcTexture = NpcTexture;
         this.favorites = favorites;
         this.responses = responses;
         this.possibleGifts = possibleGifts;

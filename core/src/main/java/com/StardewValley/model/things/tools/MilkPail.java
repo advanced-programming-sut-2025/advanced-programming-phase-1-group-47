@@ -2,6 +2,7 @@ package com.StardewValley.model.things.tools;
 
 
 import com.StardewValley.model.App;
+import com.StardewValley.model.GameAssetManager;
 import com.StardewValley.model.Player;
 import com.StardewValley.model.Result;
 import com.StardewValley.model.things.Item;
@@ -9,6 +10,7 @@ import com.StardewValley.model.things.Item;
 public class MilkPail extends Item {
     public MilkPail() {
         super("-milk pail", 55, 1000, 0, 1);
+        image = GameAssetManager.MILKPILL;
     }
 
     public int energyCost() {

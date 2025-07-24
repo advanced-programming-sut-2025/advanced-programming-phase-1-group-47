@@ -8,6 +8,7 @@ import com.StardewValley.model.Shops.*;
 import com.StardewValley.model.enums.Gender;
 import com.StardewValley.model.enums.Weather;
 import com.StardewValley.model.things.machines.Machine;
+import com.badlogic.gdx.Gdx;
 
 public class Game {
     public ArrayList<Player> players;
@@ -27,13 +28,11 @@ public class Game {
     public Shop MarniesRanchStore = new MarniesRanch().MarnieRanchBuilder();
     public Shop TheSaloonStore = new TheSaloon().theSaloonBuilder();
     public Shop pierresStore = new pierres().pierresBuilder();
-
+    public ArrayList<Shop> Shops = new ArrayList<>();
     public int turn = 0;
-    private ArrayList<Shop> shops;
     private ArrayList<Plant> plants;
     private ArrayList<Machine> machines;
 
-    // ✅ Constructor با لیست بازیکن
     public Game() {
         this.players = new ArrayList<>();
         User user1 = new User("ali", "123", "ali@gmail.com", "AliKing", Gender.Male, "pet", "cat");
@@ -43,8 +42,6 @@ public class Game {
                 user1.getSecurityQuestion(), user1.getSecurityAnswer()
         );
         players.add(player1);
-
-        // ساخت کاربر 2
         User user2 = new User("sara", "321", "sara@gmail.com", "SaraQueen", Gender.Female, "city", "tehran");
         Player player2 = new Player(
                 user2.getUsername(), user2.getPassword(), user2.getEmail(),
@@ -52,8 +49,6 @@ public class Game {
                 user2.getSecurityQuestion(), user2.getSecurityAnswer()
         );
         players.add(player2);
-
-        // ساخت کاربر جاری (لاگین‌شده)
         App.loggedInUser = new User("parsa", "Parsasrsr", "srsr@gmail.com", "xx", Gender.Male, "d", "t");
         User u3 = App.loggedInUser;
         Player lastPlayer = new Player(
@@ -62,24 +57,29 @@ public class Game {
                 u3.getSecurityQuestion(), u3.getSecurityAnswer()
         );
         players.add(lastPlayer);
-
-        // تعیین بازیکن جاری
         this.currentPlayer = lastPlayer;
-
-        // مقداردهی اولیه به سایر قسمت‌های بازی
         this.time = new Time();
         this.weather = Weather.SUNNY;
         this.tomarrowsWeather = Weather.SUNNY;
         this.plants = new ArrayList<>();
         this.machines = new ArrayList<>();
     }
-
-
+    public void loadShops(){
+        Shops.add(BlacksmithStore);
+        Shops.add(JojaMartStore);
+        Shops.add(CarpenterStore);
+        Shops.add(FishShopStore);
+        Shops.add(MarniesRanchStore);
+        Shops.add(TheSaloonStore);
+        Shops.add(pierresStore);
+    }
     public void nextDayWeather() {
         this.weather = setWeather();
         this.tomarrowsWeather = setWeather();
     }
-
+    public ArrayList<Shop> getShops() {
+        return Shops;
+    }
     public Weather setWeather() {
         int a = RAND.nextInt(1, 12);
         String season = time.getSeason().toString();
@@ -148,7 +148,7 @@ public class Game {
     }
 
     public void setShops(ArrayList<Shop> shops) {
-        this.shops = shops;
+        this.Shops = shops;
     }
 
     public ArrayList<Plant> getPlants() {

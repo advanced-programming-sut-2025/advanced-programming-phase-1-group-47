@@ -7,6 +7,7 @@ import com.StardewValley.model.Point;
 import com.StardewValley.model.enums.SkillType;
 import com.StardewValley.model.enums.TileType;
 import com.StardewValley.model.things.Item;
+import com.badlogic.gdx.graphics.Texture;
 
 public class WateringCan extends Item {
     private Type type;
@@ -14,7 +15,7 @@ public class WateringCan extends Item {
 
     public WateringCan(Type type) {
         super(type.getName() + "-wateringCan", 60, type.getPrice(), 0, 1);
-
+        image = new Texture("Tools/Watering_Can/" + type.getName() + ".png");
         if(String.valueOf(type).equalsIgnoreCase("Regular")) {
             capacity = 40;
         } if(String.valueOf(type).equalsIgnoreCase("Copper")) {

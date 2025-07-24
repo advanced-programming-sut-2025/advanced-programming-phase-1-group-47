@@ -6,14 +6,15 @@ import com.StardewValley.model.*;
 import com.StardewValley.model.enums.Season;
 import com.StardewValley.model.enums.TileType;
 import com.StardewValley.model.things.Item;
+import com.badlogic.gdx.graphics.Texture;
 
 import java.util.HashMap;
 import java.util.Random;
 
 public class Scythe extends Item {
-
     public Scythe() {
         super("-scythe", 57, 0, 0, 1);
+        image = new Texture("Tools/Scythe/Regual_Scythe.png");
     }
 
     public int energyCost() {

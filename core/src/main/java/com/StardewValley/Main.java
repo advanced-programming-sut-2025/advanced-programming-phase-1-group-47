@@ -19,6 +19,7 @@ public class Main extends Game {
 
     @Override
     public void create() {
+
         main = this;
         batch = new SpriteBatch();
         DataBaseInit.init();
@@ -30,7 +31,10 @@ public class Main extends Game {
         if (!grayscaleShader.isCompiled()) {
             System.err.println("Shader compile error: " + grayscaleShader.getLog());
         }
-        setScreen(new GameScreen());
+        try{
+            setScreen(new GameScreen());
+        }
+        catch (Exception e){}
 //        setScreen(new InitPageView(new InitPageController(), GameAssetManager.getGameAssetManager().getSkin()));
     }
 
