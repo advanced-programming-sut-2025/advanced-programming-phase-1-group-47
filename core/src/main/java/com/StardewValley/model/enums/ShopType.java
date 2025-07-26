@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 public enum ShopType {
     BlackSmith(GameAssetManager.BLACKSMITHOUT, GameAssetManager.BLACKSMITHIN, new Vector2(1675, 3375), 400, 256),
     JojaMart(GameAssetManager.JOJOMARTOUT, GameAssetManager.JOJOMARTIN, new Vector2(2975, 1875), 256, 256),
-    Pierres(GameAssetManager.PIERRESOut, GameAssetManager.PIERRESIN, new Vector2(525, 1575), 256, 256),
+    Pierres(GameAssetManager.PIERRESOut, GameAssetManager.PIERRESIN, new Vector2(525, 1800), 256, 256),
     Carpenters(GameAssetManager.CARPENTEROUT, GameAssetManager.CARPENTERIN, new Vector2(1575, 975), 256, 256),
     FishShop(GameAssetManager.FISHSHOPOUT, GameAssetManager.FISHSHOPOT, new Vector2(1875, 675), 256, 256),
     Marnies(GameAssetManager.MARNIESRANCHEOUT, GameAssetManager.MARNIESRANCHIN, new Vector2(1975, 2775), 400, 256),

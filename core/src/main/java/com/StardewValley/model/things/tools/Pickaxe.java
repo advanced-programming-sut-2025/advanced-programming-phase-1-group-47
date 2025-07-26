@@ -27,13 +27,13 @@ public class Pickaxe extends Item {
 
     public int energyCost() {
         int fraction = 0;
-        if(App.getCurrentGame().getCurrentPlayer().getSkills()[2].getLevel() == 4) {
-            fraction++;
-        }
-
-        if(App.currentGame.currentPlayer.getBuff().getType().equals(SkillType.MINING)) {
-            fraction++;
-        }
+//        if(App.getCurrentGame().getCurrentPlayer().getSkills()[2].getLevel() == 4) {
+//            fraction++;
+//        }
+//
+//        if(App.currentGame.currentPlayer.getBuff().getType().equals(SkillType.MINING)) {
+//            fraction++;
+//        }
 
         return (int) (type.getEnergyCost() * App.getCurrentGame().getWeather().getIntensity() - fraction);
     }

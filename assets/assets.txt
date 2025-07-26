@@ -373,6 +373,7 @@ Clock/ClockWithJournal.png
 Clock/Clock_All.png
 Clock/GoldDisplay.png
 Clock/WeddingDayHeart.png
+Clock/clock.atlas
 Concessions/Apple_Slices.png
 Concessions/Black_Licorice.png
 Concessions/Cappuccino_Mousse_Cake.png
@@ -397,8 +398,8 @@ Concessions/Sour_Slimes.png
 Concessions/Star_Cookie.png
 Concessions/Stardrop_Sorbet.png
 Concessions/Truffle_Popcorn.png
-Cottage/Cottage_Inside.png
-Cottage/House_(tier_3).png
+Cottage/CottageIn.png
+Cottage/CottageOut.png
 Crab_Pot_fish/Clam.png
 Crab_Pot_fish/Cockle.png
 Crab_Pot_fish/Crab.png

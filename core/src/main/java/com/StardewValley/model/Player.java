@@ -75,14 +75,18 @@ public class Player extends User {
         notifications = new ArrayList<>();
         partner = null;
         pendingPartner = null;
-        invetory.addItem(new Axe(Type.REGULAR));
-        invetory.addItem(new Hoe(Type.REGULAR));
-        invetory.addItem(new Pickaxe(Type.REGULAR));
-        invetory.addItem(new WateringCan(Type.REGULAR));
+        invetory.addItem(new Axe(Type.GOLDEN));
+        invetory.addItem(new Hoe(Type.GOLDEN));
+        invetory.addItem(new Pickaxe(Type.GOLDEN));
+        invetory.addItem(new WateringCan(Type.SILVER));
         invetory.addItem(new FishingPole(RodType.TRAININGROD));
         invetory.addItem(new Scythe());
-        invetory.addItem(new Item("Carrot Seeds", 403, 2, 0, 1000,new Texture("Crops/Carrot_Seeds.png")));
-//        invetory.addItem(new Building(FarmBuilding.BARN));
+        invetory.addItem(new Item("Carrot Seeds", 403, 2, 0, 1000,GameAssetManager.CARROT_SEEDS));
+        invetory.addItem(new Item("Cactus Seeds", 1000, 2, 0, 1000,GameAssetManager.CACTUS_FRUIT));
+
+
+
+        //        invetory.addItem(new Building(FarmBuilding.BARN));
 //        invetory.addItem(new Building(FarmBuilding.BIG_BARN));
 //        invetory.addItem(new Building(FarmBuilding.COOP));
 //        invetory.addItem(new Building(FarmBuilding.BIG_COOP));

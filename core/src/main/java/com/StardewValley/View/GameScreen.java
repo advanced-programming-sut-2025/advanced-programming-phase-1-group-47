@@ -1,13 +1,17 @@
 package com.StardewValley.View;
 
+import com.StardewValley.controllers.GameMenuController;
 import com.StardewValley.model.*;
 import com.StardewValley.model.Game;
+import com.StardewValley.model.enums.Season;
 import com.StardewValley.model.enums.TileType;
 import com.StardewValley.model.things.Item;
+import com.StardewValley.model.things.tools.Scythe;
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.*;
 import com.badlogic.gdx.utils.viewport.*;
 import com.badlogic.gdx.scenes.scene2d.*;
@@ -20,7 +24,7 @@ import java.util.Map.Entry;
 
 public class GameScreen implements Screen {
 
-    private OrthographicCamera camera;
+    private static OrthographicCamera camera;
     private Viewport viewport;
     private SpriteBatch batch;
     private int scrollDelta = 0;
@@ -37,16 +41,21 @@ public class GameScreen implements Screen {
     private HashMap<TileType, Texture> tileTextures;
     // UI
     private Stage mainStage, dialogStage;
+    Texture CottageFinal;
     private Skin skin;
     private Dialog mapDialog;
     Texture mapTexture;
     private boolean isMapDialogOpen = false;
 
     // Toolbar
+    private boolean isToolAnimating = false;
+    private float toolAnimTime = 0f;
+    private final float toolAnimDuration = 0.3f; // مدت زمان انیمیشن در ثانیه
     private static final int TOOLBAR_SIZE = 12;
     private Stack[] toolbarSlots = new Stack[TOOLBAR_SIZE];
     private int selectedToolIndex = 0;
     private ArrayList<Texture> toolTextures = new ArrayList<>();
+    private ArrayList<Item> toolbarItems = new ArrayList<>();
     private Texture emptySlotTexture;
 
     public GameScreen() {
@@ -93,15 +102,25 @@ public class GameScreen implements Screen {
         tileTextures.put(TileType.ROBIN, GameAssetManager.ROBIN);
         tileTextures.put(TileType.ABIGEL, GameAssetManager.ABIGEL);
         tileTextures.put(TileType.LEAH, GameAssetManager.LEAH);
+        tileTextures.put(TileType.TILLED, GameAssetManager.TILLED);
         tileTextures.put(TileType.SEBASTIAN, GameAssetManager.SEBASTIAN);
         tileTextures.put(TileType.HARVEY, GameAssetManager.HARVEY);
         emptySlotTexture = new Texture("bar.png");
-        for(Item x : App.getCurrentGame().getCurrentPlayer().getInvetory().getItems()){
-            if (x.getImage()!=null)
+        toolTextures.clear();
+        toolbarItems.clear();
+
+        for (Item x : App.getCurrentGame().getCurrentPlayer().getInvetory().getItems()) {
+            if (x.getImage() != null) {
                 toolTextures.add(x.getImage());
-        }while (toolTextures.size() < TOOLBAR_SIZE) {
-            toolTextures.add(null);
+                toolbarItems.add(x);
+            }
         }
+
+        while (toolTextures.size() < TOOLBAR_SIZE) {
+            toolTextures.add(null);
+            toolbarItems.add(null);
+        }
+
     }
 
     private void setupGame() {
@@ -121,7 +140,13 @@ public class GameScreen implements Screen {
             }
         }
     }
-
+    private void EnergyCounter(int energy) {
+        Player currentPlayer = App.getCurrentGame().getCurrentPlayer();
+        currentPlayer.setEnergy(new Energy(currentPlayer.getEnergy().getEnergyCap(),(currentPlayer.getEnergy().getCurrentEnergy()*1000 - energy)/1000));
+    }
+    private void showEnergy() {
+        Gdx.app.log("Energy", String.valueOf(App.getCurrentGame().getCurrentPlayer().getEnergy().getCurrentEnergy()));
+    }
     private void handleInput(float delta) {
         if (isMapDialogOpen) {
             if (Gdx.input.isKeyJustPressed(Input.Keys.N)) closeMapDialog();
@@ -134,30 +159,43 @@ public class GameScreen implements Screen {
             playerPosition.x -= speed * delta;
             moveDirection = 3;
             moving = true;
+            EnergyCounter(10);
         }
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) {
             playerPosition.x += speed * delta;
             moveDirection = 1;
             moving = true;
+            EnergyCounter(10);
         }
         if (Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W)) {
             playerPosition.y += speed * delta;
             moveDirection = 2;
             moving = true;
+            EnergyCounter(10);
         }
         if (Gdx.input.isKeyPressed(Input.Keys.DOWN) || Gdx.input.isKeyPressed(Input.Keys.S)) {
             playerPosition.y -= speed * delta;
             moveDirection = 0;
             moving = true;
+            EnergyCounter(10);
         }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.M)) showMapDialog();
+        GameMenuController controller = new GameMenuController();
+        if (Gdx.input.isKeyJustPressed(Input.Keys.N)) {
+            try{
+                controller.setUpNextDay();
+            }
+            catch (Exception e){
+                Gdx.app.log("GameScreen", "Failed to set up next day\n + " + e.getMessage());
+            }
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.T)) App.currentGame.time.setHour(App.currentGame.time.getHour() + 1);
 
         for (int i = 0; i < TOOLBAR_SIZE; i++) {
             if (toolTextures.get(i) == null || toolTextures.get(i).equals(emptySlotTexture)) {
                 continue;  // رد شدن از ابزارهای خالی، ولی حلقه ادامه پیدا کنه
             }
-            // کلیدهای انتخاب ابزار از 1 تا 9
             if (i < 9 && Gdx.input.isKeyJustPressed(Input.Keys.NUM_1 + i)) {
                 selectedToolIndex = i;
                 updateToolbarHighlight();
@@ -217,18 +255,38 @@ public class GameScreen implements Screen {
 
     @Override
     public void render(float delta) {
+
         handleInput(delta);
         stateTime += delta;
-
+//        showEnergy();
         camera.position.set(playerPosition.x, playerPosition.y, 0);
         camera.update();
 
         Gdx.gl.glClearColor(0.2f, 0.3f, 0.5f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        if (Gdx.input.justTouched()) {
+            Vector3 touchPos = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
+            camera.unproject(touchPos);
+
+            int tileX = (int)(touchPos.x / TILE_SIZE);
+            int tileY = (int)(touchPos.y / TILE_SIZE);
+
+            try {
+                Gdx.app.log("Tile Clicked", "Tile: (" + tileX + ", " + tileY + ") \n TileType: " + tileMap[tileX][tileY].type.toString() );
+                Gdx.app.log("current Item ", toolbarItems.get(selectedToolIndex).getName());
+                toolbarItems.get(selectedToolIndex).useTool(new Point(tileX, tileY));
+                Scythe x = new Scythe();
+                x.useTool(new Point(tileX, tileY));
+            }
+            catch (Exception e) {
+                Gdx.app.error("error",e.getMessage());
+            }
+            toolAnimTime = 0;
+            isToolAnimating = true;
+        }
 
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
-
         int startX = (int)(camera.position.x - viewport.getWorldWidth() / 2) / TILE_SIZE - 1;
         int startY = (int)(camera.position.y - viewport.getWorldHeight() / 2) / TILE_SIZE - 1;
         int endX = (int)(camera.position.x + viewport.getWorldWidth() / 2) / TILE_SIZE + 1;
@@ -255,11 +313,6 @@ public class GameScreen implements Screen {
                             float drawY = (y + 1) * TILE_SIZE; // بالای کاشی فعلی
                             batch.draw(GameAssetManager.NPCHOUSE, drawX, drawY, TILE_SIZE*5, TILE_SIZE*5);
                         }
-
-//                        if(tile.type == TileType.GREENHOUSE) {
-//                            Gdx.app.log("GameScreen", "Greenhouse");
-//                            batch.draw(GameAssetManager.BROKEN_GREENHOUSE, x, y, TILE_SIZE*5, TILE_SIZE*5);
-//                        }
                     }
                 }
             }
@@ -269,32 +322,51 @@ public class GameScreen implements Screen {
             shop.update(playerPosition);
             shop.render(batch);
         }
+        if (playerPosition.x >= 200 &&  playerPosition.x <= 410 && playerPosition.y >= 200 &&  playerPosition.y <= 410)
+            CottageFinal = GameAssetManager.COTTAGEIn;
+        else
+            CottageFinal = GameAssetManager.COTTAGEOut;
+//        batch.draw(GameAssetManager.CLOCK, playerPosition.x + 260, playerPosition.y + 77, TILE_SIZE*4, 4*TILE_SIZE);
+        batch.draw(CottageFinal, 200, 200, TILE_SIZE * 7, TILE_SIZE * 7);
         TextureRegion currentFrame = playerAnimations[moveDirection].getKeyFrame(stateTime, true);
         batch.draw(currentFrame, playerPosition.x, playerPosition.y, TILE_SIZE, TILE_SIZE * 2);
 
-        // 5. رسم ابزار بازیکن
         if (toolTextures.get(selectedToolIndex) != null) {
             Texture toolTex = toolTextures.get(selectedToolIndex);
             boolean flipX = false;
             float toolX = playerPosition.x;
             float toolY = playerPosition.y;
 
+            float offsetX = 0, offsetY = 0;
+            float animOffset = 5f;
+
+            if (isToolAnimating) {
+                toolAnimTime += delta;
+                float progress = toolAnimTime / toolAnimDuration;
+                if (progress > 1f) {
+                    isToolAnimating = false;
+                    progress = 1f;
+                }
+                float curve = (float)Math.sin(progress * Math.PI);  // رفتن و برگشتن
+                animOffset *= curve;
+            }
+
             switch (moveDirection) {
                 case 0: // پایین
-                    toolY -= TILE_SIZE * 0.4f;
+                    toolY -= TILE_SIZE * 0.4f - animOffset;
                     toolX += TILE_SIZE * 0.2f;
                     break;
                 case 1: // راست
-                    toolX += TILE_SIZE * 0.6f;
+                    toolX += TILE_SIZE * 0.6f + animOffset;
                     toolY += TILE_SIZE * 0.3f;
                     break;
                 case 2: // بالا
-                    toolY += TILE_SIZE * 1.1f;
+                    toolY += TILE_SIZE * 1.1f + animOffset;
                     toolX += TILE_SIZE * 0.2f;
                     break;
                 case 3: // چپ
                     flipX = true;
-                    toolX -= TILE_SIZE * 0.6f;
+                    toolX -= TILE_SIZE * 0.6f - animOffset;
                     toolY += TILE_SIZE * 0.3f;
                     break;
             }
@@ -313,6 +385,13 @@ public class GameScreen implements Screen {
             );
         }
 
+        Game currentGame = App.getCurrentGame();
+        Time time = currentGame.getTime();
+        batch.end();
+        TimeAndDate timeAndDate = new TimeAndDate(time.getDayOfSeason(),time.getHourOfDay(),time.getSeason(),1404);
+        TextureRegion clockTexture = timeAndDate.renderClockToTexture();
+        batch.begin();
+        batch.draw(clockTexture, playerPosition.x + 220, playerPosition.y + 58, TILE_SIZE*30, 15*TILE_SIZE);  // جای x و y محل دلخواه توی صفحه‌ست
         batch.end();
 
         mainStage.act(delta);
@@ -322,6 +401,10 @@ public class GameScreen implements Screen {
             dialogStage.act(delta);
             dialogStage.draw();
         }
+    }
+
+    public static OrthographicCamera getCamera() {
+        return camera;
     }
 
     private void showMapDialog() {
@@ -488,7 +571,7 @@ public class GameScreen implements Screen {
         });
 
         Table toolbar = new Table();
-        toolbar.bottom().center().padBottom(10);
+        toolbar.bottom().center().padTop(800);
         toolbar.setFillParent(true);
 
         for (int i = 0; i < TOOLBAR_SIZE; i++) {

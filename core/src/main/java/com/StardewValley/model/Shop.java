@@ -37,8 +37,7 @@ public class Shop {
         this.stoppingHour = stoppingHour;
     }
     public void update(Vector2 playerPos) {
-        float dist = playerPos.dst(type.getPosition());
-        isPlayerInside = dist < 100;
+        isPlayerInside = playerPos.x > type.getPosition().x && playerPos.x < (type.getPosition().x + type.getWidth()) && playerPos.y > type.getPosition().y && playerPos.y < (type.getPosition().y + type.getWidth());
     }
 
     public Shop() {

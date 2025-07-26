@@ -1695,27 +1695,27 @@ public class GameMenuController {
                 }
             }
         }
-
-        for(Player player1 : App.getCurrentGame().getPlayers()){
-            ArrayList<Item> soldItems = player1.getPlayerShipping_bin();
-            if(!(soldItems == null || soldItems.isEmpty()))
-                for (Item item : soldItems) {
-                    if (item instanceof Product product)
-                        player1.addMoney( (int) Math.floor(product.getAmount() * product.getValue() * product.getQuality().getPriceCoefficient()));
-                    else 
-                        player1.addMoney(item.getAmount() * item.getValue());
-                } 
-            for(Player player2 : App.getCurrentGame().getPlayers()) {
-                if (!player1.GetHasTalkedToPlayer(player2) && !player1.getHasbeenHugged().get(player2) && !player1.getHasBeenGiftedTo().get(player2))
-                    player1.reduceFriendshipXP(10, player2);
-                player1.setHasBeenTalkedTo(player2, false);
-                player2.setHasBeenTalkedTo(player1, false);
-                player1.setHasBeenGiftedTo(player2, false);
-                player2.setHasBeenGiftedTo(player1, false);
-                player1.setHasHuggedPlayer(player2, false);
-                player2.setHasHuggedPlayer(player1, false);
-            }
-        }
+        System.err.println(App.getCurrentGame().getPlayers().size());
+//        for(Player player1 : App.getCurrentGame().getPlayers()){
+//            ArrayList<Item> soldItems = player1.getPlayerShipping_bin();
+//            if(!(soldItems == null || soldItems.isEmpty()))
+//                for (Item item : soldItems) {
+//                    if (item instanceof Product product)
+//                        player1.addMoney( (int) Math.floor(product.getAmount() * product.getValue() * product.getQuality().getPriceCoefficient()));
+//                    else
+//                        player1.addMoney(item.getAmount() * item.getValue());
+//                }
+//            for(Player player2 : App.getCurrentGame().getPlayers()) {
+//                if (!player1.GetHasTalkedToPlayer(player2) && !player1.getHasbeenHugged().get(player2) && !player1.getHasBeenGiftedTo().get(player2))
+//                    player1.reduceFriendshipXP(10, player2);
+//                player1.setHasBeenTalkedTo(player2, false);
+//                player2.setHasBeenTalkedTo(player1, false);
+//                player1.setHasBeenGiftedTo(player2, false);
+//                player2.setHasBeenGiftedTo(player1, false);
+//                player1.setHasHuggedPlayer(player2, false);
+//                player2.setHasHuggedPlayer(player1, false);
+//            }
+//        }
         setMap();
         setShops();
     }
