@@ -62,29 +62,29 @@ public class Axe extends Item {
     }
     @Override
     public String useTool(Tile tile) {
+        Player currentPlayer = App.getCurrentGame().getCurrentPlayer();
+        currentPlayer.setEnergy(new Energy(currentPlayer.getEnergy().getEnergyCap(),currentPlayer.getEnergy().getCurrentEnergy() - energyCost() * 100));
         Point point = tile.point;
         Player player = App.getCurrentGame().getCurrentPlayer();
         if(player.EnergyObject.getCurrentEnergy() - energyCost() <= 0)
             return ("Not enough energy!");
         player.EnergyObject.setCurrentEnergy(player.EnergyObject.getCurrentEnergy() - energyCost());
         StringBuilder builder = new StringBuilder();
-        TileType tileType = App.currentGame.map.tiles[point.getX()][point.getY()].type;
+        TileType tileType = tile.type;
         Random rand = new Random();
         if (tileType.equals(TileType.TREE)){
-            App.currentGame.map.tiles[point.getX()][point.getY()].type = TileType.EMPTY;
+            tile.type = TileType.EMPTY;
             builder.append("Derakht ro Ghat kardi dar  (" + point.x + ", " + point.y + ")");
             int randomId = rand.nextInt(4) + 351;
             Item item = AllTheItemsInTheGame.getItemById(randomId);
             builder.append("You got a Tree Seed ").append(item.getName())
                     .append(" at ").append(point.x).append(", ").append(point.y);
-            App.currentGame.map.tiles[point.getX()][point.getY()].type = TileType.EMPTY;
-            App.currentGame.currentPlayer.getInvetory().addItem(item);
-
+            tile.type = TileType.EMPTY;
             App.currentGame.currentPlayer.getInvetory().addItem(AllTheItemsInTheGame.getItemById(36));
         }
         else if (tileType.equals(TileType.MACHINE)){
             App.currentGame.currentPlayer.getInvetory().addItem(AllTheItemsInTheGame.getItemById(30));
-            App.currentGame.map.tiles[point.getX()][point.getY()].type = TileType.EMPTY;
+            tile.type = TileType.EMPTY;
             builder.append("You got a hay at ").append(point.getX()).append(", ").append(point.getY());
         }
         else {

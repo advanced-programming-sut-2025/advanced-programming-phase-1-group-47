@@ -1,10 +1,7 @@
 package com.StardewValley.model.things.tools;
 
 
-import com.StardewValley.model.App;
-import com.StardewValley.model.GameAssetManager;
-import com.StardewValley.model.Player;
-import com.StardewValley.model.Result;
+import com.StardewValley.model.*;
 import com.StardewValley.model.things.Item;
 
 public class MilkPail extends Item {
@@ -18,6 +15,8 @@ public class MilkPail extends Item {
     }
 
     public Result<String> useTool(){
+        Player currentPlayer = App.getCurrentGame().getCurrentPlayer();
+        currentPlayer.setEnergy(new Energy(currentPlayer.getEnergy().getEnergyCap(),currentPlayer.getEnergy().getCurrentEnergy() - energyCost() * 100));
         Player player = App.getCurrentGame().getCurrentPlayer();
         if(player.EnergyObject.getCurrentEnergy() - energyCost() <= 0)
             return new Result<>(false ,"Not enough energy!");

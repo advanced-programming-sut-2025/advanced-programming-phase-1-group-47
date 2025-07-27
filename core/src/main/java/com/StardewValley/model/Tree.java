@@ -12,7 +12,7 @@ public class Tree extends Plant {
         super(plantID, point, name, baseValue, isEdible, energy, health, source, currentStage,
               currentStageCount, totalHarvestTime, seasonOfGrowth, growStages, isReUsable, canBecomeGiant, isFruit , regrowthTime);
         this.foodCycle = foodCycle;
-        image = new Texture("Trees/"+name+".png");
+//        image = new Texture("Trees/"+name+".png");
     }
     public int getFoodCycle() {
         return foodCycle;

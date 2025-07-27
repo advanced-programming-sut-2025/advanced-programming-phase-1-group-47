@@ -59,6 +59,9 @@ public class GameAssetManager {
     }
     public static final BitmapFont MAIN_FONT = new BitmapFont();
     // Farming
+    public static final Texture GREEN_SQUARE = new Texture("Night/Green.png");
+    public static final Texture YELLOW_SQUARE = new Texture("Night/Yellow.png");
+    public static final Texture ENERGY_BAR_EMPTY = new Texture("energyBarEmpty.jpg");
 
     public static final Texture CARROT = new Texture("Crops/Carrot.png");
     public static final Texture CARROT_SEEDS = new Texture("Crops/Carrot_Seeds.png");

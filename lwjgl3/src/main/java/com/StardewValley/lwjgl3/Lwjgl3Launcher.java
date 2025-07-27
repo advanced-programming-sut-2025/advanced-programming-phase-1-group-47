@@ -15,6 +15,7 @@ import com.badlogic.gdx.Gdx;
 public class Lwjgl3Launcher {
     public static void main(String[] args) {
         if (StartupHelper.startNewJvmIfRequired()) return;
+
         Lwjgl3Application app = createApplication();
 
         // 🎯 Add Drag & Drop support for avatar images

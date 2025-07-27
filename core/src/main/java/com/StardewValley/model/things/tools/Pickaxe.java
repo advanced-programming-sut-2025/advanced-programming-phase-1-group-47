@@ -36,15 +36,17 @@ public class Pickaxe extends Item {
     }
 
     public String useTool(Tile tile) {
+        Player currentPlayer = App.getCurrentGame().getCurrentPlayer();
+        currentPlayer.setEnergy(new Energy(currentPlayer.getEnergy().getEnergyCap(),currentPlayer.getEnergy().getCurrentEnergy() - energyCost() * 100));
         Point point = tile.point;
         StringBuilder builder = new StringBuilder();
-        TileType tileType = App.currentGame.map.tiles[point.getX()][point.getY()].type;
+        TileType tileType = tile.type;
         Player player = App.getCurrentGame().getCurrentPlayer();
         if(player.EnergyObject.getCurrentEnergy() - energyCost() <= 0)
             return ("Not enough energy!");
         player.EnergyObject.setCurrentEnergy(player.EnergyObject.getCurrentEnergy() - energyCost());
         if (tileType.equals(TileType.TILLED)){
-            App.currentGame.map.tiles[point.getX()][point.getY()].type = TileType.EMPTY;
+            tile.type = TileType.EMPTY;
             builder.append("the ground " + point.x + ", " + point.y + " got UnTilled");
         }
         else if (tileType.equals(TileType.MACHINE)){
@@ -53,13 +55,10 @@ public class Pickaxe extends Item {
         else if (tileType.equals(TileType.STONE)){
                 Random rand = new Random();
                 int randomId = rand.nextInt(16) + 380;
-
                 Item item = AllTheItemsInTheGame.getItemById(randomId);
-                item = new Item(item,rand.nextInt(1));
                 builder.append("You got a Mineral: ").append(item.getName())
                         .append(" at ").append(point.x).append(", ").append(point.y);
-
-                App.currentGame.map.tiles[point.getX()][point.getY()].type = TileType.EMPTY;
+                tile.type = TileType.EMPTY;
                 App.currentGame.currentPlayer.getInvetory().addItem(item);
         }
         else {

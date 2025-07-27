@@ -1,10 +1,7 @@
 package com.StardewValley.model.things.tools;
 
 
-import com.StardewValley.model.App;
-import com.StardewValley.model.Plant;
-import com.StardewValley.model.Point;
-import com.StardewValley.model.Tile;
+import com.StardewValley.model.*;
 import com.StardewValley.model.enums.SkillType;
 import com.StardewValley.model.enums.TileType;
 import com.StardewValley.model.things.Item;
@@ -63,13 +60,15 @@ public class WateringCan extends Item {
     }
     @Override
     public String useTool(Tile tile) {
+        Player currentPlayer = App.getCurrentGame().getCurrentPlayer();
+        currentPlayer.setEnergy(new Energy(currentPlayer.getEnergy().getEnergyCap(),currentPlayer.getEnergy().getCurrentEnergy() - energyCost() * 100));
         Point point = tile.point;
         if(App.getCurrentGame().getCurrentPlayer().EnergyObject.getCurrentEnergy() - energyCost() <= 0)
             return ("Not enough energy!");
         App.getCurrentGame().getCurrentPlayer().getEnergy().setCurrentEnergy(App.getCurrentGame().getCurrentPlayer().EnergyObject.getCurrentEnergy() - energyCost());
         StringBuilder builder = new StringBuilder();
         builder.append("\"Wathering can used at point \" + point");
-        if ((App.currentGame.map.tiles[point.getX()][point.getY()].type.equals(TileType.PLANT))){
+        if ((tile.type.equals(TileType.PLANT))){
             builder.append("the plant got wather in  " + point.x + ", " + point.y);
             Plant plant =  App.currentGame.map.farms[App.currentGame.turn].plantMap.get(point);
             plant.setHasBeenWatered(true);
@@ -77,7 +76,7 @@ public class WateringCan extends Item {
             App.currentGame.map.tiles[point.getX()][point.getY()].type = TileType.TILLED;
         }
         else
-            builder.append("the point You want it its a " + String.valueOf(App.currentGame.map.tiles[point.getX()][point.getY()].type.toString()).toLowerCase());
+            builder.append("the point You want it its a " + String.valueOf(tile.type.toString()).toLowerCase());
         return builder.toString();
     }
 }

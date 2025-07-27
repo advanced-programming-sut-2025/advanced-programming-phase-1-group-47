@@ -47,8 +47,10 @@ public class Scythe extends Item {
     @Override
     public String useTool(Tile tile) {
         Point point = tile.point;
+        Player currentPlayer = App.getCurrentGame().getCurrentPlayer();
+        currentPlayer.setEnergy(new Energy(currentPlayer.getEnergy().getEnergyCap(),currentPlayer.getEnergy().getCurrentEnergy() - energyCost() * 100));
         StringBuilder builder = new StringBuilder();
-        TileType tileType = App.currentGame.map.tiles[point.getX()][point.getY()].type;
+        TileType tileType = tile.type;
         Player player = App.getCurrentGame().getCurrentPlayer();
         if(player.EnergyObject.getCurrentEnergy() - energyCost() <= 0)
             return ("Not enough energy!");
@@ -59,7 +61,7 @@ public class Scythe extends Item {
             builder.append("You got a foraging ").append(item.getName())
                     .append(" at ").append(point.x).append(", ").append(point.y);
 
-            App.currentGame.map.tiles[point.getX()][point.getY()].type = TileType.EMPTY;
+            tile.type = TileType.EMPTY;
             App.currentGame.currentPlayer.getInvetory().addItem(new Item(item.getName(),item.getPlantID(),item.getBaseValue(),-1,1,item.getImage()));
         }
         else if (tileType.equals(TileType.PLANT)){
@@ -74,7 +76,7 @@ public class Scythe extends Item {
         }
         else if (tileType.equals(TileType.GRASS)){
             App.currentGame.currentPlayer.getInvetory().addItem(AllTheItemsInTheGame.getItemById(30));
-            App.currentGame.map.tiles[point.getX()][point.getY()].type = TileType.EMPTY;
+            tile.type = TileType.EMPTY;
             builder.append("You got a hay at ").append(point.getX()).append(", ").append(point.getY());
         }
         else {

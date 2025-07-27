@@ -51,13 +51,18 @@ public class GameScreen implements Screen {
     // Toolbar
     private boolean isToolAnimating = false;
     private float toolAnimTime = 0f;
-    private final float toolAnimDuration = 0.3f; // مدت زمان انیمیشن در ثانیه
+    private final float toolAnimDuration = 0.3f;
     private static final int TOOLBAR_SIZE = 24;
     private Stack[] toolbarSlots = new Stack[TOOLBAR_SIZE];
     private int selectedToolIndex = 0;
     private ArrayList<Texture> toolTextures = new ArrayList<>();
     private ArrayList<Item> toolbarItems = new ArrayList<>();
     private Texture emptySlotTexture;
+
+    private Texture energyBarTexture; // Texture for energy bar
+    private Pixmap energyBarPixmap; // Pixmap for creating energy bar texture
+    private Texture backgroundTexture;
+    private Texture fillTexture;
 
     public GameScreen() {
         camera = new OrthographicCamera();
@@ -70,7 +75,9 @@ public class GameScreen implements Screen {
         App.getCurrentGame().setNpc();
         loadTextures();
         stateTime = 0f;
+        initEnergyBar(); // Initialize energy bar
     }
+
     private boolean isNpcTile(TileType type) {
         return type == TileType.ROBIN ||
                 type == TileType.ABIGEL ||
@@ -94,7 +101,6 @@ public class GameScreen implements Screen {
 
         tileTextures.put(TileType.GRASS, GameAssetManager.GRASS);
         tileTextures.put(TileType.EMPTY, GameAssetManager.EMPTY);
-        tileTextures.put(TileType.TILLED, GameAssetManager.TILLED);
         tileTextures.put(TileType.STONE, GameAssetManager.STONE);
         tileTextures.put(TileType.PLANT, GameAssetManager.PLANT);
         tileTextures.put(TileType.LAKE, GameAssetManager.WATER);
@@ -104,10 +110,53 @@ public class GameScreen implements Screen {
         tileTextures.put(TileType.ABIGEL, GameAssetManager.ABIGEL);
         tileTextures.put(TileType.LEAH, GameAssetManager.LEAH);
         tileTextures.put(TileType.TILLED, GameAssetManager.TILLED);
+        tileTextures.put(TileType.COTTAGE, GameAssetManager.COTTAGEOut);
         tileTextures.put(TileType.SEBASTIAN, GameAssetManager.SEBASTIAN);
         tileTextures.put(TileType.HARVEY, GameAssetManager.HARVEY);
         emptySlotTexture = new Texture("bar.png");
+
+        // Load energy bar textures with fallback
+        try {
+            backgroundTexture = GameAssetManager.ENERGY_BAR_EMPTY != null ? GameAssetManager.ENERGY_BAR_EMPTY : new Texture(Gdx.files.internal("energy_bar_empty.png"));
+            fillTexture = GameAssetManager.GREEN_SQUARE != null ? GameAssetManager.GREEN_SQUARE : new Texture(Gdx.files.internal("green_square.png"));
+        } catch (Exception e) {
+            Gdx.app.error("GameScreen", "Failed to load energy bar textures: " + e.getMessage());
+            // Fallback to solid color textures
+            backgroundTexture = createSolidColorTexture(32, 128, Color.GRAY);
+            fillTexture = createSolidColorTexture(32, 128, Color.GREEN);
+        }
+
+        // Update foraging tiles
+        for (int y = 0; y <= 160; y++) {
+            for (int x = 0; x <= 120; x++) {
+                if (x >= 0 && y >= 0 && x < tileMap[0].length && y < tileMap.length) {
+                    Tile tile = tileMap[y][x];
+                    if (tile.type == TileType.FORAGING) {
+                        try {
+                            Random rand = new Random();
+                            tile.id = rand.nextInt(21) + 357;
+                        } catch (Exception e) {
+                            Gdx.app.error("error", e.getMessage());
+                        }
+                    }
+                }
+            }
+        }
+        updateToolbarItems();
+    }
+
+    private Texture createSolidColorTexture(int width, int height, Color color) {
+        Pixmap pixmap = new Pixmap(width, height, Pixmap.Format.RGBA8888);
+        pixmap.setColor(color);
+        pixmap.fill();
+        Texture texture = new Texture(pixmap);
+        pixmap.dispose();
+        return texture;
+    }
+
+    private void updateToolbarItems() {
         toolTextures.clear();
+        toolbarItems.clear();
 
         for (Item x : App.getCurrentGame().getCurrentPlayer().getInvetory().getItems()) {
             if (x.getImage() != null) {
@@ -120,30 +169,12 @@ public class GameScreen implements Screen {
             toolTextures.add(null);
             toolbarItems.add(null);
         }
-        for (int y = 0; y <= 120; y++) {
-            for (int x = 0; x <= 160; x++) {
-                if (x >= 0 && y >= 0 && x < tileMap[0].length && y < tileMap.length) {
-                    Tile tile = tileMap[y][x];
-                        if (tile.type == TileType.FORAGING) {
-                            try{
-                                Random rand = new Random();
-                                tile.id = rand.nextInt(21) + 357;
-                                ;}
-                            catch (Exception e) {
-                                Gdx.app.error("error",e.getMessage());
-                            }
-                        }
-                }
-            }
-        }
-
-
     }
 
     private void setupGame() {
         try {
             Game newGame = new Game();
-            Map newMap = new Map(new String[]{"2", "1", "3", "4"});
+            Map newMap = new Map(new String[]{"1", "2", "3", "4"});
             newGame.map = newMap;
             App.setCurrentGame(newGame);
             tileMap = App.currentGame.map.tiles;
@@ -157,13 +188,20 @@ public class GameScreen implements Screen {
             }
         }
     }
+
     private void EnergyCounter(int energy) {
         Player currentPlayer = App.getCurrentGame().getCurrentPlayer();
-//        currentPlayer.setEnergy(new Energy(currentPlayer.getEnergy().getEnergyCap(),(currentPlayer.getEnergy().getCurrentEnergy()*1000 td/1000));
+        try {
+            currentPlayer.setEnergy(new Energy(currentPlayer.getEnergy().getEnergyCap(),currentPlayer.getEnergy().getCurrentEnergy() - energy));
+        } catch (Exception e) {
+            Gdx.app.error("GameScreen", "Failed to decrease energy: " + e.getMessage());
+        }
     }
+
     private void showEnergy() {
         Gdx.app.log("Energy", String.valueOf(App.getCurrentGame().getCurrentPlayer().getEnergy().getCurrentEnergy()));
     }
+
     private void handleInput(float delta) {
         if (isMapDialogOpen) {
             if (Gdx.input.isKeyJustPressed(Input.Keys.N)) closeMapDialog();
@@ -176,34 +214,33 @@ public class GameScreen implements Screen {
             playerPosition.x -= speed * delta;
             moveDirection = 3;
             moving = true;
-            EnergyCounter(10);
+            EnergyCounter(1);
         }
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) {
             playerPosition.x += speed * delta;
             moveDirection = 1;
             moving = true;
-            EnergyCounter(10);
+            EnergyCounter(1);
         }
         if (Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W)) {
             playerPosition.y += speed * delta;
             moveDirection = 2;
             moving = true;
-            EnergyCounter(10);
+            EnergyCounter(1);
         }
         if (Gdx.input.isKeyPressed(Input.Keys.DOWN) || Gdx.input.isKeyPressed(Input.Keys.S)) {
             playerPosition.y -= speed * delta;
             moveDirection = 0;
             moving = true;
-            EnergyCounter(10);
+            EnergyCounter(1);
         }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.M)) showMapDialog();
         GameMenuController controller = new GameMenuController();
         if (Gdx.input.isKeyJustPressed(Input.Keys.N)) {
-            try{
+            try {
                 controller.setUpNextDay();
-            }
-            catch (Exception e){
+            } catch (Exception e) {
                 Gdx.app.log("GameScreen", "Failed to set up next day\n + " + e.getMessage());
             }
         }
@@ -229,7 +266,7 @@ public class GameScreen implements Screen {
         }
 
         if (scrollDelta != 0) {
-            int direction = scrollDelta > 0 ? 1 : -1; // wheel up => 1, down => -1
+            int direction = scrollDelta > 0 ? 1 : -1;
             int originalIndex = selectedToolIndex;
 
             do {
@@ -239,7 +276,7 @@ public class GameScreen implements Screen {
                     selectedToolIndex != originalIndex);
 
             updateToolbarHighlight();
-            scrollDelta = 0; // reset after handling
+            scrollDelta = 0;
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.TAB)) {
             int originalIndex = selectedToolIndex;
@@ -250,7 +287,6 @@ public class GameScreen implements Screen {
                     selectedToolIndex != originalIndex);
             updateToolbarHighlight();
         }
-
 
         if (!moving) stateTime = 0;
     }
@@ -265,47 +301,160 @@ public class GameScreen implements Screen {
         }
     }
 
+    private void updateToolbar() {
+        updateToolbarItems();
+        for (int i = 0; i < TOOLBAR_SIZE; i++) {
+            Stack stack = toolbarSlots[i];
+            Item item = (i < toolbarItems.size()) ? toolbarItems.get(i) : null;
+            int count = (item != null) ? (int)(Math.log(item.getAmount()) / Math.log(2)) + 1 : 0;
+
+            Texture tex = (item != null && item.getImage() != null) ? item.getImage() : emptySlotTexture;
+            Image icon = new Image(new TextureRegion(tex));
+            icon.setSize(36, 36);
+
+            Container<Image> container = new Container<>(icon);
+            container.background(new TextureRegionDrawable(new TextureRegion(new Texture("white.png"))));
+            container.setColor(i == selectedToolIndex ? Color.GOLD : Color.DARK_GRAY);
+            container.size(44, 44);
+
+            Label countLabel = new Label(count > 0 ? String.valueOf(count) : "", skin);
+            countLabel.setAlignment(Align.bottomRight);
+            countLabel.setFontScale(0.7f);
+            countLabel.setColor(Color.WHITE);
+
+            Table labelTable = new Table();
+            labelTable.setFillParent(true);
+            labelTable.bottom().right();
+            labelTable.add(countLabel).padRight(5).padBottom(5);
+
+            stack.clear();
+            stack.add(container);
+            stack.add(labelTable);
+        }
+    }
+
     private Texture getTextureForTileType(TileType type) {
         Texture tex = tileTextures.get(type);
         return (tex != null) ? tex : tileTextures.get(TileType.EMPTY);
     }
 
-    @Override
-    public void render(float delta) {
-        toolTextures.clear();
-        for (Item x : App.getCurrentGame().getCurrentPlayer().getInvetory().getItems()) {
-            if (x.getImage() != null) {
-                toolTextures.add(x.getImage());
-                toolbarItems.add(x);
-            }
+    private void initEnergyBar() {
+        // Initialize Pixmap for energy bar
+        int width = (int)(camera.viewportWidth * 0.03f); // Width of energy bar
+        int height = (int)(camera.viewportHeight * 0.3f); // Height of energy bar
+        energyBarPixmap = new Pixmap(width, height, Pixmap.Format.RGBA8888);
+        Gdx.app.log("GameScreen", "Energy bar Pixmap initialized: " + width + "x" + height);
+
+        // Ensure textures are loaded
+        if (backgroundTexture == null || fillTexture == null) {
+            Gdx.app.error("GameScreen", "Energy bar textures not loaded properly");
+            backgroundTexture = createSolidColorTexture(width, height, Color.GRAY);
+            fillTexture = createSolidColorTexture(width, height, Color.GREEN);
         }
 
-        while (toolTextures.size() < TOOLBAR_SIZE) {
-            toolTextures.add(null);
-            toolbarItems.add(null);
+        updateEnergyBar(); // Create initial texture
+    }
+
+    private void updateEnergyBar() {
+        Player player = App.getCurrentGame().getCurrentPlayer();
+        float energyPercent;
+        try {
+            energyPercent = (float) player.getEnergy().getCurrentEnergy() / player.getEnergy().getEnergyCap();
+            if (Float.isNaN(energyPercent) || energyPercent < 0 || energyPercent > 1) {
+                energyPercent = 1.0f; // Fallback to full bar
+                Gdx.app.error("GameScreen", "Invalid energy percent: " + energyPercent);
+            }
+        } catch (Exception e) {
+            energyPercent = 1.0f; // Fallback to full bar
+            Gdx.app.error("GameScreen", "Failed to calculate energy percent: " + e.getMessage());
         }
+
+        int width = (int)(camera.viewportWidth * 0.03f);
+        int height = (int)(camera.viewportHeight * 0.3f);
+        int fillHeight = (int)(height * 175 / 215 * energyPercent);
+        int fillWidth = (int)(width * 0.5f);
+        int fillX = (int)(width * 0.25f);
+        int fillY = (int)(height * 8 / 215);
+
+        // Clear Pixmap
+        energyBarPixmap.setColor(0, 0, 0, 0);
+        energyBarPixmap.fill();
+
+        // Draw background
+        try {
+            if (!backgroundTexture.getTextureData().isPrepared()) backgroundTexture.getTextureData().prepare();
+            Pixmap backgroundPixmap = backgroundTexture.getTextureData().consumePixmap();
+            energyBarPixmap.drawPixmap(
+                    backgroundPixmap,
+                    0, 0, backgroundPixmap.getWidth(), backgroundPixmap.getHeight(),
+                    0, 0, width, height
+            );
+            backgroundPixmap.dispose();
+        } catch (Exception e) {
+            Gdx.app.error("GameScreen", "Failed to draw background: " + e.getMessage());
+            energyBarPixmap.setColor(Color.GRAY);
+            energyBarPixmap.fillRectangle(0, 0, width, height);
+        }
+
+        // Draw fill
+        try {
+            if (!fillTexture.getTextureData().isPrepared()) fillTexture.getTextureData().prepare();
+            Pixmap fillPixmap = fillTexture.getTextureData().consumePixmap();
+            energyBarPixmap.drawPixmap(
+                    fillPixmap,
+                    0, 0, fillPixmap.getWidth(), fillPixmap.getHeight(),
+                    fillX, height - fillY - fillHeight, fillWidth, fillHeight
+            );
+            fillPixmap.dispose();
+        } catch (Exception e) {
+            Gdx.app.error("GameScreen", "Failed to draw fill: " + e.getMessage());
+            energyBarPixmap.setColor(Color.GREEN);
+            energyBarPixmap.fillRectangle(fillX, height - fillY - fillHeight, fillWidth, fillHeight);
+        }
+
+        // Dispose previous texture if exists
+        if (energyBarTexture != null) {
+            energyBarTexture.dispose();
+        }
+
+        // Create new texture
+        energyBarTexture = new Texture(energyBarPixmap);
+        Gdx.app.log("GameScreen", "Energy bar texture updated: " + energyPercent);
+    }
+
+    @Override
+    public void render(float delta) {
         handleInput(delta);
         stateTime += delta;
-//        showEnergy();
+        updateEnergyBar(); // Update energy bar texture each frame
         camera.position.set(playerPosition.x, playerPosition.y, 0);
         camera.update();
 
         Gdx.gl.glClearColor(0.2f, 0.3f, 0.5f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
         if (Gdx.input.justTouched()) {
-            show();
             Vector3 touchPos = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
             camera.unproject(touchPos);
             int tileX = (int)(touchPos.x / TILE_SIZE);
             int tileY = (int)(touchPos.y / TILE_SIZE);
 
             try {
-                Gdx.app.log("Tile Clicked", "Tile: (" + tileX + ", " + tileY + ") \n TileType: " + tileMap[tileY][tileX].type.toString() );
-                Gdx.app.log("current Item ", toolbarItems.get(selectedToolIndex).getName());
-                toolbarItems.get(selectedToolIndex).useTool(tileMap[tileY][tileX]);
-            }
-            catch (Exception e) {
-                Gdx.app.error("error",e.getMessage());
+                Gdx.app.log("Tile Clicked", "Tile: (" + tileX + ", " + tileY + ") \n TileType: " + tileMap[tileY][tileX].type.toString());
+                if (toolbarItems.get(selectedToolIndex) != null) {
+                    Gdx.app.log("current Item ", toolbarItems.get(selectedToolIndex).getName());
+                    toolbarItems.get(selectedToolIndex).useTool(tileMap[tileY][tileX]);
+                    updateToolbar(); // Update toolbar after using an item
+                }
+
+                Timer.schedule(new Timer.Task() {
+                    @Override
+                    public void run() {
+                        show();
+                    }
+                }, 0.2f);
+            } catch (Exception e) {
+                Gdx.app.error("error", e.getMessage());
             }
             toolAnimTime = 0;
             isToolAnimating = true;
@@ -335,15 +484,17 @@ public class GameScreen implements Screen {
                         Texture tileTex = getTextureForTileType(tile.type);
                         batch.draw(tileTex, x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
                         if (isNpcTile(tile.type)) {
-                            float drawX = (x-2) * TILE_SIZE ;
-                            float drawY = (y + 1) * TILE_SIZE; // بالای کاشی فعلی
+                            float drawX = (x-2) * TILE_SIZE;
+                            float drawY = (y + 1) * TILE_SIZE;
                             batch.draw(GameAssetManager.NPCHOUSE, drawX, drawY, TILE_SIZE*5, TILE_SIZE*5);
                         }
                         if (tile.type == TileType.FORAGING) {
-                            batch.draw(new Texture("Foraging/"+AllTheItemsInTheGame.getPlantById(tile.id).getName()+".png"), x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+                            try {
+                                batch.draw(new Texture("Foraging/" + AllTheItemsInTheGame.getPlantById(tile.id).getName() + ".png"), x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+                            } catch (NullPointerException e) {
+                                Gdx.app.log("error", e.getMessage());
+                            }
                         }
-
-
                     }
                 }
             }
@@ -353,11 +504,10 @@ public class GameScreen implements Screen {
             shop.update(playerPosition);
             shop.render(batch);
         }
-        if (playerPosition.x >= 200 &&  playerPosition.x <= 410 && playerPosition.y >= 200 &&  playerPosition.y <= 410)
+        if (playerPosition.x >= 200 && playerPosition.x <= 410 && playerPosition.y >= 200 && playerPosition.y <= 410)
             CottageFinal = GameAssetManager.COTTAGEIn;
         else
             CottageFinal = GameAssetManager.COTTAGEOut;
-//        batch.draw(GameAssetManager.CLOCK, playerPosition.x + 260, playerPosition.y + 77, TILE_SIZE*4, 4*TILE_SIZE);
         batch.draw(CottageFinal, 200, 200, TILE_SIZE * 7, TILE_SIZE * 7);
         TextureRegion currentFrame = playerAnimations[moveDirection].getKeyFrame(stateTime, true);
         batch.draw(currentFrame, playerPosition.x, playerPosition.y, TILE_SIZE, TILE_SIZE * 2);
@@ -368,7 +518,6 @@ public class GameScreen implements Screen {
             float toolX = playerPosition.x;
             float toolY = playerPosition.y;
 
-            float offsetX = 0, offsetY = 0;
             float animOffset = 5f;
 
             if (isToolAnimating) {
@@ -378,24 +527,24 @@ public class GameScreen implements Screen {
                     isToolAnimating = false;
                     progress = 1f;
                 }
-                float curve = (float)Math.sin(progress * Math.PI);  // رفتن و برگشتن
+                float curve = (float)Math.sin(progress * Math.PI);
                 animOffset *= curve;
             }
 
             switch (moveDirection) {
-                case 0: // پایین
+                case 0: // Down
                     toolY -= TILE_SIZE * 0.4f - animOffset;
                     toolX += TILE_SIZE * 0.2f;
                     break;
-                case 1: // راست
+                case 1: // Right
                     toolX += TILE_SIZE * 0.6f + animOffset;
                     toolY += TILE_SIZE * 0.3f;
                     break;
-                case 2: // بالا
+                case 2: // Up
                     toolY += TILE_SIZE * 1.1f + animOffset;
                     toolX += TILE_SIZE * 0.2f;
                     break;
-                case 3: // چپ
+                case 3: // Left
                     flipX = true;
                     toolX -= TILE_SIZE * 0.6f - animOffset;
                     toolY += TILE_SIZE * 0.3f;
@@ -415,10 +564,24 @@ public class GameScreen implements Screen {
                     false
             );
         }
+
+        // Draw energy bar texture
+        if (energyBarTexture != null) {
+            batch.draw(
+                    energyBarTexture,
+                    playerPosition.x + 350,
+                    playerPosition.y - 150,
+                    energyBarTexture.getWidth(),
+                    energyBarTexture.getHeight()
+            );
+        } else {
+            Gdx.app.error("GameScreen", "Energy bar texture is null");
+        }
         batch.end();
+
         TextureRegion clockTexture = TimeAndDate.renderClockToTexture();
         batch.begin();
-        batch.draw(clockTexture, playerPosition.x + 220, playerPosition.y + 58, TILE_SIZE*30, 15*TILE_SIZE);  // جای x و y محل دلخواه توی صفحه‌ست
+        batch.draw(clockTexture, playerPosition.x + 220, playerPosition.y + 58, TILE_SIZE*30, 15*TILE_SIZE);
         batch.end();
 
         mainStage.act(delta);
@@ -456,7 +619,6 @@ public class GameScreen implements Screen {
 
         Pixmap pixmap = new Pixmap(pixmapWidth, pixmapHeight, Pixmap.Format.RGBA8888);
 
-        // -------- 1. ترسیم پس‌زمینه‌ی کاشی‌ها --------
         for (int y = 0; y < mapHeight; y++) {
             for (int x = 0; x < mapWidth; x++) {
                 TileType type = tileMap[y][x].type;
@@ -476,7 +638,6 @@ public class GameScreen implements Screen {
             }
         }
 
-        // -------- 2. رسم خانه‌های NPC (روی tileهای خاص) --------
         Texture npcHouseTexture = GameAssetManager.NPCHOUSE;
         if (!npcHouseTexture.getTextureData().isPrepared()) npcHouseTexture.getTextureData().prepare();
         Pixmap npcHousePixmap = npcHouseTexture.getTextureData().consumePixmap();
@@ -492,19 +653,20 @@ public class GameScreen implements Screen {
                             npcHousePixmap,
                             0, 0, npcHousePixmap.getWidth(), npcHousePixmap.getHeight(),
                             drawX, drawY,
-                            miniTileSize, miniTileSize
+                            miniTileSize,
+                            miniTileSize
                     );
                 }
             }
         }
         npcHousePixmap.dispose();
 
-        Texture shopIconTexture = new Texture("Plank_Cabin_Stage_3.png"); // آیکون فروشگاه (مثلاً 16x16)
+        Texture shopIconTexture = new Texture("Plank_Cabin_Stage_3.png");
         if (!shopIconTexture.getTextureData().isPrepared()) shopIconTexture.getTextureData().prepare();
         Pixmap shopPixmap = shopIconTexture.getTextureData().consumePixmap();
 
         for (Shop shop : App.getCurrentGame().getShops()) {
-            Vector2 loc = shop.getType().getPosition(); // پیکسل
+            Vector2 loc = shop.getType().getPosition();
             int shopX = (int)(loc.x / TILE_SIZE);
             int shopY = (int)(loc.y / TILE_SIZE);
 
@@ -515,13 +677,13 @@ public class GameScreen implements Screen {
                     shopPixmap,
                     0, 0, shopPixmap.getWidth(), shopPixmap.getHeight(),
                     drawX, drawY,
-                    miniTileSize, miniTileSize
+                    miniTileSize,
+                    miniTileSize
             );
         }
         shopPixmap.dispose();
         shopIconTexture.dispose();
 
-        // -------- 4. رسم بازیکن --------
         int px = (int)(playerPosition.x / TILE_SIZE);
         int py = (int)(playerPosition.y / TILE_SIZE);
         Texture playerTex = GameAssetManager.ABIGEL;
@@ -538,7 +700,6 @@ public class GameScreen implements Screen {
         );
         playerPixmap.dispose();
 
-        // -------- 5. نهایی‌سازی و نمایش --------
         mapTexture = new Texture(pixmap);
         pixmap.dispose();
 
@@ -560,7 +721,6 @@ public class GameScreen implements Screen {
     }
 
     private Pixmap TextureToPixmap(Texture texture) {
-        // WARNING: only works with textures created from Pixmap or file (not FrameBuffers)
         if (!texture.getTextureData().isPrepared()) {
             texture.getTextureData().prepare();
         }
@@ -584,6 +744,11 @@ public class GameScreen implements Screen {
         viewport.update(width, height);
         if (mainStage != null) mainStage.getViewport().update(width, height, true);
         if (dialogStage != null) dialogStage.getViewport().update(width, height, true);
+        // Reinitialize energy bar Pixmap on resize
+        if (energyBarPixmap != null) {
+            energyBarPixmap.dispose();
+        }
+        initEnergyBar();
     }
 
     @Override
@@ -592,7 +757,7 @@ public class GameScreen implements Screen {
         Gdx.input.setInputProcessor(new InputAdapter() {
             @Override
             public boolean scrolled(float amountX, float amountY) {
-                scrollDelta += amountY; // بالا 1، پایین -1
+                scrollDelta += amountY;
                 return true;
             }
         });
@@ -602,10 +767,11 @@ public class GameScreen implements Screen {
         toolbar.setFillParent(true);
 
         for (int i = 0; i < TOOLBAR_SIZE; i++) {
-            Texture tex = toolTextures.get(i);
-            TextureRegionDrawable toolDrawable = new TextureRegionDrawable(
-                    new TextureRegion((tex != null) ? tex : emptySlotTexture));
-            Image icon = new Image(toolDrawable);
+            Item item = (i < toolbarItems.size()) ? toolbarItems.get(i) : null;
+            int count = (item != null) ? (int)(Math.log(item.getAmount()) / Math.log(2)) + 1 : 0;
+
+            Texture tex = (item != null && item.getImage() != null) ? item.getImage() : emptySlotTexture;
+            Image icon = new Image(new TextureRegion(tex));
             icon.setSize(36, 36);
 
             Container<Image> container = new Container<>(icon);
@@ -613,8 +779,19 @@ public class GameScreen implements Screen {
             container.setColor(i == selectedToolIndex ? Color.GOLD : Color.DARK_GRAY);
             container.size(44, 44);
 
+            Label countLabel = new Label(count > 0 ? String.valueOf(count) : "", skin);
+            countLabel.setAlignment(Align.bottomRight);
+            countLabel.setFontScale(0.7f);
+            countLabel.setColor(Color.WHITE);
+
+            Table labelTable = new Table();
+            labelTable.setFillParent(true);
+            labelTable.bottom().right();
+            labelTable.add(countLabel).padRight(5).padBottom(5);
+
             Stack stack = new Stack();
             stack.add(container);
+            stack.add(labelTable);
             toolbarSlots[i] = stack;
 
             toolbar.add(stack).pad(5);
@@ -622,7 +799,6 @@ public class GameScreen implements Screen {
 
         mainStage.addActor(toolbar);
     }
-
 
     @Override public void hide() {}
     @Override public void pause() {}
@@ -638,5 +814,9 @@ public class GameScreen implements Screen {
         if (mainStage != null) mainStage.dispose();
         if (dialogStage != null) dialogStage.dispose();
         skin.dispose();
+        if (energyBarTexture != null) energyBarTexture.dispose();
+        if (energyBarPixmap != null) energyBarPixmap.dispose();
+        if (backgroundTexture != null) backgroundTexture.dispose();
+        if (fillTexture != null) fillTexture.dispose();
     }
 }

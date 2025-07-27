@@ -28,7 +28,7 @@ public class Player extends User {
 
     public int trashCanLevel = 0;
     public ArrayList<Item> playerShipping_bin = new ArrayList<>();
-    public Energy EnergyObject = new Energy(200,200);
+    public Energy EnergyObject = new Energy(20000,20000);
     private int money;
     private int id;
     //friendships & trade
@@ -157,12 +157,6 @@ public class Player extends User {
         pendingTrades.put(player, oldPendingTrades);
     }
 
-    public void setInvetory(Item item, int amount) {
-        Item i = this.invetory.findItemFromName(item.getName());
-        item.setAmount(amount + (i == null ? amount : i.getAmount() + amount));
-        this.invetory.setItems(item);
-    }
-
     public void addGiftToPendingGifts(Player player, Gift gift) {
         ArrayList<Gift> oldPendingGifts = pendingGifts.get(player);
         oldPendingGifts.add(gift);
@@ -202,9 +196,6 @@ public class Player extends User {
 
     }
 
-    public void gainXP(SkillType type , int xp) {
-
-    }
     public void reduceMoney(int amount) {
         money-=amount;
     }

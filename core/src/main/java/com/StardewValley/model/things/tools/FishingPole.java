@@ -66,7 +66,7 @@ public class FishingPole extends Item {
             int a = rand.nextInt(19) + 1050;
             if(AllTheItemsInTheGame.getItemById(a).getSeason().equals(App.currentGame.time.getSeason())){
                if (a >=1066 && a <=1069){
-                   if (App.getCurrentGame().getCurrentPlayer().getSkills()[1].getLevel() != 4) {
+                   if (App.getCurrentGame().getCurrentPlayer().getSkills()[1].getLevel() >= 4) {
                         continue;
                    }
                }
@@ -77,8 +77,11 @@ public class FishingPole extends Item {
     }
     @Override
     public String useTool(Tile tile) {
+        Player currentPlayer = App.getCurrentGame().getCurrentPlayer();
+        currentPlayer.setEnergy(new Energy(currentPlayer.getEnergy().getEnergyCap(),currentPlayer.getEnergy().getCurrentEnergy() - energyCost() * 100));
+        App.currentGame.currentPlayer.getSkills()[1].setLevel(4);
         Point point = tile.point;
-        TileType tileType = App.currentGame.map.tiles[point.getX()][point.getY()].type;
+        TileType tileType = tile.type;
         StringBuilder builder = new StringBuilder();
         Player player = App.getCurrentGame().getCurrentPlayer();
         if(player.EnergyObject.getCurrentEnergy() - energyCost() <= 0)
