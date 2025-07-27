@@ -1429,26 +1429,26 @@ public class GameMenuController {
         }
         return new Result<String>(false, "Plant not found");
     }
-    public Result<String> toolUse(Matcher matcher) {
-        String direction = matcher.group("direction");
-        Point offset = getOffsetFromDirection(direction);
-        Player player = App.currentGame.currentPlayer;
-
-        int turn = App.currentGame.turn;
-        int baseX = App.currentGame.map.farms[turn].personPoint.x;
-        int baseY = App.currentGame.map.farms[turn].personPoint.y;
-
-        int offsetX = App.farmStart[turn].x + offset.x;
-        int offsetY = App.farmStart[turn].y + offset.y;
-
-        int targetX = baseX + offsetX;
-        int targetY = baseY + offsetY;
-
-        Point targetPoint = new Point(targetX, targetY);
-
-        return new Result<>(true,player.currentToll.useTool(targetPoint));
-
-    }
+//    public Result<String> toolUse(Matcher matcher) {
+//        String direction = matcher.group("direction");
+//        Point offset = getOffsetFromDirection(direction);
+//        Player player = App.currentGame.currentPlayer;
+//
+//        int turn = App.currentGame.turn;
+//        int baseX = App.currentGame.map.farms[turn].personPoint.x;
+//        int baseY = App.currentGame.map.farms[turn].personPoint.y;
+//
+//        int offsetX = App.farmStart[turn].x + offset.x;
+//        int offsetY = App.farmStart[turn].y + offset.y;
+//
+//        int targetX = baseX + offsetX;
+//        int targetY = baseY + offsetY;
+//
+//        Point targetPoint = new Point(targetX, targetY);
+//
+//        return new Result<>(true,player.currentToll.useTool(targetPoint));
+//
+//    }
     /*@amoojoey need  the Use Sⅽythe method to lead into harvestPlant with this code in it:
     for (Plant plant : App.getCurrentGame().getPlants()) {
         if(plant.getPoint().getX() == Integer.parseInt(x) && plant.getPoint().getY() == Integer.parseInt(y)) {
@@ -1765,6 +1765,7 @@ public class GameMenuController {
                     int mod = t % 8;
                     if (mod == 0) {
                         map.tiles[x][y].type = TileType.FORAGING;
+                        map.tiles[x][y].id = rand.nextInt(21) + 357;
                     } else if (mod == 1 || mod == 2) {
                         map.tiles[x][y].type = TileType.TREE;
                     } else if (mod == 3 || mod == 4) {

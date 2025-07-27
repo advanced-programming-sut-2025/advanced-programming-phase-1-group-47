@@ -3,6 +3,7 @@ package com.StardewValley.model.things;
 import com.StardewValley.model.AllTheItemsInTheGame;
 import com.StardewValley.model.Point;
 import com.StardewValley.model.Result;
+import com.StardewValley.model.Tile;
 import com.StardewValley.model.enums.ProductQuality;
 import com.StardewValley.model.enums.Season;
 import com.StardewValley.model.things.products.Product;
@@ -16,7 +17,7 @@ public class Item {
     private int value;
     private int amount = 0;
     protected Texture image;
-    public String useTool(Point point) {
+    public String useTool(Tile tile){
         return "";
     }
     public Item(String name ,int ItemID , int value , int ParentItemID , int amount) {

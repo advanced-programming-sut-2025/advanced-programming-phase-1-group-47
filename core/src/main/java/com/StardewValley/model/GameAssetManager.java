@@ -16,7 +16,7 @@ public class GameAssetManager {
     private final Skin skin = new Skin(Gdx.files.internal("skin/pixthulhu-ui.json"));
     public static final Texture GRASS = new Texture("Crafting/Grass_Starter.png");
     public static final Texture EMPTY =new Texture("grass.png");
-    public static final Texture TILLED = new Texture("Farming/Tiller.png");
+    public static final Texture TILLED = new Texture("Flooring/Flooring_62.png");
     public static final Texture PLANT = new Texture("Crops/Eggplant.png");
     public static final Texture WATER = new Texture("Flooring/water.png");
     public static final Texture STONE = new Texture("Rock/Stone_Index32.png");

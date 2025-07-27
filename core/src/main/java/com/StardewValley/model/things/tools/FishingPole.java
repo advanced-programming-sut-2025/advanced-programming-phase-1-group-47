@@ -4,6 +4,7 @@ import com.StardewValley.model.*;
 import com.StardewValley.model.enums.*;
 import com.StardewValley.model.enums.Weather;
 import com.StardewValley.model.things.Item;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 
 import java.util.Random;
@@ -75,7 +76,8 @@ public class FishingPole extends Item {
         return null;
     }
     @Override
-    public String useTool(Point point) {
+    public String useTool(Tile tile) {
+        Point point = tile.point;
         TileType tileType = App.currentGame.map.tiles[point.getX()][point.getY()].type;
         StringBuilder builder = new StringBuilder();
         Player player = App.getCurrentGame().getCurrentPlayer();
@@ -90,28 +92,26 @@ public class FishingPole extends Item {
         if ((tileType.equals(TileType.LAKE))){
             Fish fish = new Fish(FishType.SUNFISH);
             if (rodType.getName().equals("TrainingRod")){
-                fish = CheepestFish();
                 player.getInvetory().addItem(fish);
             }
             else if (rodType.getName().equals("BambooPole")){
-                fish = randomSeasonall();
                 player.getInvetory().addItem(randomSeasonall());
             }
             else if (rodType.getName().equals("FiberglassRod")){
-                fish = randomSeasonall();
                 player.getInvetory().addItem(randomSeasonall());
             }
             else if (rodType.getName().equals("IridiumRod")){
                 fish = randomSeasonall();
-                player.getInvetory().addItem(randomSeasonall());
             }
             builder.append("You got a " + fish.getName() + " that worth " + fish.getSellPrice() + "\n");
+            fish.setImage(new Texture("Fish/"+fish.getName() + ".png"));
             player.getInvetory().addItem(fish);
         }
         else {
             builder.append("The point you selected is a ")
                     .append(tileType.toString().toLowerCase());
         }
+        Gdx.app.log("FishingPole", builder.toString());
         return builder.toString();
     }
 }

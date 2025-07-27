@@ -9,6 +9,9 @@ public class Time {
 
     public void setHour(int hour) {
         Time.hour = hour;
+        if(hour%24 >= 0 && hour%24 <= 9) {
+            Time.hour = (Time.hour - Time.hour%24) + 9;
+        }
     }
 
     public Season getSeason() {

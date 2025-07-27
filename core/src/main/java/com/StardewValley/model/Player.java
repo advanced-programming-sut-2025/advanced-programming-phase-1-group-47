@@ -79,26 +79,8 @@ public class Player extends User {
         invetory.addItem(new Hoe(Type.GOLDEN));
         invetory.addItem(new Pickaxe(Type.GOLDEN));
         invetory.addItem(new WateringCan(Type.SILVER));
-        invetory.addItem(new FishingPole(RodType.TRAININGROD));
+        invetory.addItem(new FishingPole(RodType.IRIDIUMROD));
         invetory.addItem(new Scythe());
-        invetory.addItem(new Item("Carrot Seeds", 403, 2, 0, 1000,GameAssetManager.CARROT_SEEDS));
-        invetory.addItem(new Item("Cactus Seeds", 1000, 2, 0, 1000,GameAssetManager.CACTUS_FRUIT));
-
-
-
-        //        invetory.addItem(new Building(FarmBuilding.BARN));
-//        invetory.addItem(new Building(FarmBuilding.BIG_BARN));
-//        invetory.addItem(new Building(FarmBuilding.COOP));
-//        invetory.addItem(new Building(FarmBuilding.BIG_COOP));
-//        invetory.addItem(new Building(FarmBuilding.DELUXE_BARN));
-//        invetory.addItem(new Building(FarmBuilding.DELUXE_BARN));
-//        invetory.addItem(new Building(FarmBuilding.SHIPPING_BIN));
-//        invetory.addItem(new Building(FarmBuilding.SHIPPING_BIN));
-//        invetory.addItem(new Building(FarmBuilding.WELL));
-
-//        Item x = AllTheItemsInTheGame.getItemById(338);
-//        x.setAmount(45);
-//        invetory.addItem(x);
     }
     public void addToShippingBin(Item item) {
         for(Item item2 : playerShipping_bin){

@@ -1,6 +1,7 @@
 package com.StardewValley.model;
 
 import com.StardewValley.model.enums.Season;
+import com.badlogic.gdx.graphics.Texture;
 
 public class Tree extends Plant {
     private final int foodCycle;
@@ -11,6 +12,7 @@ public class Tree extends Plant {
         super(plantID, point, name, baseValue, isEdible, energy, health, source, currentStage,
               currentStageCount, totalHarvestTime, seasonOfGrowth, growStages, isReUsable, canBecomeGiant, isFruit , regrowthTime);
         this.foodCycle = foodCycle;
+        image = new Texture("Trees/"+name+".png");
     }
     public int getFoodCycle() {
         return foodCycle;

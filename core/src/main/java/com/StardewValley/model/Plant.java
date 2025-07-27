@@ -4,6 +4,7 @@ import com.StardewValley.model.enums.ProductQuality;
 import com.StardewValley.model.enums.Season;
 import com.StardewValley.model.things.Item;
 import com.StardewValley.model.things.products.Product;
+import com.badlogic.gdx.graphics.Texture;
 
 import java.util.Random;
 
@@ -29,6 +30,11 @@ public class Plant {
     private boolean hasBeenWatered;
     private boolean hasBeenFertilized;
     private int fertilizerId;
+    public Texture image;
+
+    public Texture getImage() {
+        return image;
+    }
 
     public Plant(int plantID, Point point, String name, int baseValue, boolean isEdible, int energy, int health,
                  String source, int currentStage, int currentStageCount, int totalHarvestTime, Season seasonOfGrowth,

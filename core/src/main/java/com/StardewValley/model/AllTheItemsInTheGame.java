@@ -10,6 +10,7 @@ import com.StardewValley.model.things.machines.*;
 import com.StardewValley.model.things.products.Product;
 import com.StardewValley.model.things.tools.*;
 import com.StardewValley.model.things.tools.Type;
+import com.badlogic.gdx.graphics.Texture;
 
 public class AllTheItemsInTheGame {
 
@@ -184,7 +185,7 @@ public class AllTheItemsInTheGame {
         tempItems.put(27, new Item("Sugar",27,2,0,1));
         tempItems.put(28, new Item("Wheat Flour",28,2,0,1));
         tempItems.put(29, new Item("Trout Soup",29,2,0,1));
-        tempItems.put(30, new Item("Hay",30,20,0,1));
+        tempItems.put(30, new Item("Hay",30,20,0,1,new Texture("Foraging/Sap.png")));
         tempItems.put(31, new Item("Vinegar", 31, 100, 0, 1));
         tempItems.put(32, new Item("Pale ale", 32, 300, 0, 1));
         tempItems.put(36, new Item("Wood",36,2,0,1));

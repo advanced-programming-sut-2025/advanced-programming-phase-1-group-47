@@ -1546,7 +1546,7 @@ Fish/Albacore.png
 Fish/Anchovy.png
 Fish/Angler.png
 Fish/Blobfish.png
-Fish/Blue_Discus.png
+Fish/Blue Discus.png
 Fish/Bream.png
 Fish/Bullhead.png
 Fish/Carp.png
@@ -1555,21 +1555,17 @@ Fish/Chub.png
 Fish/Crimsonfish.png
 Fish/Dorado.png
 Fish/Eel.png
-Fish/Flounder.png
-Fish/Ghostfish.png
 Fish/Glacierfish.png
 Fish/Glacierfish_Jr..png
 Fish/Goby.png
 Fish/Halibut.png
-Fish/Herring.png
 Fish/Ice_Pip.png
 Fish/Largemouth_Bass.png
 Fish/Lava_Eel.png
 Fish/Legend.png
 Fish/Legend_II.png
 Fish/Lingcod.png
-Fish/Lionfish.png
-Fish/Midnight_Carp.png
+Fish/Midnight Carp.png
 Fish/Midnight_Squid.png
 Fish/Ms._Angler.png
 Fish/Mutant_Carp.png
@@ -1578,11 +1574,10 @@ Fish/Perch.png
 Fish/Pike.png
 Fish/Pufferfish.png
 Fish/Radioactive_Carp.png
-Fish/Rainbow_Trout.png
+Fish/Rainbow Trout.png
 Fish/Red_Mullet.png
 Fish/Red_Snapper.png
 Fish/Salmon.png
-Fish/Sandfish.png
 Fish/Sardine.png
 Fish/Scorpion_Carp.png
 Fish/Sea_Cucumber.png
@@ -1604,6 +1599,11 @@ Fish/Tuna.png
 Fish/Void_Salmon.png
 Fish/Walleye.png
 Fish/Woodskip.png
+Fish/flounder.png
+Fish/ghostfish.png
+Fish/herring.png
+Fish/lionfish.png
+Fish/sunfish.png
 Flooring/Flooring_01.png
 Flooring/Flooring_02.png
 Flooring/Flooring_03.png
@@ -1749,11 +1749,12 @@ Foraging/Chowder.png
 Foraging/Clam.png
 Foraging/Cockle.png
 Foraging/Coconut.png
-Foraging/Common_Mushroom.png
+Foraging/Common Mushroom.png
 Foraging/Cooking_Channel.png
 Foraging/Cookout_Kit.png
 Foraging/Coral.png
 Foraging/Crocus.png
+Foraging/Crystal Fruit.png
 Foraging/Crystal_Fruit.png
 Foraging/Daffodil.png
 Foraging/Dandelion.png
@@ -1775,7 +1776,7 @@ Foraging/Eggplant.png
 Foraging/Energy.png
 Foraging/Fall_Seeds.png
 Foraging/Fiber_Seeds.png
-Foraging/Fiddlehead_Fern.png
+Foraging/Fiddlehead Fern.png
 Foraging/Fiddlehead_Risotto.png
 Foraging/Field_Snack.png
 Foraging/Fish_Pond.png
@@ -1801,7 +1802,6 @@ Foraging/Life_Elixir.png
 Foraging/Lightning_Rod.png
 Foraging/Lost_Book.png
 Foraging/Lumberjack.png
-Foraging/Magma_Cap.png
 Foraging/Maki_Roll.png
 Foraging/Miner%27s_Treat.png
 Foraging/Morel.png
@@ -1821,17 +1821,17 @@ Foraging/Pineapple.png
 Foraging/Plum_Pudding.png
 Foraging/Poison.png
 Foraging/Pumpkin.png
+Foraging/Purple Mushroom.png
 Foraging/Purple_Dried_Fruit.png
 Foraging/Purple_Jelly.png
 Foraging/Purple_Mushroom.png
-Foraging/Purple_Wine.png
 Foraging/Quality_Bobber.png
 Foraging/Rain_Totem.png
 Foraging/Rainbow_Shell.png
 Foraging/Raisins.png
+Foraging/Red Mushroom.png
 Foraging/Red_Dried_Fruit.png
 Foraging/Red_Jelly.png
-Foraging/Red_Mushroom.png
 Foraging/Red_Wine.png
 Foraging/Roasted_Hazelnuts.png
 Foraging/Roots_Platter.png
@@ -1841,9 +1841,9 @@ Foraging/Sap.png
 Foraging/Sea_Urchin.png
 Foraging/Seaweed.png
 Foraging/Shrimp_Cocktail.png
-Foraging/Snow_Yam.png
-Foraging/Spice_Berry.png
-Foraging/Spring_Onion.png
+Foraging/Snow Yam.png
+Foraging/Spice Berry.png
+Foraging/Spring Onion.png
 Foraging/Spring_Seeds.png
 Foraging/Statue_Of_Blessings.png
 Foraging/Stir_Fry.png
@@ -1851,7 +1851,7 @@ Foraging/Stuffing.png
 Foraging/Summer.png
 Foraging/Summer_Seeds.png
 Foraging/Survival_Burger.png
-Foraging/Sweet_Pea.png
+Foraging/Sweet Pea.png
 Foraging/Tapper.png
 Foraging/Tapper_Icon.png
 Foraging/Tent_Kit.png
@@ -1869,12 +1869,12 @@ Foraging/Warp_Totem_Mountains.png
 Foraging/Wheat_Flour.png
 Foraging/White_Juice.png
 Foraging/White_Pickles.png
-Foraging/Wild_Horseradish.png
-Foraging/Wild_Plum.png
+Foraging/Wild Horseradish.png
+Foraging/Wild Plum.png
 Foraging/Wild_Seeds_Stage_1.png
 Foraging/Wild_Seeds_Stage_2.png
 Foraging/Wild_Seeds_Stage_3.png
-Foraging/Winter_Root.png
+Foraging/Winter Root.png
 Foraging/Winter_Seeds.png
 Foraging/Yam.png
 Foraging/Yellow_Juice.png

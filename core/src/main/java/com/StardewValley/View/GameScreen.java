@@ -21,6 +21,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.*;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Map.Entry;
+import java.util.Random;
 
 public class GameScreen implements Screen {
 
@@ -51,7 +52,7 @@ public class GameScreen implements Screen {
     private boolean isToolAnimating = false;
     private float toolAnimTime = 0f;
     private final float toolAnimDuration = 0.3f; // مدت زمان انیمیشن در ثانیه
-    private static final int TOOLBAR_SIZE = 12;
+    private static final int TOOLBAR_SIZE = 24;
     private Stack[] toolbarSlots = new Stack[TOOLBAR_SIZE];
     private int selectedToolIndex = 0;
     private ArrayList<Texture> toolTextures = new ArrayList<>();
@@ -107,7 +108,6 @@ public class GameScreen implements Screen {
         tileTextures.put(TileType.HARVEY, GameAssetManager.HARVEY);
         emptySlotTexture = new Texture("bar.png");
         toolTextures.clear();
-        toolbarItems.clear();
 
         for (Item x : App.getCurrentGame().getCurrentPlayer().getInvetory().getItems()) {
             if (x.getImage() != null) {
@@ -120,6 +120,23 @@ public class GameScreen implements Screen {
             toolTextures.add(null);
             toolbarItems.add(null);
         }
+        for (int y = 0; y <= 120; y++) {
+            for (int x = 0; x <= 160; x++) {
+                if (x >= 0 && y >= 0 && x < tileMap[0].length && y < tileMap.length) {
+                    Tile tile = tileMap[y][x];
+                        if (tile.type == TileType.FORAGING) {
+                            try{
+                                Random rand = new Random();
+                                tile.id = rand.nextInt(21) + 357;
+                                ;}
+                            catch (Exception e) {
+                                Gdx.app.error("error",e.getMessage());
+                            }
+                        }
+                }
+            }
+        }
+
 
     }
 
@@ -142,7 +159,7 @@ public class GameScreen implements Screen {
     }
     private void EnergyCounter(int energy) {
         Player currentPlayer = App.getCurrentGame().getCurrentPlayer();
-        currentPlayer.setEnergy(new Energy(currentPlayer.getEnergy().getEnergyCap(),(currentPlayer.getEnergy().getCurrentEnergy()*1000 - energy)/1000));
+//        currentPlayer.setEnergy(new Energy(currentPlayer.getEnergy().getEnergyCap(),(currentPlayer.getEnergy().getCurrentEnergy()*1000 td/1000));
     }
     private void showEnergy() {
         Gdx.app.log("Energy", String.valueOf(App.getCurrentGame().getCurrentPlayer().getEnergy().getCurrentEnergy()));
@@ -194,7 +211,7 @@ public class GameScreen implements Screen {
 
         for (int i = 0; i < TOOLBAR_SIZE; i++) {
             if (toolTextures.get(i) == null || toolTextures.get(i).equals(emptySlotTexture)) {
-                continue;  // رد شدن از ابزارهای خالی، ولی حلقه ادامه پیدا کنه
+                continue;
             }
             if (i < 9 && Gdx.input.isKeyJustPressed(Input.Keys.NUM_1 + i)) {
                 selectedToolIndex = i;
@@ -255,7 +272,18 @@ public class GameScreen implements Screen {
 
     @Override
     public void render(float delta) {
+        toolTextures.clear();
+        for (Item x : App.getCurrentGame().getCurrentPlayer().getInvetory().getItems()) {
+            if (x.getImage() != null) {
+                toolTextures.add(x.getImage());
+                toolbarItems.add(x);
+            }
+        }
 
+        while (toolTextures.size() < TOOLBAR_SIZE) {
+            toolTextures.add(null);
+            toolbarItems.add(null);
+        }
         handleInput(delta);
         stateTime += delta;
 //        showEnergy();
@@ -265,18 +293,16 @@ public class GameScreen implements Screen {
         Gdx.gl.glClearColor(0.2f, 0.3f, 0.5f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         if (Gdx.input.justTouched()) {
+            show();
             Vector3 touchPos = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
             camera.unproject(touchPos);
-
             int tileX = (int)(touchPos.x / TILE_SIZE);
             int tileY = (int)(touchPos.y / TILE_SIZE);
 
             try {
-                Gdx.app.log("Tile Clicked", "Tile: (" + tileX + ", " + tileY + ") \n TileType: " + tileMap[tileX][tileY].type.toString() );
+                Gdx.app.log("Tile Clicked", "Tile: (" + tileX + ", " + tileY + ") \n TileType: " + tileMap[tileY][tileX].type.toString() );
                 Gdx.app.log("current Item ", toolbarItems.get(selectedToolIndex).getName());
-                toolbarItems.get(selectedToolIndex).useTool(new Point(tileX, tileY));
-                Scythe x = new Scythe();
-                x.useTool(new Point(tileX, tileY));
+                toolbarItems.get(selectedToolIndex).useTool(tileMap[tileY][tileX]);
             }
             catch (Exception e) {
                 Gdx.app.error("error",e.getMessage());
@@ -313,6 +339,11 @@ public class GameScreen implements Screen {
                             float drawY = (y + 1) * TILE_SIZE; // بالای کاشی فعلی
                             batch.draw(GameAssetManager.NPCHOUSE, drawX, drawY, TILE_SIZE*5, TILE_SIZE*5);
                         }
+                        if (tile.type == TileType.FORAGING) {
+                            batch.draw(new Texture("Foraging/"+AllTheItemsInTheGame.getPlantById(tile.id).getName()+".png"), x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+                        }
+
+
                     }
                 }
             }
@@ -384,12 +415,8 @@ public class GameScreen implements Screen {
                     false
             );
         }
-
-        Game currentGame = App.getCurrentGame();
-        Time time = currentGame.getTime();
         batch.end();
-        TimeAndDate timeAndDate = new TimeAndDate(time.getDayOfSeason(),time.getHourOfDay(),time.getSeason(),1404);
-        TextureRegion clockTexture = timeAndDate.renderClockToTexture();
+        TextureRegion clockTexture = TimeAndDate.renderClockToTexture();
         batch.begin();
         batch.draw(clockTexture, playerPosition.x + 220, playerPosition.y + 58, TILE_SIZE*30, 15*TILE_SIZE);  // جای x و y محل دلخواه توی صفحه‌ست
         batch.end();

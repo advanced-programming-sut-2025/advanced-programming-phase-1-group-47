@@ -4,6 +4,7 @@ package com.StardewValley.model.things.tools;
 import com.StardewValley.model.App;
 import com.StardewValley.model.Plant;
 import com.StardewValley.model.Point;
+import com.StardewValley.model.Tile;
 import com.StardewValley.model.enums.SkillType;
 import com.StardewValley.model.enums.TileType;
 import com.StardewValley.model.things.Item;
@@ -61,7 +62,8 @@ public class WateringCan extends Item {
         return (int) (type.getEnergyCost() * App.getCurrentGame().getWeather().getIntensity() - fraction);
     }
     @Override
-    public String useTool(Point point) {
+    public String useTool(Tile tile) {
+        Point point = tile.point;
         if(App.getCurrentGame().getCurrentPlayer().EnergyObject.getCurrentEnergy() - energyCost() <= 0)
             return ("Not enough energy!");
         App.getCurrentGame().getCurrentPlayer().getEnergy().setCurrentEnergy(App.getCurrentGame().getCurrentPlayer().EnergyObject.getCurrentEnergy() - energyCost());

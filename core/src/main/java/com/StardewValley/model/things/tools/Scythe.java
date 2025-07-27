@@ -6,6 +6,7 @@ import com.StardewValley.model.*;
 import com.StardewValley.model.enums.Season;
 import com.StardewValley.model.enums.TileType;
 import com.StardewValley.model.things.Item;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 
 import java.util.HashMap;
@@ -44,26 +45,22 @@ public class Scythe extends Item {
     }
 
     @Override
-    public String useTool(Point point) {
+    public String useTool(Tile tile) {
+        Point point = tile.point;
         StringBuilder builder = new StringBuilder();
         TileType tileType = App.currentGame.map.tiles[point.getX()][point.getY()].type;
         Player player = App.getCurrentGame().getCurrentPlayer();
         if(player.EnergyObject.getCurrentEnergy() - energyCost() <= 0)
             return ("Not enough energy!");
         player.EnergyObject.setCurrentEnergy(player.EnergyObject.getCurrentEnergy() - energyCost());
-        Random rand = new Random();
         if (tileType.equals(TileType.FORAGING)) {
-
-            int[] range = getRangeBySeason();
-            int randomId = rand.nextInt(Math.abs(range[1] - range[0])) + range[0];
-
-            Item item = AllTheItemsInTheGame.getItemById(randomId);
-            item = new Item(item,rand.nextInt(1));
+            Gdx.app.debug("id", String.valueOf(tile.id));
+            Plant item = AllTheItemsInTheGame.getPlantById(tile.id);
             builder.append("You got a foraging ").append(item.getName())
                     .append(" at ").append(point.x).append(", ").append(point.y);
 
             App.currentGame.map.tiles[point.getX()][point.getY()].type = TileType.EMPTY;
-            App.currentGame.currentPlayer.getInvetory().addItem(item);
+            App.currentGame.currentPlayer.getInvetory().addItem(new Item(item.getName(),item.getPlantID(),item.getBaseValue(),-1,1,item.getImage()));
         }
         else if (tileType.equals(TileType.PLANT)){
             GameMenuController controller = new GameMenuController();
@@ -71,7 +68,6 @@ public class Scythe extends Item {
                 Point plantpoint = entry.getKey();
                 Plant plant = entry.getValue();
                 if (plantpoint.x == point.x && plantpoint.y == point.y) {
-
                     builder.append(controller.harvestPlant(plant).getData());
                 }
             }
@@ -85,7 +81,7 @@ public class Scythe extends Item {
             builder.append("The point you selected is a ")
                     .append(tileType.toString().toLowerCase());
         }
-
+        Gdx.app.log("Skythe", builder.toString());
         return builder.toString();
     }
 

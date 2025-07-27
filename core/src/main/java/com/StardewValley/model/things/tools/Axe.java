@@ -61,7 +61,8 @@ public class Axe extends Item {
             return new int[]{357,379};
     }
     @Override
-    public String useTool(Point point) {
+    public String useTool(Tile tile) {
+        Point point = tile.point;
         Player player = App.getCurrentGame().getCurrentPlayer();
         if(player.EnergyObject.getCurrentEnergy() - energyCost() <= 0)
             return ("Not enough energy!");

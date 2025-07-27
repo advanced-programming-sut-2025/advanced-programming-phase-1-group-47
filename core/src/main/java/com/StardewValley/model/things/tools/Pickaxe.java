@@ -1,8 +1,5 @@
 package com.StardewValley.model.things.tools;
-import com.StardewValley.model.AllTheItemsInTheGame;
-import com.StardewValley.model.App;
-import com.StardewValley.model.Player;
-import com.StardewValley.model.Point;
+import com.StardewValley.model.*;
 import com.StardewValley.model.enums.SkillType;
 import com.StardewValley.model.enums.TileType;
 import com.StardewValley.model.things.Item;
@@ -38,7 +35,8 @@ public class Pickaxe extends Item {
         return (int) (type.getEnergyCost() * App.getCurrentGame().getWeather().getIntensity() - fraction);
     }
 
-    public String useTool(Point point) {
+    public String useTool(Tile tile) {
+        Point point = tile.point;
         StringBuilder builder = new StringBuilder();
         TileType tileType = App.currentGame.map.tiles[point.getX()][point.getY()].type;
         Player player = App.getCurrentGame().getCurrentPlayer();

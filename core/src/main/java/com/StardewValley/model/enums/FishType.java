@@ -15,7 +15,7 @@ public enum FishType {
     GHOSTFISH(1061, "Ghostfish", 45, Season.SPRING, false),
     TILAPIA(1062, "Tilapia", 75, Season.SUMMER, false),
     DORADO(1063, "Dorado", 100, Season.SUMMER, false),
-    SUNFISH(1064, "Sunfish", 30, Season.SUMMER, false),
+    SUNFISH(1064, "sunfish", 30, Season.SUMMER, false),
     RAINBOW_TROUT(1065, "Rainbow Trout", 65, Season.SUMMER, false),
     LEGEND(1066, "Legend", 5000, Season.SPRING, true),
     GLACIERFISH(1067, "Glacierfish", 1000, Season.WINTER, true),
