@@ -33,7 +33,6 @@ public class FishingFarm {
         changeTiles(new Point(42, 30), new Point(42,30), TileType.DOOR);
         // Cottage – یک عدد، وسط نقشه
         changeTiles(new Point(22, 18), new Point(26, 22), TileType.COTTAGE);
-        changeTiles(new Point(22, 20), new Point(22,20), TileType.DOOR);
         // Lake – دو عدد، کوچک‌تر و در نواحی باز
         lakes.add(new Lake(new Ground(new Point(10, 25), new Point(19, 31))));
         changeTiles(new Point(10, 25), new Point(19, 31), TileType.LAKE);

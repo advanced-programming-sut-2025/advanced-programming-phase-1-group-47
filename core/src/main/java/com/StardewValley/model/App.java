@@ -1,6 +1,12 @@
 package com.StardewValley.model;
 
+import com.StardewValley.model.enums.TileType;
+import com.StardewValley.model.enums.Weather;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -14,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import com.StardewValley.model.enums.Menu;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class App {
     public static User loggedUser;
@@ -23,11 +30,29 @@ public class App {
     public static Point[] farmStart = new Point[]{new Point(0,0), new Point(110,0), new Point(0,80), new Point(110,80),};
     public static Game currentGame = null;
     public static ArrayList<Game> games;
-
+    public static OrthographicCamera camera;
+    public static Viewport viewport;
+    public static SpriteBatch batch;
     public static Menu currentMenu = Menu.LoginMenu;
 
     public static int giftIdCounter = 0;
     public static int tradeIdCounter = 0;
+
+    public static boolean isNpcTile(TileType type) {
+        return type == TileType.ROBIN ||
+                type == TileType.ABIGEL ||
+                type == TileType.LEAH ||
+                type == TileType.SEBASTIAN ||
+                type == TileType.HARVEY;
+    }
+
+    // باید این‌ها رو بیرون از متد تعریف کرده باشی (مثلاً بالای کلاس)
+    public static Texture snowflakeTexture = new Texture(Gdx.files.internal("Weather/Snow.png"));
+    public static Vector2 snowPos1 = new Vector2();
+    public static Vector2 snowPos2 = new Vector2();
+    public static float snowSpeed1 = 50f;
+    public static float snowSpeed2 = 70f;
+    public static boolean snowInitialized = false;
 
 
     public static void addGiftIdCounter() {

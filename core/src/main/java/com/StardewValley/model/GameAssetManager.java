@@ -1,11 +1,14 @@
 package com.StardewValley.model;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,6 +60,21 @@ public class GameAssetManager {
             ClOCK_MANNERS[i] = new TextureRegion(CLOCK_ALL, 80 + i % 4 * 13, i / 4 * 9, 13, 9);
         }
     }
+    public static Texture WHITE_PIXEL;
+    public static final TextureRegion[][] RAIN = TextureRegion.split(new Texture("Weather/Rain.png"), 41, 130);
+    public static final TextureRegion[][] STORM = TextureRegion.split(new Texture("Weather/Storm.png"), 192, 384);
+    public static final Texture LIGHTENING = new Texture("Weather/lightening.png");
+    public static final Texture SNOW = new Texture("Weather/Snow.png");
+
+    public static void load() {
+        Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
+        pixmap.setColor(Color.WHITE);
+        pixmap.fill();
+        WHITE_PIXEL = new Texture(pixmap);
+        pixmap.dispose();
+
+    }
+    public static final Texture DIALOG = new Texture("dialog.png");
     public static final BitmapFont MAIN_FONT = new BitmapFont();
     // Farming
     public static final Texture GREEN_SQUARE = new Texture("Night/Green.png");

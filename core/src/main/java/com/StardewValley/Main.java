@@ -24,16 +24,12 @@ public class Main extends Game {
         batch = new SpriteBatch();
 //        DataBaseInit.init();
 //
-//        String vertexShader = Gdx.files.internal("BackGrounds/grayscale.vert").readString();
-//        String fragmentShader = Gdx.files.internal("BackGrounds/grayscale.frag").readString();
-//
-//        grayscaleShader = new ShaderProgram(vertexShader, fragmentShader);
-//        if (!grayscaleShader.isCompiled()) {
-//            System.err.println("Shader compile error: " + grayscaleShader.getLog());
-//        }
+
+
         try{
             setScreen(new GameScreen());
         }
+
         catch (Exception e){
             Gdx.app.error("Main", "Failed to load screen \n" + e.toString());
         }

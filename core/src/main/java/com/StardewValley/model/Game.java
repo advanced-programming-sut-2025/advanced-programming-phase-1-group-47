@@ -74,7 +74,7 @@ public class Game {
         Shops.add(pierresStore);
     }
     public void nextDayWeather() {
-        this.weather = setWeather();
+        this.weather = tomarrowsWeather;
         this.tomarrowsWeather = setWeather();
     }
     public ArrayList<Shop> getShops() {

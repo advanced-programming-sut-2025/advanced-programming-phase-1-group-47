@@ -1,17 +1,12 @@
 package com.StardewValley.model;
 
-import com.StardewValley.View.GameScreen;
-import com.StardewValley.model.enums.Season;
-import com.StardewValley.model.enums.Weather;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 
-import static com.StardewValley.model.Time.getHour;
 
 public class TimeAndDate {
     private static Sprite mainClock = new Sprite(GameAssetManager.CLOCK_MAIN);

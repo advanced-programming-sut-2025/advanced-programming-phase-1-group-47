@@ -34,8 +34,7 @@ public class ForgagingFarm {
         changeTiles(new Point(40, 2), new Point(45, 7), TileType.QUARRY);
         changeTiles(new Point(40,5), new Point(40,5), TileType.DOOR);
         // Cottage – وسط نقشه
-        changeTiles(new Point(5, 5), new Point(10, 9), TileType.COTTAGE);
-        changeTiles(new Point(10,7), new Point(10,7), TileType.DOOR);
+        changeTiles(new Point(5, 5), new Point(9, 9), TileType.COTTAGE);
         // Lake – یکی، وسط پایین
         lakes.add(new Lake(new Ground(new Point(20, 30), new Point(25, 34))));
         changeTiles(new Point(20, 30), new Point(25, 34), TileType.LAKE);

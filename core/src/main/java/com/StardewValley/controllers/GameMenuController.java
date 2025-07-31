@@ -1653,6 +1653,7 @@ public class GameMenuController {
     //har chi mikhaid update she too shab barai farda ro bezanid inja
     public void setUpNextDay() {
         CrowAttack();
+        App.currentGame.time.setHour(App.currentGame.time.getHour() + 24);
         Random random = new Random();
         int randomNumber = random.nextInt(10) + 1;
         for (Plant plant : App.getCurrentGame().getPlants()) {

@@ -31,7 +31,6 @@ public class farmingFarm {
         changeTiles(new Point(40,32), new Point(40,32), TileType.DOOR);
         // Cottage
         changeTiles(new Point(5, 5), new Point(9, 9), TileType.COTTAGE);
-        changeTiles(new Point(9, 7), new Point(9,7), TileType.DOOR);
         // Lake – فقط یکی، کوچک
         lakes.add(new Lake(new Ground(new Point(32, 8), new Point(36, 12))));
         changeTiles(new Point(32, 8), new Point(36, 12), TileType.LAKE);

@@ -36,8 +36,7 @@ public class QuarryFarm {
         changeTiles(new Point(35, 30), new Point(39,35), TileType.GREENHOUSE);
         changeTiles(new Point(37,30), new Point(37,30), TileType.DOOR);
         // Cottage
-        changeTiles(new Point(4, 4), new Point(9, 9), TileType.COTTAGE);
-        changeTiles(new Point(9,7), new Point(9,7), TileType.DOOR);
+        changeTiles(new Point(4, 4), new Point(8,8), TileType.COTTAGE);
         // Lake – یکی، کوچک و جدا
         lakes.add(new Lake(new Ground(new Point(40, 10), new Point(44, 14))));
         changeTiles(new Point(40, 10), new Point(44, 14), TileType.LAKE);
