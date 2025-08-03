@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.StardewValley.controllers.InitPageController;
+import com.StardewValley.controllers.MultiplayerController;
 import com.StardewValley.DataBase.DataBaseInit;
 import com.StardewValley.model.App;
 import com.StardewValley.model.GameAssetManager;
@@ -16,18 +17,23 @@ public class Main extends Game {
     private static Main main;
     private static SpriteBatch batch;
     private ShaderProgram grayscaleShader;
+    private MultiplayerController multiplayerController;
 
     @Override
     public void create() {
 
         main = this;
         batch = new SpriteBatch();
+        
+        // Initialize multiplayer controller
+        multiplayerController = new MultiplayerController();
+        
 //        DataBaseInit.init();
 //
 
 
         try{
-            setScreen(new GameScreen());
+            setScreen(new InitPageView(new InitPageController(), GameAssetManager.getGameAssetManager().getSkin()));
         }
 
         catch (Exception e){
@@ -63,6 +69,10 @@ public class Main extends Game {
 
     public ShaderProgram getGrayscaleShader() {
         return grayscaleShader;
+    }
+
+    public MultiplayerController getMultiplayerController() {
+        return multiplayerController;
     }
 
 }

@@ -20,6 +20,10 @@ public class InitPageController {
         Main.getMain().setScreen(new SignUpView(new SignUpMenuController(), GameAssetManager.getGameAssetManager().getSkin()));
     }
 
+    public void onMultiplayerClicked() {
+        Main.getMain().setScreen(new LobbyView(new LobbyController()));
+    }
+
     public void exit(){
         Gdx.app.exit();
     }

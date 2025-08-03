@@ -1603,7 +1603,6 @@ Fish/flounder.png
 Fish/ghostfish.png
 Fish/herring.png
 Fish/lionfish.png
-Fish/sunfish.png
 Flooring/Flooring_01.png
 Flooring/Flooring_02.png
 Flooring/Flooring_03.png

@@ -158,4 +158,60 @@ public class Game {
     public ArrayList<Machine> getMachines() {
         return machines;
     }
+    
+    // Multiplayer methods
+    public void addPlayer(Player player) {
+        if (!players.contains(player)) {
+            players.add(player);
+        }
+    }
+    
+    public void removePlayer(String playerId) {
+        players.removeIf(player -> player.getId().equals(playerId));
+    }
+    
+    public Player getPlayer(String playerId) {
+        for (Player player : players) {
+            if (player.getId().equals(playerId)) {
+                return player;
+            }
+        }
+        return null;
+    }
+    
+    // Game action methods (placeholder implementations)
+    public boolean plantCrop(Player player, float x, float y, String cropType) {
+        // TODO: Implement crop planting logic
+        return true;
+    }
+    
+    public boolean harvestCrop(Player player, float x, float y) {
+        // TODO: Implement crop harvesting logic
+        return true;
+    }
+    
+    public boolean waterCrop(Player player, float x, float y) {
+        // TODO: Implement crop watering logic
+        return true;
+    }
+    
+    public boolean mineRock(Player player, float x, float y) {
+        // TODO: Implement rock mining logic
+        return true;
+    }
+    
+    public boolean chopTree(Player player, float x, float y) {
+        // TODO: Implement tree chopping logic
+        return true;
+    }
+    
+    public boolean fish(Player player, float x, float y) {
+        // TODO: Implement fishing logic
+        return true;
+    }
+    
+    public boolean sleep(Player player) {
+        // TODO: Implement sleep logic
+        return true;
+    }
 }

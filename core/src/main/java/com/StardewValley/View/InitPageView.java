@@ -25,6 +25,7 @@ public class InitPageView implements Screen {
     private TextButton loginButton;
     private TextButton signupButton;
     private TextButton MainMenuButton;
+    private TextButton multiplayerButton;
     private TextButton exitButton;
 
     public InitPageView(InitPageController controller, Skin skin) {
@@ -32,6 +33,7 @@ public class InitPageView implements Screen {
         this.table = new Table();
         loginButton = new TextButton("Login", skin);
         signupButton = new TextButton("Sign Up", skin);
+        multiplayerButton = new TextButton("Multiplayer", skin);
         exitButton = new TextButton("Exit", skin);
         MainMenuButton = new TextButton("Main Menu", skin);
         controller.setView(this);
@@ -60,6 +62,7 @@ public class InitPageView implements Screen {
         table.defaults().pad(15).width(screenWidth * 0.45f).height(screenHeight * 0.12f);
         table.add(loginButton).width(screenWidth * 0.30f).row();
         table.add(signupButton).width(screenWidth * 0.25f).row();
+        table.add(multiplayerButton).width(screenWidth * 0.25f).row();
         table.add(MainMenuButton).width(screenWidth * 0.20f).row();
         table.add(exitButton).width(screenWidth * 0.15f).row();
 
@@ -67,10 +70,12 @@ public class InitPageView implements Screen {
 
         addHoverEffect(loginButton);
         addHoverEffect(signupButton);
+        addHoverEffect(multiplayerButton);
         addHoverEffect(exitButton);
         addHoverEffect(MainMenuButton);
         addClickListenerWithSound(loginButton, () -> controller.onLoginClicked());
         addClickListenerWithSound(signupButton, () -> controller.onSignupClicked());
+        addClickListenerWithSound(multiplayerButton, () -> controller.onMultiplayerClicked());
         addClickListenerWithSound(exitButton, () -> controller.exit());
         addClickListenerWithSound(MainMenuButton, () -> {});
     }

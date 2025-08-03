@@ -1,0 +1,23 @@
+package com.StardewValley.network;
+
+public enum MessageType {
+    PLAYER_JOIN,
+    PLAYER_LEAVE,
+    PLAYER_POSITION,
+    CHAT,
+    GAME_ACTION,
+    GAME_STATE_UPDATE,
+    ERROR,
+    VOTE,
+    VOTE_RESULT,
+    ADMIN_COMMAND,
+    KICK_PLAYER,
+    BAN_PLAYER,
+    WEATHER_UPDATE,
+    TIME_UPDATE,
+    NPC_UPDATE,
+    TRADE_REQUEST,
+    TRADE_ACCEPT,
+    TRADE_DECLINE,
+    TRADE_COMPLETE
+} 
