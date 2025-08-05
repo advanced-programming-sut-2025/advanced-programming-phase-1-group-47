@@ -1,16 +1,11 @@
 package com.StardewValley;
 
+import com.StardewValley.DataBase.DataBaseInit;
 import com.StardewValley.View.GameScreen;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
-import com.StardewValley.controllers.InitPageController;
-import com.StardewValley.DataBase.DataBaseInit;
-import com.StardewValley.model.App;
-import com.StardewValley.model.GameAssetManager;
-import com.StardewValley.View.InitPageView;
 
 public class Main extends Game {
     private static Main main;
@@ -22,8 +17,7 @@ public class Main extends Game {
 
         main = this;
         batch = new SpriteBatch();
-//        DataBaseInit.init();
-//
+        DataBaseInit.init();
 
 
         try{

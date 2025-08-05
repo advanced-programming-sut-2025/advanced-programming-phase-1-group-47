@@ -1,0 +1,17 @@
+Clock_All.png
+size: 64,80
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+background
+  rotate: false
+  xy: 0, 0
+  size: 48, 64
+icon_weather_sunny
+  rotate: false
+  xy: 48, 0
+  size: 16, 16
+icon_season_spring
+  rotate: false
+  xy: 64, 0
+  size: 16, 16
