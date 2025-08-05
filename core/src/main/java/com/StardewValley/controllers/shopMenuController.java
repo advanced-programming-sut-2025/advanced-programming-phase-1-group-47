@@ -5,6 +5,7 @@ import com.StardewValley.model.enums.ShopType;
 import com.StardewValley.model.enums.TileType;
 import com.StardewValley.model.things.Item;
 import com.StardewValley.model.things.tools.*;
+import com.badlogic.gdx.Gdx;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -153,48 +154,68 @@ public class shopMenuController {
             result.append("No items available.\n");
         }
     }
+    public Result<String> buy(Shop store, String productName, int amount) {
+        try {
+            // Get current player safely
+            Player player = App.currentGame.currentPlayer;
+            if (player == null) {
+                return new Result<>(false, "Player not found");
+            }
 
-    public Result<String> buy(Shop store, Matcher matcher) {
-        if (!(App.currentGame.time.getHourOfDay() >= store.getStartingHour() &&  App.currentGame.time.getHourOfDay() <= store.getStoppingHour()))
-            return new Result<>(false, "the Store is closed!");
-        int amount;
-        store = returnStoreToApp(store);
-        StringBuilder result = new StringBuilder();
-        String productName = matcher.group("product");
-        Player player = App.currentGame.getPlayers().get(((App.currentGame.turn - 1) < 0)? 4 + (App.currentGame.turn-1)%4 : (App.currentGame.turn)%4);
-        System.out.println(player.getNickname());
-        try{
-            amount = Integer.parseInt(matcher.group("count"));
-        }
-        catch (NumberFormatException e){
-            if (matcher.group("count") == null)
-                amount = 1;
-            else
-                return new Result<>(false, "Invalid amount.");
-        }
-        for (Item i : store.getPermaStock()) {
-            if (i.getName().equals(productName)) {
-                if (amount > i.getAmount()) {
-                    return new Result<>(false, "the Store doesnt have this amount \nAmount : " + i.getAmount());
-                }
-                i.reduceAmount(amount);
-                player.getInvetory().addItem(new Item(i, amount));
-                player.addMoney(-1  * amount * i.getAmount());
-                return new Result<>(true, amount + " number  of product " + productName + " has been purchased");
+            // Check inventory capacity
+            if (player.getInvetory().isFull()) {
+                return new Result<>(false, "Your inventory is full!");
             }
-        }
-        for (Item i : getSeasonalStock(store)) {
-            if (i.getName().equals(productName)) {
-                if (amount > i.getAmount()) {
-                    return new Result<>(false, "the Store doesnt have this amount \nAmount : " + i.getAmount());
+
+            // Find item in permanent stock
+            for (Item item : store.getPermaStock()) {
+                if (item.getName().equalsIgnoreCase(productName)) {
+                    return processPurchase(player, store, item, amount);
                 }
-                i.reduceAmount(amount);
-                player.getInvetory().addItem(new Item(i, amount));
-                player.addMoney(-1  * amount * i.getAmount());
-                return new Result<>(true, ((amount > 1)?amount:1) + " number  of product " + productName + " has been purchased");
             }
+
+            // Find item in seasonal stock
+            for (Item item : getSeasonalStock(store)) {
+                if (item.getName().equalsIgnoreCase(productName)) {
+                    return processPurchase(player, store, item, amount);
+                }
+            }
+
+            return new Result<>(false, "Product not found: " + productName);
+        } catch (Exception e) {
+            Gdx.app.error("Shop", "Error in buy(): " + e.getMessage());
+            return new Result<>(false, "Purchase failed. Please try again");
         }
-        return new Result<>(false, "no such product: " + productName);
+    }
+    private Result<String> processPurchase(Player player, Shop store, Item storeItem, int amount) {
+        if (amount <= 0) {
+            return new Result<>(false, "Quantity must be positive");
+        }
+
+        if (amount > storeItem.getAmount()) {
+            return new Result<>(false, "Only " + storeItem.getAmount() + " available in stock");
+        }
+
+        int totalPrice = amount * storeItem.getValue();
+        if (player.getMoney() < totalPrice) {
+            return new Result<>(false, "You need " + totalPrice + "g (have " + player.getMoney() + "g)");
+        }
+
+        try {
+            // 1. Reduce store stock
+            storeItem.setAmount(storeItem.getAmount() - amount);
+
+            // 3. Deduct money
+            player.addMoney(-totalPrice);
+
+            return new Result<>(true,
+                    "Purchased " + amount + " " + storeItem.getName() + " for " + totalPrice + "g");
+        } catch (Exception e) {
+            Gdx.app.error("Shop", "Purchase error: " + e.getMessage());
+            // Revert changes if possible
+            storeItem.setAmount(storeItem.getAmount() + amount);
+            return new Result<>(false, "Transaction failed. Please try again");
+        }
     }
 
     public Shop returnStoreToApp(Shop store) {

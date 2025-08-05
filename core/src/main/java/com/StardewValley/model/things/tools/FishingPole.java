@@ -108,7 +108,7 @@ public class FishingPole extends Item {
             }
             builder.append("You got a " + fish.getName() + " that worth " + fish.getSellPrice() + "\n");
             fish.setImage(new Texture("Fish/"+fish.getName() + ".png"));
-            player.getInvetory().addItem(fish);
+            player.getInvetory().addItem(fish.returnSimiliar());
         }
         else {
             builder.append("The point you selected is a ")

@@ -12,6 +12,7 @@ public class Animal extends Item {
     public Animal(AnimalType animalType) {
         super(animalType.getName(), animalType.getItemId(), animalType.getPrice(), 700, 200000);
         this.animalType = animalType;
+        this.image = animalType.getTexture();
     }
 
     public AnimalType getAnimalType() {

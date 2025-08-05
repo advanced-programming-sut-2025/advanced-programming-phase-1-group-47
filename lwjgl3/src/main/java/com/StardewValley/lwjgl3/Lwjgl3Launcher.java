@@ -33,7 +33,7 @@ public class Lwjgl3Launcher {
                         }
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
+//                    e.printStackTrace();
                 }
             }
         });

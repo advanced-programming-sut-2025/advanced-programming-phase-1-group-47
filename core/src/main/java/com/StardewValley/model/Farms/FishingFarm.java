@@ -17,7 +17,7 @@ public class FishingFarm {
                 this.temp[i][j] = new Tile(new Point(i,j) , TileType.EMPTY);
             }
         }
-        Cottage cottage = new Cottage(new Ground(new Point(1,1), new Point(5,5)),
+        Cottage cottage = new Cottage(new Ground(new Point(22,18), new Point(26,22)),
                 new Point(5,3));
         greenHouse greenHouses;
         ArrayList<Quarry> quarries = new ArrayList<>();

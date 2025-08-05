@@ -62,7 +62,7 @@ public class Scythe extends Item {
                     .append(" at ").append(point.x).append(", ").append(point.y);
 
             tile.type = TileType.EMPTY;
-            App.currentGame.currentPlayer.getInvetory().addItem(new Item(item.getName(),item.getPlantID(),item.getBaseValue(),-22,1,item.getImage()));
+            player.getInvetory().addItem(new Item(item.getName(),item.getPlantID(),item.getBaseValue(),-22,1,item.getImage()));
         }
         else if (tileType.equals(TileType.PLANT)){
             GameMenuController controller = new GameMenuController();
@@ -75,7 +75,7 @@ public class Scythe extends Item {
             }
         }
         else if (tileType.equals(TileType.GRASS)){
-            App.currentGame.currentPlayer.getInvetory().addItem(AllTheItemsInTheGame.getItemById(30));
+            player.getInvetory().addItem(AllTheItemsInTheGame.getItemById(30).returnSimiliar());
             tile.type = TileType.EMPTY;
             builder.append("You got a hay at ").append(point.getX()).append(", ").append(point.getY());
         }

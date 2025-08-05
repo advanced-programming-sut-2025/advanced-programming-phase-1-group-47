@@ -4,8 +4,8 @@ package com.StardewValley.model;
 import com.StardewValley.model.enums.TileType;
 
 public class Ground {
-    private  Point startPoint;
-    private  Point endPoint;
+    public   Point startPoint;
+    public   Point endPoint;
     public Tile[][] tiles = new Tile[8][8];
     public Ground(Point startPoint, Point endPoint) {
         this.startPoint = startPoint;

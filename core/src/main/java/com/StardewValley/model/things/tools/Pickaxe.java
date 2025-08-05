@@ -55,7 +55,7 @@ public class Pickaxe extends Item {
         else if (tileType.equals(TileType.STONE)){
                 Random rand = new Random();
                 int randomId = rand.nextInt(16) + 380;
-                Item item = AllTheItemsInTheGame.getItemById(randomId);
+                Item item = AllTheItemsInTheGame.getItemById(randomId).returnSimiliar();
                 builder.append("You got a Mineral: ").append(item.getName())
                         .append(" at ").append(point.x).append(", ").append(point.y);
                 tile.type = TileType.EMPTY;

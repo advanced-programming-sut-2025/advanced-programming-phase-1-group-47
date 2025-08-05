@@ -76,14 +76,16 @@ public class Axe extends Item {
             tile.type = TileType.EMPTY;
             builder.append("Derakht ro Ghat kardi dar  (" + point.x + ", " + point.y + ")");
             int randomId = rand.nextInt(4) + 351;
-            Item item = AllTheItemsInTheGame.getItemById(randomId);
+            Item item = AllTheItemsInTheGame.getItemById(randomId).returnSimiliar();;
             builder.append("You got a Tree Seed ").append(item.getName())
                     .append(" at ").append(point.x).append(", ").append(point.y);
             tile.type = TileType.EMPTY;
-            App.currentGame.currentPlayer.getInvetory().addItem(AllTheItemsInTheGame.getItemById(36));
+            Item x = AllTheItemsInTheGame.getItemById(36).returnSimiliar();
+            player.getInvetory().addItem(x);
+            player.getInvetory().addItem(item);
         }
         else if (tileType.equals(TileType.MACHINE)){
-            App.currentGame.currentPlayer.getInvetory().addItem(AllTheItemsInTheGame.getItemById(30));
+            player.getInvetory().addItem(AllTheItemsInTheGame.getItemById(30));
             tile.type = TileType.EMPTY;
             builder.append("You got a hay at ").append(point.getX()).append(", ").append(point.getY());
         }

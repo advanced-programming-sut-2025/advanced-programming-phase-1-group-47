@@ -276,8 +276,8 @@ public class GameMenuController {
         return false;
     }
     public Result<String> TalkToNPC(String npcname) {
-        if (!isNPCHere())
-            return new Result<>(false, "There is No NPC Around You!");
+//        if (!isNPCHere())
+//            return new Result<>(false, "There is No NPC Around You!");
         Random rand = new Random();
         int randomNumber = rand.nextInt(5);
         if(App.getCurrentGame().getTime().getSeason().equals(Season.SUMMER))
@@ -1766,11 +1766,14 @@ public class GameMenuController {
                     int mod = t % 8;
                     if (mod == 0) {
                         map.tiles[x][y].type = TileType.FORAGING;
-                        map.tiles[x][y].id = rand.nextInt(21) + 357;
+                        int id = rand.nextInt(21) + 357;
+                        map.tiles[x][y].id = id;
                     } else if (mod == 1 || mod == 2) {
                         map.tiles[x][y].type = TileType.TREE;
                     } else if (mod == 3 || mod == 4) {
                         map.tiles[x][y].type = TileType.STONE;
+                        int id = rand.nextInt(16) + 380;
+                        map.tiles[x][y].id = id;
                     } else {
                         map.tiles[x][y].type = TileType.GRASS;
                     }

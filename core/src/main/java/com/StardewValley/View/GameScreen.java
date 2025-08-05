@@ -1,57 +1,86 @@
 package com.StardewValley.View;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map.Entry;
+import java.util.Random;
+
 import com.StardewValley.View.Helpers.EnergyHelper;
 import com.StardewValley.View.Helpers.WeatherRenderer;
 import com.StardewValley.controllers.GameMenuController;
-import com.StardewValley.model.*;
+import com.StardewValley.model.AllTheItemsInTheGame;
+import com.StardewValley.model.App;
+import static com.StardewValley.model.App.batch;
+import static com.StardewValley.model.App.camera;
+import static com.StardewValley.model.App.currentGame;
+import static com.StardewValley.model.App.isNpcTile;
+import static com.StardewValley.model.App.returnCurrentFarm;
+import static com.StardewValley.model.App.viewport;
+import com.StardewValley.model.Energy;
 import com.StardewValley.model.Game;
+import com.StardewValley.model.GameAssetManager;
+import static com.StardewValley.model.GameAssetManager.backgroundMusic;
+import com.StardewValley.model.Ground;
 import com.StardewValley.model.Map;
+import com.StardewValley.model.Player;
+import com.StardewValley.model.Point;
+import com.StardewValley.model.Shop;
+import com.StardewValley.model.Tile;
+import com.StardewValley.model.TimeAndDate;
+import com.StardewValley.model.buildings.Cottage;
+import com.StardewValley.model.buildings.greenHouse;
 import com.StardewValley.model.enums.TileType;
 import com.StardewValley.model.things.Item;
-import com.badlogic.gdx.*;
-import com.badlogic.gdx.graphics.*;
-import com.badlogic.gdx.graphics.g2d.*;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Container;
+import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
-import com.badlogic.gdx.utils.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Timer;
-import com.badlogic.gdx.utils.viewport.*;
-import com.badlogic.gdx.scenes.scene2d.*;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
-import com.badlogic.gdx.scenes.scene2d.utils.*;
-
-import java.util.*;
-import java.util.List;
-import java.util.Map.Entry;
-
-import static com.StardewValley.model.App.*;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 public class GameScreen implements Screen {
 
-    private static OrthographicCamera camera = App.camera;
-    private Viewport viewport = App.viewport;
-    private SpriteBatch batch = App.batch;
     private int scrollDelta = 0;
 
-    private static final int TILE_SIZE = 30;
+    public static final int TILE_SIZE = 30;
     private Tile[][] tileMap;
     private Vector2 playerPosition;
     private float speed = 350f;
     private float stateTime;
-    private TextureAtlas playerAtlas;
-    private Animation<TextureRegion>[] playerAnimations;
+
     private int moveDirection = 2;
-    private Rectangle currentDialogIconBounds = null;
+    private Rectangle currentDialogIconBounds;
 
     private HashMap<TileType, Texture> tileTextures;
     // UI
     private Stage mainStage, dialogStage;
-    Dialog dialog;
     private Skin skin;
-    private Dialog mapDialog;
-    private boolean isMapDialogOpen = false;
     private EnergyHelper energyHelper;
     // Toolbar
     private boolean isToolAnimating = false;
@@ -64,22 +93,24 @@ public class GameScreen implements Screen {
     private ArrayList<Item> toolbarItems = new ArrayList<>();
     private Texture emptySlotTexture;
     GameMenuController controller = new GameMenuController();
-
-    private Texture energyBarTexture; // Texture for energy bar
-    private Pixmap energyBarPixmap; // Pixmap for creating energy bar texture
+    private boolean isFainted = false;
+    private float playerRotation = 0f;
+    private Texture energyBarTexture;
+    private Pixmap energyBarPixmap;
     private Texture backgroundTexture;
     private Texture fillTexture;
-
+    public static boolean isOutOfRealGame = false;
     public GameScreen() {
         camera = new OrthographicCamera();
         viewport = new FitViewport(800, 400, camera);
         batch = new SpriteBatch();
         skin = GameAssetManager.getGameAssetManager().getSkin();
-        playerPosition = new Vector2(100, 100);
         setupGame();
         App.getCurrentGame().loadShops();
         App.getCurrentGame().setNpc();
         loadTextures();
+        Point playerPos = App.returnCurrentFarm().getPersonPoint();
+        playerPosition = new Vector2(playerPos.y * TILE_SIZE, playerPos.x * TILE_SIZE);
         stateTime = 0f;
         energyHelper = new EnergyHelper();
         energyHelper.initEnergyBar(); // Initialize energy bar
@@ -87,20 +118,23 @@ public class GameScreen implements Screen {
 
     private void loadTextures() {
         tileTextures = new HashMap<>();
-        playerAtlas = new TextureAtlas(Gdx.files.internal("game/character/sprites_Alex.atlas"));
-        playerAnimations = new Animation[4];
+        Player player = currentGame.currentPlayer;
+        player.playerAtlas = new TextureAtlas(Gdx.files.internal("game/character/sprites_Alex.atlas"));
+        player.playerAnimations = new Animation[4];
 
         for (int dir = 0; dir < 4; dir++) {
             Array<TextureRegion> walkFrames = new Array<>();
             for (int frame = 0; frame < 4; frame++) {
-                walkFrames.add(playerAtlas.findRegion("player_" + (13 - dir) + "_" + frame));
-            }
-            playerAnimations[dir] = new Animation<>(0.15f, walkFrames, Animation.PlayMode.LOOP);
-        }
 
+                walkFrames.add(player.playerAtlas.findRegion("player_" + (13 - dir) + "_" + frame));
+            }
+            player.playerAnimations[dir] = new Animation<>(0.15f, walkFrames, Animation.PlayMode.LOOP);
+        }
+        backgroundMusic.setLooping(true);  // آهنگ به صورت بی‌نهایت تکرار شود
+        backgroundMusic.setVolume(0.5f);   // میزان بلندی صدا (۰ تا ۱)
+        backgroundMusic.play();
         tileTextures.put(TileType.GRASS, GameAssetManager.GRASS);
         tileTextures.put(TileType.EMPTY, GameAssetManager.EMPTY);
-        tileTextures.put(TileType.STONE, GameAssetManager.STONE);
         tileTextures.put(TileType.PLANT, GameAssetManager.PLANT);
         tileTextures.put(TileType.LAKE, GameAssetManager.WATER);
         tileTextures.put(TileType.WALL, GameAssetManager.WALL);
@@ -111,6 +145,11 @@ public class GameScreen implements Screen {
         tileTextures.put(TileType.TILLED, GameAssetManager.TILLED);
         tileTextures.put(TileType.SEBASTIAN, GameAssetManager.SEBASTIAN);
         tileTextures.put(TileType.HARVEY, GameAssetManager.HARVEY);
+        tileTextures.put(TileType.BLACKSMITH, GameAssetManager.BLACKSMITHOUT);
+        tileTextures.put(TileType.CARPENTER,GameAssetManager.CARPENTEROUT);
+        tileTextures.put(TileType.MARNIESRANCH, GameAssetManager.MARNIESRANCHEOUT);
+        tileTextures.put(TileType.PIERRESSTORE, GameAssetManager.PIERRESOut);
+        tileTextures.put(TileType.STARDROPSALOON, GameAssetManager.SALOONOUT);
         emptySlotTexture = new Texture("bar.png");
 
         // Load energy bar textures with fallback
@@ -132,7 +171,17 @@ public class GameScreen implements Screen {
                     if (tile.type == TileType.FORAGING) {
                         try {
                             Random rand = new Random();
-                            tile.id = rand.nextInt(21) + 357;
+                            int id = rand.nextInt(21) + 357;
+                            tile.id = id;
+                        } catch (Exception e) {
+                            Gdx.app.error("error", e.getMessage());
+                        }
+                    }
+                    else if (tile.type == TileType.STONE) {
+                        try {
+                            Random rand = new Random();
+                            int id = rand.nextInt(16) + 380;
+                            tile.id = id;
                         } catch (Exception e) {
                             Gdx.app.error("error", e.getMessage());
                         }
@@ -195,9 +244,30 @@ public class GameScreen implements Screen {
             Gdx.app.error("GameScreen", "Failed to decrease energy: " + e.getMessage());
         }
     }
+    private int startX() {
+        return (int)(camera.position.x - viewport.getWorldWidth() / 2) / TILE_SIZE - 1;
+    }
+
+    private int endX() {
+        return (int)(camera.position.x + viewport.getWorldWidth() / 2) / TILE_SIZE + 1;
+    }
+
+    private int startY() {
+        return (int)(camera.position.y - viewport.getWorldHeight() / 2) / TILE_SIZE - 1;
+    }
+
+    private int endY() {
+        return (int)(camera.position.y + viewport.getWorldHeight() / 2) / TILE_SIZE + 1;
+    }
+
+    private boolean isInBounds(int x, int y) {
+        return x >= 0 && y >= 0 && x < tileMap[0].length && y < tileMap.length;
+    }
 
 
     private void handleInput(float delta) {
+        if (isOutOfRealGame)
+            return;
         boolean moving = false;
 
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) {
@@ -217,6 +287,9 @@ public class GameScreen implements Screen {
             moveDirection = 2;
             moving = true;
             EnergyCounter(1);
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.X)) {
+            controller.nextTurn();
         }
         if (Gdx.input.isKeyPressed(Input.Keys.DOWN) || Gdx.input.isKeyPressed(Input.Keys.S)) {
             playerPosition.y -= speed * delta;
@@ -301,7 +374,7 @@ public class GameScreen implements Screen {
         for (int i = 0; i < TOOLBAR_SIZE; i++) {
             Stack stack = toolbarSlots[i];
             Item item = (i < toolbarItems.size()) ? toolbarItems.get(i) : null;
-            int count = (item != null) ? (int)(Math.log(item.getAmount()) / Math.log(2)) + 1 : 0;
+            int count = (item != null) ? item.getAmount() : 0;
 
             Texture tex = (item != null && item.getImage() != null) ? item.getImage() : emptySlotTexture;
             Image icon = new Image(new TextureRegion(tex));
@@ -344,49 +417,92 @@ public class GameScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
     }
     private boolean dialogOpen = false;
-    private Dialog currentDialog;
-
     private void handleTouchInteraction() {
-        if (!Gdx.input.justTouched()) return;
+        try {
+            if (isOutOfRealGame || !Gdx.input.justTouched()) return;
 
-        Vector3 touch = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
-        camera.unproject(touch);
+            Vector3 touch = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
+            camera.unproject(touch);
 
-        handleToolUse((int)(touch.x / TILE_SIZE), (int)(touch.y / TILE_SIZE));
+            int tileX = (int) (touch.x / TILE_SIZE);
+            int tileY = (int) (touch.y / TILE_SIZE);
+            Tile tile = tileMap[tileY][tileX];
+            Gdx.app.log("Touch", String.format("Screen touch at: (%.1f, %.1f)", touch.x, touch.y));
+            Gdx.app.log("Touch", String.format("Mapped to tile: (%d, %d)", tileX, tileY));
 
-        if (!dialogOpen && currentDialogIconBounds != null &&
-                currentDialogIconBounds.contains(touch.x, touch.y)) {
-            openDialog("Robin", "HI Parsa :)", "Marnie_Happy.png");
+            Vector2 touchPosition = new Vector2(tileX * TILE_SIZE, tileY * TILE_SIZE);
+            float distanceToPlayer = playerPosition.dst(touchPosition);
+
+            if (distanceToPlayer > TILE_SIZE * 3) {
+                Gdx.app.log("Interaction", "Too far to interact (distance: " + distanceToPlayer + ")");
+                return;
+            }
+
+            // Greenhouse Interaction
+            if (tile.type == TileType.GREENHOUSE && !returnCurrentFarm().getGreenHouses().hasRepeare) {
+                openDialog(
+                        "GreenHouse Maker",
+                        "Would you give 500 Gold to repair the Greenhouse?\n",
+                        "Greenhouse/greenhouse.png"
+                );
+            }
+            else
+                handleToolUse(tileX, tileY);
+
+            // NPC Interaction (2 tiles above)
+            if (tileY - 2 >= 0) {
+                Tile touchedTile = currentGame.map.tiles[tileY - 2][tileX];
+                if (touchedTile != null && isNpcTile(touchedTile.type)) {
+                    String npcName = touchedTile.type.name().toLowerCase();
+                    Gdx.app.log("NPC", "Interacting with NPC: " + npcName);
+
+                    openDialog(
+                            npcName,
+                            controller.TalkToNPC(npcName).getData(),
+                            "NPC/" + npcName + ".png"
+                    );
+                }
+            }
+
+            // Trigger tool animation
+            toolAnimTime = 0;
+            isToolAnimating = true;
+
+        } catch (Exception e) {
+            Gdx.app.error("Interaction", "Error handling touch: " + e.getMessage());
         }
-
-        toolAnimTime = 0;
-        isToolAnimating = true;
     }
 
     private void handleToolUse(int tileX, int tileY) {
         try {
-            if (toolbarItems.get(selectedToolIndex) != null) {
-                toolbarItems.get(selectedToolIndex).useTool(tileMap[tileY][tileX]);
+            Item selectedTool = toolbarItems.get(selectedToolIndex);
+            if (selectedTool != null) {
+                selectedTool.useTool(tileMap[tileY][tileX]);
                 updateToolbar();
             }
 
             Timer.schedule(new Timer.Task() {
-                @Override public void run() {
+                @Override
+                public void run() {
                     updateTools();
                 }
-            }, 0.2f);
+            }, 0.1f);
+
         } catch (Exception e) {
-            Gdx.app.error("error", e.getMessage());
+            Gdx.app.error("ToolUse", e.getMessage());
         }
     }
-
     private void openDialog(String title, String message, String imagePath) {
         dialogOpen = true;
-
+        Dialog currentDialog;
         currentDialog = new Dialog(title, skin) {
             @Override
             protected void result(Object obj) {
                 if (obj.equals(true)) {
+                    if (title.equals("GreenHouse Maker")) {
+                        App.returnCurrentFarm().getGreenHouses().hasRepeare = true;
+                        currentGame.currentPlayer.addMoney(-500);
+                    }
                     this.hide();
                     dialogOpen = false;
                 }
@@ -400,7 +516,7 @@ public class GameScreen implements Screen {
         currentDialog.getContentTable().clear();
         currentDialog.getContentTable().add(new Label(message, bigLabelStyle)).pad(20).row();
         currentDialog.getContentTable().add(new Image(new Texture(Gdx.files.internal(imagePath)))).size(100, 100).pad(10);
-        currentDialog.button("LOVE BUTTON -->", true).pad(20);
+        currentDialog.button("OK", true).pad(20);
 
         currentDialog.setSize(700, 400);
         currentDialog.setPosition((Gdx.graphics.getWidth() - 700) / 2f, Gdx.graphics.getHeight() * 0.7f);
@@ -421,7 +537,7 @@ public class GameScreen implements Screen {
             for (int x = startX(); x <= endX(); x++) {
                 if (isInBounds(x, y)) {
                     Tile tile = tileMap[y][x];
-                    if (tile.type != TileType.EMPTY && tile.type != TileType.COTTAGE) {
+                    if (tile.type != TileType.EMPTY) {
                         batch.draw(getTextureForTileType(tile.type), x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
                     }
                 }
@@ -429,32 +545,54 @@ public class GameScreen implements Screen {
         }
     }
     private void drawCottages() {
-        Set<String> drawn = new HashSet<>();
-        for (int y = startY(); y <= endY(); y++) {
-            for (int x = startX(); x <= endX(); x++) {
-                if (isInBounds(x, y)) {
-                    Tile tile = tileMap[y][x];
-                    if (tile.type == TileType.COTTAGE) {
-                        int groupX = (x / 7) * 7;
-                        int groupY = (y / 7) * 7;
-                        String key = groupX + "," + groupY;
+        for (int i = 0; i < 4; i++) {
+            int offsetX = App.farmStart[i].x;
+            int offsetY = App.farmStart[i].y;
 
-                        if (!drawn.contains(key)) {
-                            drawn.add(key);
+            Cottage cottage = App.currentGame.map.farms[i].getCottage();
+            Ground bounds = cottage.getGround();
 
-                            boolean inside = playerPosition.x >= groupX * TILE_SIZE &&
-                                    playerPosition.x <= (groupX + 7) * TILE_SIZE &&
-                                    playerPosition.y >= groupY * TILE_SIZE &&
-                                    playerPosition.y <= (groupY + 7) * TILE_SIZE;
+            int groupX = bounds.startPoint.x + offsetX;
+            int groupY = bounds.startPoint.y + offsetY;
+            int groupWidth = bounds.endPoint.x - bounds.startPoint.x + 1;
+            int groupHeight = bounds.endPoint.y - bounds.startPoint.y + 1;
 
-                            Texture cottageTex = inside ? GameAssetManager.COTTAGEIn : GameAssetManager.COTTAGEOut;
-                            batch.draw(cottageTex, groupX * TILE_SIZE, groupY * TILE_SIZE, TILE_SIZE * 7, TILE_SIZE * 7);
-                        }
-                    }
-                }
-            }
+            Texture cottageTex = cottage.isPlayerNearDoor(playerPosition) ? GameAssetManager.COTTAGEIn : GameAssetManager.COTTAGEOut;
+            batch.draw(cottageTex,
+                    groupY * TILE_SIZE,
+                    groupX * TILE_SIZE,
+                    groupWidth * TILE_SIZE,
+                    groupHeight * TILE_SIZE);
         }
     }
+    private void drawGreenhouses() {
+        for (int i = 0; i < 4; i++) {
+            int offsetX = App.farmStart[i].x;
+            int offsetY = App.farmStart[i].y;
+
+            greenHouse greenhouse = App.currentGame.map.farms[i].getGreenHouses();
+            Ground bounds = greenhouse.getGround();
+
+            int groupX = bounds.startPoint.x + offsetX;
+            int groupY = bounds.startPoint.y + offsetY;
+            int groupWidth = bounds.endPoint.x - bounds.startPoint.x + 1;
+            int groupHeight = bounds.endPoint.y - bounds.startPoint.y + 1;
+
+            boolean inside = playerPosition.x >= groupX * TILE_SIZE &&
+                    playerPosition.x <= (groupX + groupWidth) * TILE_SIZE &&
+                    playerPosition.y >= groupY * TILE_SIZE &&
+                    playerPosition.y <= (groupY + groupHeight) * TILE_SIZE;
+
+            Texture greenhouseTex = greenhouse.hasRepeare ?  GameAssetManager.GREENHOUSE : GameAssetManager.BROKEN_GREENHOUSE;
+            batch.draw(greenhouseTex,
+                    groupY * TILE_SIZE,
+                    groupX * TILE_SIZE,
+                    groupWidth * TILE_SIZE,
+                    groupHeight * TILE_SIZE);
+        }
+    }
+
+
     private void drawNPCsAndForaging() {
         for (int y = startY(); y <= endY(); y++) {
             for (int x = startX(); x <= endX(); x++) {
@@ -475,8 +613,14 @@ public class GameScreen implements Screen {
 
                 if (tile.type == TileType.FORAGING) {
                     try {
-                        String path = "Foraging/" + AllTheItemsInTheGame.getPlantById(tile.id).getName() + ".png";
-                        batch.draw(new Texture(path), x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+                        batch.draw(AllTheItemsInTheGame.allPlants.get(tile.id).image, x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+                    } catch (NullPointerException e) {
+                        Gdx.app.log("error", e.getMessage());
+                    }
+                }
+                if (tile.type == TileType.STONE) {
+                    try {
+                        batch.draw(AllTheItemsInTheGame.allItems.get(tile.id).getImage(), x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
                     } catch (NullPointerException e) {
                         Gdx.app.log("error", e.getMessage());
                     }
@@ -494,9 +638,21 @@ public class GameScreen implements Screen {
         }
     }
     private void drawPlayer() {
-        TextureRegion currentFrame = playerAnimations[moveDirection].getKeyFrame(stateTime, true);
-        batch.draw(currentFrame, playerPosition.x, playerPosition.y, TILE_SIZE, TILE_SIZE * 2);
+        TextureRegion currentFrame = currentGame.currentPlayer.playerAnimations[moveDirection].getKeyFrame(stateTime, true);
+
+        if (isFainted) {
+            Sprite faintedSprite = new Sprite(currentFrame);
+            faintedSprite.setSize(TILE_SIZE, TILE_SIZE * 2);
+            faintedSprite.setOriginCenter();
+            faintedSprite.setRotation(90);
+
+            faintedSprite.setPosition(playerPosition.x, playerPosition.y);
+            faintedSprite.draw(batch);
+        } else {
+            batch.draw(currentFrame, playerPosition.x, playerPosition.y, TILE_SIZE, TILE_SIZE * 2);
+        }
     }
+
     private void drawTool() {
         Texture toolTex = toolTextures.get(selectedToolIndex);
         if (toolTex == null) return;
@@ -521,81 +677,102 @@ public class GameScreen implements Screen {
     private void drawWeather() {
         WeatherRenderer.handleWeather(batch, camera, viewport);
     }
+
     private void handlePlayerEnergy() {
         Energy energy = App.currentGame.currentPlayer.getEnergy();
-        if (energy.getCurrentEnergy() <= 0) {
-            energy.setCurrentEnergy(energy.getEnergyCap() / 2);
-            playerPosition.set(202, 198);
+        if (energy.getCurrentEnergy() <= 0 && !isFainted) {
+            isFainted = true;
+            playerRotation = 90f;
+
+            Timer.schedule(new Timer.Task() {
+                @Override
+                public void run() {
+                    Cottage cottage = currentGame.map.farms[currentGame.turn].getCottage();
+                    int offsetX = App.farmStart[currentGame.turn].x;
+                    int offsetY = App.farmStart[currentGame.turn].y;
+
+                    Ground ground = cottage.getGround();
+
+                    int cottageX = ground.startPoint.x + offsetX;
+                    int cottageY = ground.endPoint.y + offsetY;
+
+                    playerPosition.set((cottageY - 2) * TILE_SIZE + TILE_SIZE * 2,
+                            (cottageX + 1) * TILE_SIZE + TILE_SIZE);
+
+                    playerRotation = 0f;
+                    isFainted = false;
+                    energy.setCurrentEnergy(energy.getEnergyCap() / 2);
+                }
+            }, 2f);
         }
+
     }
+
+
     private void renderShops(float delta) {
         for (Shop shop : App.getCurrentGame().getShops()) {
-            shop.update(playerPosition);
+            shop.update(playerPosition, delta);
             shop.render(batch);
         }
     }
-    private int startX() {
-        return (int)(camera.position.x - viewport.getWorldWidth() / 2) / TILE_SIZE - 1;
-    }
-
-    private int endX() {
-        return (int)(camera.position.x + viewport.getWorldWidth() / 2) / TILE_SIZE + 1;
-    }
-
-    private int startY() {
-        return (int)(camera.position.y - viewport.getWorldHeight() / 2) / TILE_SIZE - 1;
-    }
-
-    private int endY() {
-        return (int)(camera.position.y + viewport.getWorldHeight() / 2) / TILE_SIZE + 1;
-    }
-
-    private boolean isInBounds(int x, int y) {
-        return x >= 0 && y >= 0 && x < tileMap[0].length && y < tileMap.length;
-    }
-
     @Override
     public void render(float delta) {
         try {
             TextureRegion clockTexture = TimeAndDate.renderClockToTexture();
-            handleInput(delta);
+
+            if (!isOutOfRealGame || dialogOpen) {
+                handleInput(delta);
+                handleTouchInteraction();
+            }
+
             updateState(delta);
             clearScreen();
-            handleTouchInteraction();
 
-            // شروع نقاشی
             batch.setProjectionMatrix(camera.combined);
-            batch.begin();
 
+            batch.begin();
             drawGround();
             drawTiles();
-            drawCottages();
-            drawNPCsAndForaging();
-            drawUI();
-            drawPlayer();
-            drawTool();
-            batch.draw(clockTexture, playerPosition.x + 220, playerPosition.y + 58, TILE_SIZE * 30, 15 * TILE_SIZE);
             batch.end();
-            // آب‌وهوا و فروشگاه‌ها
-            drawWeather();
+
+            batch.begin();
+            drawGreenhouses();
+            drawCottages();
+            for (int i = 0; i < 4; i++) {
+                Cottage cottage = App.currentGame.map.farms[i].getCottage();
+                cottage.update(playerPosition, delta);
+                cottage.render(batch);
+            }
+            drawNPCsAndForaging();
+            batch.end();
+            batch.begin();
             renderShops(delta);
+            batch.end();
+            if (!isOutOfRealGame) {
+                batch.begin();
+                drawUI();
+                drawPlayer();
+                drawTool();
+                batch.draw(clockTexture,
+                        playerPosition.x + 220,
+                        playerPosition.y + 58,
+                        TILE_SIZE * 30,
+                        15 * TILE_SIZE);
+                batch.end();
+                drawWeather();
+            }
 
-            // انرژی و وضعیت بازیکن
             handlePlayerEnergy();
-
-            // استیج‌ها
             mainStage.act(delta);
             mainStage.draw();
-
             dialogStage.act(delta);
             dialogStage.draw();
-        }
-        catch (Exception e) {
-            Gdx.app.log("error", e.getMessage());
-        }
 
+        } catch (Exception e) {
+            Gdx.app.log("GameScreen", "Error in render: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
-
     @Override
     public void resize(int width, int height) {
         viewport.update(width, height);
@@ -631,7 +808,7 @@ public class GameScreen implements Screen {
 
         for (int i = 0; i < TOOLBAR_SIZE; i++) {
             Item item = (i < toolbarItems.size()) ? toolbarItems.get(i) : null;
-            int count = (item != null) ? (int)(Math.log(item.getAmount()) / Math.log(2)) + 1 : 0;
+            int count = (item != null) ? item.getAmount() : 0;
 
             Texture tex = (item != null && item.getImage() != null) ? item.getImage() : emptySlotTexture;
             Image icon = new Image(new TextureRegion(tex));
@@ -672,7 +849,7 @@ public class GameScreen implements Screen {
         batch.dispose();
         for (Entry<TileType, Texture> entry : tileTextures.entrySet()) entry.getValue().dispose();
         for (Texture tex : toolTextures) if (tex != null) tex.dispose();
-        playerAtlas.dispose();
+        currentGame.currentPlayer.playerAtlas.dispose();
         emptySlotTexture.dispose();
         if (mainStage != null) mainStage.dispose();
         if (dialogStage != null) dialogStage.dispose();

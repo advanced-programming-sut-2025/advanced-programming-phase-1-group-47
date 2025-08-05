@@ -15,8 +15,8 @@ public class Game {
     public Map map;
     public Time time;
 
-    public Weather weather = Weather.SUNNY;
-    public Weather tomarrowsWeather = Weather.SUNNY;
+    public Weather weather = Weather.RAINY;
+    public Weather tomarrowsWeather = Weather.STORMY;
     public ArrayList<NPC> npcs;
     public Player currentPlayer;
     private static final Random RAND = new Random();
@@ -59,8 +59,6 @@ public class Game {
         players.add(lastPlayer);
         this.currentPlayer = lastPlayer;
         this.time = new Time();
-        this.weather = Weather.SUNNY;
-        this.tomarrowsWeather = Weather.SUNNY;
         this.plants = new ArrayList<>();
         this.machines = new ArrayList<>();
     }

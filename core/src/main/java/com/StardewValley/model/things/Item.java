@@ -35,6 +35,12 @@ public class Item {
         this.amount = amount;
         this.image = image;
     }
+    public Item returnSimiliar(){
+        Item item = this;
+        Item temp = new Item(item.getName(),item.getItemID(),item.getValue(),item.getParentItemID(),item.getAmount(),item.getImage());
+        temp.setAmount(1);
+        return temp;
+    }
 
     public void setImage(Texture image) {
         this.image = image;

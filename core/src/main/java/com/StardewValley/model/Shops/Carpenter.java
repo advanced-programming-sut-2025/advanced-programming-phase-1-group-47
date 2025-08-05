@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import com.StardewValley.model.Building;
 import com.StardewValley.model.FarmBuilding;
+import com.StardewValley.model.GameAssetManager;
 import com.StardewValley.model.Shop;
 import com.StardewValley.model.enums.ShopType;
 import com.StardewValley.model.things.Item;
@@ -22,8 +23,8 @@ public class Carpenter {
     }
     private ArrayList<Item> permaStockBuilder() {
         ArrayList<Item> returnvalue = new ArrayList<>();
-        returnvalue.add(new Item("Wood",36 , 10 , 0 , 1000000));
-        returnvalue.add(new Item("Stone",2 ,20 , 0 , 1000000));
+        returnvalue.add(new Item("Wood",36 , 10 , 0 , 1000000, GameAssetManager.WOOD));
+        returnvalue.add(new Item("Stone",2 ,20 , 0 , 1000000, GameAssetManager.STONE));
         returnvalue.add(new Building(FarmBuilding.BARN));
         returnvalue.add(new Building(FarmBuilding.BIG_BARN));
         returnvalue.add(new Building(FarmBuilding.COOP));

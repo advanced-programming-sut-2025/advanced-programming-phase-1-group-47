@@ -8,5 +8,6 @@ public class Building extends Item {
     public Building(FarmBuilding buildingType) {
         super(String.valueOf(buildingType), buildingType.getId(), buildingType.getPrice(), 1000,300);
         this.buildingType = buildingType;
+        this.image = buildingType.getOutTexture();
     }
 }

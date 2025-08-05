@@ -293,10 +293,6 @@ Bait/Violet_Bait.png
 Bait/White_Bait.png
 Bait/Wild_Bait.png
 Bait/Yellow_Bait.png
-Barn_Interior.png
-Beach_Cabin_Stage_3.png
-Big_Barn_Interior.png
-Big_Coop_Interior.png
 Book/Animal_Catalogue.png
 Book/Bait_And_Bobber.png
 Book/Book_Of_Stars.png
@@ -385,7 +381,7 @@ Concessions/Ice_Cream_Sandwich.png
 Concessions/Jasmine_Tea.png
 Concessions/Jawbreaker.png
 Concessions/JojaCorn.png
-Concessions/Joja_Cola_%28large%29.png
+Concessions/Joja_Cola.png
 Concessions/Kale_Smoothie.png
 Concessions/Nachos.png
 Concessions/Panzanella_Salad.png
@@ -1252,8 +1248,6 @@ Decor/Wood_Floor_Tile_Winter.png
 Decor/Wood_Path.png
 Decor/Wood_Path_Tile.png
 Decor/Wood_Path_Tile_Winter.png
-Deluxe_Barn_Interior.png
-Deluxe_Coop_Interior.png
 Emoji/Emojis000.png
 Emoji/Emojis001.png
 Emoji/Emojis002.png
@@ -1415,11 +1409,17 @@ Emoji/Emojis194.png
 Emoji/Emojis195.png
 EnergyBar.png
 Farm_Buildings/Barn.png
+Farm_Buildings/Barn_Interior.png
+Farm_Buildings/Beach_Cabin_Stage_3.png
 Farm_Buildings/Big_Barn.png
+Farm_Buildings/Big_Barn_Interior.png
 Farm_Buildings/Big_Coop.png
+Farm_Buildings/Big_Coop_Interior.png
 Farm_Buildings/Coop.png
 Farm_Buildings/Deluxe_Barn.png
+Farm_Buildings/Deluxe_Barn_Interior.png
 Farm_Buildings/Deluxe_Coop.png
+Farm_Buildings/Deluxe_Coop_Interior.png
 Farm_Buildings/Shipping_Bin_Anim.png
 Farm_Buildings/Well.png
 Farming/Agriculturist.png
@@ -3059,6 +3059,8 @@ game/tools/watering_can.png
 grass.png
 lia_Icon.png
 menu_bg.png
+music/Daghestan.mp3
+music/gorgh.mp3
 red_pixel.png
 skin/font-export.fnt
 skin/font-subtitle-export.fnt

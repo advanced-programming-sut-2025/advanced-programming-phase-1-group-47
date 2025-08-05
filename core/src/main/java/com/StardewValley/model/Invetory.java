@@ -17,35 +17,30 @@ public class Invetory {
                 return i;
         return null;
     }
+    public boolean isFull(){
+        return (items.size() >= capacity);
+    }
     public Invetory(int i) {
         this.capacity = 20;
     }
     public void removeItem(Item item) {
         items.removeIf(item1 -> item1.getItemID() == item.getItemID());
     }
-    public void addItem(Item item) {
-        if(items.size() >= capacity){
-            if((bufferInvetory == null || bufferInvetory.isEmpty()) && item.getItemID() != 0){
-                bufferInvetory = new ArrayList<>();
-                bufferInvetory.add(item);
-                return;
-            }
-            for(Item item2 : bufferInvetory)
-                if(item2.getItemID() == item.getItemID()) {
-                    item2.addAmount(item.getAmount());
-                    return;
-                }
-            if (item.getItemID() != 0)
-                bufferInvetory.add(item);
-        }
-        for(Item item2 : items){
-            if(item2.getItemID() == item.getItemID()) {
-                item2.addAmount(item.getAmount());
-                return;
+    public boolean addItem(Item item) {
+        // First try to stack with existing items
+        for (Item existing : items) {
+            if (existing.getName().equals(item.getName())) {
+                existing.setAmount(existing.getAmount() + item.getAmount());
+                return true;
             }
         }
-        if(item.getItemID() != 0)
+
+        if (items.size() < capacity) {
             items.add(item);
+            return true;
+        }
+
+        return false;
     }
     public void setCapacity(int capacity) {
         this.capacity = capacity;

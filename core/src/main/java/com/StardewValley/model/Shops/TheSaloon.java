@@ -2,6 +2,7 @@ package com.StardewValley.model.Shops;
 
 import java.util.ArrayList;
 
+import com.StardewValley.model.GameAssetManager;
 import com.StardewValley.model.Shop;
 import com.StardewValley.model.enums.ShopType;
 import com.StardewValley.model.things.Item;
@@ -20,12 +21,12 @@ public class TheSaloon {
     }
     private ArrayList<Item> permaStockBuilder() {
         ArrayList<Item> returnvalue = new ArrayList<>();//TODO
-        returnvalue.add(new Item("Beer",26 , 400 , 0 , 10000));
-        returnvalue.add(new Item("Salad",35 , 220 , 0 , 10000));
-        returnvalue.add(new Item("Bread",31 , 120 , 0 , 10000));
-        returnvalue.add(new Item("Spaghetti",47 , 240 , 0 , 10000));
-        returnvalue.add(new Item("Pizza",5 , 600 , 0 , 10000));
-        returnvalue.add(new Item("Coffee",6 , 300 , 0 , 10000));
+        returnvalue.add(new Item("Beer",26 , 400 , 0 , 10000, GameAssetManager.BEER));
+        returnvalue.add(new Item("Salad",35 , 220 , 0 , 10000, GameAssetManager.SALAD));
+        returnvalue.add(new Item("Bread",31 , 120 , 0 , 10000, GameAssetManager.BREAD));
+        returnvalue.add(new Item("Spaghetti",47 , 240 , 0 , 10000, GameAssetManager.SPAGHETTI));
+        returnvalue.add(new Item("Pizza",5 , 600 , 0 , 10000, GameAssetManager.PIZZA));
+        returnvalue.add(new Item("Coffee",6 , 300 , 0 , 10000, GameAssetManager.COFFEE));
         return returnvalue;
     }
 

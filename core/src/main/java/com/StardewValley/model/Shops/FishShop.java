@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import com.StardewValley.model.Shop;
 import com.StardewValley.model.enums.ShopType;
 import com.StardewValley.model.things.Item;
+import com.badlogic.gdx.graphics.Texture;
 
 public class FishShop {
    public Shop fishShopBulider() {
@@ -20,7 +21,7 @@ public class FishShop {
     }
     private ArrayList<Item> permaStockBuilder() {
         ArrayList<Item> returnvalue = new ArrayList<>();
-        returnvalue.add(new Item("Trout Soup",29 , 250 , 0 , 1));
+        returnvalue.add(new Item("Recipe-Trout Soup",29 , 250 , 0 , 1,new Texture("Recipe/Trout_Soup.png")));
         return returnvalue;
     }
 

@@ -19,7 +19,7 @@ public class QuarryFarm {
             }
         }
 
-        Cottage cottage = new Cottage(new Ground(new Point(4, 4), new Point(8, 8)),new Point(8,6));
+        Cottage cottage = new Cottage(new Ground(new Point(4, 4), new Point(8,8)),new Point(8,6));
         greenHouse greenHouses ;
         ArrayList<Quarry> quarries = new ArrayList<>();
         ArrayList<Lake> lakes = new ArrayList<>();

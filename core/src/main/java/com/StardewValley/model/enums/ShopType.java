@@ -5,13 +5,13 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 
 public enum ShopType {
-    BlackSmith(GameAssetManager.BLACKSMITHOUT, GameAssetManager.BLACKSMITHIN, new Vector2(1675, 3375), 400, 256),
-    JojaMart(GameAssetManager.JOJOMARTOUT, GameAssetManager.JOJOMARTIN, new Vector2(2975, 1875), 256, 256),
-    Pierres(GameAssetManager.PIERRESOut, GameAssetManager.PIERRESIN, new Vector2(525, 1800), 256, 256),
-    Carpenters(GameAssetManager.CARPENTEROUT, GameAssetManager.CARPENTERIN, new Vector2(1575, 975), 256, 256),
-    FishShop(GameAssetManager.FISHSHOPOUT, GameAssetManager.FISHSHOPOT, new Vector2(1875, 675), 256, 256),
-    Marnies(GameAssetManager.MARNIESRANCHEOUT, GameAssetManager.MARNIESRANCHIN, new Vector2(1975, 2775), 400, 256),
-    TheSaloon(GameAssetManager.SALOONOUT, GameAssetManager.SALOONIN, new Vector2(825, 2175), 256, 256);
+    BlackSmith(GameAssetManager.BLACKSMITHOUT, GameAssetManager.BLACKSMITHIN, new Vector2(60, 110), 8, 8),
+    Marnies(GameAssetManager.MARNIESRANCHEOUT, GameAssetManager.MARNIESRANCHIN, new Vector2(70, 90), 8, 8),
+    Carpenters(GameAssetManager.CARPENTEROUT, GameAssetManager.CARPENTERIN, new Vector2(80, 30), 8, 8),
+    FishShop(GameAssetManager.FISHSHOPOUT, GameAssetManager.FISHSHOPOT, new Vector2(60, 20), 8, 8),
+    JojaMart(GameAssetManager.JOJOMARTOUT, GameAssetManager.JOJOMARTIN, new Vector2(120, 60), 8, 8),
+    TheSaloon(GameAssetManager.SALOONOUT, GameAssetManager.SALOONIN, new Vector2(25, 70), 8, 8),
+    Pierres(GameAssetManager.PIERRESOut, GameAssetManager.PIERRESIN, new Vector2(15, 50), 8, 8);
 
     private final Texture outTexture;
     private final Texture inTexture;

@@ -3,6 +3,7 @@ package com.StardewValley.model.Shops;
 import java.util.ArrayList;
 
 import com.StardewValley.model.Animal;
+import com.StardewValley.model.GameAssetManager;
 import com.StardewValley.model.Shop;
 import com.StardewValley.model.enums.AnimalType;
 import com.StardewValley.model.enums.ShopType;
@@ -21,8 +22,8 @@ public class MarniesRanch {
     }
     private ArrayList<Item> permaStockBuilder() {
         ArrayList<Item> returnvalue = new ArrayList<>();
-        returnvalue.add(new Item("Hay",30 , 50 , 0 , 1000000));
-        returnvalue.add(new Item("Milk Pail",55 ,1000 , 0 , 1));
+        returnvalue.add(new Item("Hay",30 , 50 , 0 , 1000000, GameAssetManager.HAY));
+        returnvalue.add(new Item("Milk Pail",55 ,1000 , 0 , 1, GameAssetManager.MILKPILL));
 
         returnvalue.add(new Animal(AnimalType.DINOSAUR));
         returnvalue.add(new Animal(AnimalType.HEN));

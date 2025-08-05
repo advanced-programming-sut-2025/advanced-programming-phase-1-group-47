@@ -11,12 +11,17 @@ import com.StardewValley.model.things.Item;
 import com.StardewValley.model.things.relations.Gift;
 import com.StardewValley.model.things.tools.*;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class Player extends User {
     private Point Coordinates;
     private Invetory invetory;
     public Item currentToll;
     public HashMap<String,Animal> animalHashMap = new HashMap<>();
+    public TextureAtlas playerAtlas;
+    public Animation<TextureRegion>[] playerAnimations;
     TrashCanType trashCanType = TrashCanType.REGULARTRASHCAN;
     private Buff buff = null;
     private final Skill[] skills = new Skill[]{
@@ -242,6 +247,7 @@ public class Player extends User {
     public void setCoordinates(Point Coordinates) {
         this.Coordinates = Coordinates;
     }
+
 
     public Point getCoordinates() {
         return Coordinates;

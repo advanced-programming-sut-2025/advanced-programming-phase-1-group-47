@@ -45,8 +45,10 @@ public class App {
                 type == TileType.SEBASTIAN ||
                 type == TileType.HARVEY;
     }
+    public static Farm returnCurrentFarm() {
+        return currentGame.map.farms[currentGame.turn];
+    }
 
-    // باید این‌ها رو بیرون از متد تعریف کرده باشی (مثلاً بالای کلاس)
     public static Texture snowflakeTexture = new Texture(Gdx.files.internal("Weather/Snow.png"));
     public static Vector2 snowPos1 = new Vector2();
     public static Vector2 snowPos2 = new Vector2();
