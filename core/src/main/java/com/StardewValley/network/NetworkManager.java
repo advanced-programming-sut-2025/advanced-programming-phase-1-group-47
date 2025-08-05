@@ -119,6 +119,7 @@ public class NetworkManager {
         message.setType(MessageType.PLAYER_JOIN);
         message.setPlayerId(String.valueOf(player.getId()));
         message.setData(json.toJson(player));
+        Gdx.app.log("NetworkManager", "Sending player join with ID: " + player.getId() + " and name: " + player.getNickname());
         sendMessage(message);
     }
 
@@ -183,6 +184,7 @@ public class NetworkManager {
                     case PLAYER_JOIN:
                         Player newPlayer = json.fromJson(Player.class, message.getData());
                         connectedPlayers.put(String.valueOf(newPlayer.getId()), newPlayer);
+                        Gdx.app.log("NetworkManager", "Added player to connected players: " + newPlayer.getId() + " - " + newPlayer.getNickname());
                         if (messageListener != null) {
                             messageListener.onPlayerJoined(newPlayer);
                         }
@@ -203,6 +205,7 @@ public class NetworkManager {
                         break;
                         
                     case CHAT:
+                        Gdx.app.log("NetworkManager", "Received chat message from " + message.getPlayerId() + ": " + message.getData());
                         if (messageListener != null) {
                             messageListener.onChatMessage(message.getPlayerId(), message.getData());
                         }

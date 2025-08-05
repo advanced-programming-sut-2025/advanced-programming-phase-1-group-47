@@ -42,10 +42,18 @@ public class LobbyController implements NetworkManager.NetworkMessageListener {
         localPlayer = new Player(playerName, "password", "email", playerName, 
                                 com.StardewValley.model.enums.Gender.Male, "question", "answer");
         
+        // Debug: Log the generated player ID
+        Gdx.app.log("LobbyController", "Created player with ID: " + localPlayer.getId() + " and name: " + localPlayer.getNickname());
+        
         // Connect to server
         boolean connected = networkManager.connect(address, port);
         if (connected) {
             networkManager.setPlayerId(String.valueOf(localPlayer.getId()));
+            
+            // Add local player to connected players map
+            networkManager.getConnectedPlayers().put(String.valueOf(localPlayer.getId()), localPlayer);
+            Gdx.app.log("LobbyController", "Added local player to connected players map: " + localPlayer.getId());
+            
             networkManager.sendPlayerJoin(localPlayer);
             
             this.currentServerAddress = address;
@@ -102,12 +110,9 @@ public class LobbyController implements NetworkManager.NetworkMessageListener {
     }
     
     public void refreshServerList() {
-        view.updateStatus("Refreshing server list...", Color.YELLOW);
-        
         // In a real implementation, this would discover servers on the network
         // For now, we'll just refresh the UI
         view.refreshServerList();
-        view.updateStatus("Server list refreshed", Color.GREEN);
     }
     
     public void sendChatMessage(String message) {
@@ -185,17 +190,31 @@ public class LobbyController implements NetworkManager.NetworkMessageListener {
     
     @Override
     public void onChatMessage(String playerId, String message) {
+        Gdx.app.log("LobbyController", "Processing chat message from " + playerId + ": " + message);
+        
         if (view != null) {
             Gdx.app.postRunnable(() -> {
                 // Find player name by ID
                 String playerName = "Unknown";
-                ConcurrentHashMap<String, Player> players = networkManager.getConnectedPlayers();
-                for (Player player : players.values()) {
-                    if (String.valueOf(player.getId()).equals(playerId)) {
-                        playerName = player.getNickname();
-                        break;
+                
+                // Check if it's the local player
+                if (localPlayer != null && String.valueOf(localPlayer.getId()).equals(playerId)) {
+                    playerName = localPlayer.getNickname();
+                    Gdx.app.log("LobbyController", "Found local player: " + playerName);
+                } else {
+                    // Check other connected players
+                    ConcurrentHashMap<String, Player> players = networkManager.getConnectedPlayers();
+                    Gdx.app.log("LobbyController", "Checking " + players.size() + " connected players");
+                    for (Player player : players.values()) {
+                        if (String.valueOf(player.getId()).equals(playerId)) {
+                            playerName = player.getNickname();
+                            Gdx.app.log("LobbyController", "Found remote player: " + playerName);
+                            break;
+                        }
                     }
                 }
+                
+                Gdx.app.log("LobbyController", "Displaying message: " + playerName + ": " + message);
                 view.addChatMessage(playerName + ": " + message);
             });
         }

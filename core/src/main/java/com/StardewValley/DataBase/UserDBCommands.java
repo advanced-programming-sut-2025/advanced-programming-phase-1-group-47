@@ -1,15 +1,15 @@
 package com.StardewValley.DataBase;
 
-import com.StardewValley.model.User;
-import com.badlogic.gdx.Gdx;
-import com.StardewValley.model.App;
-
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import com.StardewValley.model.App;
+import com.StardewValley.model.User;
+import com.badlogic.gdx.Gdx;
 
 public class UserDBCommands {
 
@@ -63,18 +63,15 @@ public class UserDBCommands {
             ResultSet rs = pstmt.executeQuery();
 
             if (rs.next()) {
-//                user = new User(
-//                    rs.getString("username"),
-//                    rs.getString("password"),
-//                    rs.getString("question_security_question"),
-//                    rs.getString("answer_security_question"),
-//                    rs.getString("avatar")
-//                );
-//
-//                user.setScore(rs.getInt("score"));
-//                user.setMostSurvivalTime(rs.getInt("survival_time"));
-//                user.setKillNumber(rs.getInt("kill_count"));
-//                user.setAutoReloadingEnable(rs.getBoolean("auto_reload"));
+                user = new User(
+                    rs.getString("username"),
+                    rs.getString("password"),
+                    rs.getString("answer_security_question"), // email field
+                    rs.getString("username"), // nickname field
+                    com.StardewValley.model.enums.Gender.Male, // gender field
+                    rs.getString("question_security_question"),
+                    rs.getString("answer_security_question")
+                );
             }
 
             new UserDBCommands().logSQL(sql, Arrays.asList(username));

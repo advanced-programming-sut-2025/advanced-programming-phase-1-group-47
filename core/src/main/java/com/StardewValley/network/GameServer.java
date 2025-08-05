@@ -1,20 +1,25 @@
 package com.StardewValley.network;
 
-import com.StardewValley.model.Player;
-import com.StardewValley.model.Game;
-import com.StardewValley.model.Time;
-import com.StardewValley.model.Point;
-import com.badlogic.gdx.utils.Json;
-import com.badlogic.gdx.utils.JsonWriter;
-
-import java.io.*;
-import java.net.*;
-import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.Map;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.ArrayList;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import com.StardewValley.model.Game;
+import com.StardewValley.model.Player;
+import com.StardewValley.model.Point;
+import com.StardewValley.model.Time;
+import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.JsonWriter;
 
 public class GameServer {
     private ServerSocket serverSocket;
@@ -160,17 +165,20 @@ public class GameServer {
 
     public void handlePlayerJoin(Player player, ClientHandler client) {
         String playerId = String.valueOf(player.getId());
+        System.out.println("Server: Player joining with ID: " + playerId + " and name: " + player.getNickname());
         addClient(playerId, client);
         
         // Add player to game state
         gameState.addPlayer(player);
         
-        // Notify other players
+        // Send join message to the joining player (so they can add themselves to their local player list)
         NetworkMessage joinMessage = new NetworkMessage();
         joinMessage.setType(MessageType.PLAYER_JOIN);
         joinMessage.setPlayerId(playerId);
         joinMessage.setData(json.toJson(player));
+        client.sendMessage(joinMessage);
         
+        // Notify other players
         broadcastMessageToOthers(joinMessage, playerId);
         
         // Send current game state to new player
@@ -193,12 +201,15 @@ public class GameServer {
     }
 
     public void handleChatMessage(String playerId, String message) {
+        System.out.println("Server: Broadcasting chat message from player " + playerId + ": " + message);
+        
         NetworkMessage chatMessage = new NetworkMessage();
         chatMessage.setType(MessageType.CHAT);
         chatMessage.setPlayerId(playerId);
         chatMessage.setData(message);
         
         broadcastMessage(chatMessage);
+        System.out.println("Server: Chat message broadcasted to " + clients.size() + " clients");
     }
 
     public void handlePlayerPosition(String playerId, float x, float y) {

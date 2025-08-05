@@ -10,7 +10,13 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextArea;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Disposable;
@@ -25,9 +31,9 @@ public class LobbyView implements Screen, Disposable {
     
     // UI Components
     private Table mainTable;
-    private Table serverListTable;
-    private Table connectionTable;
-    private Table chatTable;
+    private Table connectionPanel;
+    private Table chatPanel;
+    private Table serverPanel;
     
     // Connection UI
     private TextField serverAddressField;
@@ -35,12 +41,6 @@ public class LobbyView implements Screen, Disposable {
     private TextField playerNameField;
     private TextButton connectButton;
     private TextButton createServerButton;
-    private TextButton refreshButton;
-    private TextButton backButton;
-    
-    // Server List UI
-    private ScrollPane serverListScrollPane;
-    private Table serverListContent;
     private Label statusLabel;
     
     // Chat UI
@@ -49,9 +49,17 @@ public class LobbyView implements Screen, Disposable {
     private TextButton sendChatButton;
     private ScrollPane chatScrollPane;
     
+    // Server List UI
+    private Table serverListTable;
+    private ScrollPane serverListScrollPane;
+    
     // Player List UI
     private Table playerListTable;
     private ScrollPane playerListScrollPane;
+    private Table playerListPanel;
+    
+    // Navigation
+    private TextButton backButton;
     
     public LobbyView(LobbyController controller) {
         this.controller = controller;
@@ -70,158 +78,231 @@ public class LobbyView implements Screen, Disposable {
     private void createUI() {
         mainTable = new Table();
         mainTable.setFillParent(true);
-        mainTable.pad(20);
+        mainTable.pad(15);
+        mainTable.setBackground(skin.newDrawable("white", new Color(0.15f, 0.15f, 0.2f, 0.95f)));
         
-        // Title
-        Label titleLabel = new Label("Multiplayer Lobby", skin, "title");
-        titleLabel.setAlignment(Align.center);
-        mainTable.add(titleLabel).colspan(3).expandX().fillX().padBottom(20).row();
+        // Header
+        createHeader();
         
         // Main content area
         Table contentTable = new Table();
+        contentTable.pad(10);
         
         // Left side - Connection and Server List
-        Table leftPanel = new Table();
-        leftPanel.pad(10);
+        Table leftSide = new Table();
+        leftSide.pad(5);
         
-        // Connection section
-        connectionTable = new Table();
-        connectionTable.pad(10);
+        // Connection Panel
+        createConnectionPanel();
+        leftSide.add(connectionPanel).expandX().fillX().height(140).row();
         
-        Label connectionLabel = new Label("Connect to Server", skin, "subtitle");
-        connectionTable.add(connectionLabel).colspan(2).expandX().fillX().padBottom(10).row();
+        // Server List Panel
+        createServerPanel();
+        leftSide.add(serverPanel).expandX().fillX().height(200).padTop(10).row();
         
-        connectionTable.add(new Label("Server Address:", skin)).left().padRight(10);
-        serverAddressField = new TextField("localhost", skin);
-        connectionTable.add(serverAddressField).expandX().fillX().padBottom(5).row();
+        // Right side - Chat and Players
+        Table rightSide = new Table();
+        rightSide.pad(5);
         
-        connectionTable.add(new Label("Port:", skin)).left().padRight(10);
-        serverPortField = new TextField("8080", skin);
-        connectionTable.add(serverPortField).expandX().fillX().padBottom(5).row();
+        // Chat Panel
+        createChatPanel();
+        rightSide.add(chatPanel).expandX().fillX().height(280).row();
         
-        connectionTable.add(new Label("Player Name:", skin)).left().padRight(10);
-        playerNameField = new TextField("Player", skin);
-        connectionTable.add(playerNameField).expandX().fillX().padBottom(10).row();
+        // Player List Panel
+        createPlayerPanel();
+        rightSide.add(playerListPanel).expandX().fillX().height(60).padTop(10).row();
         
-        Table buttonTable = new Table();
-        connectButton = new TextButton("Connect", skin);
-        createServerButton = new TextButton("Create Server", skin);
-        refreshButton = new TextButton("Refresh", skin);
-        
-        buttonTable.add(connectButton).padRight(10);
-        buttonTable.add(createServerButton).padRight(10);
-        buttonTable.add(refreshButton);
-        
-        connectionTable.add(buttonTable).colspan(2).expandX().fillX().row();
-        
-        // Status label
-        statusLabel = new Label("Ready to connect", skin);
-        statusLabel.setColor(Color.GREEN);
-        connectionTable.add(statusLabel).colspan(2).expandX().fillX().padTop(10).row();
-        
-        leftPanel.add(connectionTable).expandX().fillX().row();
-        
-        // Server list section
-        Table serverListSection = new Table();
-        serverListSection.pad(10);
-        
-        Label serverListLabel = new Label("Available Servers", skin, "subtitle");
-        serverListSection.add(serverListLabel).expandX().fillX().padBottom(10).row();
-        
-        serverListContent = new Table();
-        serverListScrollPane = new ScrollPane(serverListContent, skin);
-        serverListScrollPane.setFadeScrollBars(false);
-        serverListSection.add(serverListScrollPane).expand().fill().row();
-        
-        leftPanel.add(serverListSection).expand().fill().padTop(10).row();
-        
-        // Right side - Chat and Player List
-        Table rightPanel = new Table();
-        rightPanel.pad(10);
-        
-        // Chat section
-        chatTable = new Table();
-        chatTable.pad(10);
-        
-        Label chatLabel = new Label("Chat", skin, "subtitle");
-        chatTable.add(chatLabel).expandX().fillX().padBottom(10).row();
-        
-        chatArea = new TextArea("", skin);
-        chatArea.setDisabled(true);
-        chatScrollPane = new ScrollPane(chatArea, skin);
-        chatScrollPane.setFadeScrollBars(false);
-        chatTable.add(chatScrollPane).expand().fill().padBottom(5).row();
-        
-        Table chatInputTable = new Table();
-        chatInputField = new TextField("", skin);
-        sendChatButton = new TextButton("Send", skin);
-        
-        chatInputTable.add(chatInputField).expandX().fillX().padRight(5);
-        chatInputTable.add(sendChatButton).width(80);
-        
-        chatTable.add(chatInputTable).expandX().fillX().row();
-        
-        rightPanel.add(chatTable).expand().fill().row();
-        
-        // Player list section
-        Table playerListSection = new Table();
-        playerListSection.pad(10);
-        
-        Label playerListLabel = new Label("Connected Players", skin, "subtitle");
-        playerListSection.add(playerListLabel).expandX().fillX().padBottom(10).row();
-        
-        playerListTable = new Table();
-        playerListScrollPane = new ScrollPane(playerListTable, skin);
-        playerListScrollPane.setFadeScrollBars(false);
-        playerListSection.add(playerListScrollPane).expand().fill().row();
-        
-        rightPanel.add(playerListSection).expand().fill().padTop(10).row();
-        
-        // Add panels to content
-        contentTable.add(leftPanel).width(400).expandY().fillY().padRight(10);
-        contentTable.add(rightPanel).expand().fill().padLeft(10);
+        // Add sides to content
+        contentTable.add(leftSide).width(280).expandY().fillY().padRight(10);
+        contentTable.add(rightSide).expand().fill();
         
         mainTable.add(contentTable).expand().fill().row();
         
-        // Bottom buttons
-        Table bottomTable = new Table();
-        backButton = new TextButton("Back to Main Menu", skin);
-        bottomTable.add(backButton).padRight(10);
-        
-        mainTable.add(bottomTable).expandX().fillX().padTop(20);
+        // Footer
+        createFooter();
         
         stage.addActor(mainTable);
-        
-        // Set input processor
         Gdx.input.setInputProcessor(stage);
         
         // Initialize server list
         refreshServerList();
     }
     
+    private void createHeader() {
+        Table headerTable = new Table();
+        headerTable.pad(5);
+        headerTable.setBackground(skin.newDrawable("white", new Color(0.2f, 0.2f, 0.3f, 0.9f)));
+        
+        Label titleLabel = new Label("MULTIPLAYER LOBBY", skin, "title");
+        titleLabel.setAlignment(Align.center);
+        titleLabel.setFontScale(1.1f);
+        titleLabel.setColor(Color.WHITE);
+        
+        headerTable.add(titleLabel).expandX().fillX();
+        mainTable.add(headerTable).expandX().fillX().height(40).padBottom(10).row();
+    }
+    
+    private void createConnectionPanel() {
+        connectionPanel = new Table();
+        connectionPanel.pad(8);
+        connectionPanel.setBackground(skin.newDrawable("white", new Color(0.25f, 0.25f, 0.35f, 0.8f)));
+        
+        // Title
+        Label titleLabel = new Label("CONNECTION", skin, "subtitle");
+        titleLabel.setFontScale(0.9f);
+        titleLabel.setColor(Color.CYAN);
+        connectionPanel.add(titleLabel).colspan(2).expandX().fillX().padBottom(5).row();
+        
+        // Server Address
+        connectionPanel.add(new Label("Address:", skin)).left().width(60).padRight(5);
+        serverAddressField = new TextField("localhost", skin);
+        serverAddressField.setMaxLength(20);
+        connectionPanel.add(serverAddressField).expandX().fillX().padBottom(3).row();
+        
+        // Port
+        connectionPanel.add(new Label("Port:", skin)).left().width(60).padRight(5);
+        serverPortField = new TextField("8080", skin);
+        serverPortField.setMaxLength(5);
+        connectionPanel.add(serverPortField).expandX().fillX().padBottom(3).row();
+        
+        // Player Name
+        connectionPanel.add(new Label("Name:", skin)).left().width(60).padRight(5);
+        playerNameField = new TextField("Player", skin);
+        playerNameField.setMaxLength(15);
+        connectionPanel.add(playerNameField).expandX().fillX().padBottom(5).row();
+        
+        // Buttons
+        Table buttonTable = new Table();
+        buttonTable.pad(2);
+        
+        connectButton = new TextButton("Connect", skin);
+        connectButton.setWidth(70);
+        createServerButton = new TextButton("Host", skin);
+        createServerButton.setWidth(50);
+        
+        buttonTable.add(connectButton).padRight(5);
+        buttonTable.add(createServerButton);
+        
+        connectionPanel.add(buttonTable).colspan(2).expandX().fillX().row();
+        
+        // Status
+        statusLabel = new Label("Ready to connect", skin);
+        statusLabel.setColor(Color.GREEN);
+        statusLabel.setFontScale(0.7f);
+        connectionPanel.add(statusLabel).colspan(2).expandX().fillX().padTop(3);
+    }
+    
+    private void createServerPanel() {
+        serverPanel = new Table();
+        serverPanel.pad(8);
+        serverPanel.setBackground(skin.newDrawable("white", new Color(0.25f, 0.25f, 0.35f, 0.8f)));
+        
+        // Title
+        Label titleLabel = new Label("AVAILABLE SERVERS", skin, "subtitle");
+        titleLabel.setFontScale(0.9f);
+        titleLabel.setColor(Color.YELLOW);
+        serverPanel.add(titleLabel).expandX().fillX().padBottom(5).row();
+        
+        // Server list
+        serverListTable = new Table();
+        serverListScrollPane = new ScrollPane(serverListTable, skin);
+        serverListScrollPane.setFadeScrollBars(false);
+        serverListScrollPane.setScrollingDisabled(false, false);
+        
+        serverPanel.add(serverListScrollPane).expand().fill();
+    }
+    
+    private void createChatPanel() {
+        chatPanel = new Table();
+        chatPanel.pad(8);
+        chatPanel.setBackground(skin.newDrawable("white", new Color(0.25f, 0.25f, 0.35f, 0.8f)));
+        
+        // Title
+        Label titleLabel = new Label("CHAT", skin, "subtitle");
+        titleLabel.setFontScale(0.9f);
+        titleLabel.setColor(Color.LIME);
+        chatPanel.add(titleLabel).expandX().fillX().padBottom(5).row();
+        
+        // Chat area
+        chatArea = new TextArea("", skin);
+        chatArea.setDisabled(true);
+        chatArea.setPrefRows(10);
+        chatScrollPane = new ScrollPane(chatArea, skin);
+        chatScrollPane.setFadeScrollBars(false);
+        chatScrollPane.setScrollingDisabled(false, false);
+        chatPanel.add(chatScrollPane).expand().fill().padBottom(5).row();
+        
+        // Chat input
+        Table inputTable = new Table();
+        inputTable.pad(2);
+        
+        chatInputField = new TextField("", skin);
+        chatInputField.setMaxLength(100);
+        sendChatButton = new TextButton("Send", skin);
+        sendChatButton.setWidth(60);
+        
+        inputTable.add(chatInputField).expandX().fillX().padRight(5);
+        inputTable.add(sendChatButton);
+        
+        chatPanel.add(inputTable).expandX().fillX();
+    }
+    
+    private void createPlayerPanel() {
+        playerListPanel = new Table();
+        playerListPanel.pad(8);
+        playerListPanel.setBackground(skin.newDrawable("white", new Color(0.25f, 0.25f, 0.35f, 0.8f)));
+        
+        // Title
+        Label titleLabel = new Label("PLAYERS ONLINE", skin, "subtitle");
+        titleLabel.setFontScale(0.9f);
+        titleLabel.setColor(Color.ORANGE);
+        playerListPanel.add(titleLabel).expandX().fillX().padBottom(5).row();
+        
+        // Player list
+        playerListTable = new Table();
+        playerListScrollPane = new ScrollPane(playerListTable, skin);
+        playerListScrollPane.setFadeScrollBars(false);
+        playerListScrollPane.setScrollingDisabled(false, false);
+        
+        playerListPanel.add(playerListScrollPane).expand().fill();
+    }
+    
+    private void createFooter() {
+        Table footerTable = new Table();
+        footerTable.pad(5);
+        footerTable.setBackground(skin.newDrawable("white", new Color(0.2f, 0.2f, 0.3f, 0.9f)));
+        
+        backButton = new TextButton("Back to Main Menu", skin);
+        backButton.setWidth(120);
+        
+        footerTable.add(backButton).expandX().center();
+        mainTable.add(footerTable).expandX().fillX().height(35).padTop(10);
+    }
+    
     private void setupEventHandlers() {
         connectButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                controller.connectToServer(
-                    serverAddressField.getText(),
-                    Integer.parseInt(serverPortField.getText()),
-                    playerNameField.getText()
-                );
+                try {
+                    controller.connectToServer(
+                        serverAddressField.getText(),
+                        Integer.parseInt(serverPortField.getText()),
+                        playerNameField.getText()
+                    );
+                } catch (NumberFormatException e) {
+                    updateStatus("Invalid port number", Color.RED);
+                }
             }
         });
         
         createServerButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                controller.createServer(Integer.parseInt(serverPortField.getText()));
-            }
-        });
-        
-        refreshButton.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                controller.refreshServerList();
+                try {
+                    controller.createServer(Integer.parseInt(serverPortField.getText()));
+                } catch (NumberFormatException e) {
+                    updateStatus("Invalid port number", Color.RED);
+                }
             }
         });
         
@@ -273,48 +354,53 @@ public class LobbyView implements Screen, Disposable {
     }
     
     public void refreshServerList() {
-        serverListContent.clear();
+        serverListTable.clear();
         
-        // Add some sample servers (in real implementation, this would come from network discovery)
-        addServerToList("Local Server", "localhost:8080", "2/4 players");
-        addServerToList("Test Server", "192.168.1.100:8080", "1/4 players");
-        
-        // Add refresh button
-        TextButton refreshListButton = new TextButton("Refresh List", skin);
-        refreshListButton.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                controller.refreshServerList();
-            }
-        });
-        serverListContent.add(refreshListButton).expandX().fillX().padTop(10).row();
+        // Add sample servers
+        addServerToList("Local Server", "localhost:8080", "2/4");
+        addServerToList("Test Server", "192.168.1.100:8080", "1/4");
+        addServerToList("Public Server", "stardew.example.com:8080", "3/4");
     }
     
     private void addServerToList(String name, String address, String players) {
         Table serverRow = new Table();
-        serverRow.pad(5);
+        serverRow.pad(3);
+        serverRow.setBackground(skin.newDrawable("white", new Color(0.3f, 0.3f, 0.4f, 0.6f)));
         
         Label nameLabel = new Label(name, skin);
+        nameLabel.setFontScale(0.8f);
+        nameLabel.setColor(Color.WHITE);
+        
         Label addressLabel = new Label(address, skin);
+        addressLabel.setFontScale(0.7f);
+        addressLabel.setColor(Color.LIGHT_GRAY);
+        
         Label playersLabel = new Label(players, skin);
+        playersLabel.setFontScale(0.7f);
+        playersLabel.setColor(Color.YELLOW);
         
         TextButton joinButton = new TextButton("Join", skin);
+        joinButton.setWidth(40);
         joinButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 String[] parts = address.split(":");
                 if (parts.length == 2) {
-                    controller.connectToServer(parts[0], Integer.parseInt(parts[1]), playerNameField.getText());
+                    try {
+                        controller.connectToServer(parts[0], Integer.parseInt(parts[1]), playerNameField.getText());
+                    } catch (NumberFormatException e) {
+                        updateStatus("Invalid server address", Color.RED);
+                    }
                 }
             }
         });
         
-        serverRow.add(nameLabel).expandX().fillX().padRight(10);
-        serverRow.add(addressLabel).expandX().fillX().padRight(10);
-        serverRow.add(playersLabel).expandX().fillX().padRight(10);
-        serverRow.add(joinButton).width(60);
+        serverRow.add(nameLabel).expandX().fillX().padRight(5);
+        serverRow.add(addressLabel).expandX().fillX().padRight(5);
+        serverRow.add(playersLabel).width(30).padRight(5);
+        serverRow.add(joinButton).width(40);
         
-        serverListContent.add(serverRow).expandX().fillX().row();
+        serverListTable.add(serverRow).expandX().fillX().padBottom(2).row();
     }
     
     public void updatePlayerList(String[] players) {
@@ -322,6 +408,8 @@ public class LobbyView implements Screen, Disposable {
         
         for (String player : players) {
             Label playerLabel = new Label("• " + player, skin);
+            playerLabel.setFontScale(0.8f);
+            playerLabel.setColor(Color.WHITE);
             playerListTable.add(playerLabel).left().pad(2).row();
         }
     }
@@ -333,7 +421,7 @@ public class LobbyView implements Screen, Disposable {
     
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(0.1f, 0.1f, 0.1f, 1);
+        Gdx.gl.glClearColor(0.1f, 0.1f, 0.15f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         
         stage.act(delta);

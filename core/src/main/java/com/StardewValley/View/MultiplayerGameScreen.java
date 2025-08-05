@@ -158,15 +158,16 @@ public class MultiplayerGameScreen implements Screen, Disposable {
     private void createUI() {
         mainTable = new Table();
         mainTable.setFillParent(true);
-        mainTable.pad(10);
+        mainTable.pad(15);
         
         // Title
         Label titleLabel = new Label("Multiplayer Game", skin, "title");
         titleLabel.setAlignment(Align.center);
-        mainTable.add(titleLabel).colspan(2).expandX().fillX().padBottom(10).row();
+        mainTable.add(titleLabel).colspan(2).expandX().fillX().padBottom(15).row();
         
-        // Main content area
+        // Main content area with better spacing
         Table contentTable = new Table();
+        contentTable.pad(10);
         
         // Left side - Game info and controls
         Table leftPanel = new Table();
@@ -174,66 +175,69 @@ public class MultiplayerGameScreen implements Screen, Disposable {
         
         // Game info section
         gameInfoTable = new Table();
-        gameInfoTable.pad(5);
+        gameInfoTable.pad(8);
+        gameInfoTable.setBackground(skin.newDrawable("white", Color.DARK_GRAY));
         
         Label gameInfoLabel = new Label("Game Information", skin, "subtitle");
-        gameInfoTable.add(gameInfoLabel).expandX().fillX().padBottom(5).row();
+        gameInfoTable.add(gameInfoLabel).expandX().fillX().padBottom(8).row();
         
         statusLabel = new Label("Status: Connected", skin);
-        gameInfoTable.add(statusLabel).left().padBottom(2).row();
+        gameInfoTable.add(statusLabel).left().padBottom(3).row();
         
         playerCountLabel = new Label("Players: 1", skin);
-        gameInfoTable.add(playerCountLabel).left().padBottom(2).row();
+        gameInfoTable.add(playerCountLabel).left().padBottom(3).row();
         
         serverInfoLabel = new Label("Server: localhost:8080", skin);
         gameInfoTable.add(serverInfoLabel).left().padBottom(5).row();
         
-        leftPanel.add(gameInfoTable).expandX().fillX().row();
+        leftPanel.add(gameInfoTable).expandX().fillX().height(120).row();
         
         // Controls section
         controlsTable = new Table();
-        controlsTable.pad(5);
+        controlsTable.pad(8);
+        controlsTable.setBackground(skin.newDrawable("white", Color.DARK_GRAY));
         
         Label controlsLabel = new Label("Controls", skin, "subtitle");
-        controlsTable.add(controlsLabel).expandX().fillX().padBottom(5).row();
+        controlsTable.add(controlsLabel).expandX().fillX().padBottom(8).row();
         
         disconnectButton = new TextButton("Disconnect", skin);
         toggleChatButton = new TextButton("Toggle Chat", skin);
         backToLobbyButton = new TextButton("Back to Lobby", skin);
         
-        controlsTable.add(disconnectButton).expandX().fillX().padBottom(2).row();
-        controlsTable.add(toggleChatButton).expandX().fillX().padBottom(2).row();
+        controlsTable.add(disconnectButton).expandX().fillX().padBottom(3).row();
+        controlsTable.add(toggleChatButton).expandX().fillX().padBottom(3).row();
         controlsTable.add(backToLobbyButton).expandX().fillX().row();
         
-        leftPanel.add(controlsTable).expandX().fillX().padTop(10).row();
+        leftPanel.add(controlsTable).expandX().fillX().height(150).padTop(10).row();
         
         // Right side - Player list
         Table rightPanel = new Table();
         rightPanel.pad(5);
         
         Label playerListLabel = new Label("Connected Players", skin, "subtitle");
-        rightPanel.add(playerListLabel).expandX().fillX().padBottom(5).row();
+        rightPanel.add(playerListLabel).expandX().fillX().padBottom(8).row();
         
         playerListContent = new Table();
         playerListScrollPane = new ScrollPane(playerListContent, skin);
         playerListScrollPane.setFadeScrollBars(false);
-        rightPanel.add(playerListScrollPane).expand().fill().row();
+        rightPanel.add(playerListScrollPane).expand().fill().height(280).row();
         
-        // Add panels to content
-        contentTable.add(leftPanel).width(300).expandY().fillY().padRight(10);
-        contentTable.add(rightPanel).width(250).expandY().fillY();
+        // Add panels to content with better proportions
+        contentTable.add(leftPanel).width(280).expandY().fillY().padRight(15);
+        contentTable.add(rightPanel).width(220).expandY().fillY().padLeft(15);
         
         mainTable.add(contentTable).expand().fill().row();
         
         // Game area placeholder
         Table gameAreaTable = new Table();
-        gameAreaTable.pad(10);
+        gameAreaTable.pad(15);
+        gameAreaTable.setBackground(skin.newDrawable("white", Color.LIGHT_GRAY));
         
         Label gameAreaLabel = new Label("Game Area - Multiplayer functionality integrated", skin);
         gameAreaLabel.setAlignment(Align.center);
         gameAreaTable.add(gameAreaLabel).expand().fill();
         
-        mainTable.add(gameAreaTable).expand().fill().padTop(10);
+        mainTable.add(gameAreaTable).expand().fill().padTop(15).height(300);
         
         stage.addActor(mainTable);
         

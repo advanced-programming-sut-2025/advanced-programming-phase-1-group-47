@@ -1,22 +1,31 @@
     package com.StardewValley.View;
 
+    import com.StardewValley.Main;
+    import com.StardewValley.controllers.SignUpMenuController;
+    import com.StardewValley.model.App;
+    import static com.StardewValley.model.App.addClickListenerWithSound;
+    import static com.StardewValley.model.App.addFieldWithPlaceholder;
+    import static com.StardewValley.model.App.addHoverEffect;
     import com.badlogic.gdx.Gdx;
     import com.badlogic.gdx.Screen;
     import com.badlogic.gdx.graphics.Color;
     import com.badlogic.gdx.graphics.Texture;
-    import com.badlogic.gdx.scenes.scene2d.*;
-    import com.badlogic.gdx.scenes.scene2d.actions.Actions;
-    import com.badlogic.gdx.scenes.scene2d.ui.*;
-    import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-    import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-    import com.badlogic.gdx.utils.Align;
-    import com.badlogic.gdx.utils.ScreenUtils;
-    import com.badlogic.gdx.utils.viewport.ScreenViewport;
-    import com.StardewValley.controllers.SignUpMenuController;
-    import com.StardewValley.Main;
-    import com.StardewValley.model.App;
-
-    import static com.StardewValley.model.App.*;
+    import com.badlogic.gdx.scenes.scene2d.Actor;
+    import com.badlogic.gdx.scenes.scene2d.InputEvent;
+    import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
     public class SignUpView implements Screen {
         private Stage stage;
@@ -32,12 +41,18 @@
         private TextButton signUpButton, backButton, guestButton;
         private Skin skin;
 
-        public SignUpView(SignUpMenuController controller, Skin skin) {
+            public SignUpView(SignUpMenuController controller, Skin skin) {
+        try {
             this.controller = controller;
             this.skin = skin;
             initFields();
             controller.setView(this);
+        } catch (Exception e) {
+            Gdx.app.error("SignUpView", "Error in constructor: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
         }
+    }
 
         private void initFields() {
             usernameField = new TextField("", skin);
@@ -72,14 +87,20 @@
             return placeholder;
         }
 
-        @Override
-        public void show() {
+            @Override
+    public void show() {
+        try {
             stage = new Stage(new ScreenViewport(), Main.getBatch());
             Gdx.input.setInputProcessor(stage);
             loadBackground();
             setupUI();
             App.addFlashingTitleLabel(stage, skin, "Sign Up");
+        } catch (Exception e) {
+            Gdx.app.error("SignUpView", "Error in show method: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
         }
+    }
 
         private void loadBackground() {
             bgTexture = new Texture(Gdx.files.internal("BackGrounds/VahidInit.jpg"));

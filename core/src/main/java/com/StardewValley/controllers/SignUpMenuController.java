@@ -1,15 +1,16 @@
 package com.StardewValley.controllers;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.utils.Timer;
+import java.sql.SQLException;
+
 import com.StardewValley.DataBase.UserDBCommands;
 import com.StardewValley.Main;
-import com.StardewValley.model.App;
+import com.StardewValley.View.InitPageView;
+import com.StardewValley.View.LoginView;
+import com.StardewValley.View.SignUpView;
 import com.StardewValley.model.GameAssetManager;
 import com.StardewValley.model.User;
-import com.StardewValley.View.*;
-
-import java.sql.SQLException;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.utils.Timer;
 
 public class SignUpMenuController {
     private SignUpView view;
@@ -40,28 +41,66 @@ public class SignUpMenuController {
             return;
         }
 
-        if (commands.getUser(username) != null) {
-            view.showMessage(false, "Username already exists. Please choose another.");
+        // Check if database is initialized
+        if (com.StardewValley.DataBase.DataBaseInit.getConnection() == null) {
+            view.showMessage(false, "Database not initialized. Please restart the game.");
+            isSigningUp = false;
+            return;
+        }
+
+        try {
+            if (commands.getUser(username) != null) {
+                view.showMessage(false, "Username already exists. Please choose another.");
+                isSigningUp = false;
+                return;
+            }
+        } catch (Exception e) {
+            Gdx.app.error("SignUp", "Error checking existing user: " + e.getMessage());
+            view.showMessage(false, "Database connection error. Please try again.");
             isSigningUp = false;
             return;
         }
 
         view.getSignUpMenu().setDisabled(true);
-        view.showMessage(true, "");
+        view.showMessage(true, "Creating account...");
 
         Timer.schedule(new Timer.Task() {
             @Override
             public void run() {
-//                Gdx.app.postRunnable(() -> {
-//                    try {
-//                        commands.saveUser(user);
-//                    } catch (SQLException e) {
-//                        e.printStackTrace();
-//                    }
-//                    isSigningUp = false;
-//                    view.getSignUpMenu().setDisabled(false);
-//                    Main.getMain().setScreen(new LoginView(new LoginMenuController(), GameAssetManager.getGameAssetManager().getSkin()));
-//                });
+                Gdx.app.postRunnable(() -> {
+                    try {
+                        // Create user with required parameters
+                        User user = new User(username, password, username + "@example.com", username, 
+                                           com.StardewValley.model.enums.Gender.Male, securityQuestion, securityQuestion);
+                        commands.saveUser(user);
+                        view.showMessage(true, "Account created successfully!");
+                        
+                        // Wait a moment then redirect to login
+                        Timer.schedule(new Timer.Task() {
+                            @Override
+                            public void run() {
+                                Gdx.app.postRunnable(() -> {
+                                    isSigningUp = false;
+                                    view.getSignUpMenu().setDisabled(false);
+                                    Main.getMain().setScreen(new LoginView(new LoginMenuController(), GameAssetManager.getGameAssetManager().getSkin()));
+                                });
+                            }
+                        }, 1.0f);
+                        
+                    } catch (SQLException e) {
+                        Gdx.app.error("SignUp", "Database error during signup: " + e.getMessage());
+                        e.printStackTrace();
+                        view.showMessage(false, "Database error: " + e.getMessage());
+                        isSigningUp = false;
+                        view.getSignUpMenu().setDisabled(false);
+                    } catch (Exception e) {
+                        Gdx.app.error("SignUp", "Unexpected error during signup: " + e.getMessage());
+                        e.printStackTrace();
+                        view.showMessage(false, "Unexpected error: " + e.getMessage());
+                        isSigningUp = false;
+                        view.getSignUpMenu().setDisabled(false);
+                    }
+                });
             }
         }, 1.3f);
     }

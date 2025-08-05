@@ -1,17 +1,14 @@
 package com.StardewValley;
 
-import com.StardewValley.View.GameScreen;
-import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.StardewValley.DataBase.DataBaseInit;
+import com.StardewValley.View.InitPageView;
 import com.StardewValley.controllers.InitPageController;
 import com.StardewValley.controllers.MultiplayerController;
-import com.StardewValley.DataBase.DataBaseInit;
-import com.StardewValley.model.App;
 import com.StardewValley.model.GameAssetManager;
-import com.StardewValley.View.InitPageView;
+import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 
 public class Main extends Game {
     private static Main main;
@@ -28,8 +25,11 @@ public class Main extends Game {
         // Initialize multiplayer controller
         multiplayerController = new MultiplayerController();
         
-//        DataBaseInit.init();
-//
+        // Initialize database
+        DataBaseInit.init();
+        
+        // Reset player ID counter to ensure unique IDs
+        com.StardewValley.model.Player.resetIdCounter();
 
 
         try{

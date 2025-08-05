@@ -1,16 +1,24 @@
 package com.StardewValley.model;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.StardewValley.model.enums.*;
+import com.StardewValley.model.enums.Gender;
+import com.StardewValley.model.enums.Recipe;
+import com.StardewValley.model.enums.RodType;
+import com.StardewValley.model.enums.SkillType;
+import com.StardewValley.model.enums.TrashCanType;
 import com.StardewValley.model.things.Item;
 import com.StardewValley.model.things.relations.Gift;
-import com.StardewValley.model.things.tools.*;
-import com.badlogic.gdx.graphics.Texture;
+import com.StardewValley.model.things.tools.Axe;
+import com.StardewValley.model.things.tools.FishingPole;
+import com.StardewValley.model.things.tools.Hoe;
+import com.StardewValley.model.things.tools.Pickaxe;
+import com.StardewValley.model.things.tools.Scythe;
+import com.StardewValley.model.things.tools.Type;
+import com.StardewValley.model.things.tools.WateringCan;
 
 public class Player extends User {
     private Point Coordinates;
@@ -31,6 +39,7 @@ public class Player extends User {
     public Energy EnergyObject = new Energy(20000,20000);
     private int money;
     private int id;
+    private static int nextId = 1; // Static counter for generating unique IDs
     //friendships & trade
     private Map <Player, Integer> friendshipXP;
     private Map <Player, Integer> friendshipLevel;
@@ -60,6 +69,7 @@ public class Player extends User {
     public Player(String username, String password, String email, String nickname, Gender gender, String securityQuestion, String securityAnswer) {
 
         super(username, password, email, nickname, gender, securityQuestion, securityAnswer);
+        this.id = nextId++; // Assign unique ID and increment counter
         this.Coordinates = new Point(0, 0);
         this.invetory = new Invetory(20);
         money = 5000;
@@ -206,6 +216,16 @@ public class Player extends User {
 
     public int getId() {
         return id;
+    }
+    
+    // Method to reset ID counter (useful for testing)
+    public static void resetIdCounter() {
+        nextId = 1;
+    }
+    
+    // Method to get the next ID that would be assigned (for debugging)
+    public static int getNextId() {
+        return nextId;
     }
 
     public Energy getEnergy() {
