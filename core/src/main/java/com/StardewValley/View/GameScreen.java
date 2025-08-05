@@ -132,7 +132,7 @@ public class GameScreen implements Screen {
         }
         backgroundMusic.setLooping(true);  // آهنگ به صورت بی‌نهایت تکرار شود
         backgroundMusic.setVolume(0.5f);   // میزان بلندی صدا (۰ تا ۱)
-        backgroundMusic.play();
+      //  backgroundMusic.play();
         tileTextures.put(TileType.GRASS, GameAssetManager.GRASS);
         tileTextures.put(TileType.EMPTY, GameAssetManager.EMPTY);
         tileTextures.put(TileType.PLANT, GameAssetManager.PLANT);

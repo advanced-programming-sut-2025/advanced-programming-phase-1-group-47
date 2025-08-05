@@ -35,6 +35,12 @@
             "b": 0.54509807,
             "a": 1
         },
+        "Sish": {
+            "r": 0.54,
+            "g": 0.349,
+            "b": 0.09,
+            "a": 1
+        },
         "red": {
             "r": 1,
             "g": 0,
@@ -186,7 +192,7 @@
     "com.badlogic.gdx.scenes.scene2d.ui.SelectBox$SelectBoxStyle": {
         "default": {
             "font": "subtitle",
-            "fontColor": "red",
+            "fontColor": "Sish",
             "background": "select-box",
             "scrollStyle": "default",
             "listStyle": "default"
@@ -213,7 +219,7 @@
     "com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle": {
         "default": {
             "font": "subtitle",
-            "fontColor": "field",
+            "fontColor": "Sish",
             "up": "button",
             "down": "button-pressed"
         },
