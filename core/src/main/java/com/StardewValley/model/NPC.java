@@ -4,9 +4,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.StardewValley.View.Helpers.DialogUtils;
+import com.StardewValley.View.Helpers.InventoryDialog;
+import com.StardewValley.controllers.GameMenuController;
 import com.StardewValley.model.things.Item;
 import com.StardewValley.model.things.relations.Quest;
+import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+
+import static com.StardewValley.View.GameScreen.dialogStage;
 
 public class NPC {
     private Map <Player, Integer> friendship;
@@ -22,9 +29,7 @@ public class NPC {
     private ArrayList<Item> possibleGifts;
     private int TimeUntilQuest3;
     private Point coordinates;
-    public String getName() {
-        return name;
-    }
+    private boolean menuOpen  = false;
     private Texture NpcTexture;
     public NPC(String name , String job , Quest quest1 , Quest quest2 , Quest quest3 ,ArrayList<Item> favorites
     ,ArrayList<String> responses , ArrayList<Item> possibleGifts , int TimeUntilQuest3 ,Point coordinates,Texture NpcTexture) {
@@ -63,9 +68,81 @@ public class NPC {
         friendship.put(player, friendshipamount);
         hasBeenTalkedTo.put(player, true);
     }
-    
-    public void ActivateQuest(Quest quest) {
+    public void showMenu() {
+        try {
+            GameMenuController controller = new GameMenuController();
+            Player currentPlayer = App.getCurrentGame().getCurrentPlayer();
+            int friendshipLevel = friendship.getOrDefault(currentPlayer, 0);
+            String dialogMessage = "Hello, I'm " + name + "\n I'm a " + job + "!\nFriendship level: " + friendshipLevel + "\nWhat would you like to do?";
+            String giftOption = hasBeenGiftedTo.getOrDefault(currentPlayer, false) ?
+                    "You've already given a gift today!" :
+                    "Give a gift to " + name;
 
+            // Create gift button action
+            Runnable giftAction = () -> {
+                InventoryDialog.show();
+            };
+
+            DialogUtils.openDialog(
+                    GameAssetManager.getGameAssetManager().getSkin(),
+                    dialogStage,
+                    name,
+                    dialogMessage,
+                    "NPC/" + name.toLowerCase() + ".png",
+                    700, 400,
+                    (Gdx.graphics.getWidth() - 700) / 2f,
+                    Gdx.graphics.getHeight() * 0.7f,
+                    new DialogUtils.DialogButton(giftOption, "gift", giftAction),
+                    new DialogUtils.DialogButton("Quest 1", "quest1", () -> {
+                        String result = controller.FinishQuest(1).getData();
+                        DialogUtils.openDialog(
+                                GameAssetManager.getGameAssetManager().getSkin(),
+                                dialogStage,
+                                "Quest 1 Result",
+                                result,
+                                null,
+                                500, 300,
+                                (Gdx.graphics.getWidth() - 500) / 2f,
+                                Gdx.graphics.getHeight() * 0.5f,
+                                new DialogUtils.DialogButton("OK", "ok", () -> {})
+                        );
+                    }),
+                    new DialogUtils.DialogButton("Quest 2", "quest2", () -> {
+                        String result = controller.FinishQuest(2).getData();
+                        DialogUtils.openDialog(
+                                GameAssetManager.getGameAssetManager().getSkin(),
+                                dialogStage,
+                                "Quest 2 Result",
+                                result,
+                                null,
+                                500, 300,
+                                (Gdx.graphics.getWidth() - 500) / 2f,
+                                Gdx.graphics.getHeight() * 0.5f,
+                                new DialogUtils.DialogButton("OK", "ok", () -> {})
+                        );
+                    }),
+                    new DialogUtils.DialogButton("Quest 3", "quest3", () -> {
+                        String result = controller.FinishQuest(3).getData();
+                        DialogUtils.openDialog(
+                                GameAssetManager.getGameAssetManager().getSkin(),
+                                dialogStage,
+                                "Quest 3 Result",
+                                result,
+                                null,
+                                500, 300,
+                                (Gdx.graphics.getWidth() - 500) / 2f,
+                                Gdx.graphics.getHeight() * 0.5f,
+                                new DialogUtils.DialogButton("OK", "ok", () -> {})
+                        );
+                    }),
+                    new DialogUtils.DialogButton("Cancel", "cancel", () -> {})
+            );
+
+            menuOpen = true;
+            Gdx.app.log("NPC Menu", "Showing menu for NPC: " + name);
+        } catch (Exception e) {
+            Gdx.app.error("NPC Menu", "Error showing NPC menu: " + e.getMessage());
+        }
     }
 
     public ArrayList<String> getResponses() {
@@ -134,5 +211,8 @@ public class NPC {
 
     public ArrayList<Item> getPossibleGifts() {
         return possibleGifts;
+    }
+    public String getName() {
+        return name;
     }
 }

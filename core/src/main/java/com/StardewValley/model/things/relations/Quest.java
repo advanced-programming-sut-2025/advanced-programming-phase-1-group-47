@@ -56,6 +56,12 @@ public class Quest {
         return isDone;
     }
 
+    public String getName() {
+        return "QUEST " + questID;
+    }
+    public String getDescription() {
+        return "YYYYY:  " + questID;
+    }
     public void setIsDone(boolean isDone) {
         this.isDone = isDone;
     }

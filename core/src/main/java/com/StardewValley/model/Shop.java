@@ -411,11 +411,9 @@ public class Shop {
     public void render(SpriteBatch batch) {
         try {
             if(type == null) return;
-
             Texture tex = isPlayerInside ? type.getInTexture() : type.getOutTexture();
             batch.draw(tex, type.getPosition().y * TILE_SIZE, type.getPosition().x * TILE_SIZE,
                     type.getWidth() * TILE_SIZE, type.getHeight() * TILE_SIZE);
-
             if (isMenuOpen) {
                 stage.draw();
             }

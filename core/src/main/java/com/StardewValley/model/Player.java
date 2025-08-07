@@ -24,6 +24,27 @@ public class Player extends User {
     public Animation<TextureRegion>[] playerAnimations;
     TrashCanType trashCanType = TrashCanType.REGULARTRASHCAN;
     private Buff buff = null;
+    public Item currentItem;
+    public int currentNumber;
+    private List<ItemSelection> selectedItems = new ArrayList<>(); // New field for multiple selections
+
+    public void setRecentItem(Item item) {
+        currentItem = item;
+    }
+
+    public void setRecentQuantity(int quantity) {
+        currentNumber = quantity;
+    }
+
+    public void setSelectedItems(List<ItemSelection> items) {
+        this.selectedItems = items;
+    }
+
+    public List<ItemSelection> getSelectedItems() {
+        return selectedItems;
+    }
+
+// New class to hold item and quantity pairs
     private final Skill[] skills = new Skill[]{
             new Skill(SkillType.FARMING),
             new Skill(SkillType.FISHING),

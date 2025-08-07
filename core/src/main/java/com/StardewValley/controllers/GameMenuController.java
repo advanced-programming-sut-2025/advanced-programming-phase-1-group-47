@@ -533,19 +533,12 @@ public class GameMenuController {
     public Result<String> FinishQuest(int QuestIndex) {
         for (NPC npc : App.getCurrentGame().getNpcs()) {
             if (npc.getQuest1().getQuestID() == QuestIndex) {
-                if(!isNPCHere())
-                    return new Result<>(false , "NPC too far away!");
                 return finishQuest2(npc.getQuest1() , npc);
-
             }
             if (npc.getQuest2().getQuestID() == QuestIndex) {
-                if(!isNPCHere())
-                    return new Result<>(false , "NPC too far away!");
                 return finishQuest2(npc.getQuest2() , npc);
             }
             if (npc.getQuest3().getQuestID() == QuestIndex) {
-                if(!isNPCHere())
-                    return new Result<>(false , "NPC too far away!");
                 return finishQuest2(npc.getQuest3() , npc);
             }
 
@@ -609,28 +602,29 @@ public class GameMenuController {
         }
         return surrounding;
     }
-    private Result<String> finishQuest2(Quest quest , NPC npc) {
-        if(quest.isIsDone())
-            return new Result<>(false , "Quest Already Done!");
-        if(!quest.getIsActive().get(App.getCurrentGame().getCurrentPlayer()))
-            return new Result<>(false , "You don't have access to that Quest yet!");
+    private Result<String> finishQuest2(Quest quest, NPC npc) {
+        if (quest.isIsDone())
+            return new Result<>(false, "Quest Already Done!");
+        if (!quest.getIsActive().get(App.getCurrentGame().getCurrentPlayer()))
+            return new Result<>(false, "You don't have access to that Quest yet!");
         for (Item item : App.getCurrentGame().getCurrentPlayer().getInvetory().getItems()) {
-            if(item.questEquals(quest.getRequiermentItems())) {
+            if (item.questEquals(quest.getRequiermentItems())) {
                 item.reduceAmount(quest.getRequiermentItems().getAmount());
-                if(quest.getRewards().getItemID() == 201) //201 is the friendship level item that shall not exist
+                if (quest.getRewards().getItemID() == 201) //201 is the friendship level item that shall not exist
                     npc.addFriendship(200, App.getCurrentGame().getCurrentPlayer());
-                else if(npc.getFriendship().get(App.getCurrentGame().getCurrentPlayer()) >= 400)
+                else if (npc.getFriendship().get(App.getCurrentGame().getCurrentPlayer()) >= 400)
                     App.getCurrentGame().getCurrentPlayer().getInvetory().getItems().add(new Item(quest.getRewards(), quest.getRewards().getAmount() * 2));
                 else
                     App.getCurrentGame().getCurrentPlayer().getInvetory().getItems().add(quest.getRewards());
                 App.getCurrentGame().getCurrentPlayer().addMoney(quest.getRewardMoney());
                 quest.setIsDone(true);
-                if(item.getAmount() == 0)
+                if (item.getAmount() == 0)
                     App.getCurrentGame().getCurrentPlayer().getInvetory().getItems().remove(item);
-                return new Result<>(true , "Quest completed");
+                return new Result<>(true, "Quest completed");
             }
         }
-        return new Result<>(false , "You don't have the quest Item (Or Enough of it)");
+        String requiredItemMessage = "You need " + quest.getRequiermentItems().getAmount() + " x " + quest.getRequiermentItems().getName() + " to complete this quest.";
+        return new Result<>(false, requiredItemMessage);
     }
     public Result<String> handleNewGame(Matcher matcher, Scanner scanner) {
         List<Player> players = new ArrayList<>();

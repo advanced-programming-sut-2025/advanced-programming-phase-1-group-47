@@ -5,28 +5,21 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Random;
 
+import com.StardewValley.View.Helpers.DialogUtils;
 import com.StardewValley.View.Helpers.EnergyHelper;
+import com.StardewValley.View.Helpers.InventoryDialog;
 import com.StardewValley.View.Helpers.WeatherRenderer;
 import com.StardewValley.controllers.GameMenuController;
-import com.StardewValley.model.AllTheItemsInTheGame;
-import com.StardewValley.model.App;
+import com.StardewValley.model.*;
+
 import static com.StardewValley.model.App.batch;
 import static com.StardewValley.model.App.camera;
 import static com.StardewValley.model.App.currentGame;
 import static com.StardewValley.model.App.isNpcTile;
 import static com.StardewValley.model.App.returnCurrentFarm;
 import static com.StardewValley.model.App.viewport;
-import com.StardewValley.model.Energy;
-import com.StardewValley.model.Game;
-import com.StardewValley.model.GameAssetManager;
 import static com.StardewValley.model.GameAssetManager.backgroundMusic;
-import com.StardewValley.model.Ground;
-import com.StardewValley.model.Map;
-import com.StardewValley.model.Player;
-import com.StardewValley.model.Point;
-import com.StardewValley.model.Shop;
-import com.StardewValley.model.Tile;
-import com.StardewValley.model.TimeAndDate;
+
 import com.StardewValley.model.buildings.Cottage;
 import com.StardewValley.model.buildings.greenHouse;
 import com.StardewValley.model.enums.TileType;
@@ -79,7 +72,7 @@ public class GameScreen implements Screen {
 
     private HashMap<TileType, Texture> tileTextures;
     // UI
-    private Stage mainStage, dialogStage;
+    public static Stage mainStage, dialogStage;
     private Skin skin;
     private EnergyHelper energyHelper;
     // Toolbar
@@ -132,7 +125,7 @@ public class GameScreen implements Screen {
         }
         backgroundMusic.setLooping(true);  // آهنگ به صورت بی‌نهایت تکرار شود
         backgroundMusic.setVolume(0.5f);   // میزان بلندی صدا (۰ تا ۱)
-        backgroundMusic.play();
+//        backgroundMusic.play();
         tileTextures.put(TileType.GRASS, GameAssetManager.GRASS);
         tileTextures.put(TileType.EMPTY, GameAssetManager.EMPTY);
         tileTextures.put(TileType.PLANT, GameAssetManager.PLANT);
@@ -311,6 +304,9 @@ public class GameScreen implements Screen {
                 App.currentGame.time.setHour(App.currentGame.time.getHour() + 1);
             }
         }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
+            InventoryDialog.show();
+        }
 
 
 
@@ -419,6 +415,7 @@ public class GameScreen implements Screen {
     private boolean dialogOpen = false;
     private void handleTouchInteraction() {
         try {
+            boolean rightClick = Gdx.input.isButtonPressed(Input.Buttons.RIGHT);
             if (isOutOfRealGame || !Gdx.input.justTouched()) return;
 
             Vector3 touch = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
@@ -438,13 +435,36 @@ public class GameScreen implements Screen {
                 return;
             }
 
-            // Greenhouse Interaction
             if (tile.type == TileType.GREENHOUSE && !returnCurrentFarm().getGreenHouses().hasRepeare) {
-                openDialog(
+                DialogUtils.openDialog(
+                        skin,
+                        dialogStage,
                         "GreenHouse Maker",
                         "Would you give 500 Gold to repair the Greenhouse?\n",
-                        "Greenhouse/greenhouse.png"
+                        "Greenhouse/greenhouse.png",
+                        700, 400,
+                        (Gdx.graphics.getWidth() - 700) / 2f,
+                        Gdx.graphics.getHeight() * 0.7f,
+                        new DialogUtils.DialogButton("OK", true, () -> {
+                            App.returnCurrentFarm().getGreenHouses().hasRepeare = true;
+                            App.getCurrentGame().getCurrentPlayer().addMoney(-500);
+                        }),
+                        new DialogUtils.DialogButton("Cancel", false, () -> {
+                            Gdx.app.log("Dialog", "Greenhouse repair cancelled");
+                        })
                 );
+            }
+            else if (isNpcTile(tile.type)) {
+                String npcName = tile.type.name().toLowerCase();
+                Gdx.app.log("NPC", "Interacting with NPC: " + npcName);
+                NPC npc = currentGame.getNpcs().get(0);
+                for (NPC test : currentGame.getNpcs()) {
+                    if (test.getName().toLowerCase().equals(npcName)) {
+                        npc = test;
+                        break;
+                    }
+                }
+                npc.showMenu();
             }
             else
                 handleToolUse(tileX, tileY);
@@ -455,11 +475,22 @@ public class GameScreen implements Screen {
                 if (touchedTile != null && isNpcTile(touchedTile.type)) {
                     String npcName = touchedTile.type.name().toLowerCase();
                     Gdx.app.log("NPC", "Interacting with NPC: " + npcName);
-
-                    openDialog(
+                    DialogUtils.openDialog(
+                            skin,
+                            dialogStage,
                             npcName,
                             controller.TalkToNPC(npcName).getData(),
-                            "NPC/" + npcName + ".png"
+                            "NPC/"+npcName+".png",
+                            700, 400,
+                            (Gdx.graphics.getWidth() - 700) / 2f,
+                            Gdx.graphics.getHeight() * 0.7f,
+                            new DialogUtils.DialogButton("OK", true, () -> {
+                                App.returnCurrentFarm().getGreenHouses().hasRepeare = true;
+                                App.getCurrentGame().getCurrentPlayer().addMoney(-500);
+                            }),
+                            new DialogUtils.DialogButton("Cancel", false, () -> {
+                                Gdx.app.log("Dialog", "Greenhouse repair cancelled");
+                            })
                     );
                 }
             }
@@ -491,36 +522,6 @@ public class GameScreen implements Screen {
         } catch (Exception e) {
             Gdx.app.error("ToolUse", e.getMessage());
         }
-    }
-    private void openDialog(String title, String message, String imagePath) {
-        dialogOpen = true;
-        Dialog currentDialog;
-        currentDialog = new Dialog(title, skin) {
-            @Override
-            protected void result(Object obj) {
-                if (obj.equals(true)) {
-                    if (title.equals("GreenHouse Maker")) {
-                        App.returnCurrentFarm().getGreenHouses().hasRepeare = true;
-                        currentGame.currentPlayer.addMoney(-500);
-                    }
-                    this.hide();
-                    dialogOpen = false;
-                }
-            }
-        };
-
-        BitmapFont bigFont = new BitmapFont();
-        bigFont.getData().setScale(2f);
-        Label.LabelStyle bigLabelStyle = new Label.LabelStyle(bigFont, Color.WHITE);
-
-        currentDialog.getContentTable().clear();
-        currentDialog.getContentTable().add(new Label(message, bigLabelStyle)).pad(20).row();
-        currentDialog.getContentTable().add(new Image(new Texture(Gdx.files.internal(imagePath)))).size(100, 100).pad(10);
-        currentDialog.button("OK", true).pad(20);
-
-        currentDialog.setSize(700, 400);
-        currentDialog.setPosition((Gdx.graphics.getWidth() - 700) / 2f, Gdx.graphics.getHeight() * 0.7f);
-        currentDialog.show(dialogStage);
     }
     private void drawGround() {
         Texture grassTexture = tileTextures.get(TileType.EMPTY);
@@ -613,14 +614,14 @@ public class GameScreen implements Screen {
 
                 if (tile.type == TileType.FORAGING) {
                     try {
-                        batch.draw(AllTheItemsInTheGame.allPlants.get(tile.id).image, x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+//                        batch.draw(AllTheItemsInTheGame.allPlants.get(tile.id).image, x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
                     } catch (NullPointerException e) {
                         Gdx.app.log("error", e.getMessage());
                     }
                 }
                 if (tile.type == TileType.STONE) {
                     try {
-                        batch.draw(AllTheItemsInTheGame.allItems.get(tile.id).getImage(), x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+//                        batch.draw(AllTheItemsInTheGame.allItems.get(tile.id).getImage(), x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
                     } catch (NullPointerException e) {
                         Gdx.app.log("error", e.getMessage());
                     }
@@ -713,6 +714,10 @@ public class GameScreen implements Screen {
         for (Shop shop : App.getCurrentGame().getShops()) {
             shop.update(playerPosition, delta);
             shop.render(batch);
+//            if (shop.isMenuOpen())
+//            {
+//                updateToolbar();
+//            }
         }
     }
     @Override
@@ -738,11 +743,10 @@ public class GameScreen implements Screen {
             batch.begin();
             drawGreenhouses();
             drawCottages();
-            for (int i = 0; i < 4; i++) {
-                Cottage cottage = App.currentGame.map.farms[i].getCottage();
-                cottage.update(playerPosition, delta);
-                cottage.render(batch);
-            }
+            Cottage cottage = App.returnCurrentFarm().getCottage();
+            cottage.update(playerPosition, delta);
+            cottage.render(batch);
+
             drawNPCsAndForaging();
             batch.end();
             batch.begin();

@@ -16,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
@@ -59,18 +60,41 @@ public class Cottage extends Building {
     }
 
     private void showMessage(String text, Color color) {
-        messageLabel.setText(text);
-        messageLabel.setColor(color);
-        messageLabel.setVisible(true);
-        messageLabel.setX((Gdx.graphics.getWidth() - messageLabel.getWidth()) / 2);
-        messageLabel.setY(Gdx.graphics.getHeight() - 100);
-
-        Timer.schedule(new Timer.Task() {
-            @Override
-            public void run() {
-                messageLabel.setVisible(false);
+        try {
+            // 1. مطمئن شوید label مقداردهی شده است
+            if (messageLabel == null) {
+                messageLabel = new Label("", skin);
+                messageLabel.setFontScale(1.2f);
+                stage.addActor(messageLabel);
             }
-        }, 3);
+
+            // 2. تنظیم متن و استایل
+            messageLabel.setText(text);
+            messageLabel.setColor(color);
+            messageLabel.setFontScale(1.2f); // اندازه فونت را مجدداً تنظیم کنید
+
+            // 3. محاسبه موقعیت پس از تنظیم متن
+            messageLabel.pack(); // این خط حیاتی است!
+            messageLabel.setPosition(
+                    (Gdx.graphics.getWidth() - messageLabel.getWidth()) / 2,
+                    Gdx.graphics.getHeight() - 100
+            );
+
+            // 4. نمایش پیام
+            messageLabel.setVisible(true);
+
+            // 5. مخفی کردن خودکار پس از 3 ثانیه
+            Timer.schedule(new Timer.Task() {
+                @Override
+                public void run() {
+                    if (messageLabel != null) {
+                        messageLabel.setVisible(false);
+                    }
+                }
+            }, 3);
+        } catch (Exception e) {
+            Gdx.app.error("Cottage", "Error showing message: " + e.getMessage());
+        }
     }
 
     public void update(Vector2 playerPos, float delta) {
@@ -138,67 +162,67 @@ public class Cottage extends Building {
         try {
             stage.clear();
 
-            Dialog dialog = new Dialog("Cottage Menu", skin) {
+            // پس‌زمینه
+            Image bg = new Image(GameAssetManager.COTTAGEIn);
+            bg.setFillParent(true);
+            stage.addActor(bg);
+
+            // دیالوگ اصلی
+            Dialog dialog = new Dialog("", skin) {
                 @Override
                 protected void result(Object obj) {
-                    if (obj instanceof Boolean && (Boolean) obj) {
-                        closeCottageMenu();
-                    }
+                    closeCottageMenu();
                 }
             };
 
             dialog.setModal(true);
-            dialog.setMovable(true);
-            dialog.pad(20);
-            dialog.setSize(600, 400);
-            dialog.setPosition(
-                    (stage.getWidth() - dialog.getWidth()) / 2,
-                    (stage.getHeight() - dialog.getHeight()) / 2
-            );
+            dialog.setMovable(false);
+            dialog.setFillParent(true);
+            dialog.setBackground((Drawable) null); // حذف پس‌زمینه دیالوگ
 
             Table contentTable = dialog.getContentTable();
-            contentTable.defaults().pad(10);
+            contentTable.defaults().pad(20);
 
-            // Header
-            Label title = new Label("Cottage Options", skin, "title");
-            title.setFontScale(1.5f);
-            contentTable.add(title).colspan(2).padBottom(20).row();
+            // جدول برای قرار دادن تصاویر
+            Table imagesTable = new Table();
+            imagesTable.center();
 
-            // Buttons
-            TextButton cookingButton = new TextButton("Cooking", skin);
-            TextButton craftingButton = new TextButton("Crafting", skin);
-            TextButton fridgeButton = new TextButton("Fridge", skin);
-            TextButton exitButton = new TextButton("Exit", skin);
-
-            cookingButton.getLabel().setFontScale(1.2f);
-            craftingButton.getLabel().setFontScale(1.2f);
-            fridgeButton.getLabel().setFontScale(1.2f);
-            exitButton.getLabel().setFontScale(1.1f);
-
-            // Button listeners
-            cookingButton.addListener(new ClickListener() {
-                public void clicked(InputEvent event, float x, float y) {
-                    showMessage("Cooking menu opened", Color.GREEN);
-                    // Implement cooking functionality here
-                }
-            });
-
-            craftingButton.addListener(new ClickListener() {
+            // تصویر یخچال
+            Image fridgeImage = new Image(new Texture("Special_item/Mini-Fridge.png"));
+            fridgeImage.addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
-                    showMessage("Crafting menu opened", Color.GREEN);
-                    // Implement crafting functionality here
+                    showMessage("gregre", Color.GREEN);
                 }
             });
 
-            fridgeButton.addListener(new ClickListener() {
+            // تصویر اجاق گاز
+            Image stoveImage = new Image(GameAssetManager.BARN_OUT_TEXTURE);
+            stoveImage.addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
-                    showMessage("Fridge accessed", Color.GREEN);
-                    // Implement fridge functionality here
+                    showMessage("grege", Color.GREEN);
+                    // اینجا می‌توانید صفحه آشپزی را باز کنید
                 }
             });
 
+            // تصویر کوره صنعتگری
+            Image furnaceImage = new Image(GameAssetManager.DINOSAUR_TEXTURE);
+            furnaceImage.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    showMessage("tege", Color.GREEN);
+                    // اینجا می‌توانید صفحه صنعتگری را باز کنید
+                }
+            });
+
+            // اضافه کردن تصاویر به جدول
+            imagesTable.add(fridgeImage).size(100, 100).pad(15);
+            imagesTable.add(stoveImage).size(100, 100).pad(15);
+            imagesTable.add(furnaceImage).size(100, 100).pad(15);
+
+            // دکمه خروج
+            TextButton exitButton = new TextButton("EXIT", skin);
             exitButton.addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
@@ -206,11 +230,9 @@ public class Cottage extends Building {
                 }
             });
 
-            // Layout
-            contentTable.add(cookingButton).width(200).height(60).pad(10).row();
-            contentTable.add(craftingButton).width(200).height(60).pad(10).row();
-            contentTable.add(fridgeButton).width(200).height(60).pad(10).row();
-            contentTable.add(exitButton).width(150).height(50).pad(10);
+            // چیدمان نهایی
+            contentTable.add(imagesTable).row();
+            contentTable.add(exitButton).width(150).height(50).padTop(30);
 
             dialog.show(stage);
         } catch (Exception e) {
