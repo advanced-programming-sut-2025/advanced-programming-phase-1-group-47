@@ -9,7 +9,7 @@ public class Invetory {
     private ArrayList<eatble> foods = new ArrayList<>();
     private ArrayList<Item> items = new ArrayList<>();
     private ArrayList<Tool> tools = new ArrayList<>();
-    private  int capacity = 20;
+    private  int capacity = 100;
     private ArrayList<Item> bufferInvetory = new ArrayList<>();
     public Item findItemFromName(String name){
         for(Item i : items)
@@ -21,7 +21,7 @@ public class Invetory {
         return (items.size() >= capacity);
     }
     public Invetory(int i) {
-        this.capacity = 20;
+        this.capacity = 100;
     }
     public void removeItem(Item item) {
         items.removeIf(item1 -> item1.getItemID() == item.getItemID());

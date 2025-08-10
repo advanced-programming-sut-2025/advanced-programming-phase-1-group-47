@@ -1,5 +1,7 @@
 package com.StardewValley.model.buildings;
 
+import com.StardewValley.View.Helpers.DialogUtils;
+import com.StardewValley.View.Helpers.InventoryDialog;
 import com.StardewValley.model.GameAssetManager;
 import com.StardewValley.model.Ground;
 import com.StardewValley.model.Point;
@@ -20,8 +22,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
-import static com.StardewValley.View.GameScreen.TILE_SIZE;
-import static com.StardewValley.View.GameScreen.isOutOfRealGame;
+import static com.StardewValley.View.GameScreen.*;
+import static com.StardewValley.View.GameScreen.dialogStage;
 
 public class Cottage extends Building {
     public Refrigerator fridge;
@@ -162,12 +164,11 @@ public class Cottage extends Building {
         try {
             stage.clear();
 
-            // پس‌زمینه
             Image bg = new Image(GameAssetManager.COTTAGEIn);
             bg.setFillParent(true);
             stage.addActor(bg);
 
-            // دیالوگ اصلی
+            // دیالوگ اصلی (غیر Modal)
             Dialog dialog = new Dialog("", skin) {
                 @Override
                 protected void result(Object obj) {
@@ -175,15 +176,14 @@ public class Cottage extends Building {
                 }
             };
 
-            dialog.setModal(true);
+            dialog.setModal(false); // غیر Modal باشد تا کلیک‌ها به اجزای دیگر برسد
             dialog.setMovable(false);
             dialog.setFillParent(true);
-            dialog.setBackground((Drawable) null); // حذف پس‌زمینه دیالوگ
+            dialog.setBackground((Drawable) null);
 
             Table contentTable = dialog.getContentTable();
             contentTable.defaults().pad(20);
 
-            // جدول برای قرار دادن تصاویر
             Table imagesTable = new Table();
             imagesTable.center();
 
@@ -192,17 +192,30 @@ public class Cottage extends Building {
             fridgeImage.addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
-                    showMessage("gregre", Color.GREEN);
+                    DialogUtils.openDialog(
+                            GameAssetManager.getGameAssetManager().getSkin()        ,
+                            stage,
+                            "Fridge",
+                            "Pick some Thing To Put In Fridge Or Take",
+                            "Special_item/Mini-Fridge.png",
+                            700, 400,
+                            (Gdx.graphics.getWidth() - 700) / 2f,
+                            Gdx.graphics.getHeight() * 0.7f,
+                            new DialogUtils.DialogButton("food", "food", () -> {
+                                DialogUtils.closeDialog();
+                                InventoryDialog.show(()->{});
+                            }),
+                            new DialogUtils.DialogButton("Cancel", "cancel", DialogUtils::closeDialog)
+                    );
                 }
             });
-
             // تصویر اجاق گاز
             Image stoveImage = new Image(GameAssetManager.BARN_OUT_TEXTURE);
             stoveImage.addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
                     showMessage("grege", Color.GREEN);
-                    // اینجا می‌توانید صفحه آشپزی را باز کنید
+
                 }
             });
 

@@ -3,6 +3,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 
+import com.StardewValley.View.GameScreen;
 import com.StardewValley.model.*;
 import com.StardewValley.model.Map;
 import com.StardewValley.model.Shops.*;
@@ -530,8 +531,7 @@ public class GameMenuController {
 
         return new Result<>(true, output.toString());
     }
-    public Result<String> FinishQuest(int QuestIndex) {
-        for (NPC npc : App.getCurrentGame().getNpcs()) {
+    public Result<String> FinishQuest(int QuestIndex,NPC npc) {
             if (npc.getQuest1().getQuestID() == QuestIndex) {
                 return finishQuest2(npc.getQuest1() , npc);
             }
@@ -541,8 +541,6 @@ public class GameMenuController {
             if (npc.getQuest3().getQuestID() == QuestIndex) {
                 return finishQuest2(npc.getQuest3() , npc);
             }
-
-        }
         return new Result<>(false , "invalid Quest index");
     }
     //for finishquest
@@ -985,8 +983,31 @@ public class GameMenuController {
         }
         return new Result<>(false, "new Day: " + App.currentGame.time.getDayOfSeason());
     }
-    public Result<String> GiveGiftToNPC(NPC npc , Item gift) {
-        return null;
+    public String GiveGiftToNPC(NPC npc , ArrayList<Item> gifts) {
+        StringBuilder result = new StringBuilder();
+        result.append("");
+        try{
+            Player player = App.currentGame.currentPlayer;
+            if (gifts==null || gifts.size()==0)
+                return null;
+            for (Item gift : gifts) {
+                if (gift.getValue() == -1)
+                    result.append("You Can't gift that Item!\n");
+                npc.addFriendship(50, player);
+                for (Item favitem : npc.getFavorites()) {
+                    if (favitem.getItemID() == gift.getItemID() || favitem.getItemID() == gift.getParentItemID()) {
+                        npc.addFriendship(200, App.getCurrentGame().getCurrentPlayer());
+                        result.append( "Thanks! I love this Gift!\n");
+                    }
+                }
+                player.getInvetory().removeItem(gift);
+                npc.addFriendship(50, App.getCurrentGame().getCurrentPlayer());
+                result.append( "Thanks!\n");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return result.toString();
     }
     public Result<String> showCraftInfo(String itemName){
         StringBuilder output = new StringBuilder();
@@ -1122,41 +1143,30 @@ public class GameMenuController {
         }
         return AllTheItemsInTheGame.getPlantById(finalId);
     }
-    public Result<String> plantPlant (String seedName , String direction) {
-        System.out.println("plantPlant " + seedName + " " + direction);
+    public Result<String> plantPlant (Item item, Tile tile) {
         Player currentPlayer = App.getCurrentGame().getCurrentPlayer();
-        for(Item item : currentPlayer.getInvetory().getItems()){
-            if (item.getName().equalsIgnoreCase(seedName)) {
-                if(item.getItemID() > 456 || item.getItemID() < 402)
-                    return new Result<>(false, "the Item you are attempting to plant is not a Seed!");
-                Plant basePlant = null;
-                if(item.getItemID() !=397)
-                    basePlant = AllTheItemsInTheGame.getPlantById(item.getItemID() - 100);
-                else{
-                    basePlant = getPlantFromMixedSeed();
-                }
-                Point offset = getOffsetFromDirection(direction);
-                Point current = App.currentGame.map.farms[App.currentGame.turn].personPoint;
-                Point target = new Point(current.getX() + offset.getX(), current.getY() + offset.getY());
-                if (!App.currentGame.map.tiles[target.x][target.y].type.equals(TileType.GREENHOUSE) && !isPlantInSeason(basePlant)) {
-                    return new Result<>(false, "its not the perfect time to plant. come back in " + basePlant.getSeasonOfGrowth() + " for planting");
-                }
-                item.reduceAmount(1);
-                if(item.getAmount() == 0) {
-                    currentPlayer.getInvetory().getItems().remove(item);
-                }
-                if (offset == null) {
-                    return new Result<>(false, "Invalid direction!");
-                }
-                if (!App.currentGame.map.tiles[target.x][target.y].type.equals(TileType.TILLED) && !App.currentGame.map.tiles[target.x][target.y].type.equals(TileType.GREENHOUSE))
-                    return new Result<>(false, "You are attempting to plant in a not tilled Ground!");
-                Plant targetPlant = new Plant(basePlant, target);
-                putPlantInGround(targetPlant);
-                App.currentGame.map.farms[App.currentGame.turn].plantMap.put(target, targetPlant);
-                return new Result<>(true, "Plant " + item.getName() + " is now planted in (" + target.x + ", " + target.y +") cordinates !");
-            }
+        if(item.getItemID() > 456 || item.getItemID() < 402)
+            return new Result<>(false, "the Item you are attempting to plant is not a Seed!");
+        Plant basePlant = null;
+        if(item.getItemID() !=397)
+            basePlant = AllTheItemsInTheGame.getPlantById(item.getItemID() - 100);
+        else{
+            basePlant = getPlantFromMixedSeed();
         }
-        return new Result<>(false, "You don't have that seed/Item!");
+        Point target = tile.point;
+        if (!tile.type.equals(TileType.GREENHOUSE) && !isPlantInSeason(basePlant)) {
+            return new Result<>(false, "its not the perfect time to plant. come back in " + basePlant.getSeasonOfGrowth() + " for planting");
+        }
+        item.reduceAmount(1);
+        if(item.getAmount() == 0) {
+            currentPlayer.getInvetory().getItems().remove(item);
+        }
+        if (!tile.type.equals(TileType.TILLED) && !tile.type.equals(TileType.GREENHOUSE))
+            return new Result<>(false, "You are attempting to plant in a not tilled Ground!");
+        Plant targetPlant = new Plant(basePlant, target);
+        putPlantInGround(targetPlant);
+        App.returnCurrentFarm().plantMap.put(target, targetPlant);
+        return new Result<>(true, "Plant " + item.getName() + " is now planted in (" + target.x + ", " + target.y +") cordinates !");
     }
     public boolean isPlantInSeason(Plant plant) {
         Season plantSeason = plant.getSeasonOfGrowth();
@@ -1225,9 +1235,9 @@ public class GameMenuController {
     public Result<String> putPlantInGround (Plant plant) {
         App.getCurrentGame().addPlantInPlants(plant);
         Point placeInMap = plant.getPoint();
-        App.currentGame.map.tiles[plant.getPoint().getX()][plant.getPoint().getX()].type = TileType.PLANT;
+        App.currentGame.map.tiles[plant.getPoint().getX()][plant.getPoint().getY()].type = TileType.PLANT;
         if(plant instanceof Tree)
-            App.currentGame.map.tiles[plant.getPoint().getX()][plant.getPoint().getX()].type = TileType.TREE;
+            App.currentGame.map.tiles[plant.getPoint().getX()][plant.getPoint().getY()].type = TileType.TREE;
         return new Result<>(true, "You have Planted the Plant!");
     }
 

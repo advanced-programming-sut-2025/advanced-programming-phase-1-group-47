@@ -963,7 +963,7 @@ Crops/Grape_Stage_5.png
 Crops/Grape_Stage_6.png
 Crops/Grape_Stage_7.png
 Crops/Grape_Starter.png
-Crops/Green_Bean.png
+Crops/Green_Bean_Stage_1.png
 Crops/Green_Bean_Stage_2.png
 Crops/Green_Bean_Stage_3.png
 Crops/Green_Bean_Stage_4.png

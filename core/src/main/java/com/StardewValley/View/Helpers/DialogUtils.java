@@ -24,6 +24,9 @@ public class DialogUtils {
         }
     }
 
+    // نگهداری آخرین دیالوگ باز شده
+    private static Dialog currentOpenDialog;
+
     public static void openDialog(
             Skin skin,
             com.badlogic.gdx.scenes.scene2d.Stage dialogStage,
@@ -37,7 +40,7 @@ public class DialogUtils {
             DialogButton... buttons
     ) {
         try {
-            Dialog currentDialog = new Dialog(title, skin) {
+            currentOpenDialog = new Dialog(title, skin) {
                 @Override
                 protected void result(Object obj) {
                     for (DialogButton button : buttons) {
@@ -55,25 +58,33 @@ public class DialogUtils {
             Label.LabelStyle bigLabelStyle = new Label.LabelStyle(bigFont, Color.WHITE);
 
             // تنظیم محتوای دیالوگ
-            currentDialog.getContentTable().clear();
-            currentDialog.getContentTable().add(new Label(message, bigLabelStyle)).pad(20).row();
+            currentOpenDialog.getContentTable().clear();
+            currentOpenDialog.getContentTable().add(new Label(message, bigLabelStyle)).pad(20).row();
             if (imagePath != null && !imagePath.isEmpty()) {
-                currentDialog.getContentTable().add(new Image(new Texture(Gdx.files.internal(imagePath)))).size(100, 100).pad(10);
+                currentOpenDialog.getContentTable().add(new Image(new Texture(Gdx.files.internal(imagePath)))).size(100, 100).pad(10);
             }
 
             // افزودن دکمه‌ها
             for (DialogButton button : buttons) {
-                currentDialog.button(button.text, button.result).pad(20);
+                currentOpenDialog.button(button.text, button.result).pad(20);
             }
 
             // تنظیم اندازه و موقعیت دیالوگ
-            currentDialog.setSize(width, height);
-            currentDialog.setPosition(xPosition, yPosition);
-            currentDialog.show(dialogStage);
+            currentOpenDialog.setSize(width, height);
+            currentOpenDialog.setPosition(xPosition, yPosition);
+            currentOpenDialog.show(dialogStage);
 
             Gdx.app.log("Dialog", "Opened dialog: " + title);
         } catch (Exception e) {
             Gdx.app.error("Dialog", "Error opening dialog: " + e.getMessage());
+        }
+    }
+
+    public static void closeDialog() {
+        if (currentOpenDialog != null) {
+            currentOpenDialog.hide();
+            currentOpenDialog = null;
+            Gdx.app.log("Dialog", "Dialog closed successfully.");
         }
     }
 }

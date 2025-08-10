@@ -62,7 +62,7 @@ public class Scythe extends Item {
                     .append(" at ").append(point.x).append(", ").append(point.y);
 
             tile.type = TileType.EMPTY;
-            player.getInvetory().addItem(new Item(item.getName(),item.getPlantID(),item.getBaseValue(),-22,1,item.getImage()));
+            player.getInvetory().addItem(new Item(item.getName(),item.getPlantID(),item.getBaseValue(),-22,1,item.image));
         }
         else if (tileType.equals(TileType.PLANT)){
             GameMenuController controller = new GameMenuController();

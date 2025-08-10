@@ -1,5 +1,6 @@
 package com.StardewValley.View.Helpers;
 
+import com.StardewValley.View.GameScreen;
 import com.StardewValley.model.App;
 import com.StardewValley.model.GameAssetManager;
 import com.StardewValley.model.ItemSelection;
@@ -27,7 +28,7 @@ import static com.StardewValley.View.GameScreen.dialogStage;
 import static com.StardewValley.View.GameScreen.isOutOfRealGame;
 
 public class InventoryDialog {
-    public static void show() {
+    public static void show(Runnable action) {
         try {
             isOutOfRealGame = true;
             Skin skin = GameAssetManager.getGameAssetManager().getSkin();
@@ -35,10 +36,14 @@ public class InventoryDialog {
                 @Override
                 protected void result(Object obj) {
                     if ("ok".equals(obj)) {
-                        // Handled in button listener to access table data
+                        try {
+//                            action.run();
+                        }
+                        catch (Exception e) {
+                            Gdx.app.log("InventoryDialog", e.getMessage());
+                        }
                     }
                     isOutOfRealGame = false;
-//                    this.hide();
                 }
             };
 
@@ -82,7 +87,7 @@ public class InventoryDialog {
                     itemTable.add(checkBox).padLeft(5);
                     itemTable.add(new Label(item.getName(), labelStyle)).padLeft(5).width(200);
                     itemTable.add(new Label("(x" + item.getAmount() + ")", labelStyle)).padBottom(60);
-                    itemTable.add(quantityField).width(100).height(60).pad(5); // Larger input field
+                    itemTable.add(quantityField).width(100).height(60).pad(5).padRight(50); // Larger input field
                     itemTable.row();
                 }
 
@@ -135,9 +140,7 @@ public class InventoryDialog {
                             }
                         }
                     }
-                    // Store selected items in Player
                     player.setSelectedItems(selectedItems);
-//                    inventoryDialog.hide();
                 }
             });
 

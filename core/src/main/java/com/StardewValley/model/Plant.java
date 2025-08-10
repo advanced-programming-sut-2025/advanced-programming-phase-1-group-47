@@ -30,10 +30,10 @@ public class Plant {
     private boolean hasBeenWatered;
     private boolean hasBeenFertilized;
     private int fertilizerId;
+    public String imagePath;
     public Texture image;
-
-    public Texture getImage() {
-        return image;
+    public Texture getGrowStageImage() {
+        return new Texture(imagePath.replace("1",(currentStage+1)+""));
     }
 
     public Plant(int plantID, Point point, String name, int baseValue, boolean isEdible, int energy, int health,
@@ -59,7 +59,34 @@ public class Plant {
         this.hasBeenFertilized = false;
         this.regrowthTime = regrowthTime;
     }
+    public Plant(Texture textureFinal,String imagePath,int plantID, Point point, String name, int baseValue, boolean isEdible, int energy, int health,
+                 String source, int currentStage, int currentStageCount, int totalHarvestTime, Season seasonOfGrowth,
+                 int[] growStages, boolean isReUsable, boolean canBecomeGiant, boolean isFruit , int regrowthTime) {
+        this.image = textureFinal;
+        this.imagePath = imagePath;
+        this.plantID = plantID;
+        this.point = point;
+        this.name = name;
+        this.baseValue = baseValue;
+        this.isEdible = isEdible;
+        this.energy = energy;
+        this.health = health;
+        this.source = source;
+        this.currentStage = currentStage;
+        this.currentStageCount = currentStageCount;
+        this.totalHarvestTime = totalHarvestTime;
+        this.seasonOfGrowth = seasonOfGrowth;
+        this.growStages = growStages;
+        this.isReUsable = isReUsable;
+        this.canBecomeGiant = canBecomeGiant;
+        this.isFruit = isFruit;
+        this.hasBeenWatered = false;
+        this.hasBeenFertilized = false;
+        this.regrowthTime = regrowthTime;
+    }
     public Plant(Plant plant , Point point) {
+        this.imagePath = plant.imagePath;
+        this.image = plant.image;
         this.plantID = plant.getPlantID();
         this.point = point;
         this.name = plant.getName();
@@ -92,7 +119,7 @@ public class Plant {
             quality = ProductQuality.GOLD;
         else if (randomNumber < 61)
             quality = ProductQuality.SILVER;
-        return new Product(name , plantID ,baseValue , 301 ,amount ,isEdible , energy ,health , quality ,isFruit , !isFruit );
+        return new Product(image,name , plantID ,baseValue , 301 ,amount ,isEdible , energy ,health , quality ,isFruit , !isFruit );
     }
     public Item getSeed() {
         return new Item(source,plantID + 100 ,2 , 401 ,1);
@@ -109,7 +136,7 @@ public class Plant {
             return;
         }
         int currentCap = growStages[currentStage];
-        if ( growStages.length - 1 == currentStage && growStages[growStages.length - 1] - 1 ==currentStageCount){
+        if (growStages.length - 1 == currentStage && growStages[growStages.length - 1] - 1 ==currentStageCount){
             currentStage = -1;
             return;
         }
@@ -118,10 +145,9 @@ public class Plant {
             currentStage++;
         }
         else
-            currentStageCount++;
-
+            ++currentStageCount;
     }
- 
+
     public int getPlantID() {
         return plantID;
     }

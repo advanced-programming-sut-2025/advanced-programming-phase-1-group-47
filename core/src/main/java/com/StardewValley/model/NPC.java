@@ -73,14 +73,16 @@ public class NPC {
             GameMenuController controller = new GameMenuController();
             Player currentPlayer = App.getCurrentGame().getCurrentPlayer();
             int friendshipLevel = friendship.getOrDefault(currentPlayer, 0);
-            String dialogMessage = "Hello, I'm " + name + "\n I'm a " + job + "!\nFriendship level: " + friendshipLevel + "\nWhat would you like to do?";
+            String dialogMessage = "Hello, I'm " + name + "\n I'm a " + job + "!\nFriendship level: " + getFriendship().get(currentPlayer) + "\nWhat would you like to do?";
             String giftOption = hasBeenGiftedTo.getOrDefault(currentPlayer, false) ?
                     "You've already given a gift today!" :
                     "Give a gift to " + name;
 
             // Create gift button action
             Runnable giftAction = () -> {
-                InventoryDialog.show();
+                InventoryDialog.show(()->{
+                    controller.GiveGiftToNPC(this,currentPlayer.getItemsFroAction());
+                });
             };
 
             DialogUtils.openDialog(
@@ -94,7 +96,7 @@ public class NPC {
                     Gdx.graphics.getHeight() * 0.7f,
                     new DialogUtils.DialogButton(giftOption, "gift", giftAction),
                     new DialogUtils.DialogButton("Quest 1", "quest1", () -> {
-                        String result = controller.FinishQuest(1).getData();
+                        String result = controller.FinishQuest(quest1.getQuestID(),this).getData();
                         DialogUtils.openDialog(
                                 GameAssetManager.getGameAssetManager().getSkin(),
                                 dialogStage,
@@ -108,7 +110,7 @@ public class NPC {
                         );
                     }),
                     new DialogUtils.DialogButton("Quest 2", "quest2", () -> {
-                        String result = controller.FinishQuest(2).getData();
+                        String result = controller.FinishQuest(quest2.getQuestID(), this).getData();
                         DialogUtils.openDialog(
                                 GameAssetManager.getGameAssetManager().getSkin(),
                                 dialogStage,
@@ -122,7 +124,7 @@ public class NPC {
                         );
                     }),
                     new DialogUtils.DialogButton("Quest 3", "quest3", () -> {
-                        String result = controller.FinishQuest(3).getData();
+                        String result = controller.FinishQuest(quest3.getQuestID(),this).getData();
                         DialogUtils.openDialog(
                                 GameAssetManager.getGameAssetManager().getSkin(),
                                 dialogStage,

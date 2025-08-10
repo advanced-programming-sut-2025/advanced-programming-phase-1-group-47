@@ -73,18 +73,18 @@ public class GameScreen implements Screen {
     private HashMap<TileType, Texture> tileTextures;
     // UI
     public static Stage mainStage, dialogStage;
-    private Skin skin;
+    private  static Skin skin;
     private EnergyHelper energyHelper;
     // Toolbar
     private boolean isToolAnimating = false;
     private float toolAnimTime = 0f;
     private final float toolAnimDuration = 0.3f;
     private static final int TOOLBAR_SIZE = 24;
-    private Stack[] toolbarSlots = new Stack[TOOLBAR_SIZE];
-    private int selectedToolIndex = 0;
+    private static Stack[] toolbarSlots = new Stack[TOOLBAR_SIZE];
+    private static int selectedToolIndex = 0;
     private ArrayList<Texture> toolTextures = new ArrayList<>();
-    private ArrayList<Item> toolbarItems = new ArrayList<>();
-    private Texture emptySlotTexture;
+    private static ArrayList<Item> toolbarItems = new ArrayList<>();
+    private static Texture emptySlotTexture;
     GameMenuController controller = new GameMenuController();
     private boolean isFainted = false;
     private float playerRotation = 0f;
@@ -123,12 +123,10 @@ public class GameScreen implements Screen {
             }
             player.playerAnimations[dir] = new Animation<>(0.15f, walkFrames, Animation.PlayMode.LOOP);
         }
-        backgroundMusic.setLooping(true);  // آهنگ به صورت بی‌نهایت تکرار شود
-        backgroundMusic.setVolume(0.5f);   // میزان بلندی صدا (۰ تا ۱)
-//        backgroundMusic.play();
+        backgroundMusic.setLooping(true);
+        backgroundMusic.setVolume(0.5f);
         tileTextures.put(TileType.GRASS, GameAssetManager.GRASS);
         tileTextures.put(TileType.EMPTY, GameAssetManager.EMPTY);
-        tileTextures.put(TileType.PLANT, GameAssetManager.PLANT);
         tileTextures.put(TileType.LAKE, GameAssetManager.WATER);
         tileTextures.put(TileType.WALL, GameAssetManager.WALL);
         tileTextures.put(TileType.TREE, GameAssetManager.TREE);
@@ -138,11 +136,6 @@ public class GameScreen implements Screen {
         tileTextures.put(TileType.TILLED, GameAssetManager.TILLED);
         tileTextures.put(TileType.SEBASTIAN, GameAssetManager.SEBASTIAN);
         tileTextures.put(TileType.HARVEY, GameAssetManager.HARVEY);
-        tileTextures.put(TileType.BLACKSMITH, GameAssetManager.BLACKSMITHOUT);
-        tileTextures.put(TileType.CARPENTER,GameAssetManager.CARPENTEROUT);
-        tileTextures.put(TileType.MARNIESRANCH, GameAssetManager.MARNIESRANCHEOUT);
-        tileTextures.put(TileType.PIERRESSTORE, GameAssetManager.PIERRESOut);
-        tileTextures.put(TileType.STARDROPSALOON, GameAssetManager.SALOONOUT);
         emptySlotTexture = new Texture("bar.png");
 
         // Load energy bar textures with fallback
@@ -305,7 +298,9 @@ public class GameScreen implements Screen {
             }
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
-            InventoryDialog.show();
+            InventoryDialog.show(() -> {
+
+            });
         }
 
 
@@ -485,11 +480,6 @@ public class GameScreen implements Screen {
                             (Gdx.graphics.getWidth() - 700) / 2f,
                             Gdx.graphics.getHeight() * 0.7f,
                             new DialogUtils.DialogButton("OK", true, () -> {
-                                App.returnCurrentFarm().getGreenHouses().hasRepeare = true;
-                                App.getCurrentGame().getCurrentPlayer().addMoney(-500);
-                            }),
-                            new DialogUtils.DialogButton("Cancel", false, () -> {
-                                Gdx.app.log("Dialog", "Greenhouse repair cancelled");
                             })
                     );
                 }
@@ -508,8 +498,13 @@ public class GameScreen implements Screen {
         try {
             Item selectedTool = toolbarItems.get(selectedToolIndex);
             if (selectedTool != null) {
-                selectedTool.useTool(tileMap[tileY][tileX]);
-                updateToolbar();
+                if (selectedTool.getParentItemID() != 401) {
+                    selectedTool.useTool(tileMap[tileY][tileX]);
+                    updateToolbar();
+                }
+                else{
+                    controller.plantPlant(selectedTool, tileMap[tileY][tileX]);
+                }
             }
 
             Timer.schedule(new Timer.Task() {
@@ -564,6 +559,20 @@ public class GameScreen implements Screen {
                     groupX * TILE_SIZE,
                     groupWidth * TILE_SIZE,
                     groupHeight * TILE_SIZE);
+        }
+    }
+    private void drawPlants() {
+        try {
+            for (Plant plant : currentGame.getPlants()) {
+                batch.draw((plant.getCurrentStage() != -1 ? plant.getGrowStageImage() :
+                                new Texture(plant.imagePath.replace("1", "4"))) ,
+                        plant.getPoint().getY() * TILE_SIZE,
+                        plant.getPoint().getX() * TILE_SIZE,
+                        TILE_SIZE,
+                        TILE_SIZE);
+            }
+        }catch (Exception e) {
+            Gdx.app.error("Plants", e.getMessage());
         }
     }
     private void drawGreenhouses() {
@@ -743,6 +752,7 @@ public class GameScreen implements Screen {
             batch.begin();
             drawGreenhouses();
             drawCottages();
+            drawPlants();
             Cottage cottage = App.returnCurrentFarm().getCottage();
             cottage.update(playerPosition, delta);
             cottage.render(batch);
@@ -805,7 +815,7 @@ public class GameScreen implements Screen {
         updateTools();
 
     }
-    public void updateTools(){
+    public static void updateTools(){
         Table toolbar = new Table();
         toolbar.bottom().center().padTop(800);
         toolbar.setFillParent(true);

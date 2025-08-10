@@ -3,6 +3,7 @@ package com.StardewValley.model.things.products;
 
 import com.StardewValley.model.enums.ProductQuality;
 import com.StardewValley.model.things.Item;
+import com.badlogic.gdx.graphics.Texture;
 
 public  class Product extends Item {
     private boolean isEdible;
@@ -16,6 +17,17 @@ public  class Product extends Item {
     public Product(String name, int itemID, int value, int parentItemID, int amount,
                    boolean isEdible, int energy, int health , ProductQuality quality , boolean isFruit , boolean isVegetable) {
         super(name, itemID, value, parentItemID, amount);
+        this.isEdible = isEdible;
+        this.energy = energy;
+        this.health = health;
+        this.quality = quality;
+        this.isFruit = isFruit;
+        this.isVegetable = isVegetable;
+    }
+    public Product(Texture image, String name, int itemID, int value, int parentItemID, int amount,
+                   boolean isEdible, int energy, int health , ProductQuality quality , boolean isFruit , boolean isVegetable) {
+        super(name, itemID, value, parentItemID, amount);
+        this.image = image;
         this.isEdible = isEdible;
         this.energy = energy;
         this.health = health;

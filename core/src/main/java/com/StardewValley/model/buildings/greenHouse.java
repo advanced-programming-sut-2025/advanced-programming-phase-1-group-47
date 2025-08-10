@@ -2,15 +2,12 @@ package com.StardewValley.model.buildings;
 
 import java.util.ArrayList;
 
-import com.StardewValley.model.GameAssetManager;
-import com.StardewValley.model.Ground;
-import com.StardewValley.model.Point;
-import com.StardewValley.model.Tree;
+import com.StardewValley.model.*;
 import com.StardewValley.model.enums.TileType;
 import com.badlogic.gdx.graphics.Texture;
 
 public  class greenHouse  extends Building  {
-    ArrayList<Tree> trees = new ArrayList<>();
+    ArrayList<Plant> trees = new ArrayList<>();
     public boolean hasRepeare = false;
     private Texture image;
     public Point Door;

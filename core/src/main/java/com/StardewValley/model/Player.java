@@ -27,7 +27,15 @@ public class Player extends User {
     public Item currentItem;
     public int currentNumber;
     private List<ItemSelection> selectedItems = new ArrayList<>(); // New field for multiple selections
-
+    public ArrayList<Item> getItemsFroAction(){
+        ArrayList<Item> items = new ArrayList<>();
+        for (ItemSelection x : selectedItems) {
+            Item temp = x.getItem();
+            temp.setAmount(x.getQuantity());
+            items.add(temp);
+        }
+        return items;
+    }
     public void setRecentItem(Item item) {
         currentItem = item;
     }
@@ -107,6 +115,14 @@ public class Player extends User {
         invetory.addItem(new WateringCan(Type.SILVER));
         invetory.addItem(new FishingPole(RodType.IRIDIUMROD));
         invetory.addItem(new Scythe());
+        Item x = AllTheItemsInTheGame.getItemById(36).returnSimiliar();
+        x.setAmount(81);
+        invetory.addItem(new Item("Coffee Beans", 405, 200, 401, 100, GameAssetManager.COFFEE_BEANS));
+        invetory.addItem(new Item("Tomato Seeds", 427, 62, 401, 100, GameAssetManager.TOMATO_SEEDS));
+        invetory.addItem(new Item("Carrot Seeds", 403, 5, 401, 100, GameAssetManager.CARROT_SEEDS));
+        invetory.addItem(new Item("Strawberry Seeds", 412, 100, 401, 100, GameAssetManager.STRAWBERRY_SEEDS));
+        invetory.addItem(x);
+        invetory.addItem(new Item("Potato Seeds", 444, 62, 401, 5, new Texture("Trees/Cherry_Sapling.png")));
     }
     public void addToShippingBin(Item item) {
         for(Item item2 : playerShipping_bin){
