@@ -24,7 +24,7 @@ public class InitPageView implements Screen {
 
     private TextButton loginButton;
     private TextButton signupButton;
-    private TextButton MainMenuButton;
+    private TextButton loginAsGuestButton;
     private TextButton exitButton;
 
     public InitPageView(InitPageController controller, Skin skin) {
@@ -33,7 +33,7 @@ public class InitPageView implements Screen {
         loginButton = new TextButton("Login", skin);
         signupButton = new TextButton("Sign Up", skin);
         exitButton = new TextButton("Exit", skin);
-        MainMenuButton = new TextButton("Main Menu", skin);
+        loginAsGuestButton = new TextButton("Login as Guest", skin);
         controller.setView(this);
     }
 
@@ -60,7 +60,7 @@ public class InitPageView implements Screen {
         table.defaults().pad(15).width(screenWidth * 0.45f).height(screenHeight * 0.12f);
         table.add(loginButton).width(screenWidth * 0.30f).row();
         table.add(signupButton).width(screenWidth * 0.25f).row();
-        table.add(MainMenuButton).width(screenWidth * 0.20f).row();
+        table.add(loginAsGuestButton).width(screenWidth * 0.25f).row();
         table.add(exitButton).width(screenWidth * 0.15f).row();
 
         stage.addActor(table);
@@ -68,11 +68,11 @@ public class InitPageView implements Screen {
         addHoverEffect(loginButton);
         addHoverEffect(signupButton);
         addHoverEffect(exitButton);
-        addHoverEffect(MainMenuButton);
+        addHoverEffect(loginAsGuestButton);
         addClickListenerWithSound(loginButton, () -> controller.onLoginClicked());
         addClickListenerWithSound(signupButton, () -> controller.onSignupClicked());
         addClickListenerWithSound(exitButton, () -> controller.exit());
-        addClickListenerWithSound(MainMenuButton, () -> {});
+        addClickListenerWithSound(loginAsGuestButton, () -> controller.onLoginAsGuestClicked());
     }
 
     @Override

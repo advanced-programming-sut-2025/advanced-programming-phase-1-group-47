@@ -8,6 +8,8 @@ import com.StardewValley.model.App;
 import com.StardewValley.model.GameAssetManager;
 import com.StardewValley.model.User;
 import com.StardewValley.View.*;
+import com.StardewValley.View.GameModeSelectionView;
+import com.StardewValley.controllers.GameModeSelectionController;
 
 import java.sql.SQLException;
 
@@ -40,10 +42,15 @@ public class SignUpMenuController {
             return;
         }
 
-        if (commands.getUser(username) != null) {
-            view.showMessage(false, "Username already exists. Please choose another.");
-            isSigningUp = false;
-            return;
+        try {
+            if (commands.getUser(username) != null) {
+                view.showMessage(false, "Username already exists. Please choose another.");
+                isSigningUp = false;
+                return;
+            }
+        } catch (Exception e) {
+            // If database is not available, allow signup to proceed
+            Gdx.app.log("SignUp", "Database check failed, proceeding with signup: " + e.getMessage());
         }
 
         view.getSignUpMenu().setDisabled(true);
@@ -52,16 +59,40 @@ public class SignUpMenuController {
         Timer.schedule(new Timer.Task() {
             @Override
             public void run() {
-//                Gdx.app.postRunnable(() -> {
-//                    try {
-//                        commands.saveUser(user);
-//                    } catch (SQLException e) {
-//                        e.printStackTrace();
-//                    }
-//                    isSigningUp = false;
-//                    view.getSignUpMenu().setDisabled(false);
-//                    Main.getMain().setScreen(new LoginView(new LoginMenuController(), GameAssetManager.getGameAssetManager().getSkin()));
-//                });
+                Gdx.app.postRunnable(() -> {
+                    try {
+                        // Create new user and save to database
+                        User user = new User(username, password, "", "", null, securityQuestion, "");
+                        
+                        try {
+                            commands.saveUser(user);
+                            App.loggedUser = user;
+                        } catch (SQLException e) {
+                            // If database save fails, still create the user in memory
+                            Gdx.app.log("SignUp", "Database save failed, using in-memory user: " + e.getMessage());
+                            App.loggedUser = user;
+                        }
+                        
+                        isSigningUp = false;
+                        view.getSignUpMenu().setDisabled(false);
+                        
+                        // Redirect to game mode selection after successful signup
+                        view.showMessage(true, "Sign up successful! Redirecting...");
+                        Timer.schedule(new Timer.Task() {
+                            @Override
+                            public void run() {
+                                Gdx.app.postRunnable(() -> {
+                                    Main.getMain().setScreen(new GameModeSelectionView(new GameModeSelectionController(), GameAssetManager.getGameAssetManager().getSkin()));
+                                });
+                            }
+                        }, 1.5f);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        isSigningUp = false;
+                        view.getSignUpMenu().setDisabled(false);
+                        view.showMessage(false, "Error during signup: " + e.getMessage());
+                    }
+                });
             }
         }, 1.3f);
     }
