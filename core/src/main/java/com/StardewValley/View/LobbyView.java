@@ -1,9 +1,17 @@
 package com.StardewValley.View;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.StardewValley.Main;
-import com.StardewValley.controllers.LobbyController;
 import com.StardewValley.controllers.GameModeSelectionController;
 import com.StardewValley.controllers.InitPageController;
+import com.StardewValley.controllers.LobbyController;
 import com.StardewValley.model.App;
 import com.StardewValley.model.GameAssetManager;
 import com.badlogic.gdx.Gdx;
@@ -11,14 +19,17 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
+import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextArea;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Align;
-
-import java.io.*;
-import java.net.Socket;
-import java.util.List;
-import java.util.ArrayList;
 
 public class LobbyView implements Screen {
 
@@ -50,6 +61,8 @@ public class LobbyView implements Screen {
 
     // Data
     private List<SimpleLobbyInfo> lobbies = new ArrayList<>();
+    
+
 
     public LobbyView() {
         skin = GameAssetManager.getGameAssetManager().getSkin();
@@ -823,10 +836,47 @@ public class LobbyView implements Screen {
                 // Handle server errors
                 String errorMsg = message.length() > 6 ? message.substring(6) : "Unknown server error";
                 addChatMessage("System", "Server Error: " + errorMsg);
+            } else if (message.startsWith("START_GAME:")) {
+                // Handle game start message
+                String lobbyId = message.substring(11);
+                if (currentLobbyId != null && currentLobbyId.equals(lobbyId)) {
+                    addChatMessage("System", "Game is starting! Transitioning to game...");
+                    // Launch the regular game screen (singleplayer with chat)
+                    Gdx.app.postRunnable(() -> {
+                        try {
+                            // Create and show the regular game screen
+                            GameScreen gameScreen = new GameScreen();
+                            // Set multiplayer info for chat functionality
+                            gameScreen.setMultiplayerInfo(playerNickname, currentLobbyId);
+                            
+                            // Game started - transition to GameScreen
+                            // GameScreen will connect to the game server on port 8081
+                            Main.getMain().setScreen(gameScreen);
+                            
+                            System.out.println("LobbyView: Game started - transitioning to GameScreen");
+                            System.out.println("LobbyView: GameScreen will connect to game server on port 8081");
+                            
+                        } catch (Exception e) {
+                            addChatMessage("System", "Failed to start game: " + e.getMessage());
+                            System.err.println("Error starting game: " + e.getMessage());
+                        }
+                    });
+                }
             } else if (message.startsWith("INFO:")) {
                 // Handle server info messages
                 String infoMsg = message.length() > 5 ? message.substring(5) : "Server info";
                 addChatMessage("System", infoMsg);
+            } else if (message.startsWith("GAME_CHAT:")) {
+                // Handle in-game chat messages (these will be handled by game server now)
+                String[] parts = message.split(":", 3);
+                if (parts.length == 3) {
+                    String playerName = parts[1];
+                    String chatMessage = parts[2];
+                    System.out.println("LobbyView: Received GAME_CHAT from " + playerName + ": " + chatMessage);
+                    
+                    // Show in lobby chat for debugging
+                    addChatMessage(playerName, chatMessage);
+                }
             } else {
                 // Only show unknown messages in chat if they're not server system messages
                 // Make this very restrictive to prevent server messages from appearing
@@ -1129,6 +1179,60 @@ public class LobbyView implements Screen {
         chatScrollPane.setScrollY(chatScrollPane.getMaxY());
     }
     
+
+    
+
+    
+    /**
+     * Hides the lobby UI elements when transitioning to game mode
+     */
+    private void hideLobbyUI() {
+        // Hide all lobby-related UI elements
+        if (mainLayout != null) mainLayout.setVisible(false);
+        if (lobbyTable != null) lobbyTable.setVisible(false);
+        if (chatTable != null) chatTable.setVisible(false);
+        
+        // Show a simple "Game in Progress" message
+        showGameInProgressMessage();
+        
+        System.out.println("LobbyView: Lobby UI hidden, connection maintained");
+    }
+    
+    /**
+     * Shows a simple message indicating the game is in progress
+     */
+    private void showGameInProgressMessage() {
+        // Clear the stage and show a simple message
+        stage.clear();
+        
+        Table gameTable = new Table();
+        gameTable.setFillParent(true);
+        
+        Label titleLabel = new Label("Game in Progress", skin);
+        titleLabel.setFontScale(2);
+        titleLabel.setColor(Color.GREEN);
+        
+        Label statusLabel = new Label("Connection maintained for chat functionality", skin);
+        statusLabel.setColor(Color.WHITE);
+        
+        Label instructionLabel = new Label("Press C to toggle chat", skin);
+        instructionLabel.setColor(Color.YELLOW);
+        
+        gameTable.add(titleLabel).center().padBottom(20).row();
+        gameTable.add(statusLabel).center().padBottom(10).row();
+        gameTable.add(instructionLabel).center().padBottom(20).row();
+        
+        // Add a simple chat display
+        if (chatArea != null) {
+            chatArea.setVisible(true);
+            gameTable.add(chatArea).width(400).height(200).padTop(20).row();
+        }
+        
+        stage.addActor(gameTable);
+        
+        System.out.println("LobbyView: Game in progress message displayed");
+    }
+    
     // Screen implementations
     @Override
     public void render(float delta) {
@@ -1143,8 +1247,10 @@ public class LobbyView implements Screen {
     
     @Override
     public void dispose() {
+        // Close the lobby server connection
         if (isConnected) {
             try {
+                System.out.println("LobbyView: Closing lobby server connection during dispose");
                 if (out != null) out.close();
                 if (in != null) in.close();
                 if (socket != null) socket.close();
@@ -1152,6 +1258,7 @@ public class LobbyView implements Screen {
                 System.err.println("Error during dispose: " + e.getMessage());
             }
         }
+        
         if (stage != null) {
             stage.dispose();
         }

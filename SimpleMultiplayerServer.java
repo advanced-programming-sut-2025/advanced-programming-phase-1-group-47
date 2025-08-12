@@ -22,6 +22,7 @@ public class SimpleMultiplayerServer {
     private final Map<String, SimpleClientHandler> connectedClients;
     private final Map<String, SimpleLobby> lobbies;
     private final Map<String, DisconnectedPlayer> disconnectedPlayers;
+    private final Map<String, String> playerLobbyMap; // Track which lobby each player is in
     private volatile boolean isRunning;
     private final int port;
     private final ScheduledExecutorService scheduler;
@@ -31,6 +32,7 @@ public class SimpleMultiplayerServer {
         this.connectedClients = new ConcurrentHashMap<>();
         this.lobbies = new ConcurrentHashMap<>();
         this.disconnectedPlayers = new ConcurrentHashMap<>();
+        this.playerLobbyMap = new ConcurrentHashMap<>();
         this.isRunning = false;
         this.scheduler = Executors.newScheduledThreadPool(1);
     }
@@ -72,6 +74,20 @@ public class SimpleMultiplayerServer {
     }
     
     public void addClient(String playerId, SimpleClientHandler client) {
+        // Check if this player is already connected
+        if (connectedClients.containsKey(playerId)) {
+            System.out.println("WARNING: Player " + playerId + " is already connected. Replacing existing connection.");
+            // Close the old connection before adding the new one
+            SimpleClientHandler oldClient = connectedClients.get(playerId);
+            if (oldClient != null) {
+                try {
+                    oldClient.closeConnection();
+                } catch (Exception e) {
+                    System.err.println("Error closing old connection for " + playerId + ": " + e.getMessage());
+                }
+            }
+        }
+        
         connectedClients.put(playerId, client);
         System.out.println("Player " + playerId + " connected. Total players: " + connectedClients.size());
     }
@@ -213,6 +229,9 @@ public class SimpleMultiplayerServer {
             
             // Verify the lobby was created successfully
             if (lobbies.containsKey(lobbyId)) {
+                // Track that the host is in this lobby
+                playerLobbyMap.put(hostPlayerId, lobbyId);
+                
                 System.out.println("Lobby created: " + lobbyName + " (ID: [" + lobbyId + "]) by " + hostPlayerId + (password != null && !password.trim().isEmpty() ? " (Private)" : " (Public)") + (isInvisible ? " (Invisible)" : " (Visible)"));
                 System.out.println("Verification - lobby.isInvisible(): " + lobby.isInvisible());
                 return lobbyId;
@@ -264,6 +283,9 @@ public class SimpleMultiplayerServer {
         }
         
         if (lobby.addPlayer(playerId)) {
+            // Track that this player is in this lobby
+            playerLobbyMap.put(playerId, lobbyId);
+            
             System.out.println("Player " + playerId + " joined lobby " + lobby.getLobbyName() + " (ID: " + lobbyId + ")");
             broadcastLobbyUpdate(lobbyId);
             return true;
@@ -280,6 +302,9 @@ public class SimpleMultiplayerServer {
         }
         
         if (lobby.removePlayer(playerId)) {
+            // Remove player from lobby tracking
+            playerLobbyMap.remove(playerId);
+            
             // If lobby is empty, remove it
             if (lobby.getCurrentPlayerCount() == 0) {
                 lobbies.remove(lobbyId);
@@ -331,6 +356,11 @@ public class SimpleMultiplayerServer {
         
         // Also remove any disconnected player entries for this lobby
         disconnectedPlayers.entrySet().removeIf(entry -> entry.getValue().getLobbyId().equals(lobbyId));
+        
+        // Remove all players from lobby tracking
+        for (String playerInLobby : allPlayers) {
+            playerLobbyMap.remove(playerInLobby);
+        }
         
         return true;
     }
@@ -395,6 +425,54 @@ public class SimpleMultiplayerServer {
             }
         }
         return null;
+    }
+    
+    public SimpleLobby getLobbyById(String lobbyId) {
+        return lobbies.get(lobbyId);
+    }
+    
+    /**
+     * Checks if a client is already connected
+     */
+    public boolean isClientConnected(String playerId) {
+        return connectedClients.containsKey(playerId);
+    }
+    
+    /**
+     * Marks an existing client as a game client for a specific lobby
+     */
+    public void markAsGameClient(String playerId, String lobbyId) {
+        // Track which lobby this player is in
+        playerLobbyMap.put(playerId, lobbyId);
+        System.out.println("Marked client " + playerId + " as game client for lobby " + lobbyId);
+    }
+    
+    /**
+     * Gets the lobby ID for a specific player
+     */
+    public String getPlayerLobby(String playerId) {
+        return playerLobbyMap.get(playerId);
+    }
+    
+    /**
+     * Checks if a player is in a specific lobby
+     */
+    public boolean isPlayerInLobby(String playerId, String lobbyId) {
+        String playerLobby = playerLobbyMap.get(playerId);
+        return playerLobby != null && playerLobby.equals(lobbyId);
+    }
+    
+    public void broadcastToLobby(String lobbyId, String message) {
+        SimpleLobby lobby = lobbies.get(lobbyId);
+        if (lobby == null) return;
+        
+        // Send message to all players in the lobby
+        for (String playerId : lobby.getPlayers()) {
+            SimpleClientHandler client = connectedClients.get(playerId);
+            if (client != null) {
+                client.sendMessage(message);
+            }
+        }
     }
     
     private void broadcastLobbyUpdate(String lobbyId) {
@@ -649,12 +727,76 @@ class SimpleClientHandler implements Runnable {
             String finalList = lobbyList.toString();
             System.out.println("Sending lobby list to " + playerId + ": [" + finalList + "]");
             sendMessage(finalList);
+        } else if (message.startsWith("START_GAME:")) {
+            String[] parts = message.split(":", 2);
+            if (parts.length == 2) {
+                String lobbyId = parts[1];
+                SimpleLobby lobby = server.getLobbyById(lobbyId);
+                if (lobby != null && lobby.isHost(playerId)) {
+                    // Mark the lobby as game started
+                    lobby.setGameStarted(true);
+                    System.out.println("Game started in lobby " + lobbyId + " by " + playerId);
+                    
+                    // Broadcast START_GAME message to all players in the lobby
+                    server.broadcastToLobby(lobbyId, "START_GAME:" + lobbyId);
+                    
+                    // Send confirmation to the host
+                    sendMessage("GAME_STARTED:" + lobbyId);
+                } else {
+                    sendMessage("GAME_START_FAILED:Only the host can start the game or lobby not found");
+                    System.out.println("Player " + playerId + " failed to start game in lobby " + lobbyId + " (not the host or lobby not found)");
+                }
+            } else {
+                sendMessage("GAME_START_FAILED:Invalid message format");
+            }
         } else if (message.startsWith("CHAT:")) {
             String[] parts = message.split(":", 3);
             if (parts.length == 3) {
                 String lobbyId = parts[1];
                 String chatMessage = parts[2];
                 server.addChatMessage(lobbyId, playerId, chatMessage);
+            }
+        } else if (message.startsWith("GAME_CHAT:")) {
+            // Handle in-game chat messages
+            String[] parts = message.split(":", 3);
+            if (parts.length == 3) {
+                String lobbyId = parts[1];
+                String chatMessage = parts[2];
+                // Broadcast in-game chat to all players in the lobby
+                server.broadcastToLobby(lobbyId, "GAME_CHAT:" + playerId + ":" + chatMessage);
+            }
+        } else if (message.startsWith("GAME_CLIENT:")) {
+            // Handle game client identification - this should NOT create a new connection
+            String[] parts = message.split(":", 3);
+            if (parts.length == 3) {
+                String playerNickname = parts[1];
+                String lobbyId = parts[2];
+                
+                // Check if this player is already connected (from lobby phase)
+                if (server.isClientConnected(playerNickname)) {
+                    // Player is already connected, just update their lobby association
+                    System.out.println("Game client identified: " + playerNickname + " for lobby: " + lobbyId + " (already connected)");
+                    
+                    // Send confirmation without changing the connection
+                    sendMessage("GAME_CLIENT_CONFIRMED:" + lobbyId);
+                    
+                    // Mark this connection as a game client
+                    server.markAsGameClient(playerNickname, lobbyId);
+                } else {
+                    // This is a new connection (shouldn't happen in normal flow)
+                    System.out.println("WARNING: New GAME_CLIENT connection for " + playerNickname + " - this may indicate a connection issue");
+                    
+                    // Set the player ID for this connection
+                    this.playerId = playerNickname;
+                    
+                    // Add to server's client list
+                    server.addClient(playerNickname, this);
+                    
+                    System.out.println("Game client connected: " + playerNickname + " for lobby: " + lobbyId);
+                    
+                    // Send confirmation
+                    sendMessage("GAME_CLIENT_CONFIRMED:" + lobbyId);
+                }
             }
         } else if (message.startsWith("PING")) {
             // Handle ping messages silently - don't send PONG response
@@ -665,6 +807,19 @@ class SimpleClientHandler implements Runnable {
     public void sendMessage(String message) {
         if (out != null) {
             out.println(message);
+        }
+    }
+    
+    /**
+     * Closes the connection cleanly
+     */
+    public void closeConnection() {
+        try {
+            if (out != null) out.close();
+            if (in != null) in.close();
+            if (socket != null) socket.close();
+        } catch (IOException e) {
+            System.err.println("Error closing connection for " + playerId + ": " + e.getMessage());
         }
     }
 }
