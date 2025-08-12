@@ -630,9 +630,9 @@ public class LobbyView implements Screen {
             
             // Add welcome messages
             addChatMessage("System", "Connected to lobby server successfully!");
-            addChatMessage("System", "Use the buttons above to create or join lobbies.");
-            addChatMessage("System", "Type messages in the chat box below to communicate with other players.");
-            addChatMessage("System", "Press P to view all connected players and their lobby assignments.");
+          //  addChatMessage("System", "Use the buttons above to create or join lobbies.");
+          //  addChatMessage("System", "Type messages in the chat box below to communicate with other players.");
+         //   addChatMessage("System", "Press P to view all connected players and their lobby assignments.");
             
         } catch (IOException e) {
             String errorMsg = "Failed to connect to server: " + e.getMessage();
