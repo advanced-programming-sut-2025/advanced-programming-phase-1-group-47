@@ -20,7 +20,7 @@ cd core\src\main\java
 
 REM Compile the GameServer if needed
 echo Compiling GameServer...
-javac -cp . com\StardewValley\View\GameServer.java
+javac -cp . com\StardewValley\servers\GameServer.java
 if errorlevel 1 (
     echo ERROR: Failed to compile GameServer
     pause
@@ -34,7 +34,7 @@ echo Starting server...
 echo.
 
 REM Run the GameServer
-java -cp . com.StardewValley.View.GameServer
+java -cp . com.StardewValley.servers.GameServer
 
 echo.
 echo Game Server has stopped.

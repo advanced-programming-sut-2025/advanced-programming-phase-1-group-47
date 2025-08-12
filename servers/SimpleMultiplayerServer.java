@@ -1,3 +1,5 @@
+package com.StardewValley.servers;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -804,6 +806,8 @@ class SimpleClientHandler implements Runnable {
             }
         } else if (message.startsWith("ALL_PLAYERS_REQUEST")) {
             // Handle request for all players and their lobby assignments
+            System.out.println("ALL_PLAYERS_REQUEST received from " + playerId);
+            
             StringBuilder playerList = new StringBuilder();
             
             // Add header
@@ -811,10 +815,13 @@ class SimpleClientHandler implements Runnable {
             playerList.append("==============");
             
             // Get all connected players
+            System.out.println("Server: Getting connected clients...");
             Map<String, SimpleClientHandler> connectedClients = server.getConnectedClients();
+            System.out.println("Server: Found " + connectedClients.size() + " connected clients: " + connectedClients.keySet());
             
             for (String connectedPlayerId : connectedClients.keySet()) {
                 String lobbyAssignment = server.getPlayerLobby(connectedPlayerId);
+                System.out.println("Server: Player " + connectedPlayerId + " is in lobby: " + lobbyAssignment);
                 if (lobbyAssignment != null) {
                     playerList.append("• ").append(connectedPlayerId).append(" → ").append(lobbyAssignment);
                 } else {
@@ -826,7 +833,9 @@ class SimpleClientHandler implements Runnable {
             playerList.append("Lobby Details:");
             playerList.append("==============");
             List<SimpleLobby> lobbies = server.getLobbyList();
+            System.out.println("Server: Found " + lobbies.size() + " lobbies");
             for (SimpleLobby lobby : lobbies) {
+                System.out.println("Server: Processing lobby: " + lobby.getLobbyName() + " (" + lobby.getLobbyId() + ")");
                 playerList.append("Lobby: ").append(lobby.getLobbyName()).append(" (").append(lobby.getLobbyId()).append(")");
                 playerList.append("  Players: ").append(lobby.getCurrentPlayerCount()).append("/").append(lobby.getMaxPlayers());
                 playerList.append("  Host: ").append(lobby.getHostPlayerId());
@@ -834,7 +843,18 @@ class SimpleClientHandler implements Runnable {
             }
             
             String finalPlayerList = playerList.toString();
+            System.out.println("Server: Sending player list to " + playerId + " (length: " + finalPlayerList.length() + ")");
+            System.out.println("Server: First 200 chars of response: " + finalPlayerList.substring(0, Math.min(200, finalPlayerList.length())));
+            
+            // Send the complete message in one piece
             sendMessage("ALL_PLAYERS_RESPONSE:" + finalPlayerList);
+            
+            System.out.println("Server: Sent complete player list to " + playerId);
+            
+            // Test: Send a simple long message to see if transmission works
+            String testMessage = "TEST_LONG_MESSAGE:" + "A".repeat(200);
+            sendMessage(testMessage);
+            System.out.println("Server: Sent test long message to " + playerId + " (length: " + testMessage.length() + ")");
         } else if (message.startsWith("PING")) {
             // Handle ping messages silently - don't send PONG response
             // sendMessage("PONG");

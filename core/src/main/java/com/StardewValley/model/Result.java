@@ -13,6 +13,14 @@ public class Result<Type> {
         return data;
     }
 
+    public boolean isSuccess() {
+        return success;
+    }
+
+    public String getMessage() {
+        return data != null ? data.toString() : "";
+    }
+
     @Override
     public String toString() {
         return data.toString();

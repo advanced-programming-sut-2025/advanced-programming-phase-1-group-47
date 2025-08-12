@@ -1,15 +1,14 @@
 package com.StardewValley.DataBase;
 
-import com.StardewValley.model.User;
-import com.badlogic.gdx.Gdx;
-import com.StardewValley.model.App;
-
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import com.StardewValley.model.User;
+import com.badlogic.gdx.Gdx;
 
 public class UserDBCommands {
 
@@ -27,13 +26,15 @@ public class UserDBCommands {
 
     public void saveUser(User user) throws SQLException {
         String sql = "INSERT INTO users (" +
-            "username, password, question_security_question, answer_security_question, avatar, " +
+            "username, password, email, gender, question_security_question, answer_security_question, avatar, " +
             "last_game_path, score, survival_time, kill_count, auto_reload" +
-            ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         List<Object> params = Arrays.asList(
             user.getUsername(),
             user.getPassword(),
+            user.getEmail() != null ? user.getEmail() : "",
+            user.getGender() != null ? user.getGender().valueOf() : "",
             user.getSecurityQuestion(),
             user.getSecurityAnswer(),
             user.getEmail() != null ? user.getEmail() : "", // avatar field
@@ -48,7 +49,8 @@ public class UserDBCommands {
             for (int i = 0; i < params.size(); i++) {
                 pstmt.setObject(i + 1, params.get(i));
             }
-            pstmt.executeUpdate();
+            int rowsAffected = pstmt.executeUpdate();
+            Gdx.app.log("Database", "User saved successfully. Rows affected: " + rowsAffected);
         }
 
         logSQL(sql, params);
@@ -66,9 +68,9 @@ public class UserDBCommands {
                 user = new User(
                     rs.getString("username"),
                     rs.getString("password"),
-                    rs.getString("avatar"), // email field
+                    rs.getString("email"),
                     "", // nickname field (empty for now)
-                    null, // gender field (null for now)
+                    rs.getString("gender") != null ? com.StardewValley.model.enums.Gender.getGenderEnum(rs.getString("gender")) : null,
                     rs.getString("question_security_question"),
                     rs.getString("answer_security_question")
                 );
@@ -91,8 +93,10 @@ public class UserDBCommands {
 
     public void updateUser(User user, String username) {
         String sql = "UPDATE users SET " +
-            "username = ?," +
+            "username = ?, " +
             "password = ?, " +
+            "email = ?, " +
+            "gender = ?, " +
             "question_security_question = ?, " +
             "answer_security_question = ?, " +
             "avatar = ?, " +
@@ -105,14 +109,16 @@ public class UserDBCommands {
         List<Object> params = Arrays.asList(
             user.getUsername(),
             user.getPassword(),
-//            user.getQuestionSecurityQuestion(),
-//            user.getAnswerSecurityQuestion(),
-//            user.getAvatarPath(),
-//            user.getScore(),
-//            user.getMostSurvivalTime(),
-//            user.getKillNumber(),
-//            user.isAutoReloadingEnable(),
-            App.loggedUser.getUsername()
+            user.getEmail() != null ? user.getEmail() : "",
+            user.getGender() != null ? user.getGender().valueOf() : "",
+            user.getSecurityQuestion(),
+            user.getSecurityAnswer(),
+            user.getEmail() != null ? user.getEmail() : "", // avatar field
+            user.getGamePlayed(),
+            user.getGamePlayed(), // survival_time
+            user.getGamePlayed(), // kill_count
+            true, // auto_reload
+            username // WHERE clause parameter
         );
 
         try (PreparedStatement pstmt = DataBaseInit.getConnection().prepareStatement(sql)) {
