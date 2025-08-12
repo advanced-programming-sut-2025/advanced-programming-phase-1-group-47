@@ -1,6 +1,7 @@
 package com.StardewValley.controllers;
 
 
+import com.StardewValley.View.ProfileView;
 import com.StardewValley.model.App;
 import com.StardewValley.model.Result;
 import com.StardewValley.model.enums.Menu;
@@ -18,6 +19,14 @@ public class ProfileMenuController {
         }
 
         App.getLoggedInUser().setUsername(newUsername);
+        
+        // Save to database
+        try {
+            new com.StardewValley.DataBase.UserDBCommands().updateUser(App.getLoggedInUser(), App.getLoggedInUser().getUsername());
+        } catch (Exception e) {
+            // Log error but don't fail the operation
+            System.err.println("Failed to save username to database: " + e.getMessage());
+        }
 
         return new Result<>(true, "Username changed successfully!");
 
@@ -42,6 +51,15 @@ public class ProfileMenuController {
         }
 
         App.getLoggedInUser().setPassword(newPassword);
+        
+        // Save to database
+        try {
+            new com.StardewValley.DataBase.UserDBCommands().updateUser(App.getLoggedInUser(), App.getLoggedInUser().getUsername());
+        } catch (Exception e) {
+            // Log error but don't fail the operation
+            System.err.println("Failed to save password to database: " + e.getMessage());
+        }
+        
         return new Result<>(true, "Password changed successfully!");
     }
 
@@ -55,6 +73,15 @@ public class ProfileMenuController {
         }
 
         App.getLoggedInUser().setEmail(newEmail);
+        
+        // Save to database
+        try {
+            new com.StardewValley.DataBase.UserDBCommands().updateUser(App.getLoggedInUser(), App.getLoggedInUser().getUsername());
+        } catch (Exception e) {
+            // Log error but don't fail the operation
+            System.err.println("Failed to save email to database: " + e.getMessage());
+        }
+        
         return new Result<>(true, "Email changed successfully!");
     }
     public Result<String> UserInfo() {
@@ -85,5 +112,23 @@ public class ProfileMenuController {
         return string.matches(Regex);
     }
 
+    public void setView(ProfileView view) {
+        // This method is called by the ProfileView to set the view reference
+    }
 
+    public void continueToGame() {
+        // Navigate to game mode selection
+        com.StardewValley.Main.getMain().setScreen(new com.StardewValley.View.GameModeSelectionView(
+            new com.StardewValley.controllers.GameModeSelectionController(), 
+            com.StardewValley.model.GameAssetManager.getGameAssetManager().getSkin()
+        ));
+    }
+
+    public void back() {
+        // Go back to main menu
+        com.StardewValley.Main.getMain().setScreen(new com.StardewValley.View.InitPageView(
+            new com.StardewValley.controllers.InitPageController(), 
+            com.StardewValley.model.GameAssetManager.getGameAssetManager().getSkin()
+        ));
+    }
 }

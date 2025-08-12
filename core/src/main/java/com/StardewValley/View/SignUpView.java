@@ -1,22 +1,31 @@
     package com.StardewValley.View;
 
+    import com.StardewValley.Main;
+    import com.StardewValley.controllers.SignUpMenuController;
+    import com.StardewValley.model.App;
+    import static com.StardewValley.model.App.addClickListenerWithSound;
+    import static com.StardewValley.model.App.addFieldWithPlaceholder;
+    import static com.StardewValley.model.App.addHoverEffect;
     import com.badlogic.gdx.Gdx;
     import com.badlogic.gdx.Screen;
     import com.badlogic.gdx.graphics.Color;
     import com.badlogic.gdx.graphics.Texture;
-    import com.badlogic.gdx.scenes.scene2d.*;
+    import com.badlogic.gdx.scenes.scene2d.Actor;
+    import com.badlogic.gdx.scenes.scene2d.InputEvent;
+    import com.badlogic.gdx.scenes.scene2d.Stage;
     import com.badlogic.gdx.scenes.scene2d.actions.Actions;
-    import com.badlogic.gdx.scenes.scene2d.ui.*;
-    import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-    import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-    import com.badlogic.gdx.utils.Align;
-    import com.badlogic.gdx.utils.ScreenUtils;
-    import com.badlogic.gdx.utils.viewport.ScreenViewport;
-    import com.StardewValley.controllers.SignUpMenuController;
-    import com.StardewValley.Main;
-    import com.StardewValley.model.App;
-
-    import static com.StardewValley.model.App.*;
+    import com.badlogic.gdx.scenes.scene2d.ui.Image;
+    import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
     public class SignUpView implements Screen {
         private Stage stage;
@@ -26,10 +35,10 @@
         private Texture bgTexture;
         private Image background;
 
-        private TextField usernameField, passwordField, securityQuestionField;
-        private Label usernamePlaceholder, passwordPlaceholder, securityLabel, messageLabel;
-        private SelectBox<String> selectBox;
-        private TextButton signUpButton, backButton, guestButton;
+        private TextField usernameField, passwordField, emailField, securityQuestionField;
+        private Label usernamePlaceholder, passwordPlaceholder, emailPlaceholder, securityLabel, messageLabel;
+        private SelectBox<String> selectBox, genderSelectBox;
+        private TextButton signUpButton, backButton, guestButton, resetDbButton;
         private Skin skin;
 
         public SignUpView(SignUpMenuController controller, Skin skin) {
@@ -39,32 +48,52 @@
             controller.setView(this);
         }
 
-        private void initFields() {
-            usernameField = new TextField("", skin);
-            passwordField = new TextField("", skin);
-            passwordField.setPasswordMode(true);
-            passwordField.setPasswordCharacter('*');
-            securityQuestionField = new TextField("", skin);
+            private void initFields() {
+        usernameField = new TextField("", skin);
+        passwordField = new TextField("", skin);
+        passwordField.setPasswordMode(true);
+        passwordField.setPasswordCharacter('*');
+        emailField = new TextField("", skin);
+        securityQuestionField = new TextField("", skin);
 
-            usernamePlaceholder = createPlaceholder("Enter username");
-            passwordPlaceholder = createPlaceholder("Enter password");
+        usernamePlaceholder = createPlaceholder("Enter username");
+        passwordPlaceholder = createPlaceholder("Enter password");
+        emailPlaceholder = createPlaceholder("Enter email");
 
-            securityLabel = new Label("City of Birth", skin);
-            securityLabel.setColor(new Color(1f, 0.8f, 0.2f, 0.8f));
+        securityLabel = new Label("City of Birth", skin);
+        securityLabel.setColor(new Color(1f, 0.8f, 0.2f, 0.8f));
 
-            selectBox = new SelectBox<>(skin);
-            selectBox.setItems("1-Which City Born?", "2-Your Favourite Singer?", "3-Your Role Model?");
+        selectBox = new SelectBox<>(skin);
+        selectBox.setItems("1-Which City Born?", "2-Your Favourite Singer?", "3-Your Role Model?");
 
-            signUpButton = new TextButton("-" + "Sign Up" + "-", skin);
-            backButton = new TextButton("-" + "Back" +"-", skin);
-            guestButton = new TextButton("-" + "Login as Guest" + "-", skin);
+        genderSelectBox = new SelectBox<>(skin);
+        genderSelectBox.setItems("Male", "Female");
 
-            messageLabel = new Label("", skin);
-            messageLabel.setAlignment(Align.center);
-            messageLabel.setFontScale(0.9f);
-            messageLabel.setWrap(true);
-            messageLabel.setVisible(false);
-        }
+        signUpButton = new TextButton("-" + "Sign Up" + "-", skin);
+        backButton = new TextButton("-" + "Back" +"-", skin);
+        guestButton = new TextButton("-" + "Login as Guest" + "-", skin);
+        
+        // Add a reset database button for troubleshooting
+        TextButton resetDbButton = new TextButton("Reset Database", skin);
+        resetDbButton.setColor(Color.RED);
+        resetDbButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                try {
+                    com.StardewValley.DataBase.DataBaseInit.resetDatabase();
+                    showMessage(true, "Database reset successfully! Please try signing up again.");
+                } catch (Exception e) {
+                    showMessage(false, "Failed to reset database: " + e.getMessage());
+                }
+            }
+        });
+
+        messageLabel = new Label("", skin);
+        messageLabel.setAlignment(Align.center);
+        messageLabel.setFontScale(0.9f);
+        messageLabel.setWrap(true);
+        messageLabel.setVisible(false);
+    }
 
         private Label createPlaceholder(String text) {
             Label placeholder = new Label(text, skin);
@@ -95,26 +124,46 @@
             rootTable = new Table();
             rootTable.setFillParent(true);
             rootTable.align(Align.topLeft);
-            rootTable.padTop(238).padLeft(80);
+            rootTable.padTop(200).padLeft(80);
 
-            float w = stage.getViewport().getWorldWidth() * 0.24f;
+            float w = stage.getViewport().getWorldWidth() * 0.22f;
             float h = stage.getViewport().getWorldHeight() * 0.08f;
             rootTable.defaults().pad(4).width(w).height(h);
 
-            addFieldWithPlaceholder(rootTable, usernameField, usernamePlaceholder);
-            rootTable.row().padTop(5);
-            addFieldWithPlaceholder(rootTable, passwordField, passwordPlaceholder);
-            rootTable.row().padTop(5);
+            // Left column - First half of fields
+            Table leftColumn = new Table();
+            leftColumn.defaults().pad(4).width(w).height(h);
 
-            rootTable.add(new Label("Choose Security Question" +" :", skin)).left();
-            rootTable.row().padTop(5);
-            rootTable.add(selectBox).left();
-            rootTable.row().padTop(5);
-            rootTable.add(securityLabel).left();
-            rootTable.row().padTop(5);
-            rootTable.add(securityQuestionField).left();
-            rootTable.row().padTop(8);
+            addFieldWithPlaceholder(leftColumn, usernameField, usernamePlaceholder);
+            leftColumn.row().padTop(5);
+            addFieldWithPlaceholder(leftColumn, passwordField, passwordPlaceholder);
+            leftColumn.row().padTop(5);
+            addFieldWithPlaceholder(leftColumn, emailField, emailPlaceholder);
+            leftColumn.row().padTop(5);
 
+            leftColumn.add(new Label("Gender:", skin)).left();
+            leftColumn.row().padTop(5);
+            leftColumn.add(genderSelectBox).left();
+
+            // Right column - Second half of fields
+            Table rightColumn = new Table();
+            rightColumn.defaults().pad(4).width(w).height(h);
+            rightColumn.padLeft(50); // Add spacing between columns
+
+            rightColumn.add(new Label("Choose Security Question:", skin)).left();
+            rightColumn.row().padTop(5);
+            rightColumn.add(selectBox).left();
+            rightColumn.row().padTop(5);
+            rightColumn.add(securityLabel).left();
+            rightColumn.row().padTop(5);
+            addFieldWithPlaceholder(rightColumn, securityQuestionField, securityLabel);
+
+            // Add both columns to main table
+            rootTable.add(leftColumn).left();
+            rootTable.add(rightColumn).left();
+            rootTable.row().padTop(20);
+
+            // Buttons row
             Table buttonTable = new Table();
             buttonTable.defaults().pad(6);
 
@@ -124,11 +173,14 @@
             buttonTable.add(backButton);
 
             rootTable.add(buttonTable).left();
-            rootTable.add(guestButton).left().width(w * 0.95f).height(h * 0.9f).padLeft(100);
+            rootTable.add(guestButton).left().width(w * 0.95f).height(h * 0.9f).padLeft(50);
 
             rootTable.row().padTop(10);
-            rootTable.add(messageLabel).width(w).center();
-            rootTable.padLeft(56);
+            rootTable.add(messageLabel).width(w * 2 + 50).center(); // Span both columns
+            
+            // Add reset database button below the message
+            rootTable.row().padTop(5);
+            rootTable.add(resetDbButton).colspan(2).center().width(w * 0.8f).height(h * 0.8f);
 
             stage.addActor(rootTable);
 
@@ -140,11 +192,13 @@
             stage.addAction(Actions.forever(Actions.run(() -> {
                 usernamePlaceholder.setVisible(usernameField.getText().isEmpty());
                 passwordPlaceholder.setVisible(passwordField.getText().isEmpty());
+                emailPlaceholder.setVisible(emailField.getText().isEmpty());
                 securityLabel.setVisible(securityQuestionField.getText().isEmpty());
             })));
 
             usernamePlaceholder.addListener(clickToFocus(usernameField));
             passwordPlaceholder.addListener(clickToFocus(passwordField));
+            emailPlaceholder.addListener(clickToFocus(emailField));
             securityLabel.addListener(clickToFocus(securityQuestionField));
         }
 
@@ -180,6 +234,8 @@
             addClickListenerWithSound(signUpButton, () -> controller.signUp(
                 usernameField.getText().trim(),
                 passwordField.getText().trim(),
+                emailField.getText().trim(),
+                genderSelectBox.getSelected(),
                 selectBox.getSelected(),
                 securityQuestionField.getText().trim()
             ));

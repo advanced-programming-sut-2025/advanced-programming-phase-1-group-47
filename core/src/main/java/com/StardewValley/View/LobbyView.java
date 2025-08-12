@@ -800,11 +800,25 @@ public class LobbyView implements Screen {
                 return;
             } else if (message.startsWith("ALL_PLAYERS_RESPONSE:")) {
                 // Handle response with all players and their lobby assignments
-
+                System.out.println("LobbyView: Received ALL_PLAYERS_RESPONSE message");
+                System.out.println("LobbyView: Full message: [" + message + "]");
+                System.out.println("LobbyView: Message length: " + message.length());
+                System.out.println("LobbyView: Message starts with 'ALL_PLAYERS_RESPONSE:': " + message.startsWith("ALL_PLAYERS_RESPONSE:"));
+                System.out.println("LobbyView: Index of colon: " + message.indexOf(':'));
                 
                 if (message.length() > 22) {
                     // Extract data after "ALL_PLAYERS_RESPONSE:"
                     String playerData = message.substring(23);
+                    System.out.println("LobbyView: Player data extracted: " + playerData.substring(0, Math.min(100, playerData.length())) + "...");
+                    System.out.println("LobbyView: Actual data length: " + playerData.length());
+                    
+                    // Check if we got the complete data
+                    if (playerData.length() < 100) {
+                        System.out.println("LobbyView: WARNING - Data seems truncated! Expected ~248 chars, got " + playerData.length());
+                        System.out.println("LobbyView: This suggests a message transmission issue");
+                    } else {
+                        System.out.println("LobbyView: SUCCESS - Complete player data received!");
+                    }
                     
                     // Format the data for better display by adding line breaks
                     String formattedData = playerData.replace("Connected Players and Their Lobbies:", "Connected Players and Their Lobbies:\n")
@@ -815,12 +829,30 @@ public class LobbyView implements Screen {
                                                    .replace("  Host:", "\n  Host:")
                                                    .replace("  Status:", "\n  Status:");
                     
-
+                    System.out.println("LobbyView: Formatted data length: " + formattedData.length());
                     
                     updatePlayerListDialog(formattedData);
                     addChatMessage("System", "Player information updated successfully!");
+                } else {
+                    System.out.println("LobbyView: ALL_PLAYERS_RESPONSE message too short: " + message);
                 }
-
+            } else if (message.startsWith("TEST_LONG_MESSAGE:")) {
+                // Handle test long message to check transmission
+                System.out.println("LobbyView: Received TEST_LONG_MESSAGE");
+                System.out.println("LobbyView: Full message: [" + message + "]");
+                System.out.println("LobbyView: Message length: " + message.length());
+                
+                if (message.length() > 17) {
+                    String testData = message.substring(17);
+                    System.out.println("LobbyView: Test data length: " + testData.length());
+                    System.out.println("LobbyView: Test data: " + testData.substring(0, Math.min(50, testData.length())) + "...");
+                    
+                    if (testData.length() < 200) {
+                        System.out.println("LobbyView: ERROR - Test message truncated! Expected 200 chars, got " + testData.length());
+                    } else {
+                        System.out.println("LobbyView: SUCCESS - Test message received completely!");
+                    }
+                }
             } else if (message.startsWith("LOBBY_LIST:")) {
                 if (message.length() > 12) {
                     // Fix: Use indexOf to find the colon and extract everything after it
@@ -1301,30 +1333,32 @@ public class LobbyView implements Screen {
      * Shows the player list dialog
      */
     private void showPlayerList() {
-
+        System.out.println("LobbyView: showPlayerList called");
         
         if (playerListDialog == null) {
-
+            System.out.println("LobbyView: Creating new player list dialog");
             createPlayerListDialog();
         }
         
         // Request player list from server
         if (isConnected) {
-
+            System.out.println("LobbyView: Sending ALL_PLAYERS_REQUEST to server");
             sendMessage("ALL_PLAYERS_REQUEST");
             addChatMessage("System", "Requesting player information...");
         } else {
-
+            System.out.println("LobbyView: Not connected to server!");
             addChatMessage("System", "Not connected to server!");
             return;
         }
         
-
+        System.out.println("LobbyView: Showing player list dialog");
+        System.out.println("LobbyView: Stage is null: " + (stage == null));
+        System.out.println("LobbyView: Dialog is null: " + (playerListDialog == null));
         
         if (stage != null && playerListDialog != null) {
             playerListDialog.show(stage);
             isPlayerListVisible = true;
-
+            System.out.println("LobbyView: Player list dialog shown on stage");
             System.out.println("LobbyView: Dialog visible after show: " + playerListDialog.isVisible());
             System.out.println("LobbyView: Dialog modal: " + playerListDialog.isModal());
         } else {

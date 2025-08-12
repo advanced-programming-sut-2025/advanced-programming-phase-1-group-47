@@ -1,17 +1,17 @@
 package com.StardewValley.controllers;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.utils.Timer;
+import java.sql.SQLException;
+
 import com.StardewValley.DataBase.UserDBCommands;
 import com.StardewValley.Main;
+import com.StardewValley.View.InitPageView;
+import com.StardewValley.View.ProfileView;
+import com.StardewValley.View.SignUpView;
 import com.StardewValley.model.App;
 import com.StardewValley.model.GameAssetManager;
 import com.StardewValley.model.User;
-import com.StardewValley.View.*;
-import com.StardewValley.View.GameModeSelectionView;
-import com.StardewValley.controllers.GameModeSelectionController;
-
-import java.sql.SQLException;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.utils.Timer;
 
 public class SignUpMenuController {
     private SignUpView view;
@@ -26,11 +26,11 @@ public class SignUpMenuController {
         Main.getMain().setScreen(new InitPageView(new InitPageController(), GameAssetManager.getGameAssetManager().getSkin()));
     }
 
-    public void signUp(String username, String password, String select, String securityQuestion) {
+    public void signUp(String username, String password, String email, String gender, String select, String securityQuestion) {
         if (isSigningUp) return;
         isSigningUp = true;
 
-        if (username.isEmpty() || password.isEmpty() || securityQuestion.isEmpty()) {
+        if (username.isEmpty() || password.isEmpty() || email.isEmpty() || gender.isEmpty() || securityQuestion.isEmpty()) {
             view.showMessage(false, "You Should Fill All Fields");
             isSigningUp = false;
             return;
@@ -62,27 +62,45 @@ public class SignUpMenuController {
                 Gdx.app.postRunnable(() -> {
                     try {
                         // Create new user and save to database
-                        User user = new User(username, password, "", "", null, securityQuestion, "");
+                        User user = new User(username, password, email, "", com.StardewValley.model.enums.Gender.getGenderEnum(gender), securityQuestion, securityQuestion);
                         
                         try {
+                            Gdx.app.log("SignUp", "Attempting to save user to database: " + username);
                             commands.saveUser(user);
+                            Gdx.app.log("SignUp", "User saved successfully to database: " + username);
+                            
+                            // Verify the user was actually saved by trying to retrieve it
+                            try {
+                                User savedUser = commands.getUser(username);
+                                if (savedUser != null) {
+                                    Gdx.app.log("SignUp", "User verification successful - found in database: " + savedUser.getUsername());
+                                } else {
+                                    Gdx.app.error("SignUp", "User verification failed - user not found in database after save");
+                                }
+                            } catch (Exception e) {
+                                Gdx.app.error("SignUp", "User verification check failed: " + e.getMessage());
+                            }
+                            
                             App.loggedUser = user;
+                            App.setLoggedInUser(user);
                         } catch (SQLException e) {
                             // If database save fails, still create the user in memory
-                            Gdx.app.log("SignUp", "Database save failed, using in-memory user: " + e.getMessage());
+                            Gdx.app.error("SignUp", "Database save failed, using in-memory user: " + e.getMessage());
+                            e.printStackTrace();
                             App.loggedUser = user;
+                            App.setLoggedInUser(user);
                         }
                         
                         isSigningUp = false;
                         view.getSignUpMenu().setDisabled(false);
                         
-                        // Redirect to game mode selection after successful signup
-                        view.showMessage(true, "Sign up successful! Redirecting...");
+                        // Redirect to profile view after successful signup
+                        view.showMessage(true, "Sign up successful! Redirecting to profile...");
                         Timer.schedule(new Timer.Task() {
                             @Override
                             public void run() {
                                 Gdx.app.postRunnable(() -> {
-                                    Main.getMain().setScreen(new GameModeSelectionView(new GameModeSelectionController(), GameAssetManager.getGameAssetManager().getSkin()));
+                                    Main.getMain().setScreen(new ProfileView(new ProfileMenuController(), GameAssetManager.getGameAssetManager().getSkin()));
                                 });
                             }
                         }, 1.5f);

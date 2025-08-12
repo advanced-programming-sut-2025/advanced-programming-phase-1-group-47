@@ -1,16 +1,15 @@
 package com.StardewValley.controllers;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.utils.Timer;
 import com.StardewValley.DataBase.UserDBCommands;
 import com.StardewValley.Main;
+import com.StardewValley.View.InitPageView;
+import com.StardewValley.View.LoginView;
+import com.StardewValley.View.ProfileView;
 import com.StardewValley.model.App;
 import com.StardewValley.model.GameAssetManager;
 import com.StardewValley.model.User;
-import com.StardewValley.View.InitPageView;
-import com.StardewValley.View.LoginView;
-import com.StardewValley.View.GameModeSelectionView;
-import com.StardewValley.controllers.GameModeSelectionController;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.utils.Timer;
 
 public class LoginMenuController {
     private LoginView view;
@@ -20,8 +19,9 @@ public class LoginMenuController {
     }
 
     public void login(String username, String password) {
+        User user = null;
         try {
-            User user = UserDBCommands.getUser(username);
+            user = UserDBCommands.getUser(username);
             if (user == null || !user.getPassword().equals(password)) {
                 view.showMessage(false, "invalid username or password");
                 return;
@@ -36,12 +36,14 @@ public class LoginMenuController {
         }
 
         view.showMessage(true, "login successful!");
-        // Redirect to game mode selection after successful login
+        // Set the logged in user
+        App.setLoggedInUser(user);
+        // Redirect to profile view after successful login
         Timer.schedule(new Timer.Task() {
             @Override
             public void run() {
                 Gdx.app.postRunnable(() -> {
-                    Main.getMain().setScreen(new GameModeSelectionView(new GameModeSelectionController(), GameAssetManager.getGameAssetManager().getSkin()));
+                    Main.getMain().setScreen(new ProfileView(new ProfileMenuController(), GameAssetManager.getGameAssetManager().getSkin()));
                 });
             }
         }, 1.5f);
@@ -66,13 +68,14 @@ public class LoginMenuController {
         view.showMessage(true, welcomeMsg);
 
         App.loggedUser = user;
+        App.setLoggedInUser(user);
         
-        // Redirect to game mode selection after successful password recovery
+        // Redirect to profile view after successful password recovery
         Timer.schedule(new Timer.Task() {
             @Override
             public void run() {
                 Gdx.app.postRunnable(() -> {
-                    Main.getMain().setScreen(new GameModeSelectionView(new GameModeSelectionController(), GameAssetManager.getGameAssetManager().getSkin()));
+                    Main.getMain().setScreen(new ProfileView(new ProfileMenuController(), GameAssetManager.getGameAssetManager().getSkin()));
                 });
             }
         }, 1.5f);
