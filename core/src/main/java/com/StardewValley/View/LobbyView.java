@@ -62,6 +62,11 @@ public class LobbyView implements Screen {
     // Data
     private List<SimpleLobbyInfo> lobbies = new ArrayList<>();
     
+    // Player list dialog
+    private Dialog playerListDialog;
+    private Label playerListLabel; // Store direct reference to the label
+    private boolean isPlayerListVisible = false;
+    
 
 
     public LobbyView() {
@@ -623,6 +628,12 @@ public class LobbyView implements Screen {
             // Request lobby list
             onRefreshLobbies();
             
+            // Add welcome messages
+            addChatMessage("System", "Connected to lobby server successfully!");
+            addChatMessage("System", "Use the buttons above to create or join lobbies.");
+            addChatMessage("System", "Type messages in the chat box below to communicate with other players.");
+            addChatMessage("System", "Press P to view all connected players and their lobby assignments.");
+            
         } catch (IOException e) {
             String errorMsg = "Failed to connect to server: " + e.getMessage();
             System.err.println(errorMsg);
@@ -787,6 +798,29 @@ public class LobbyView implements Screen {
                 // Handle lobby update messages silently - don't show in chat
                 // These are sent after chat messages to update lobby info
                 return;
+            } else if (message.startsWith("ALL_PLAYERS_RESPONSE:")) {
+                // Handle response with all players and their lobby assignments
+
+                
+                if (message.length() > 22) {
+                    // Extract data after "ALL_PLAYERS_RESPONSE:"
+                    String playerData = message.substring(23);
+                    
+                    // Format the data for better display by adding line breaks
+                    String formattedData = playerData.replace("Connected Players and Their Lobbies:", "Connected Players and Their Lobbies:\n")
+                                                   .replace("==============", "==============\n")
+                                                   .replace("• ", "\n• ")
+                                                   .replace("Lobby Details:", "\n\nLobby Details:\n")
+                                                   .replace("  Players:", "\n  Players:")
+                                                   .replace("  Host:", "\n  Host:")
+                                                   .replace("  Status:", "\n  Status:");
+                    
+
+                    
+                    updatePlayerListDialog(formattedData);
+                    addChatMessage("System", "Player information updated successfully!");
+                }
+
             } else if (message.startsWith("LOBBY_LIST:")) {
                 if (message.length() > 12) {
                     // Fix: Use indexOf to find the colon and extract everything after it
@@ -1236,8 +1270,199 @@ public class LobbyView implements Screen {
     // Screen implementations
     @Override
     public void render(float delta) {
+        // Handle input for keybinds
+        handleInput();
+        
         stage.act(delta);
         stage.draw();
+    }
+    
+    /**
+     * Handles keyboard input for keybinds
+     */
+    private void handleInput() {
+        if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.P)) {
+            togglePlayerList();
+        }
+    }
+    
+    /**
+     * Toggles the player list dialog visibility
+     */
+    private void togglePlayerList() {
+        if (isPlayerListVisible) {
+            hidePlayerList();
+        } else {
+            showPlayerList();
+        }
+    }
+    
+    /**
+     * Shows the player list dialog
+     */
+    private void showPlayerList() {
+
+        
+        if (playerListDialog == null) {
+
+            createPlayerListDialog();
+        }
+        
+        // Request player list from server
+        if (isConnected) {
+
+            sendMessage("ALL_PLAYERS_REQUEST");
+            addChatMessage("System", "Requesting player information...");
+        } else {
+
+            addChatMessage("System", "Not connected to server!");
+            return;
+        }
+        
+
+        
+        if (stage != null && playerListDialog != null) {
+            playerListDialog.show(stage);
+            isPlayerListVisible = true;
+
+            System.out.println("LobbyView: Dialog visible after show: " + playerListDialog.isVisible());
+            System.out.println("LobbyView: Dialog modal: " + playerListDialog.isModal());
+        } else {
+            System.out.println("LobbyView: ERROR - Cannot show dialog - stage: " + (stage != null) + ", dialog: " + (playerListDialog != null));
+        }
+    }
+    
+    /**
+     * Hides the player list dialog
+     */
+    private void hidePlayerList() {
+        if (playerListDialog != null) {
+            playerListDialog.hide();
+        }
+        isPlayerListVisible = false;
+    }
+    
+    /**
+     * Creates the player list dialog
+     */
+    private void createPlayerListDialog() {
+        playerListDialog = new Dialog("All Players & Lobbies", skin);
+        playerListDialog.setModal(false);
+        playerListDialog.setResizable(true);
+        
+        // Create content table
+        Table contentTable = new Table();
+        contentTable.pad(10);
+        
+        // Title
+        Label titleLabel = new Label("Connected Players and Their Lobbies", skin);
+        titleLabel.setFontScale(1.2f);
+        titleLabel.setColor(Color.BLUE);
+        contentTable.add(titleLabel).center().padBottom(10).row();
+        
+        // Instructions
+        Label instructionLabel = new Label("Press P again to close this window", skin);
+        instructionLabel.setColor(Color.GRAY);
+        contentTable.add(instructionLabel).center().padBottom(15).row();
+        
+        // Player list area (will be populated when data arrives)
+        this.playerListLabel = new Label("Loading player information...", skin);
+        this.playerListLabel.setWrap(true);
+        this.playerListLabel.setAlignment(Align.left);
+        contentTable.add(this.playerListLabel).width(400).height(300).padTop(10).row();
+        
+        // Test button to manually update the label
+        TextButton testButton = new TextButton("Test Update", skin);
+        testButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                if (playerListLabel != null) {
+                    playerListLabel.setText("TEST UPDATE - Manual button click worked!");
+                    System.out.println("LobbyView: Test button clicked - label updated manually");
+                } else {
+                    System.out.println("LobbyView: Test button clicked - but playerListLabel is null!");
+                }
+            }
+        });
+        contentTable.add(testButton).center().padTop(5).row();
+        
+        // Test button to show server data
+        TextButton showDataButton = new TextButton("Show Server Data", skin);
+        showDataButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                if (playerListLabel != null) {
+                    String testData = "Connected Players and Their Lobbies:\n" +
+                                    "================================\n\n" +
+                                    "• emdies → LOBBY_1754967636785_844\n" +
+                                    "• thewhat → No Lobby\n\n" +
+                                    "Lobby Details:\n" +
+                                    "==============\n" +
+                                    "Lobby: My Lobby (LOBBY_1754967636785_844)\n" +
+                                    "  Players: 1/4\n" +
+                                    "  Host: emdies\n" +
+                                    "  Status: Waiting for Players";
+                    
+                    playerListLabel.setText(testData);
+                    System.out.println("LobbyView: Show Server Data button clicked - showing test data");
+                } else {
+                    System.out.println("LobbyView: Show Server Data button clicked - but playerListLabel is null!");
+                }
+            }
+        });
+        contentTable.add(showDataButton).center().padTop(5).row();
+        
+        // Close button
+        TextButton closeButton = new TextButton("Close", skin);
+        closeButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                hidePlayerList();
+            }
+        });
+        contentTable.add(closeButton).center().padTop(10);
+        
+        playerListDialog.getContentTable().add(contentTable);
+        
+        System.out.println("LobbyView: Player list dialog created successfully");
+    }
+    
+    /**
+     * Updates the player list dialog with data from server
+     */
+    private void updatePlayerListDialog(String playerData) {
+        System.out.println("LobbyView: updatePlayerListDialog called with data: " + playerData);
+        System.out.println("LobbyView: Data length: " + playerData.length());
+        System.out.println("LobbyView: First 100 chars: " + playerData.substring(0, Math.min(100, playerData.length())));
+        
+        if (playerListDialog != null && isPlayerListVisible && playerListLabel != null) {
+            System.out.println("LobbyView: All conditions met, updating label");
+            System.out.println("LobbyView: Dialog visible: " + playerListDialog.isVisible());
+            System.out.println("LobbyView: Label text before update: " + playerListLabel.getText());
+            
+            playerListLabel.setText(playerData);
+            
+            System.out.println("LobbyView: Label text after update: " + playerListLabel.getText());
+            
+            // Force a redraw of the dialog
+            if (playerListDialog.isVisible()) {
+                playerListDialog.pack();
+                System.out.println("LobbyView: Dialog packed after update");
+            }
+            
+            // Force stage to redraw
+            if (stage != null) {
+                stage.act(0);
+                System.out.println("LobbyView: Stage acted after update");
+            }
+        } else {
+            System.out.println("LobbyView: Cannot update player list - dialog: " + (playerListDialog != null) + 
+                             ", visible: " + isPlayerListVisible + ", label: " + (playerListLabel != null));
+            if (playerListDialog != null) {
+                System.out.println("LobbyView: Dialog visible: " + playerListDialog.isVisible());
+                System.out.println("LobbyView: Dialog modal: " + playerListDialog.isModal());
+            }
+        }
     }
     
     @Override

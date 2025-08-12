@@ -454,6 +454,10 @@ public class SimpleMultiplayerServer {
         return playerLobbyMap.get(playerId);
     }
     
+    public Map<String, SimpleClientHandler> getConnectedClients() {
+        return new ConcurrentHashMap<>(connectedClients);
+    }
+    
     /**
      * Checks if a player is in a specific lobby
      */
@@ -798,6 +802,39 @@ class SimpleClientHandler implements Runnable {
                     sendMessage("GAME_CLIENT_CONFIRMED:" + lobbyId);
                 }
             }
+        } else if (message.startsWith("ALL_PLAYERS_REQUEST")) {
+            // Handle request for all players and their lobby assignments
+            StringBuilder playerList = new StringBuilder();
+            
+            // Add header
+            playerList.append("Connected Players and Their Lobbies:");
+            playerList.append("==============");
+            
+            // Get all connected players
+            Map<String, SimpleClientHandler> connectedClients = server.getConnectedClients();
+            
+            for (String connectedPlayerId : connectedClients.keySet()) {
+                String lobbyAssignment = server.getPlayerLobby(connectedPlayerId);
+                if (lobbyAssignment != null) {
+                    playerList.append("• ").append(connectedPlayerId).append(" → ").append(lobbyAssignment);
+                } else {
+                    playerList.append("• ").append(connectedPlayerId).append(" → No Lobby");
+                }
+            }
+            
+            // Add lobby information
+            playerList.append("Lobby Details:");
+            playerList.append("==============");
+            List<SimpleLobby> lobbies = server.getLobbyList();
+            for (SimpleLobby lobby : lobbies) {
+                playerList.append("Lobby: ").append(lobby.getLobbyName()).append(" (").append(lobby.getLobbyId()).append(")");
+                playerList.append("  Players: ").append(lobby.getCurrentPlayerCount()).append("/").append(lobby.getMaxPlayers());
+                playerList.append("  Host: ").append(lobby.getHostPlayerId());
+                playerList.append("  Status: ").append(lobby.isGameStarted() ? "Game in Progress" : "Waiting for Players");
+            }
+            
+            String finalPlayerList = playerList.toString();
+            sendMessage("ALL_PLAYERS_RESPONSE:" + finalPlayerList);
         } else if (message.startsWith("PING")) {
             // Handle ping messages silently - don't send PONG response
             // sendMessage("PONG");

@@ -141,6 +141,30 @@ public class GameScreen implements Screen {
     private Dialog playerListDialog;
     private boolean isPlayerListVisible = false;
     
+    // Private chat components
+    private Stage privateChatStage;
+    private Table privateChatTable;
+    private TextArea privateChatArea;
+    private TextField privateChatInputField;
+    private ScrollPane privateChatScrollPane;
+    private boolean isPrivateChatVisible = false;
+    private List<String> privateChatMessages;
+    
+    // Voting system
+    private Stage votingStage;
+    private Table votingTable;
+    private TextField kickPlayerField;
+    private TextButton yesVoteButton;
+    private TextButton noVoteButton;
+    private TextButton initiateVoteButton;
+    private boolean isVotingVisible = false;
+    private boolean isVoteInProgress = false;
+    private String playerBeingVotedOn = null;
+    private boolean hasVoted = false;
+    private boolean votedYes = false;
+    private int totalVotes = 0;
+    private int yesVotes = 0;
+    
     public GameScreen() {
         camera = new OrthographicCamera();
         viewport = new FitViewport(800, 400, camera);
@@ -158,6 +182,12 @@ public class GameScreen implements Screen {
         
         // Initialize chat system for multiplayer
         initializeChatSystem();
+        
+        // Initialize private chat system
+        initializePrivateChatSystem();
+        
+        // Initialize voting system
+        initializeVotingSystem();
     }
     
     /**
@@ -261,7 +291,7 @@ public class GameScreen implements Screen {
         if (chatMessages == null) {
             chatMessages = new ArrayList<>();
         }
-        addChatMessage("System", "Chat ready. Press C to toggle, P for players, Enter to send, or click Exit to close.");
+        addChatMessage("System", "Chat ready. Press C to toggle, P for players, V for private chat, Enter to send, or click Exit to close.");
         
         // Chat input field
         chatInputField = new TextField("", skin);
@@ -379,6 +409,482 @@ public class GameScreen implements Screen {
         // Now that chatStage is ready, add the player list dialog to it
         if (playerListDialog != null) {
             chatStage.addActor(playerListDialog);
+        }
+        
+        // Initialize private chat system
+        initializePrivateChatSystem();
+    }
+    
+    /**
+     * Initializes the private chat system UI components
+     */
+    private void initializePrivateChatSystem() {
+        privateChatMessages = new ArrayList<>();
+        privateChatStage = new Stage();
+        
+        // Create private chat table
+        privateChatTable = new Table();
+        privateChatTable.setVisible(false); // Hidden by default
+        
+        // Private chat area
+        privateChatArea = new TextArea("", skin);
+        privateChatArea.setDisabled(false);
+        privateChatArea.setPrefRows(6); // Smaller than main chat
+        
+        privateChatScrollPane = new ScrollPane(privateChatArea, skin);
+        privateChatScrollPane.setFadeScrollBars(false);
+        privateChatScrollPane.setScrollBarPositions(false, false);
+        privateChatTable.add(privateChatScrollPane).width(220).height(120).row();
+        
+        // Add toggle button
+        TextButton togglePrivateButton = new TextButton("Private Chat", skin);
+        togglePrivateButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                togglePrivateChat();
+            }
+        });
+        privateChatTable.add(togglePrivateButton).width(100).height(25).row();
+        
+        // Private chat input field
+        privateChatInputField = new TextField("", skin);
+        privateChatInputField.setMessageText("Type: RECEIVERNAME_MESSAGE");
+        privateChatInputField.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
+                    sendPrivateMessage();
+                }
+            }
+        });
+        
+        // Add input listener for Enter key
+        privateChatInputField.addListener(new InputListener() {
+            @Override
+            public boolean keyDown(InputEvent event, int keycode) {
+                // Consume ALL key events when private chat is visible
+                if (isPrivateChatVisible) {
+                    if (keycode == Input.Keys.ENTER) {
+                        sendPrivateMessage();
+                        return true;
+                    }
+                    // Consume all other key events to prevent game input
+                    return true;
+                }
+                return false;
+            }
+            
+            @Override
+            public boolean keyUp(InputEvent event, int keycode) {
+                // Consume ALL key up events when private chat is visible
+                return isPrivateChatVisible;
+            }
+            
+            @Override
+            public boolean keyTyped(InputEvent event, char character) {
+                // Consume ALL key typed events when private chat is visible
+                return isPrivateChatVisible;
+            }
+            
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                // Ensure focus when clicked
+                if (isPrivateChatVisible) {
+                    privateChatStage.setKeyboardFocus(privateChatInputField);
+                    Gdx.input.setInputProcessor(privateChatStage);
+                    return true;
+                }
+                return false;
+            }
+        });
+        
+        privateChatTable.add(privateChatInputField).width(220).row();
+        
+        // Send button
+        TextButton sendButton = new TextButton("Send", skin);
+        sendButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                sendPrivateMessage();
+            }
+        });
+        privateChatTable.add(sendButton).width(100).height(25);
+        
+        // Close button
+        TextButton closeButton = new TextButton("Close", skin);
+        closeButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                togglePrivateChat();
+            }
+        });
+        privateChatTable.add(closeButton).width(100).height(25).row();
+        
+        // Position with better margins to fit on screen and be easily accessible
+        privateChatTable.setPosition(250, 300);
+        privateChatStage.addActor(privateChatTable);
+    }
+    
+    /**
+     * Initializes the voting system UI components
+     */
+    private void initializeVotingSystem() {
+        votingStage = new Stage();
+        votingTable = new Table();
+        votingTable.setVisible(false);
+        
+        // Title label
+        Label titleLabel = new Label("Vote to Kick Player", skin);
+        titleLabel.setFontScale(1.2f);
+        votingTable.add(titleLabel).colspan(2).row();
+        
+        // Player name input field (for initiating vote)
+        kickPlayerField = new TextField("", skin);
+        kickPlayerField.setMessageText("Enter player name to kick");
+        kickPlayerField.addListener(new InputListener() {
+            @Override
+            public boolean keyDown(InputEvent event, int keycode) {
+                if (keycode == Input.Keys.ENTER) {
+                    initiateVote();
+                    return true;
+                }
+                return isVotingVisible;
+            }
+            
+            @Override
+            public boolean keyUp(InputEvent event, int keycode) {
+                return isVotingVisible;
+            }
+            
+            @Override
+            public boolean keyTyped(InputEvent event, char character) {
+                return isVotingVisible;
+            }
+        });
+        votingTable.add(kickPlayerField).width(200).row();
+        
+        // Initiate vote button
+        initiateVoteButton = new TextButton("Initiate Vote", skin);
+        initiateVoteButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                initiateVote();
+            }
+        });
+        votingTable.add(initiateVoteButton).width(100).row();
+        
+        // Vote buttons (initially hidden)
+        yesVoteButton = new TextButton("Yes - Kick", skin);
+        yesVoteButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                voteYes();
+            }
+        });
+        yesVoteButton.setVisible(false); // Hide initially
+        votingTable.add(yesVoteButton).width(100).height(30);
+        
+        noVoteButton = new TextButton("No - Keep", skin);
+        noVoteButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                voteNo();
+            }
+        });
+        noVoteButton.setVisible(false); // Hide initially
+        votingTable.add(noVoteButton).width(100).height(30).row();
+        
+        // Close button
+        TextButton closeButton = new TextButton("Close", skin);
+        closeButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                toggleVoting();
+            }
+        });
+        votingTable.add(closeButton).width(100).height(25).row();
+        
+        // Position at middle right - accessible and centered vertically
+        votingTable.setPosition(400, 200);
+        votingStage.addActor(votingTable);
+    }
+    
+    /**
+     * Toggles the private chat visibility
+     */
+    private void togglePrivateChat() {
+        isPrivateChatVisible = !isPrivateChatVisible;
+        privateChatTable.setVisible(isPrivateChatVisible);
+        
+        if (isPrivateChatVisible) {
+            privateChatInputField.setText("");
+            // Force focus to private chat input field
+            Gdx.app.postRunnable(() -> {
+                privateChatStage.setKeyboardFocus(privateChatInputField);
+                // Ensure input processor is set to private chat stage
+                Gdx.input.setInputProcessor(privateChatStage);
+                System.out.println("GameScreen: Private chat opened - focus and input processor set");
+            });
+        } else {
+            privateChatStage.setKeyboardFocus(null);
+            // Restore game input processor when private chat is closed
+            Gdx.app.postRunnable(() -> {
+                InputAdapter gameInputProcessor = new InputAdapter() {
+                    @Override
+                    public boolean scrolled(float amountX, float amountY) {
+                        scrollDelta += amountY;
+                        return true;
+                    }
+                };
+                Gdx.input.setInputProcessor(gameInputProcessor);
+                System.out.println("GameScreen: Private chat closed - game input processor restored");
+            });
+        }
+    }
+    
+    /**
+     * Sends a private message using the RECEIVERNAME_MESSAGE format
+     */
+    private void sendPrivateMessage() {
+        if (!isMultiplayerMode) return;
+        
+        String input = privateChatInputField.getText().trim();
+        if (!input.isEmpty()) {
+            // Parse the RECEIVERNAME_MESSAGE format
+            int underscoreIndex = input.indexOf('_');
+            if (underscoreIndex > 0 && underscoreIndex < input.length() - 1) {
+                String receiverName = input.substring(0, underscoreIndex).trim();
+                String message = input.substring(underscoreIndex + 1).trim();
+                
+                if (!receiverName.isEmpty() && !message.isEmpty()) {
+                    // Send private message through game server
+                    if (gameOut != null) {
+                        String privateMessage = "PRIVATE_CHAT:" + currentLobbyId + ":" + receiverName + ":" + message;
+                        System.out.println("GameScreen: Sending private message to " + receiverName + ": [" + message + "]");
+                        gameOut.println(privateMessage);
+                        gameOut.flush();
+                        
+                        // Add to local private chat
+                        addPrivateChatMessage(playerNickname + " (to " + receiverName + ")", message);
+                        
+                        // Clear input field
+                        privateChatInputField.setText("");
+                        
+                        System.out.println("GameScreen: Private message sent successfully");
+                    } else {
+                        addPrivateChatMessage("System", "ERROR: Not connected to game server");
+                    }
+                } else {
+                    addPrivateChatMessage("System", "ERROR: Invalid format. Use: RECEIVERNAME_MESSAGE");
+                }
+            } else {
+                addPrivateChatMessage("System", "ERROR: Invalid format. Use: RECEIVERNAME_MESSAGE");
+            }
+        }
+    }
+    
+    /**
+     * Adds a message to the private chat area
+     */
+    private void addPrivateChatMessage(String sender, String message) {
+        // Truncate very long messages to prevent chat overflow
+        String truncatedMessage = message;
+        if (message.length() > 60) {
+            truncatedMessage = message.substring(0, 57) + "...";
+        }
+        
+        privateChatMessages.add(sender + ": " + truncatedMessage);
+        
+        // Keep only last 30 messages
+        if (privateChatMessages.size() > 30) {
+            privateChatMessages.remove(0);
+        }
+        
+        // Update private chat area
+        StringBuilder chatText = new StringBuilder();
+        for (String msg : privateChatMessages) {
+            chatText.append(msg).append("\n");
+        }
+        
+        // Ensure we're on the main thread when updating UI
+        Gdx.app.postRunnable(() -> {
+            try {
+                privateChatArea.setText(chatText.toString());
+                privateChatScrollPane.setScrollY(privateChatScrollPane.getMaxY());
+                privateChatArea.invalidate();
+                privateChatScrollPane.invalidate();
+            } catch (Exception e) {
+                System.err.println("GameScreen: Error updating private chat area: " + e.getMessage());
+            }
+        });
+    }
+    
+    /**
+     * Toggles the voting system visibility
+     */
+    private void toggleVoting() {
+        isVotingVisible = !isVotingVisible;
+        votingTable.setVisible(isVotingVisible);
+        
+        if (isVotingVisible) {
+            kickPlayerField.setText("");
+            // Reset voting state when opening
+            resetVotingUI();
+            // Force focus to voting input field
+            Gdx.app.postRunnable(() -> {
+                votingStage.setKeyboardFocus(kickPlayerField);
+                // Ensure input processor is set to voting stage
+                Gdx.input.setInputProcessor(votingStage);
+                System.out.println("GameScreen: Voting system opened - focus and input processor set");
+            });
+        } else {
+            votingStage.setKeyboardFocus(null);
+            // Restore game input processor when voting is closed
+            Gdx.app.postRunnable(() -> {
+                InputAdapter gameInputProcessor = new InputAdapter() {
+                    @Override
+                    public boolean scrolled(float amountX, float amountY) {
+                        scrollDelta += amountY;
+                        return true;
+                    }
+                };
+                Gdx.input.setInputProcessor(gameInputProcessor);
+                System.out.println("GameScreen: Voting system closed - game input processor restored");
+            });
+        }
+    }
+    
+    /**
+     * Initiates a vote to kick a player
+     */
+    private void initiateVote() {
+        if (!isMultiplayerMode) return;
+        
+        String playerName = kickPlayerField.getText().trim();
+        if (!playerName.isEmpty()) {
+            if (gameOut != null) {
+                String voteMessage = "INITIATE_VOTE:" + currentLobbyId + ":" + playerName;
+                System.out.println("GameScreen: Initiating vote to kick " + playerName);
+                gameOut.println(voteMessage);
+                gameOut.flush();
+                
+                // Clear input field
+                kickPlayerField.setText("");
+                
+                addChatMessage("System", "Vote initiated to kick " + playerName);
+            } else {
+                addChatMessage("System", "ERROR: Not connected to game server");
+            }
+        } else {
+            addChatMessage("System", "ERROR: Please enter a player name");
+        }
+    }
+    
+    /**
+     * Votes yes to kick the player
+     */
+    private void voteYes() {
+        if (!isMultiplayerMode || !isVoteInProgress || hasVoted) return;
+        
+        if (gameOut != null) {
+            String voteMessage = "VOTE_YES:" + currentLobbyId + ":" + playerBeingVotedOn;
+            System.out.println("GameScreen: Voting YES to kick " + playerBeingVotedOn);
+            gameOut.println(voteMessage);
+            gameOut.flush();
+            
+            hasVoted = true;
+            votedYes = true;
+            addChatMessage("System", "You voted YES to kick " + playerBeingVotedOn);
+        }
+    }
+    
+    /**
+     * Votes no to kick the player
+     */
+    private void voteNo() {
+        if (!isMultiplayerMode || !isVoteInProgress || hasVoted) return;
+        
+        if (gameOut != null) {
+            String voteMessage = "VOTE_NO:" + currentLobbyId + ":" + playerBeingVotedOn;
+            System.out.println("GameScreen: Voting NO to kick " + playerBeingVotedOn);
+            gameOut.println(voteMessage);
+            gameOut.flush();
+            
+            hasVoted = true;
+            votedYes = false;
+            addChatMessage("System", "You voted NO to kick " + playerBeingVotedOn);
+        }
+    }
+    
+    /**
+     * Updates the voting UI when a vote is in progress
+     */
+    private void updateVotingUI(String playerName) {
+        playerBeingVotedOn = playerName;
+        isVoteInProgress = true;
+        hasVoted = false;
+        votedYes = false;
+        
+        // Show vote buttons and hide initiate button
+        if (yesVoteButton != null && noVoteButton != null && initiateVoteButton != null) {
+            yesVoteButton.setVisible(true);
+            noVoteButton.setVisible(true);
+            initiateVoteButton.setVisible(false);
+            
+            System.out.println("GameScreen: Vote UI updated - vote buttons shown, initiate button hidden");
+        }
+        
+        addChatMessage("System", "Vote started to kick " + playerName + " - Please vote!");
+    }
+    
+    /**
+     * Handles the end of a vote
+     */
+    private void handleVoteEnd(boolean playerKicked, String kickedPlayer) {
+        isVoteInProgress = false;
+        hasVoted = false;
+        votedYes = false;
+        playerBeingVotedOn = null;
+        
+        // Reset UI - hide vote buttons and show initiate button
+        if (yesVoteButton != null && noVoteButton != null && initiateVoteButton != null) {
+            yesVoteButton.setVisible(false);
+            noVoteButton.setVisible(false);
+            initiateVoteButton.setVisible(true);
+            
+            System.out.println("GameScreen: Vote UI reset - vote buttons hidden, initiate button shown");
+        }
+        
+        if (playerKicked) {
+            addChatMessage("System", "Vote passed! " + kickedPlayer + " has been kicked from the game.");
+            // If this player was kicked, return to main menu
+            if (kickedPlayer.equals(playerNickname)) {
+                Gdx.app.postRunnable(() -> {
+                    // For now, just close the game when kicked
+                    Gdx.app.exit();
+                });
+            }
+        } else {
+            addChatMessage("System", "Vote failed! " + kickedPlayer + " will remain in the game.");
+        }
+    }
+    
+    /**
+     * Resets the voting UI to initial state
+     */
+    private void resetVotingUI() {
+        isVoteInProgress = false;
+        hasVoted = false;
+        votedYes = false;
+        playerBeingVotedOn = null;
+        
+        // Reset UI - hide vote buttons and show initiate button
+        if (yesVoteButton != null && noVoteButton != null && initiateVoteButton != null) {
+            yesVoteButton.setVisible(false);
+            noVoteButton.setVisible(false);
+            initiateVoteButton.setVisible(true);
+            
+            System.out.println("GameScreen: Voting UI reset to initial state");
         }
     }
     
@@ -719,6 +1225,98 @@ public class GameScreen implements Screen {
                     updatePlayerList(new String[0]);
                 }
             }
+        } else if (message.startsWith("PRIVATE_CHAT:")) {
+            // Handle private chat message from another player
+            String[] parts = message.split(":", 3);
+            if (parts.length == 3) {
+                String sender = parts[1];
+                String chatMessage = parts[2];
+                System.out.println("GameScreen: Processing private message from " + sender + ": " + chatMessage);
+                
+                // Add to private chat area
+                addPrivateChatMessage(sender + " (private)", chatMessage);
+                
+                // Also add to main chat for visibility
+                addChatMessage(sender + " (private)", chatMessage);
+            } else {
+                System.out.println("GameScreen: Invalid PRIVATE_CHAT format, expected 3 parts, got " + parts.length);
+            }
+        } else if (message.startsWith("PRIVATE_CHAT_SENT:")) {
+            // Handle confirmation that private message was sent
+            String[] parts = message.split(":", 3);
+            if (parts.length == 3) {
+                String recipient = parts[1];
+                String chatMessage = parts[2];
+                System.out.println("GameScreen: Private message sent to " + recipient + ": " + chatMessage);
+                addPrivateChatMessage("System", "Private message sent to " + recipient);
+            }
+        } else if (message.startsWith("PRIVATE_CHAT_ERROR:")) {
+            // Handle private message error
+            String[] parts = message.split(":", 3);
+            if (parts.length == 3) {
+                String recipient = parts[1];
+                String errorMsg = parts[2];
+                System.out.println("GameScreen: Private message error to " + recipient + ": " + errorMsg);
+                addPrivateChatMessage("System", "Error: " + errorMsg);
+            }
+        } else if (message.startsWith("VOTE_START:")) {
+            // Handle vote start message
+            String[] parts = message.split(":", 3);
+            if (parts.length == 3) {
+                String lobbyId = parts[1];
+                String playerName = parts[2];
+                System.out.println("GameScreen: Vote started to kick " + playerName);
+                updateVotingUI(playerName);
+                addChatMessage("System", "Vote started to kick " + playerName + " - Please vote!");
+            }
+        } else if (message.startsWith("VOTE_UPDATE:")) {
+            // Handle vote update message
+            String[] parts = message.split(":", 5);
+            if (parts.length == 5) {
+                String lobbyId = parts[1];
+                int totalVotes = Integer.parseInt(parts[2]);
+                int yesVotes = Integer.parseInt(parts[3]);
+                int expectedVotes = Integer.parseInt(parts[4]);
+                System.out.println("GameScreen: Vote update - Total: " + totalVotes + ", Yes: " + yesVotes + ", Expected: " + expectedVotes);
+                this.totalVotes = totalVotes;
+                this.yesVotes = yesVotes;
+                addChatMessage("System", "Vote progress: " + yesVotes + "/" + expectedVotes + " voted YES (" + totalVotes + "/" + expectedVotes + " total votes)");
+            }
+        } else if (message.startsWith("VOTE_END:")) {
+            // Handle vote end message
+            String[] parts = message.split(":", 4);
+            if (parts.length == 4) {
+                String lobbyId = parts[1];
+                boolean playerKicked = Boolean.parseBoolean(parts[2]);
+                String kickedPlayer = parts[3];
+                System.out.println("GameScreen: Vote ended - Player kicked: " + playerKicked + ", Player: " + kickedPlayer);
+                handleVoteEnd(playerKicked, kickedPlayer);
+            }
+        } else if (message.startsWith("VOTE_ERROR:")) {
+            // Handle vote error message
+            String errorMsg = message.substring(11);
+            System.out.println("GameScreen: Vote error: " + errorMsg);
+            addChatMessage("System", "Vote Error: " + errorMsg);
+        } else if (message.startsWith("PLAYER_KICKED:")) {
+            // Handle player kicked message
+            String[] parts = message.split(":", 2);
+            if (parts.length == 2) {
+                String kickedPlayer = parts[1];
+                System.out.println("GameScreen: Player kicked: " + kickedPlayer);
+                
+                if (kickedPlayer.equals(playerNickname)) {
+                    // This player was kicked - return to main menu
+                    addChatMessage("System", "You have been kicked from the game!");
+                    Gdx.app.postRunnable(() -> {
+                        // Return to main menu
+                        // Note: You'll need to implement the proper way to return to main menu
+                        // For now, just close the game
+                        Gdx.app.exit();
+                    });
+                } else {
+                    addChatMessage("System", kickedPlayer + " has been kicked from the game!");
+                }
+            }
         } else if (message.startsWith("Welcome")) {
             // Handle welcome messages
             System.out.println("GameScreen: Welcome message: " + message);
@@ -999,12 +1597,12 @@ public class GameScreen implements Screen {
                 System.out.println("GameScreen: Sending chat message: [" + chatMessage + "]");
                 gameOut.println(chatMessage);
                 gameOut.flush();
-                
-                // Add to local chat
-                addChatMessage(playerNickname, message);
-                
-                // Clear input field
-                chatInputField.setText("");
+            
+            // Add to local chat
+            addChatMessage(playerNickname, message);
+            
+            // Clear input field
+            chatInputField.setText("");
                 
                 System.out.println("GameScreen: Chat message sent successfully");
             } else {
@@ -1042,10 +1640,10 @@ public class GameScreen implements Screen {
         // Ensure we're on the main thread when updating UI
         Gdx.app.postRunnable(() -> {
             try {
-                chatArea.setText(chatText.toString());
-                
-                // Scroll to bottom
-                chatScrollPane.setScrollY(chatScrollPane.getMaxY());
+        chatArea.setText(chatText.toString());
+        
+        // Scroll to bottom
+        chatScrollPane.setScrollY(chatScrollPane.getMaxY());
                 
                 // Force a redraw of the chat area
                 chatArea.invalidate();
@@ -1263,9 +1861,27 @@ public class GameScreen implements Screen {
             togglePlayerList();
         }
         
-        // Close chat with Escape key when chat is visible
-        if (isMultiplayerMode && isChatVisible && Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            toggleChat();
+        // Private chat toggle for multiplayer (only when in multiplayer mode)
+        if (isMultiplayerMode && Gdx.input.isKeyJustPressed(Input.Keys.V)) {
+            togglePrivateChat();
+        }
+        
+        // Voting system toggle for multiplayer (only when in multiplayer mode)
+        if (isMultiplayerMode && Gdx.input.isKeyJustPressed(Input.Keys.K)) {
+            toggleVoting();
+        }
+        
+        // Close chats and voting with Escape key when visible
+        if (isMultiplayerMode && (isChatVisible || isPrivateChatVisible || isVotingVisible) && Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            if (isChatVisible) {
+                toggleChat();
+            }
+            if (isPrivateChatVisible) {
+                togglePrivateChat();
+            }
+            if (isVotingVisible) {
+                toggleVoting();
+            }
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
             InventoryDialog.show(() -> {
@@ -1760,30 +2376,72 @@ public class GameScreen implements Screen {
                 // Check connection status and update UI
                 checkConnectionStatus();
                 
-                // Handle input focus for chat
-                if (isChatVisible) {
-                    // Ensure chat stage gets input priority when visible
+                // Handle input focus for chat and voting - Priority: Private Chat > Voting > Main Chat > Game
+                if (isPrivateChatVisible) {
+                    // Private chat gets absolute input priority when visible
+                    if (!privateChatInputField.hasKeyboardFocus()) {
+                        privateChatStage.setKeyboardFocus(privateChatInputField);
+                    }
+                    
+                    // CRITICAL: Force private chat stage to handle ALL input when visible
+                    if (Gdx.input.getInputProcessor() != privateChatStage) {
+                        Gdx.input.setInputProcessor(privateChatStage);
+                        System.out.println("GameScreen: Input processor set to private chat stage");
+                    }
+                    
+                    // Ensure private chat stage is the ONLY input processor
+                    Gdx.input.setInputProcessor(privateChatStage);
+                    
+                } else if (isVotingVisible) {
+                    // Voting gets input priority when visible (and private chat is not)
+                    if (!kickPlayerField.hasKeyboardFocus()) {
+                        votingStage.setKeyboardFocus(kickPlayerField);
+                    }
+                    
+                    // Ensure voting stage handles all input
+                    if (Gdx.input.getInputProcessor() != votingStage) {
+                        Gdx.input.setInputProcessor(votingStage);
+                        System.out.println("GameScreen: Input processor set to voting stage");
+                    }
+                    
+                } else if (isChatVisible) {
+                    // Main chat only gets input when neither private chat nor voting is visible
                     if (!chatInputField.hasKeyboardFocus()) {
                         chatStage.setKeyboardFocus(chatInputField);
                     }
                     
-                    // When chat is visible, ensure the chat stage handles all input
-                    // This prevents game input from interfering with chat input
+                    // When main chat is visible (and others are not), use main chat stage
                     if (Gdx.input.getInputProcessor() != chatStage) {
                         Gdx.input.setInputProcessor(chatStage);
+                        System.out.println("GameScreen: Input processor set to main chat stage");
                     }
                 } else {
-                    // When chat is not visible, restore the game input processor
-                    if (Gdx.input.getInputProcessor() == chatStage) {
-                        Gdx.input.setInputProcessor(new InputAdapter() {
+                    // When no UI is visible, restore the game input processor
+                    if (Gdx.input.getInputProcessor() == chatStage || Gdx.input.getInputProcessor() == privateChatStage || Gdx.input.getInputProcessor() == votingStage) {
+                        InputAdapter gameInputProcessor = new InputAdapter() {
                             @Override
                             public boolean scrolled(float amountX, float amountY) {
                                 scrollDelta += amountY;
                                 return true;
                             }
-                        });
+                        };
+                        Gdx.input.setInputProcessor(gameInputProcessor);
+                        System.out.println("GameScreen: Input processor set to game input");
                     }
                 }
+            }
+            
+            // Render private chat stage for multiplayer
+            if (isMultiplayerMode && privateChatStage != null) {
+                privateChatStage.act(delta);
+                privateChatStage.draw();
+                // Input handling is now managed centrally in the main input logic above
+            }
+            
+            // Render voting stage for multiplayer
+            if (isMultiplayerMode && votingStage != null) {
+                votingStage.act(delta);
+                votingStage.draw();
             }
 
         } catch (Exception e) {
@@ -1803,6 +2461,24 @@ public class GameScreen implements Screen {
             // Reposition chat table for new screen size
             if (chatTable != null) {
                 chatTable.setPosition(width - 320, height - 250);
+            }
+        }
+        
+        // Update private chat stage viewport if it exists
+        if (privateChatStage != null) {
+            privateChatStage.getViewport().update(width, height, true);
+            // Reposition private chat table for new screen size
+            if (privateChatTable != null) {
+                privateChatTable.setPosition(250, 300);
+            }
+        }
+        
+        // Update voting stage viewport if it exists
+        if (votingStage != null) {
+            votingStage.getViewport().update(width, height, true);
+            // Reposition voting table for new screen size
+            if (votingTable != null) {
+                votingTable.setPosition(400, 200);
             }
         }
         
@@ -1844,7 +2520,7 @@ public class GameScreen implements Screen {
             }
             
             // Add a welcome message
-            addChatMessage("System", "Multiplayer mode active. Press C for chat.");
+            addChatMessage("System", "Multiplayer mode active. Press C for chat, V for private chat, K for voting system.");
         }
         
         updateTools();

@@ -7,8 +7,10 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -146,6 +148,180 @@ public class GameServer {
         }
         return playersInLobby;
     }
+    
+    /**
+     * Gets the client handler for a specific player
+     */
+    public GameClientHandler getClientHandler(String playerId) {
+        return connectedClients.get(playerId);
+    }
+    
+    /**
+     * Gets the lobby ID for a specific player
+     */
+    public String getPlayerLobby(String playerId) {
+        return playerLobbyMap.get(playerId);
+    }
+    
+    // Voting system
+    private final Map<String, VoteSession> activeVotes = new ConcurrentHashMap<>();
+    
+    /**
+     * Starts a vote to kick a player
+     */
+    public void startVote(String lobbyId, String playerToKick) {
+        System.out.println("Game Server: Starting vote to kick " + playerToKick + " in lobby " + lobbyId);
+        
+        // Get all players in the lobby for the vote
+        List<String> allPlayersInLobby = getPlayersInLobby(lobbyId);
+        Set<String> playersSet = new HashSet<>(allPlayersInLobby);
+        
+        System.out.println("Game Server: Players in lobby " + lobbyId + ": " + playersSet);
+        
+        // Create new vote session with all players
+        VoteSession voteSession = new VoteSession(lobbyId, playerToKick, playersSet);
+        activeVotes.put(lobbyId, voteSession);
+        
+        // Notify all players in the lobby about the vote
+        String voteStartMessage = "VOTE_START:" + lobbyId + ":" + playerToKick;
+        broadcastToLobby(lobbyId, voteStartMessage);
+        
+        System.out.println("Game Server: Vote started for " + playerToKick + " in lobby " + lobbyId + " - waiting for " + voteSession.getExpectedVotes() + " votes");
+    }
+    
+    /**
+     * Casts a vote in an active vote session
+     */
+    public void castVote(String lobbyId, String playerToKick, String voter, boolean voteYes) {
+        VoteSession voteSession = activeVotes.get(lobbyId);
+        if (voteSession != null && voteSession.getPlayerToKick().equals(playerToKick)) {
+            boolean voteAdded = voteSession.addVote(voter, voteYes);
+            if (voteAdded) {
+                System.out.println("Game Server: Vote cast by " + voter + " for " + playerToKick + ": " + (voteYes ? "YES" : "NO"));
+                
+                // Send vote update to all players
+                String voteUpdateMessage = "VOTE_UPDATE:" + lobbyId + ":" + voteSession.getTotalVotes() + ":" + voteSession.getYesVotes() + ":" + voteSession.getExpectedVotes();
+                broadcastToLobby(lobbyId, voteUpdateMessage);
+                
+                System.out.println("Game Server: Vote progress: " + voteSession.getTotalVotes() + "/" + voteSession.getExpectedVotes() + " votes received");
+                
+                // Check if vote should end (when everyone has voted)
+                if (voteSession.shouldEndVote()) {
+                    System.out.println("Game Server: All votes received, ending vote for " + playerToKick);
+                    endVote(lobbyId, playerToKick);
+                } else {
+                    // Show who still needs to vote
+                    Set<String> remainingVoters = voteSession.getRemainingVoters();
+                    System.out.println("Game Server: Still waiting for votes from: " + remainingVoters);
+                }
+            } else {
+                System.out.println("Game Server: " + voter + " already voted for " + playerToKick);
+                // Send error message to the voter
+                GameClientHandler voterHandler = getClientHandler(voter);
+                if (voterHandler != null) {
+                    voterHandler.sendMessage("VOTE_ERROR:You have already voted in this election");
+                }
+            }
+        } else {
+            System.out.println("Game Server: No active vote found for " + playerToKick + " in lobby " + lobbyId);
+            // Send error message to the voter
+            GameClientHandler voterHandler = getClientHandler(voter);
+            if (voterHandler != null) {
+                voterHandler.sendMessage("VOTE_ERROR:No active vote found");
+            }
+        }
+    }
+    
+    /**
+     * Ends a vote and processes the result
+     */
+    private void endVote(String lobbyId, String playerToKick) {
+        VoteSession voteSession = activeVotes.get(lobbyId);
+        if (voteSession != null) {
+            boolean playerKicked = voteSession.getYesVotes() >= (voteSession.getTotalVotes() / 2.0);
+            
+            System.out.println("Game Server: Vote ended for " + playerToKick + " - Result: " + (playerKicked ? "KICKED" : "KEPT"));
+            
+            // Send vote end message to all players
+            String voteEndMessage = "VOTE_END:" + lobbyId + ":" + playerKicked + ":" + playerToKick;
+            broadcastToLobby(lobbyId, voteEndMessage);
+            
+            // If player is kicked, disconnect them
+            if (playerKicked) {
+                GameClientHandler kickedPlayerHandler = getClientHandler(playerToKick);
+                if (kickedPlayerHandler != null) {
+                    System.out.println("Game Server: Kicking " + playerToKick + " from the game");
+                    kickedPlayerHandler.sendMessage("PLAYER_KICKED:" + playerToKick);
+                    // The client will handle disconnection when it receives this message
+                }
+            }
+            
+            // Remove the vote session
+            activeVotes.remove(lobbyId);
+        }
+    }
+}
+
+/**
+ * Represents a voting session for kicking a player
+ */
+class VoteSession {
+    private final String lobbyId;
+    private final String playerToKick;
+    private final Set<String> voters = new HashSet<>();
+    private final Set<String> allPlayersInLobby; // Track all players who should vote
+    private int yesVotes = 0;
+    private int noVotes = 0;
+    
+    public VoteSession(String lobbyId, String playerToKick, Set<String> allPlayersInLobby) {
+        this.lobbyId = lobbyId;
+        this.playerToKick = playerToKick;
+        this.allPlayersInLobby = new HashSet<>(allPlayersInLobby);
+        // Remove the player being voted on from the voting pool
+        this.allPlayersInLobby.remove(playerToKick);
+    }
+    
+    public String getPlayerToKick() {
+        return playerToKick;
+    }
+    
+    public boolean addVote(String voter, boolean voteYes) {
+        if (voters.contains(voter)) {
+            return false; // Already voted
+        }
+        
+        voters.add(voter);
+        if (voteYes) {
+            yesVotes++;
+        } else {
+            noVotes++;
+        }
+        
+        return true;
+    }
+    
+    public int getTotalVotes() {
+        return voters.size();
+    }
+    
+    public int getYesVotes() {
+        return yesVotes;
+    }
+    
+    public int getExpectedVotes() {
+        return allPlayersInLobby.size();
+    }
+    
+    public boolean shouldEndVote() {
+        // End vote when ALL players in the lobby have voted (except the player being voted on)
+        return voters.size() >= allPlayersInLobby.size();
+    }
+    
+    public Set<String> getRemainingVoters() {
+        Set<String> remaining = new HashSet<>(allPlayersInLobby);
+        remaining.removeAll(voters);
+        return remaining;
+    }
 }
 
 /**
@@ -238,6 +414,88 @@ class GameClientHandler implements Runnable {
                 server.broadcastToLobby(lobbyId, "GAME_CHAT:" + playerId + ":" + chatMessage);
             } else {
                 System.err.println("Game Server: Invalid GAME_CHAT message format: " + message);
+            }
+        } else if (message.startsWith("PRIVATE_CHAT:")) {
+            // Handle private chat messages
+            String[] parts = message.split(":", 4);
+            if (parts.length == 4) {
+                String lobbyId = parts[1];
+                String receiverName = parts[2];
+                String privateMessage = parts[3];
+                
+                System.out.println("Game Server: Processing private message from " + playerId + " to " + receiverName + " in lobby " + lobbyId + ": " + privateMessage);
+                
+                // Check if receiver is connected and in the same lobby
+                GameClientHandler receiverHandler = server.getClientHandler(receiverName);
+                if (receiverHandler != null && server.isClientConnected(receiverName)) {
+                    // Check if receiver is in the same lobby
+                    String receiverLobby = server.getPlayerLobby(receiverName);
+                    if (lobbyId.equals(receiverLobby)) {
+                        // Send private message to receiver
+                        String privateMessageToReceiver = "PRIVATE_CHAT:" + playerId + ":" + privateMessage;
+                        receiverHandler.sendMessage(privateMessageToReceiver);
+                        System.out.println("Game Server: Private message sent to " + receiverName);
+                        
+                        // Send confirmation to sender
+                        sendMessage("PRIVATE_CHAT_SENT:" + receiverName + ":" + privateMessage);
+                    } else {
+                        // Receiver is not in the same lobby
+                        sendMessage("PRIVATE_CHAT_ERROR:" + receiverName + " is not in the same lobby");
+                        System.err.println("Game Server: Private message failed - " + receiverName + " not in lobby " + lobbyId);
+                    }
+                } else {
+                    // Receiver is not connected
+                    sendMessage("PRIVATE_CHAT_ERROR:" + receiverName + " is not connected");
+                    System.err.println("Game Server: Private message failed - " + receiverName + " not connected");
+                }
+            } else {
+                System.err.println("Game Server: Invalid PRIVATE_CHAT message format: " + message);
+                sendMessage("PRIVATE_CHAT_ERROR:Invalid message format");
+            }
+        } else if (message.startsWith("INITIATE_VOTE:")) {
+            // Handle vote initiation
+            String[] parts = message.split(":", 3);
+            if (parts.length == 3) {
+                String lobbyId = parts[1];
+                String playerToKick = parts[2];
+                
+                System.out.println("Game Server: Vote initiated to kick " + playerToKick + " in lobby " + lobbyId);
+                
+                // Check if player to kick exists and is in the same lobby
+                if (server.isClientConnected(playerToKick)) {
+                    String playerLobby = server.getPlayerLobby(playerToKick);
+                    if (lobbyId.equals(playerLobby)) {
+                        // Start the vote
+                        server.startVote(lobbyId, playerToKick);
+                    } else {
+                        sendMessage("VOTE_ERROR:" + playerToKick + " is not in the same lobby");
+                    }
+                } else {
+                    sendMessage("VOTE_ERROR:" + playerToKick + " is not connected");
+                }
+            } else {
+                System.err.println("Game Server: Invalid INITIATE_VOTE message format: " + message);
+                sendMessage("VOTE_ERROR:Invalid message format");
+            }
+        } else if (message.startsWith("VOTE_YES:")) {
+            // Handle yes vote
+            String[] parts = message.split(":", 3);
+            if (parts.length == 3) {
+                String lobbyId = parts[1];
+                String playerToKick = parts[2];
+                
+                System.out.println("Game Server: " + playerId + " voted YES to kick " + playerToKick);
+                server.castVote(lobbyId, playerToKick, playerId, true);
+            }
+        } else if (message.startsWith("VOTE_NO:")) {
+            // Handle no vote
+            String[] parts = message.split(":", 3);
+            if (parts.length == 3) {
+                String lobbyId = parts[1];
+                String playerToKick = parts[2];
+                
+                System.out.println("Game Server: " + playerId + " voted NO to kick " + playerToKick);
+                server.castVote(lobbyId, playerToKick, playerId, false);
             }
         } else if (message.startsWith("PLAYER_LIST_REQUEST:")) {
             // Handle player list requests
