@@ -1,4 +1,4 @@
-package com.StardewValley.View;
+package com.StardewValley.servers;
 
 import java.io.BufferedReader;
 import java.io.IOException;
