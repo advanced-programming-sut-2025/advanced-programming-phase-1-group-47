@@ -23,4 +23,10 @@ public class InitPageController {
     public void exit(){
         Gdx.app.exit();
     }
+    
+    public void onLoginAsGuestClicked() {
+        // Create a guest user and go to game mode selection
+        // This allows guests to choose between singleplayer and multiplayer
+        Main.getMain().setScreen(new GameModeSelectionView(new GameModeSelectionController(), GameAssetManager.getGameAssetManager().getSkin()));
+    }
 }

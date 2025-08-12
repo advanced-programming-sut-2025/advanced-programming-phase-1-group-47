@@ -1,7 +1,13 @@
 package com.StardewValley.View;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Random;
 
@@ -10,16 +16,26 @@ import com.StardewValley.View.Helpers.EnergyHelper;
 import com.StardewValley.View.Helpers.InventoryDialog;
 import com.StardewValley.View.Helpers.WeatherRenderer;
 import com.StardewValley.controllers.GameMenuController;
-import com.StardewValley.model.*;
-
+import com.StardewValley.model.App;
 import static com.StardewValley.model.App.batch;
 import static com.StardewValley.model.App.camera;
 import static com.StardewValley.model.App.currentGame;
 import static com.StardewValley.model.App.isNpcTile;
 import static com.StardewValley.model.App.returnCurrentFarm;
 import static com.StardewValley.model.App.viewport;
+import com.StardewValley.model.Energy;
+import com.StardewValley.model.Game;
+import com.StardewValley.model.GameAssetManager;
 import static com.StardewValley.model.GameAssetManager.backgroundMusic;
-
+import com.StardewValley.model.Ground;
+import com.StardewValley.model.Map;
+import com.StardewValley.model.NPC;
+import com.StardewValley.model.Plant;
+import com.StardewValley.model.Player;
+import com.StardewValley.model.Point;
+import com.StardewValley.model.Shop;
+import com.StardewValley.model.Tile;
+import com.StardewValley.model.TimeAndDate;
 import com.StardewValley.model.buildings.Cottage;
 import com.StardewValley.model.buildings.greenHouse;
 import com.StardewValley.model.enums.TileType;
@@ -34,7 +50,6 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -42,14 +57,22 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextArea;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
@@ -93,6 +116,55 @@ public class GameScreen implements Screen {
     private Texture backgroundTexture;
     private Texture fillTexture;
     public static boolean isOutOfRealGame = false;
+    
+    // Multiplayer chat functionality
+    private boolean isMultiplayerMode = false;
+    private String playerNickname;
+    private String currentLobbyId;
+    private Socket gameSocket;
+    private PrintWriter gameOut;
+    private BufferedReader gameIn;
+    private Thread gameMessageThread;
+
+    
+    // Chat UI components
+    private Stage chatStage;
+    private Table chatTable;
+    private TextArea chatArea;
+    private TextField chatInputField;
+    private ScrollPane chatScrollPane;
+    private boolean isChatVisible = false;
+    private List<String> chatMessages;
+    private Label statusLabel;
+    
+    // Player list dialog components
+    private Dialog playerListDialog;
+    private boolean isPlayerListVisible = false;
+    
+    // Private chat components
+    private Stage privateChatStage;
+    private Table privateChatTable;
+    private TextArea privateChatArea;
+    private TextField privateChatInputField;
+    private ScrollPane privateChatScrollPane;
+    private boolean isPrivateChatVisible = false;
+    private List<String> privateChatMessages;
+    
+    // Voting system
+    private Stage votingStage;
+    private Table votingTable;
+    private TextField kickPlayerField;
+    private TextButton yesVoteButton;
+    private TextButton noVoteButton;
+    private TextButton initiateVoteButton;
+    private boolean isVotingVisible = false;
+    private boolean isVoteInProgress = false;
+    private String playerBeingVotedOn = null;
+    private boolean hasVoted = false;
+    private boolean votedYes = false;
+    private int totalVotes = 0;
+    private int yesVotes = 0;
+    
     public GameScreen() {
         camera = new OrthographicCamera();
         viewport = new FitViewport(800, 400, camera);
@@ -107,6 +179,1482 @@ public class GameScreen implements Screen {
         stateTime = 0f;
         energyHelper = new EnergyHelper();
         energyHelper.initEnergyBar(); // Initialize energy bar
+        
+        // Initialize chat system for multiplayer
+        initializeChatSystem();
+        
+        // Initialize private chat system
+        initializePrivateChatSystem();
+        
+        // Initialize voting system
+        initializeVotingSystem();
+    }
+    
+    /**
+     * Sets multiplayer information and enables chat functionality
+     */
+    public void setMultiplayerInfo(String nickname, String lobbyId) {
+        this.playerNickname = nickname;
+        this.currentLobbyId = lobbyId;
+        this.isMultiplayerMode = true;
+        
+        // Initialize the chat system
+        initializeChatSystem();
+        
+        // Connect to the game server on port 8081
+        connectToGameServer();
+    }
+    
+    /**
+     * Connects to the game server on port 8081
+     */
+    private void connectToGameServer() {
+        try {
+            System.out.println("GameScreen: Connecting to game server on port 8081...");
+            updateStatusLabel("Connecting to Game Server...", Color.YELLOW);
+            
+            // Connect to game server
+            gameSocket = new Socket("localhost", 8081);
+            gameOut = new PrintWriter(gameSocket.getOutputStream(), true);
+            gameIn = new BufferedReader(new InputStreamReader(gameSocket.getInputStream()));
+            
+            System.out.println("GameScreen: Connected to game server successfully");
+            updateStatusLabel("Connected to Game Server", Color.GREEN);
+            
+            // Send identification to game server
+            String identificationMessage = "GAME_CLIENT:" + playerNickname + ":" + currentLobbyId;
+            System.out.println("GameScreen: Sending identification to game server: " + identificationMessage);
+            gameOut.println(identificationMessage);
+            gameOut.flush();
+            
+            // Start listening for messages from game server
+            startGameMessageListener();
+            
+            addChatMessage("System", "Connected to game server - chat functionality enabled!");
+            
+        } catch (IOException e) {
+            System.err.println("GameScreen: Failed to connect to game server: " + e.getMessage());
+            e.printStackTrace();
+            updateStatusLabel("Game Server Connection Failed", Color.RED);
+            addChatMessage("System", "Failed to connect to game server: " + e.getMessage());
+        }
+    }
+    
+
+    
+    /**
+     * Initializes the chat system UI components
+     */
+    private void initializeChatSystem() {
+        // Initialize player list dialog
+        initializePlayerListDialog();
+        
+        chatMessages = new ArrayList<>();
+        chatStage = new Stage();
+        
+        // Create chat table
+        chatTable = new Table();
+        chatTable.setVisible(false); // Hidden by default
+        
+        // Chat area
+        chatArea = new TextArea("", skin);
+        chatArea.setDisabled(false); // Enable the chat area so it can display text
+        chatArea.setPrefRows(8); // Set preferred number of rows
+        
+        chatScrollPane = new ScrollPane(chatArea, skin);
+        chatScrollPane.setFadeScrollBars(false); // Always show scroll bars
+        chatScrollPane.setScrollBarPositions(false, true); // Show scroll bars on right and bottom
+        chatTable.add(chatScrollPane).width(300).height(200).row();
+        
+        // Add player list button
+        TextButton playerListButton = new TextButton("Players", skin);
+        playerListButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                togglePlayerList();
+            }
+        });
+        chatTable.add(playerListButton).width(100).height(30);
+        
+        // Add exit button
+        TextButton exitButton = new TextButton("Exit", skin);
+        exitButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                toggleChat();
+            }
+        });
+        chatTable.add(exitButton).width(80).height(30).row();
+        
+        // Add initial message to show chat is working
+        // Initialize chat messages list if it's null
+        if (chatMessages == null) {
+            chatMessages = new ArrayList<>();
+        }
+        addChatMessage("System", "Chat ready. Press C to toggle, P for players, V for private chat, Enter to send, or click Exit to close.");
+        
+        // Chat input field
+        chatInputField = new TextField("", skin);
+        chatInputField.setMessageText("Type a message... (Press C to toggle chat, Enter to send)");
+        
+        // Add listener for Enter key to send message
+        chatInputField.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                // This will be called when Enter is pressed
+                if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
+                    sendChatMessage();
+                }
+            }
+        });
+        
+        // Also add a key listener to handle Enter key properly
+        chatInputField.addListener(new InputListener() {
+            @Override
+            public boolean keyDown(InputEvent event, int keycode) {
+                if (keycode == Input.Keys.ENTER) {
+                    sendChatMessage();
+                    return true;
+                }
+                return false;
+            }
+        });
+        
+        // Add focus listener to ensure proper input handling
+        chatInputField.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                // When chat input field gains focus, ensure it can receive all keyboard input
+                if (chatInputField.hasKeyboardFocus()) {
+                    // The field is now focused and ready to receive input
+                }
+            }
+        });
+        
+        chatTable.add(chatInputField).width(300).row();
+        
+        // Send button
+        TextButton sendButton = new TextButton("Send", skin);
+        sendButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                sendChatMessage();
+            }
+        });
+        chatTable.add(sendButton).width(80);
+        
+        // Test button to add sample messages (for debugging)
+        TextButton testButton = new TextButton("Test", skin);
+        testButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                addChatMessage("TestPlayer", "This is a test message from another player");
+                addChatMessage("System", "Testing chat functionality");
+            }
+        });
+        chatTable.add(testButton).width(60);
+        
+        // Test connection button to verify server communication
+        TextButton testConnButton = new TextButton("TestConn", skin);
+        testConnButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                testServerConnection();
+            }
+        });
+        chatTable.add(testConnButton).width(60);
+        
+        // Test broadcast button to verify message broadcasting
+        TextButton testBroadcastButton = new TextButton("TestBroad", skin);
+        testBroadcastButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                testMessageBroadcast();
+            }
+        });
+        chatTable.add(testBroadcastButton).width(60);
+        
+        // Clear chat button to help manage cluttered chat
+        TextButton clearButton = new TextButton("Clear", skin);
+        clearButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                clearChat();
+            }
+        });
+        chatTable.add(clearButton).width(60);
+        
+        // Debug button to show current chat state
+        TextButton debugButton = new TextButton("Debug", skin);
+        debugButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                showChatDebugInfo();
+            }
+        });
+        chatTable.add(debugButton).width(60);
+        
+        // Status indicator to show connection state
+        statusLabel = new Label("Disconnected", skin);
+        statusLabel.setColor(Color.RED);
+        chatTable.add(statusLabel).width(120).row();
+        
+        // Add a row for status information
+        chatTable.row();
+        
+        // Position chat at top-right corner
+        chatTable.setPosition(Gdx.graphics.getWidth() - 320, Gdx.graphics.getHeight() - 250);
+        chatStage.addActor(chatTable);
+        
+        // Now that chatStage is ready, add the player list dialog to it
+        if (playerListDialog != null) {
+            chatStage.addActor(playerListDialog);
+        }
+        
+        // Initialize private chat system
+        initializePrivateChatSystem();
+    }
+    
+    /**
+     * Initializes the private chat system UI components
+     */
+    private void initializePrivateChatSystem() {
+        privateChatMessages = new ArrayList<>();
+        privateChatStage = new Stage();
+        
+        // Create private chat table
+        privateChatTable = new Table();
+        privateChatTable.setVisible(false); // Hidden by default
+        
+        // Private chat area
+        privateChatArea = new TextArea("", skin);
+        privateChatArea.setDisabled(false);
+        privateChatArea.setPrefRows(6); // Smaller than main chat
+        
+        privateChatScrollPane = new ScrollPane(privateChatArea, skin);
+        privateChatScrollPane.setFadeScrollBars(false);
+        privateChatScrollPane.setScrollBarPositions(false, false);
+        privateChatTable.add(privateChatScrollPane).width(220).height(120).row();
+        
+        // Add toggle button
+        TextButton togglePrivateButton = new TextButton("Private Chat", skin);
+        togglePrivateButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                togglePrivateChat();
+            }
+        });
+        privateChatTable.add(togglePrivateButton).width(100).height(25).row();
+        
+        // Private chat input field
+        privateChatInputField = new TextField("", skin);
+        privateChatInputField.setMessageText("Type: RECEIVERNAME_MESSAGE");
+        privateChatInputField.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
+                    sendPrivateMessage();
+                }
+            }
+        });
+        
+        // Add input listener for Enter key
+        privateChatInputField.addListener(new InputListener() {
+            @Override
+            public boolean keyDown(InputEvent event, int keycode) {
+                // Consume ALL key events when private chat is visible
+                if (isPrivateChatVisible) {
+                    if (keycode == Input.Keys.ENTER) {
+                        sendPrivateMessage();
+                        return true;
+                    }
+                    // Consume all other key events to prevent game input
+                    return true;
+                }
+                return false;
+            }
+            
+            @Override
+            public boolean keyUp(InputEvent event, int keycode) {
+                // Consume ALL key up events when private chat is visible
+                return isPrivateChatVisible;
+            }
+            
+            @Override
+            public boolean keyTyped(InputEvent event, char character) {
+                // Consume ALL key typed events when private chat is visible
+                return isPrivateChatVisible;
+            }
+            
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                // Ensure focus when clicked
+                if (isPrivateChatVisible) {
+                    privateChatStage.setKeyboardFocus(privateChatInputField);
+                    Gdx.input.setInputProcessor(privateChatStage);
+                    return true;
+                }
+                return false;
+            }
+        });
+        
+        privateChatTable.add(privateChatInputField).width(220).row();
+        
+        // Send button
+        TextButton sendButton = new TextButton("Send", skin);
+        sendButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                sendPrivateMessage();
+            }
+        });
+        privateChatTable.add(sendButton).width(100).height(25);
+        
+        // Close button
+        TextButton closeButton = new TextButton("Close", skin);
+        closeButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                togglePrivateChat();
+            }
+        });
+        privateChatTable.add(closeButton).width(100).height(25).row();
+        
+        // Position with better margins to fit on screen and be easily accessible
+        privateChatTable.setPosition(250, 300);
+        privateChatStage.addActor(privateChatTable);
+    }
+    
+    /**
+     * Initializes the voting system UI components
+     */
+    private void initializeVotingSystem() {
+        votingStage = new Stage();
+        votingTable = new Table();
+        votingTable.setVisible(false);
+        
+        // Title label
+        Label titleLabel = new Label("Vote to Kick Player", skin);
+        titleLabel.setFontScale(1.2f);
+        votingTable.add(titleLabel).colspan(2).row();
+        
+        // Player name input field (for initiating vote)
+        kickPlayerField = new TextField("", skin);
+        kickPlayerField.setMessageText("Enter player name to kick");
+        kickPlayerField.addListener(new InputListener() {
+            @Override
+            public boolean keyDown(InputEvent event, int keycode) {
+                if (keycode == Input.Keys.ENTER) {
+                    initiateVote();
+                    return true;
+                }
+                return isVotingVisible;
+            }
+            
+            @Override
+            public boolean keyUp(InputEvent event, int keycode) {
+                return isVotingVisible;
+            }
+            
+            @Override
+            public boolean keyTyped(InputEvent event, char character) {
+                return isVotingVisible;
+            }
+        });
+        votingTable.add(kickPlayerField).width(200).row();
+        
+        // Initiate vote button
+        initiateVoteButton = new TextButton("Initiate Vote", skin);
+        initiateVoteButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                initiateVote();
+            }
+        });
+        votingTable.add(initiateVoteButton).width(100).row();
+        
+        // Vote buttons (initially hidden)
+        yesVoteButton = new TextButton("Yes - Kick", skin);
+        yesVoteButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                voteYes();
+            }
+        });
+        yesVoteButton.setVisible(false); // Hide initially
+        votingTable.add(yesVoteButton).width(100).height(30);
+        
+        noVoteButton = new TextButton("No - Keep", skin);
+        noVoteButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                voteNo();
+            }
+        });
+        noVoteButton.setVisible(false); // Hide initially
+        votingTable.add(noVoteButton).width(100).height(30).row();
+        
+        // Close button
+        TextButton closeButton = new TextButton("Close", skin);
+        closeButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                toggleVoting();
+            }
+        });
+        votingTable.add(closeButton).width(100).height(25).row();
+        
+        // Position at middle right - accessible and centered vertically
+        votingTable.setPosition(400, 200);
+        votingStage.addActor(votingTable);
+    }
+    
+    /**
+     * Toggles the private chat visibility
+     */
+    private void togglePrivateChat() {
+        isPrivateChatVisible = !isPrivateChatVisible;
+        privateChatTable.setVisible(isPrivateChatVisible);
+        
+        if (isPrivateChatVisible) {
+            privateChatInputField.setText("");
+            // Force focus to private chat input field
+            Gdx.app.postRunnable(() -> {
+                privateChatStage.setKeyboardFocus(privateChatInputField);
+                // Ensure input processor is set to private chat stage
+                Gdx.input.setInputProcessor(privateChatStage);
+                System.out.println("GameScreen: Private chat opened - focus and input processor set");
+            });
+        } else {
+            privateChatStage.setKeyboardFocus(null);
+            // Restore game input processor when private chat is closed
+            Gdx.app.postRunnable(() -> {
+                InputAdapter gameInputProcessor = new InputAdapter() {
+                    @Override
+                    public boolean scrolled(float amountX, float amountY) {
+                        scrollDelta += amountY;
+                        return true;
+                    }
+                };
+                Gdx.input.setInputProcessor(gameInputProcessor);
+                System.out.println("GameScreen: Private chat closed - game input processor restored");
+            });
+        }
+    }
+    
+    /**
+     * Sends a private message using the RECEIVERNAME_MESSAGE format
+     */
+    private void sendPrivateMessage() {
+        if (!isMultiplayerMode) return;
+        
+        String input = privateChatInputField.getText().trim();
+        if (!input.isEmpty()) {
+            // Parse the RECEIVERNAME_MESSAGE format
+            int underscoreIndex = input.indexOf('_');
+            if (underscoreIndex > 0 && underscoreIndex < input.length() - 1) {
+                String receiverName = input.substring(0, underscoreIndex).trim();
+                String message = input.substring(underscoreIndex + 1).trim();
+                
+                if (!receiverName.isEmpty() && !message.isEmpty()) {
+                    // Send private message through game server
+                    if (gameOut != null) {
+                        String privateMessage = "PRIVATE_CHAT:" + currentLobbyId + ":" + receiverName + ":" + message;
+                        System.out.println("GameScreen: Sending private message to " + receiverName + ": [" + message + "]");
+                        gameOut.println(privateMessage);
+                        gameOut.flush();
+                        
+                        // Add to local private chat
+                        addPrivateChatMessage(playerNickname + " (to " + receiverName + ")", message);
+                        
+                        // Clear input field
+                        privateChatInputField.setText("");
+                        
+                        System.out.println("GameScreen: Private message sent successfully");
+                    } else {
+                        addPrivateChatMessage("System", "ERROR: Not connected to game server");
+                    }
+                } else {
+                    addPrivateChatMessage("System", "ERROR: Invalid format. Use: RECEIVERNAME_MESSAGE");
+                }
+            } else {
+                addPrivateChatMessage("System", "ERROR: Invalid format. Use: RECEIVERNAME_MESSAGE");
+            }
+        }
+    }
+    
+    /**
+     * Adds a message to the private chat area
+     */
+    private void addPrivateChatMessage(String sender, String message) {
+        // Truncate very long messages to prevent chat overflow
+        String truncatedMessage = message;
+        if (message.length() > 60) {
+            truncatedMessage = message.substring(0, 57) + "...";
+        }
+        
+        privateChatMessages.add(sender + ": " + truncatedMessage);
+        
+        // Keep only last 30 messages
+        if (privateChatMessages.size() > 30) {
+            privateChatMessages.remove(0);
+        }
+        
+        // Update private chat area
+        StringBuilder chatText = new StringBuilder();
+        for (String msg : privateChatMessages) {
+            chatText.append(msg).append("\n");
+        }
+        
+        // Ensure we're on the main thread when updating UI
+        Gdx.app.postRunnable(() -> {
+            try {
+                privateChatArea.setText(chatText.toString());
+                privateChatScrollPane.setScrollY(privateChatScrollPane.getMaxY());
+                privateChatArea.invalidate();
+                privateChatScrollPane.invalidate();
+            } catch (Exception e) {
+                System.err.println("GameScreen: Error updating private chat area: " + e.getMessage());
+            }
+        });
+    }
+    
+    /**
+     * Toggles the voting system visibility
+     */
+    private void toggleVoting() {
+        isVotingVisible = !isVotingVisible;
+        votingTable.setVisible(isVotingVisible);
+        
+        if (isVotingVisible) {
+            kickPlayerField.setText("");
+            // Reset voting state when opening
+            resetVotingUI();
+            // Force focus to voting input field
+            Gdx.app.postRunnable(() -> {
+                votingStage.setKeyboardFocus(kickPlayerField);
+                // Ensure input processor is set to voting stage
+                Gdx.input.setInputProcessor(votingStage);
+                System.out.println("GameScreen: Voting system opened - focus and input processor set");
+            });
+        } else {
+            votingStage.setKeyboardFocus(null);
+            // Restore game input processor when voting is closed
+            Gdx.app.postRunnable(() -> {
+                InputAdapter gameInputProcessor = new InputAdapter() {
+                    @Override
+                    public boolean scrolled(float amountX, float amountY) {
+                        scrollDelta += amountY;
+                        return true;
+                    }
+                };
+                Gdx.input.setInputProcessor(gameInputProcessor);
+                System.out.println("GameScreen: Voting system closed - game input processor restored");
+            });
+        }
+    }
+    
+    /**
+     * Initiates a vote to kick a player
+     */
+    private void initiateVote() {
+        if (!isMultiplayerMode) return;
+        
+        String playerName = kickPlayerField.getText().trim();
+        if (!playerName.isEmpty()) {
+            if (gameOut != null) {
+                String voteMessage = "INITIATE_VOTE:" + currentLobbyId + ":" + playerName;
+                System.out.println("GameScreen: Initiating vote to kick " + playerName);
+                gameOut.println(voteMessage);
+                gameOut.flush();
+                
+                // Clear input field
+                kickPlayerField.setText("");
+                
+                addChatMessage("System", "Vote initiated to kick " + playerName);
+            } else {
+                addChatMessage("System", "ERROR: Not connected to game server");
+            }
+        } else {
+            addChatMessage("System", "ERROR: Please enter a player name");
+        }
+    }
+    
+    /**
+     * Votes yes to kick the player
+     */
+    private void voteYes() {
+        if (!isMultiplayerMode || !isVoteInProgress || hasVoted) return;
+        
+        if (gameOut != null) {
+            String voteMessage = "VOTE_YES:" + currentLobbyId + ":" + playerBeingVotedOn;
+            System.out.println("GameScreen: Voting YES to kick " + playerBeingVotedOn);
+            gameOut.println(voteMessage);
+            gameOut.flush();
+            
+            hasVoted = true;
+            votedYes = true;
+            addChatMessage("System", "You voted YES to kick " + playerBeingVotedOn);
+        }
+    }
+    
+    /**
+     * Votes no to kick the player
+     */
+    private void voteNo() {
+        if (!isMultiplayerMode || !isVoteInProgress || hasVoted) return;
+        
+        if (gameOut != null) {
+            String voteMessage = "VOTE_NO:" + currentLobbyId + ":" + playerBeingVotedOn;
+            System.out.println("GameScreen: Voting NO to kick " + playerBeingVotedOn);
+            gameOut.println(voteMessage);
+            gameOut.flush();
+            
+            hasVoted = true;
+            votedYes = false;
+            addChatMessage("System", "You voted NO to kick " + playerBeingVotedOn);
+        }
+    }
+    
+    /**
+     * Updates the voting UI when a vote is in progress
+     */
+    private void updateVotingUI(String playerName) {
+        playerBeingVotedOn = playerName;
+        isVoteInProgress = true;
+        hasVoted = false;
+        votedYes = false;
+        
+        // Show vote buttons and hide initiate button
+        if (yesVoteButton != null && noVoteButton != null && initiateVoteButton != null) {
+            yesVoteButton.setVisible(true);
+            noVoteButton.setVisible(true);
+            initiateVoteButton.setVisible(false);
+            
+            System.out.println("GameScreen: Vote UI updated - vote buttons shown, initiate button hidden");
+        }
+        
+        addChatMessage("System", "Vote started to kick " + playerName + " - Please vote!");
+    }
+    
+    /**
+     * Handles the end of a vote
+     */
+    private void handleVoteEnd(boolean playerKicked, String kickedPlayer) {
+        isVoteInProgress = false;
+        hasVoted = false;
+        votedYes = false;
+        playerBeingVotedOn = null;
+        
+        // Reset UI - hide vote buttons and show initiate button
+        if (yesVoteButton != null && noVoteButton != null && initiateVoteButton != null) {
+            yesVoteButton.setVisible(false);
+            noVoteButton.setVisible(false);
+            initiateVoteButton.setVisible(true);
+            
+            System.out.println("GameScreen: Vote UI reset - vote buttons hidden, initiate button shown");
+        }
+        
+        if (playerKicked) {
+            addChatMessage("System", "Vote passed! " + kickedPlayer + " has been kicked from the game.");
+            // If this player was kicked, return to main menu
+            if (kickedPlayer.equals(playerNickname)) {
+                Gdx.app.postRunnable(() -> {
+                    // For now, just close the game when kicked
+                    Gdx.app.exit();
+                });
+            }
+        } else {
+            addChatMessage("System", "Vote failed! " + kickedPlayer + " will remain in the game.");
+        }
+    }
+    
+    /**
+     * Resets the voting UI to initial state
+     */
+    private void resetVotingUI() {
+        isVoteInProgress = false;
+        hasVoted = false;
+        votedYes = false;
+        playerBeingVotedOn = null;
+        
+        // Reset UI - hide vote buttons and show initiate button
+        if (yesVoteButton != null && noVoteButton != null && initiateVoteButton != null) {
+            yesVoteButton.setVisible(false);
+            noVoteButton.setVisible(false);
+            initiateVoteButton.setVisible(true);
+            
+            System.out.println("GameScreen: Voting UI reset to initial state");
+        }
+    }
+    
+    /**
+     * Initializes the player list dialog
+     */
+    private void initializePlayerListDialog() {
+        playerListDialog = new Dialog("Connected Players", skin);
+        playerListDialog.setModal(false);
+        playerListDialog.setMovable(true);
+        playerListDialog.setResizable(false);
+        
+        // Set dialog size and position
+        playerListDialog.setSize(250, 200);
+        playerListDialog.setPosition(Gdx.graphics.getWidth() / 2 - 125, Gdx.graphics.getHeight() / 2 - 100);
+        
+        // Add close button
+        TextButton closeButton = new TextButton("Close", skin);
+        closeButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                hidePlayerList();
+            }
+        });
+        
+        // Add close button to dialog
+        playerListDialog.button(closeButton);
+        
+        // Initially hide the dialog
+        playerListDialog.setVisible(false);
+        
+        // Don't add to chatStage here - it will be added later when chatStage is ready
+    }
+    
+    /**
+     * Toggles the player list dialog visibility
+     */
+    private void togglePlayerList() {
+        if (isPlayerListVisible) {
+            hidePlayerList();
+        } else {
+            showPlayerList();
+        }
+    }
+    
+    /**
+     * Shows the player list dialog with current connected players
+     */
+    private void showPlayerList() {
+        if (playerListDialog != null) {
+            // Ensure the dialog is added to the chat stage if it wasn't before
+            if (chatStage != null && !chatStage.getActors().contains(playerListDialog, true)) {
+                chatStage.addActor(playerListDialog);
+                System.out.println("GameScreen: Player list dialog added to chat stage");
+            }
+            
+            // Clear previous content
+            playerListDialog.clearChildren();
+            
+            // Add title
+            Label titleLabel = new Label("Connected Players", skin);
+            titleLabel.setFontScale(1.2f);
+            playerListDialog.add(titleLabel).row();
+            
+            // Add close button
+            TextButton closeButton = new TextButton("Close", skin);
+            closeButton.addListener(new ChangeListener() {
+                @Override
+                public void changed(ChangeEvent event, Actor actor) {
+                    hidePlayerList();
+                }
+            });
+            
+            // Get connected players from the game server
+            if (isMultiplayerMode && gameSocket != null && !gameSocket.isClosed()) {
+                // Request player list from server
+                requestPlayerList();
+                
+                // Add a temporary message while waiting for server response
+                Label tempLabel = new Label("Requesting player list...", skin);
+                playerListDialog.add(tempLabel).row();
+            } else {
+                Label noConnectionLabel = new Label("Not connected to game server", skin);
+                playerListDialog.add(noConnectionLabel).row();
+            }
+            
+            playerListDialog.add(closeButton).width(80).height(30).row();
+            
+            // Show the dialog
+            playerListDialog.setVisible(true);
+            isPlayerListVisible = true;
+            
+            System.out.println("GameScreen: Player list dialog shown");
+        }
+    }
+    
+    /**
+     * Hides the player list dialog
+     */
+    private void hidePlayerList() {
+        if (playerListDialog != null) {
+            playerListDialog.setVisible(false);
+            isPlayerListVisible = false;
+            System.out.println("GameScreen: Player list dialog hidden");
+        }
+    }
+    
+    /**
+     * Requests the current player list from the game server
+     */
+    private void requestPlayerList() {
+        if (gameOut != null) {
+            try {
+                String requestMessage = "PLAYER_LIST_REQUEST:" + currentLobbyId;
+                System.out.println("GameScreen: Requesting player list: " + requestMessage);
+                gameOut.println(requestMessage);
+                gameOut.flush();
+            } catch (Exception e) {
+                System.err.println("GameScreen: Error requesting player list: " + e.getMessage());
+            }
+        }
+    }
+    
+    /**
+     * Updates the player list dialog with received player information
+     */
+    public void updatePlayerList(String[] playerNames) {
+        if (playerListDialog != null && isPlayerListVisible) {
+            // Ensure the dialog is added to the chat stage if it wasn't before
+            if (chatStage != null && !chatStage.getActors().contains(playerListDialog, true)) {
+                chatStage.addActor(playerListDialog);
+                System.out.println("GameScreen: Player list dialog added to chat stage during update");
+            }
+            
+            // Clear previous content
+            playerListDialog.clearChildren();
+            
+            // Add title
+            Label titleLabel = new Label("Connected Players", skin);
+            titleLabel.setFontScale(1.2f);
+            playerListDialog.add(titleLabel).row();
+            
+            // Add player names
+            if (playerNames != null && playerNames.length > 0) {
+                for (String playerName : playerNames) {
+                    Label playerLabel = new Label("• " + playerName, skin);
+                    playerLabel.setColor(Color.WHITE);
+                    playerListDialog.add(playerLabel).row();
+                }
+            } else {
+                Label noPlayersLabel = new Label("No players connected", skin);
+                noPlayersLabel.setColor(Color.GRAY);
+                playerListDialog.add(noPlayersLabel).row();
+            }
+            
+            // Add close button
+            TextButton closeButton = new TextButton("Close", skin);
+            closeButton.addListener(new ChangeListener() {
+                @Override
+                public void changed(ChangeEvent event, Actor actor) {
+                    hidePlayerList();
+                }
+            });
+            playerListDialog.add(closeButton).width(80).height(30).row();
+        }
+    }
+    
+    /**
+     * Connects to the multiplayer game server
+     */
+    private void connectToMultiplayerGame() {
+        try {
+            System.out.println("GameScreen: Attempting to connect to multiplayer server...");
+            updateStatusLabel("Connecting...", Color.YELLOW);
+            
+            // Check if server is reachable first
+            if (!isServerReachable()) {
+                updateStatusLabel("Server Unreachable", Color.RED);
+                addChatMessage("System", "Server is not reachable. Make sure the multiplayer server is running on localhost:8080");
+                return;
+            }
+            
+            gameSocket = new Socket("localhost", 8080);
+            gameOut = new PrintWriter(gameSocket.getOutputStream(), true);
+            gameIn = new BufferedReader(new InputStreamReader(gameSocket.getInputStream()));
+            
+            System.out.println("GameScreen: Connected to server successfully");
+            updateStatusLabel("Connected", Color.GREEN);
+            
+            // Send game client identification
+            String identificationMessage = "GAME_CLIENT:" + playerNickname + ":" + currentLobbyId;
+            System.out.println("GameScreen: Sending identification: " + identificationMessage);
+            gameOut.println(identificationMessage);
+            gameOut.flush(); // Ensure message is sent immediately
+            
+            // Add a small delay to ensure server processes the identification
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                // Ignore interruption
+            }
+            
+            // Start message listener thread
+            startGameMessageListener();
+            
+            // Add connection success message to chat
+            addChatMessage("System", "Connected to multiplayer server");
+            
+            // Start a heartbeat thread to keep connection alive
+            startHeartbeatThread();
+            
+        } catch (IOException e) {
+            System.err.println("GameScreen: Failed to connect to multiplayer game server: " + e.getMessage());
+            e.printStackTrace();
+            updateStatusLabel("Connection Failed", Color.RED);
+            addChatMessage("System", "Failed to connect to server: " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println("GameScreen: Unexpected error during connection: " + e.getMessage());
+            e.printStackTrace();
+            updateStatusLabel("Connection Error", Color.RED);
+            addChatMessage("System", "Connection error: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * Starts the message listener thread for multiplayer communication
+     */
+    private void startGameMessageListener() {
+        gameMessageThread = new Thread(() -> {
+            System.out.println("GameScreen: Message listener thread started");
+            try {
+                String message;
+                while (gameSocket != null && !gameSocket.isClosed() && (message = gameIn.readLine()) != null) {
+                    final String finalMessage = message;
+                    System.out.println("GameScreen: Raw message received: [" + finalMessage + "]");
+                    System.out.println("GameScreen: Message length: " + finalMessage.length());
+                    System.out.println("GameScreen: Message starts with: " + (finalMessage.length() > 0 ? finalMessage.substring(0, Math.min(10, finalMessage.length())) : "empty"));
+                    
+                    // Process message immediately to avoid delays
+                    Gdx.app.postRunnable(() -> {
+                        try {
+                            handleGameMessage(finalMessage);
+                        } catch (Exception e) {
+                            System.err.println("GameScreen: Error in handleGameMessage: " + e.getMessage());
+                            e.printStackTrace();
+                        }
+                    });
+                }
+            } catch (IOException e) {
+                if (gameSocket != null && !gameSocket.isClosed()) {
+                    System.err.println("Game message listener error: " + e.getMessage());
+                    e.printStackTrace();
+                }
+            } catch (Exception e) {
+                System.err.println("Game message listener unexpected error: " + e.getMessage());
+                e.printStackTrace();
+            }
+            System.out.println("GameScreen: Message listener thread ended");
+        });
+        gameMessageThread.setDaemon(true);
+        gameMessageThread.start();
+    }
+    
+    /**
+     * Handles incoming game messages
+     */
+    private void handleGameMessage(String message) {
+        System.out.println("GameScreen: Processing message: [" + message + "]");
+        
+        // Filter out unwanted server messages that clutter the chat
+        if (message.contains("server has been initialized") || 
+            message.contains("Server has been initialized") ||
+            message.contains("SERVER HAS BEEN INITIALIZED")) {
+            System.out.println("GameScreen: Filtering out server initialization message");
+            return;
+        }
+        
+        // Handle different chat message formats
+        if (message.startsWith("GAME_CHAT:")) {
+            String[] parts = message.split(":", 3);
+            if (parts.length == 3) {
+                String playerId = parts[1];
+                String chatMessage = parts[2];
+                System.out.println("GameScreen: Processing GAME_CHAT message from " + playerId + ": " + chatMessage);
+                addChatMessage(playerId, chatMessage);
+            } else {
+                System.out.println("GameScreen: Invalid GAME_CHAT format, expected 3 parts, got " + parts.length);
+            }
+        } else if (message.startsWith("CHAT:")) {
+            // Alternative chat message format
+            String[] parts = message.split(":", 4);
+            if (parts.length == 4) {
+                String playerName = parts[1];
+                String lobbyId = parts[2];
+                String chatMessage = parts[3];
+                System.out.println("GameScreen: Processing CHAT message from " + playerName + ": " + chatMessage);
+                addChatMessage(playerName, chatMessage);
+            } else {
+                System.out.println("GameScreen: Invalid CHAT format, expected 4 parts, got " + parts.length);
+            }
+        } else if (message.startsWith("PLAYER_JOINED:")) {
+            // Handle player joined notification
+            String playerName = message.substring(14);
+            System.out.println("GameScreen: Player joined: " + playerName);
+            addChatMessage("System", playerName + " joined the game");
+        } else if (message.startsWith("PLAYER_LEFT:")) {
+            // Handle player left notification
+            String playerName = message.substring(12);
+            System.out.println("GameScreen: Player left: " + playerName);
+            addChatMessage("System", playerName + " left the game");
+        } else if (message.startsWith("INFO:")) {
+            // Handle info messages, but filter out long system messages
+            String infoMsg = message.substring(5);
+            if (infoMsg.length() > 100) {
+                System.out.println("GameScreen: Filtering out long info message: " + infoMsg.substring(0, 50) + "...");
+                return;
+            }
+            System.out.println("GameScreen: Info message: " + infoMsg);
+            addChatMessage("System", infoMsg);
+        } else if (message.startsWith("ECHO:")) {
+            // Handle echo messages (server responses)
+            String echoMsg = message.substring(5);
+            System.out.println("GameScreen: Echo message: " + echoMsg);
+            // Don't add echo messages to chat to avoid spam
+        } else if (message.startsWith("PONG")) {
+            // Handle pong messages (server responses)
+            System.out.println("GameScreen: Pong received");
+            // Don't add pong messages to chat
+        } else if (message.startsWith("PLAYER_LIST_RESPONSE:")) {
+            // Handle player list response from server
+            String[] parts = message.split(":", 2);
+            if (parts.length == 2) {
+                String playerListString = parts[1];
+                if (!playerListString.isEmpty()) {
+                    String[] playerNames = playerListString.split(",");
+                    updatePlayerList(playerNames);
+                } else {
+                    updatePlayerList(new String[0]);
+                }
+            }
+        } else if (message.startsWith("PRIVATE_CHAT:")) {
+            // Handle private chat message from another player
+            String[] parts = message.split(":", 3);
+            if (parts.length == 3) {
+                String sender = parts[1];
+                String chatMessage = parts[2];
+                System.out.println("GameScreen: Processing private message from " + sender + ": " + chatMessage);
+                
+                // Add to private chat area
+                addPrivateChatMessage(sender + " (private)", chatMessage);
+                
+                // Also add to main chat for visibility
+                addChatMessage(sender + " (private)", chatMessage);
+            } else {
+                System.out.println("GameScreen: Invalid PRIVATE_CHAT format, expected 3 parts, got " + parts.length);
+            }
+        } else if (message.startsWith("PRIVATE_CHAT_SENT:")) {
+            // Handle confirmation that private message was sent
+            String[] parts = message.split(":", 3);
+            if (parts.length == 3) {
+                String recipient = parts[1];
+                String chatMessage = parts[2];
+                System.out.println("GameScreen: Private message sent to " + recipient + ": " + chatMessage);
+                addPrivateChatMessage("System", "Private message sent to " + recipient);
+            }
+        } else if (message.startsWith("PRIVATE_CHAT_ERROR:")) {
+            // Handle private message error
+            String[] parts = message.split(":", 3);
+            if (parts.length == 3) {
+                String recipient = parts[1];
+                String errorMsg = parts[2];
+                System.out.println("GameScreen: Private message error to " + recipient + ": " + errorMsg);
+                addPrivateChatMessage("System", "Error: " + errorMsg);
+            }
+        } else if (message.startsWith("VOTE_START:")) {
+            // Handle vote start message
+            String[] parts = message.split(":", 3);
+            if (parts.length == 3) {
+                String lobbyId = parts[1];
+                String playerName = parts[2];
+                System.out.println("GameScreen: Vote started to kick " + playerName);
+                updateVotingUI(playerName);
+                addChatMessage("System", "Vote started to kick " + playerName + " - Please vote!");
+            }
+        } else if (message.startsWith("VOTE_UPDATE:")) {
+            // Handle vote update message
+            String[] parts = message.split(":", 5);
+            if (parts.length == 5) {
+                String lobbyId = parts[1];
+                int totalVotes = Integer.parseInt(parts[2]);
+                int yesVotes = Integer.parseInt(parts[3]);
+                int expectedVotes = Integer.parseInt(parts[4]);
+                System.out.println("GameScreen: Vote update - Total: " + totalVotes + ", Yes: " + yesVotes + ", Expected: " + expectedVotes);
+                this.totalVotes = totalVotes;
+                this.yesVotes = yesVotes;
+                addChatMessage("System", "Vote progress: " + yesVotes + "/" + expectedVotes + " voted YES (" + totalVotes + "/" + expectedVotes + " total votes)");
+            }
+        } else if (message.startsWith("VOTE_END:")) {
+            // Handle vote end message
+            String[] parts = message.split(":", 4);
+            if (parts.length == 4) {
+                String lobbyId = parts[1];
+                boolean playerKicked = Boolean.parseBoolean(parts[2]);
+                String kickedPlayer = parts[3];
+                System.out.println("GameScreen: Vote ended - Player kicked: " + playerKicked + ", Player: " + kickedPlayer);
+                handleVoteEnd(playerKicked, kickedPlayer);
+            }
+        } else if (message.startsWith("VOTE_ERROR:")) {
+            // Handle vote error message
+            String errorMsg = message.substring(11);
+            System.out.println("GameScreen: Vote error: " + errorMsg);
+            addChatMessage("System", "Vote Error: " + errorMsg);
+        } else if (message.startsWith("PLAYER_KICKED:")) {
+            // Handle player kicked message
+            String[] parts = message.split(":", 2);
+            if (parts.length == 2) {
+                String kickedPlayer = parts[1];
+                System.out.println("GameScreen: Player kicked: " + kickedPlayer);
+                
+                if (kickedPlayer.equals(playerNickname)) {
+                    // This player was kicked - return to main menu
+                    addChatMessage("System", "You have been kicked from the game!");
+                    Gdx.app.postRunnable(() -> {
+                        // Return to main menu
+                        // Note: You'll need to implement the proper way to return to main menu
+                        // For now, just close the game
+                        Gdx.app.exit();
+                    });
+                } else {
+                    addChatMessage("System", kickedPlayer + " has been kicked from the game!");
+                }
+            }
+        } else if (message.startsWith("Welcome")) {
+            // Handle welcome messages
+            System.out.println("GameScreen: Welcome message: " + message);
+            // Don't add welcome messages to chat
+        } else if (message.contains("connected to the server")) {
+            // Handle connection messages
+            System.out.println("GameScreen: Connection message: " + message);
+            // Don't add connection messages to chat
+        } else {
+            // Check if this might be a chat message in a different format
+            if (message.contains(":") && message.length() < 150) {
+                // This might be a simple chat message format like "PlayerName: Message"
+                String[] parts = message.split(":", 2);
+                if (parts.length == 2) {
+                    String playerName = parts[0].trim();
+                    String chatMessage = parts[1].trim();
+                    if (!playerName.isEmpty() && !chatMessage.isEmpty()) {
+                        System.out.println("GameScreen: Processing simple chat message from " + playerName + ": " + chatMessage);
+                        addChatMessage(playerName, chatMessage);
+                        return;
+                    }
+                }
+            }
+            
+            // Filter out other long or unwanted messages
+            if (message.length() > 150 || 
+                message.toLowerCase().contains("initialized") ||
+                message.toLowerCase().contains("server") ||
+                message.toLowerCase().contains("started")) {
+                System.out.println("GameScreen: Filtering out unwanted message: " + message.substring(0, Math.min(50, message.length())) + "...");
+                return;
+            }
+            
+            // Log unknown message format for debugging
+            System.out.println("GameScreen: Unknown message format: " + message);
+            System.out.println("GameScreen: Message length: " + message.length());
+            System.out.println("GameScreen: Message contains colon: " + message.contains(":"));
+        }
+    }
+    
+    /**
+     * Toggles the chat visibility
+     */
+    private void toggleChat() {
+        isChatVisible = !isChatVisible;
+        chatTable.setVisible(isChatVisible);
+        
+        if (isChatVisible) {
+            chatInputField.setText("");
+            chatStage.setKeyboardFocus(chatInputField);
+            
+            // Refresh the chat display to ensure all messages are visible
+            refreshChatDisplay();
+            
+            // Ensure the chat input field gets focus and can receive keyboard input
+            Gdx.app.postRunnable(() -> {
+                chatInputField.setCursorPosition(chatInputField.getText().length());
+                chatInputField.selectAll();
+            });
+        } else {
+            // When hiding chat, clear focus to return to game input
+            chatStage.setKeyboardFocus(null);
+        }
+    }
+    
+    /**
+     * Refreshes the chat display to ensure all messages are visible
+     */
+    private void refreshChatDisplay() {
+        if (chatMessages != null && !chatMessages.isEmpty()) {
+            StringBuilder chatText = new StringBuilder();
+            for (String msg : chatMessages) {
+                chatText.append(msg).append("\n");
+            }
+            
+            Gdx.app.postRunnable(() -> {
+                try {
+                    chatArea.setText(chatText.toString());
+                    chatScrollPane.setScrollY(chatScrollPane.getMaxY());
+                    chatArea.invalidate();
+                    chatScrollPane.invalidate();
+                    System.out.println("GameScreen: Chat display refreshed with " + chatMessages.size() + " messages");
+                } catch (Exception e) {
+                    System.err.println("GameScreen: Error refreshing chat display: " + e.getMessage());
+                }
+            });
+        }
+    }
+    
+    /**
+     * Clears the chat to remove all messages
+     */
+    private void clearChat() {
+        if (chatMessages != null) {
+            chatMessages.clear();
+            addChatMessage("System", "Chat cleared.");
+            System.out.println("GameScreen: Chat cleared by user");
+        }
+    }
+    
+    /**
+     * Tests the server connection by sending a test message
+     */
+    private void testServerConnection() {
+        if (gameOut != null && gameSocket != null && !gameSocket.isClosed()) {
+            try {
+                String testMessage = "TEST_CONNECTION:" + playerNickname + ":" + currentLobbyId;
+                System.out.println("GameScreen: Sending test connection message: " + testMessage);
+                gameOut.println(testMessage);
+                gameOut.flush();
+                addChatMessage("System", "Test message sent to server");
+            } catch (Exception e) {
+                System.err.println("GameScreen: Error sending test message: " + e.getMessage());
+                addChatMessage("System", "Error sending test message: " + e.getMessage());
+            }
+        } else {
+            addChatMessage("System", "Not connected to server");
+            // Try to reconnect if not connected
+            if (isMultiplayerMode) {
+                addChatMessage("System", "Attempting to reconnect...");
+                connectToMultiplayerGame();
+            }
+        }
+    }
+    
+    /**
+     * Tests message broadcasting by sending a test chat message
+     */
+    private void testMessageBroadcast() {
+        if (gameOut != null && gameSocket != null && !gameSocket.isClosed()) {
+            try {
+                String testMessage = "GAME_CHAT:" + playerNickname + ":" + currentLobbyId + ":TEST_BROADCAST_MESSAGE";
+                System.out.println("GameScreen: Sending test broadcast message: [" + testMessage + "]");
+                gameOut.println(testMessage);
+                gameOut.flush();
+                addChatMessage("System", "Test broadcast message sent to server");
+                
+                        // Also send a simple test message
+        String simpleTest = "TEST:" + playerNickname + ":Hello from " + playerNickname;
+        System.out.println("GameScreen: Sending simple test message: [" + simpleTest + "]");
+        gameOut.println(simpleTest);
+        gameOut.flush();
+        
+        // Send a message in the simple format that servers often expect
+        String simpleChat = playerNickname + ": Test message from " + playerNickname;
+        System.out.println("GameScreen: Sending simple chat format: [" + simpleChat + "]");
+        gameOut.println(simpleChat);
+        gameOut.flush();
+                
+            } catch (Exception e) {
+                System.err.println("GameScreen: Error sending test broadcast message: " + e.getMessage());
+                addChatMessage("System", "Error sending test broadcast: " + e.getMessage());
+            }
+        } else {
+            addChatMessage("System", "Not connected to server");
+        }
+    }
+    
+    /**
+     * Shows debug information about the current chat state
+     */
+    private void showChatDebugInfo() {
+        StringBuilder debugInfo = new StringBuilder();
+        debugInfo.append("=== CHAT DEBUG INFO ===\n");
+        debugInfo.append("Multiplayer Mode: ").append(isMultiplayerMode).append("\n");
+        debugInfo.append("Player Nickname: ").append(playerNickname).append("\n");
+        debugInfo.append("Current Lobby ID: ").append(currentLobbyId).append("\n");
+        debugInfo.append("Socket Connected: ").append(gameSocket != null && !gameSocket.isClosed()).append("\n");
+        debugInfo.append("Chat Messages Count: ").append(chatMessages != null ? chatMessages.size() : 0).append("\n");
+        debugInfo.append("Chat Visible: ").append(isChatVisible).append("\n");
+        debugInfo.append("Message Thread Alive: ").append(gameMessageThread != null && gameMessageThread.isAlive()).append("\n");
+        
+        if (chatMessages != null && !chatMessages.isEmpty()) {
+            debugInfo.append("Last 5 Messages:\n");
+            int start = Math.max(0, chatMessages.size() - 5);
+            for (int i = start; i < chatMessages.size(); i++) {
+                debugInfo.append("  ").append(i + 1).append(". ").append(chatMessages.get(i)).append("\n");
+            }
+        }
+        
+        debugInfo.append("=====================");
+        
+        System.out.println(debugInfo.toString());
+        addChatMessage("System", "Debug info printed to console");
+    }
+    
+    /**
+     * Starts a heartbeat thread to keep the connection alive
+     */
+    private void startHeartbeatThread() {
+        Thread heartbeatThread = new Thread(() -> {
+            System.out.println("GameScreen: Heartbeat thread started");
+            try {
+                while (gameSocket != null && !gameSocket.isClosed() && isMultiplayerMode) {
+                    try {
+                        // Send a ping every 30 seconds
+                        Thread.sleep(30000);
+                        if (gameOut != null && gameSocket != null && !gameSocket.isClosed()) {
+                            gameOut.println("PING");
+                            gameOut.flush();
+                            System.out.println("GameScreen: Heartbeat ping sent");
+                        }
+                    } catch (InterruptedException e) {
+                        System.out.println("GameScreen: Heartbeat thread interrupted");
+                        break;
+                    } catch (Exception e) {
+                        System.err.println("GameScreen: Error in heartbeat: " + e.getMessage());
+                        break;
+                    }
+                }
+            } catch (Exception e) {
+                System.err.println("GameScreen: Heartbeat thread error: " + e.getMessage());
+            }
+            System.out.println("GameScreen: Heartbeat thread ended");
+        });
+        heartbeatThread.setDaemon(true);
+        heartbeatThread.start();
+    }
+    
+    /**
+     * Updates the status label to show connection state
+     */
+    private void updateStatusLabel(String status, Color color) {
+        if (statusLabel != null) {
+            Gdx.app.postRunnable(() -> {
+                try {
+                    statusLabel.setText(status);
+                    statusLabel.setColor(color);
+                    System.out.println("GameScreen: Status updated to: " + status);
+                } catch (Exception e) {
+                    System.err.println("GameScreen: Error updating status label: " + e.getMessage());
+                }
+            });
+        }
+    }
+    
+    /**
+     * Checks if the multiplayer server is reachable
+     */
+    private boolean isServerReachable() {
+        try {
+            Socket testSocket = new Socket();
+            testSocket.connect(new java.net.InetSocketAddress("localhost", 8080), 3000); // 3 second timeout
+            testSocket.close();
+            return true;
+        } catch (Exception e) {
+            System.out.println("GameScreen: Server not reachable: " + e.getMessage());
+            return false;
+        }
+    }
+    
+    /**
+     * Checks the current connection status and updates the UI accordingly
+     */
+    private void checkConnectionStatus() {
+        if (isMultiplayerMode) {
+            if (gameSocket == null || gameSocket.isClosed()) {
+                updateStatusLabel("Disconnected", Color.RED);
+            } else if (gameSocket.isConnected()) {
+                updateStatusLabel("Connected", Color.GREEN);
+            } else {
+                updateStatusLabel("Connecting...", Color.YELLOW);
+            }
+        }
+    }
+    
+    /**
+     * Sends a chat message
+     */
+    private void sendChatMessage() {
+        if (!isMultiplayerMode) return;
+        
+        String message = chatInputField.getText().trim();
+        if (!message.isEmpty()) {
+            // Send through game server connection
+            if (gameOut != null) {
+                String chatMessage = "GAME_CHAT:" + currentLobbyId + ":" + message;
+                System.out.println("GameScreen: Sending chat message: [" + chatMessage + "]");
+                gameOut.println(chatMessage);
+                gameOut.flush();
+            
+            // Add to local chat
+            addChatMessage(playerNickname, message);
+            
+            // Clear input field
+            chatInputField.setText("");
+                
+                System.out.println("GameScreen: Chat message sent successfully");
+            } else {
+                addChatMessage("System", "ERROR: Not connected to game server");
+            }
+        }
+    }
+    
+    /**
+     * Adds a message to the chat area
+     */
+    public void addChatMessage(String sender, String message) {
+        // Truncate very long messages to prevent chat overflow
+        String truncatedMessage = message;
+        if (message.length() > 80) {
+            truncatedMessage = message.substring(0, 77) + "...";
+            System.out.println("GameScreen: Truncating long message from " + sender);
+        }
+        
+        System.out.println("GameScreen: Adding chat message - " + sender + ": " + truncatedMessage);
+        
+        chatMessages.add(sender + ": " + truncatedMessage);
+        
+        // Keep only last 50 messages
+        if (chatMessages.size() > 50) {
+            chatMessages.remove(0);
+        }
+        
+        // Update chat area
+        StringBuilder chatText = new StringBuilder();
+        for (String msg : chatMessages) {
+            chatText.append(msg).append("\n");
+        }
+        
+        // Ensure we're on the main thread when updating UI
+        Gdx.app.postRunnable(() -> {
+            try {
+        chatArea.setText(chatText.toString());
+        
+        // Scroll to bottom
+        chatScrollPane.setScrollY(chatScrollPane.getMaxY());
+                
+                // Force a redraw of the chat area
+                chatArea.invalidate();
+                chatScrollPane.invalidate();
+                
+                System.out.println("GameScreen: Chat area updated with " + chatMessages.size() + " messages");
+            } catch (Exception e) {
+                System.err.println("GameScreen: Error updating chat area: " + e.getMessage());
+                e.printStackTrace();
+            }
+        });
     }
 
     private void loadTextures() {
@@ -252,6 +1800,11 @@ public class GameScreen implements Screen {
 
 
     private void handleInput(float delta) {
+        // If chat is visible and focused, ignore all game input
+        if (isChatVisible && chatInputField.hasKeyboardFocus()) {
+            return;
+        }
+        
         if (isOutOfRealGame)
             return;
         boolean moving = false;
@@ -295,6 +1848,39 @@ public class GameScreen implements Screen {
                 App.currentGame.time.setHour(App.currentGame.time.getHour() + 100000);
             } else {
                 App.currentGame.time.setHour(App.currentGame.time.getHour() + 1);
+            }
+        }
+        
+        // Chat toggle for multiplayer (only when in multiplayer mode)
+        if (isMultiplayerMode && Gdx.input.isKeyJustPressed(Input.Keys.C)) {
+            toggleChat();
+        }
+        
+        // Player list toggle for multiplayer (only when in multiplayer mode)
+        if (isMultiplayerMode && Gdx.input.isKeyJustPressed(Input.Keys.P)) {
+            togglePlayerList();
+        }
+        
+        // Private chat toggle for multiplayer (only when in multiplayer mode)
+        if (isMultiplayerMode && Gdx.input.isKeyJustPressed(Input.Keys.V)) {
+            togglePrivateChat();
+        }
+        
+        // Voting system toggle for multiplayer (only when in multiplayer mode)
+        if (isMultiplayerMode && Gdx.input.isKeyJustPressed(Input.Keys.K)) {
+            toggleVoting();
+        }
+        
+        // Close chats and voting with Escape key when visible
+        if (isMultiplayerMode && (isChatVisible || isPrivateChatVisible || isVotingVisible) && Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            if (isChatVisible) {
+                toggleChat();
+            }
+            if (isPrivateChatVisible) {
+                togglePrivateChat();
+            }
+            if (isVotingVisible) {
+                toggleVoting();
             }
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
@@ -781,6 +2367,82 @@ public class GameScreen implements Screen {
             mainStage.draw();
             dialogStage.act(delta);
             dialogStage.draw();
+            
+            // Render chat stage for multiplayer
+            if (isMultiplayerMode && chatStage != null) {
+                chatStage.act(delta);
+                chatStage.draw();
+                
+                // Check connection status and update UI
+                checkConnectionStatus();
+                
+                // Handle input focus for chat and voting - Priority: Private Chat > Voting > Main Chat > Game
+                if (isPrivateChatVisible) {
+                    // Private chat gets absolute input priority when visible
+                    if (!privateChatInputField.hasKeyboardFocus()) {
+                        privateChatStage.setKeyboardFocus(privateChatInputField);
+                    }
+                    
+                    // CRITICAL: Force private chat stage to handle ALL input when visible
+                    if (Gdx.input.getInputProcessor() != privateChatStage) {
+                        Gdx.input.setInputProcessor(privateChatStage);
+                        System.out.println("GameScreen: Input processor set to private chat stage");
+                    }
+                    
+                    // Ensure private chat stage is the ONLY input processor
+                    Gdx.input.setInputProcessor(privateChatStage);
+                    
+                } else if (isVotingVisible) {
+                    // Voting gets input priority when visible (and private chat is not)
+                    if (!kickPlayerField.hasKeyboardFocus()) {
+                        votingStage.setKeyboardFocus(kickPlayerField);
+                    }
+                    
+                    // Ensure voting stage handles all input
+                    if (Gdx.input.getInputProcessor() != votingStage) {
+                        Gdx.input.setInputProcessor(votingStage);
+                        System.out.println("GameScreen: Input processor set to voting stage");
+                    }
+                    
+                } else if (isChatVisible) {
+                    // Main chat only gets input when neither private chat nor voting is visible
+                    if (!chatInputField.hasKeyboardFocus()) {
+                        chatStage.setKeyboardFocus(chatInputField);
+                    }
+                    
+                    // When main chat is visible (and others are not), use main chat stage
+                    if (Gdx.input.getInputProcessor() != chatStage) {
+                        Gdx.input.setInputProcessor(chatStage);
+                        System.out.println("GameScreen: Input processor set to main chat stage");
+                    }
+                } else {
+                    // When no UI is visible, restore the game input processor
+                    if (Gdx.input.getInputProcessor() == chatStage || Gdx.input.getInputProcessor() == privateChatStage || Gdx.input.getInputProcessor() == votingStage) {
+                        InputAdapter gameInputProcessor = new InputAdapter() {
+                            @Override
+                            public boolean scrolled(float amountX, float amountY) {
+                                scrollDelta += amountY;
+                                return true;
+                            }
+                        };
+                        Gdx.input.setInputProcessor(gameInputProcessor);
+                        System.out.println("GameScreen: Input processor set to game input");
+                    }
+                }
+            }
+            
+            // Render private chat stage for multiplayer
+            if (isMultiplayerMode && privateChatStage != null) {
+                privateChatStage.act(delta);
+                privateChatStage.draw();
+                // Input handling is now managed centrally in the main input logic above
+            }
+            
+            // Render voting stage for multiplayer
+            if (isMultiplayerMode && votingStage != null) {
+                votingStage.act(delta);
+                votingStage.draw();
+            }
 
         } catch (Exception e) {
             Gdx.app.log("GameScreen", "Error in render: " + e.getMessage());
@@ -792,28 +2454,76 @@ public class GameScreen implements Screen {
         viewport.update(width, height);
         if (mainStage != null) mainStage.getViewport().update(width, height, true);
         if (dialogStage != null) dialogStage.getViewport().update(width, height, true);
+        
+        // Update chat stage viewport if it exists
+        if (chatStage != null) {
+            chatStage.getViewport().update(width, height, true);
+            // Reposition chat table for new screen size
+            if (chatTable != null) {
+                chatTable.setPosition(width - 320, height - 250);
+            }
+        }
+        
+        // Update private chat stage viewport if it exists
+        if (privateChatStage != null) {
+            privateChatStage.getViewport().update(width, height, true);
+            // Reposition private chat table for new screen size
+            if (privateChatTable != null) {
+                privateChatTable.setPosition(250, 300);
+            }
+        }
+        
+        // Update voting stage viewport if it exists
+        if (votingStage != null) {
+            votingStage.getViewport().update(width, height, true);
+            // Reposition voting table for new screen size
+            if (votingTable != null) {
+                votingTable.setPosition(400, 200);
+            }
+        }
+        
         // Reinitialize energy bar Pixmap on resize
         if (energyBarPixmap != null) {
             energyBarPixmap.dispose();
         }
         energyHelper.initEnergyBar();
-
     }
 
     @Override
     public void show() {
         mainStage = new Stage(new ScreenViewport(), batch);
+        dialogStage = new Stage(new ScreenViewport());
+        
+        // Create a custom input processor that handles both game and chat input
         Gdx.input.setInputProcessor(new InputAdapter() {
             @Override
             public boolean scrolled(float amountX, float amountY) {
                 scrollDelta += amountY;
                 return true;
             }
+            
+            @Override
+            public boolean keyDown(int keycode) {
+                // If chat is visible and focused, let the chat stage handle all input
+                if (isChatVisible && chatInputField.hasKeyboardFocus()) {
+                    return false; // Let the chat stage handle it
+                }
+                return false; // Let the game handle it
+            }
         });
-        dialogStage = new Stage(new ScreenViewport());
-        Gdx.input.setInputProcessor(dialogStage);
+        
+        // Initialize chat system if in multiplayer mode
+        if (isMultiplayerMode) {
+            // Ensure chat messages list is initialized
+            if (chatMessages == null) {
+                chatMessages = new ArrayList<>();
+            }
+            
+            // Add a welcome message
+            addChatMessage("System", "Multiplayer mode active. Press C for chat, V for private chat, K for voting system.");
+        }
+        
         updateTools();
-
     }
     public static void updateTools(){
         Table toolbar = new Table();
@@ -860,6 +2570,21 @@ public class GameScreen implements Screen {
 
     @Override
     public void dispose() {
+        // Clean up multiplayer resources
+        if (isMultiplayerMode) {
+            try {
+                if (gameOut != null) gameOut.close();
+                if (gameIn != null) gameIn.close();
+                if (gameSocket != null) gameSocket.close();
+                if (gameMessageThread != null && gameMessageThread.isAlive()) {
+                    gameMessageThread.interrupt();
+                }
+                if (chatStage != null) chatStage.dispose();
+            } catch (IOException e) {
+                System.err.println("Error cleaning up multiplayer resources: " + e.getMessage());
+            }
+        }
+        
         batch.dispose();
         for (Entry<TileType, Texture> entry : tileTextures.entrySet()) entry.getValue().dispose();
         for (Texture tex : toolTextures) if (tex != null) tex.dispose();

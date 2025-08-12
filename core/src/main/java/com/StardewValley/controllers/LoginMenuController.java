@@ -1,6 +1,7 @@
 package com.StardewValley.controllers;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.utils.Timer;
 import com.StardewValley.DataBase.UserDBCommands;
 import com.StardewValley.Main;
 import com.StardewValley.model.App;
@@ -8,6 +9,8 @@ import com.StardewValley.model.GameAssetManager;
 import com.StardewValley.model.User;
 import com.StardewValley.View.InitPageView;
 import com.StardewValley.View.LoginView;
+import com.StardewValley.View.GameModeSelectionView;
+import com.StardewValley.controllers.GameModeSelectionController;
 
 public class LoginMenuController {
     private LoginView view;
@@ -27,10 +30,21 @@ public class LoginMenuController {
         } catch (Exception e) {
             e.printStackTrace();
             Gdx.app.error("Error: ", "An error occurred during login: " + e.getMessage());
+            // If database is not available, show appropriate message
+            view.showMessage(false, "Database connection failed. Please try again later.");
             return;
         }
 
         view.showMessage(true, "login successful!");
+        // Redirect to game mode selection after successful login
+        Timer.schedule(new Timer.Task() {
+            @Override
+            public void run() {
+                Gdx.app.postRunnable(() -> {
+                    Main.getMain().setScreen(new GameModeSelectionView(new GameModeSelectionController(), GameAssetManager.getGameAssetManager().getSkin()));
+                });
+            }
+        }, 1.5f);
     }
 
     public void forgotPassword(String username) {
@@ -52,6 +66,16 @@ public class LoginMenuController {
         view.showMessage(true, welcomeMsg);
 
         App.loggedUser = user;
+        
+        // Redirect to game mode selection after successful password recovery
+        Timer.schedule(new Timer.Task() {
+            @Override
+            public void run() {
+                Gdx.app.postRunnable(() -> {
+                    Main.getMain().setScreen(new GameModeSelectionView(new GameModeSelectionController(), GameAssetManager.getGameAssetManager().getSkin()));
+                });
+            }
+        }, 1.5f);
     }
 
     public void back() {

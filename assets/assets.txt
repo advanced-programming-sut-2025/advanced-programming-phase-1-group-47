@@ -1591,7 +1591,6 @@ Fish/Squid.png
 Fish/Stingray.png
 Fish/Stonefish.png
 Fish/Sturgeon.png
-Fish/Sunfish.png
 Fish/Super_Cucumber.png
 Fish/Tiger_Trout.png
 Fish/Tilapia.png

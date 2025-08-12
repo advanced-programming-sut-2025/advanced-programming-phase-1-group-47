@@ -22,18 +22,22 @@ public class Main extends Game {
 
         main = this;
         batch = new SpriteBatch();
-//        DataBaseInit.init();
-//
+        
+        // Initialize database
+        try {
+            DataBaseInit.init();
+        } catch (Exception e) {
+            Gdx.app.error("Main", "Failed to initialize database: " + e.toString());
+        }
 
 
         try{
-            setScreen(new GameScreen());
+            setScreen(new InitPageView(new InitPageController(), GameAssetManager.getGameAssetManager().getSkin()));
         }
 
         catch (Exception e){
-            Gdx.app.error("Main", "Failed to load screen \n" + e.toString());
+            Gdx.app.error("Main", "Failed to load main menu \n" + e.toString());
         }
-//        setScreen(new InitPageView(new InitPageController(), GameAssetManager.getGameAssetManager().getSkin()));
     }
 
     @Override

@@ -36,12 +36,12 @@ public class UserDBCommands {
             user.getPassword(),
             user.getSecurityQuestion(),
             user.getSecurityAnswer(),
-            user.getUsername(),
-            "-",
+            user.getEmail() != null ? user.getEmail() : "", // avatar field
+            "-", // last_game_path
             user.getGamePlayed(),
-            user.getGamePlayed(),
-            user.getGamePlayed(),
-            true
+            user.getGamePlayed(), // survival_time
+            user.getGamePlayed(), // kill_count
+            true // auto_reload
         );
 
         try (PreparedStatement pstmt = DataBaseInit.getConnection().prepareStatement(sql)) {
@@ -63,18 +63,22 @@ public class UserDBCommands {
             ResultSet rs = pstmt.executeQuery();
 
             if (rs.next()) {
-//                user = new User(
-//                    rs.getString("username"),
-//                    rs.getString("password"),
-//                    rs.getString("question_security_question"),
-//                    rs.getString("answer_security_question"),
-//                    rs.getString("avatar")
-//                );
-//
-//                user.setScore(rs.getInt("score"));
-//                user.setMostSurvivalTime(rs.getInt("survival_time"));
-//                user.setKillNumber(rs.getInt("kill_count"));
-//                user.setAutoReloadingEnable(rs.getBoolean("auto_reload"));
+                user = new User(
+                    rs.getString("username"),
+                    rs.getString("password"),
+                    rs.getString("avatar"), // email field
+                    "", // nickname field (empty for now)
+                    null, // gender field (null for now)
+                    rs.getString("question_security_question"),
+                    rs.getString("answer_security_question")
+                );
+                
+                // Set additional fields if they exist
+                try {
+                    user.setGame_played(rs.getInt("score"));
+                } catch (Exception e) {
+                    // Field might not exist, ignore
+                }
             }
 
             new UserDBCommands().logSQL(sql, Arrays.asList(username));
