@@ -38,7 +38,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
         private TextField usernameField, passwordField, emailField, securityQuestionField;
         private Label usernamePlaceholder, passwordPlaceholder, emailPlaceholder, securityLabel, messageLabel;
         private SelectBox<String> selectBox, genderSelectBox;
-        private TextButton signUpButton, backButton, guestButton, resetDbButton;
+        private TextButton signUpButton, backButton, resetDbButton, copyPasswordButton;
         private Skin skin;
 
         public SignUpView(SignUpMenuController controller, Skin skin) {
@@ -71,7 +71,6 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
         signUpButton = new TextButton("-" + "Sign Up" + "-", skin);
         backButton = new TextButton("-" + "Back" +"-", skin);
-        guestButton = new TextButton("-" + "Login as Guest" + "-", skin);
         
         // Add a reset database button for troubleshooting
         TextButton resetDbButton = new TextButton("Reset Database", skin);
@@ -134,10 +133,124 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
             Table leftColumn = new Table();
             leftColumn.defaults().pad(4).width(w).height(h);
 
-            addFieldWithPlaceholder(leftColumn, usernameField, usernamePlaceholder);
-            leftColumn.row().padTop(5);
-            addFieldWithPlaceholder(leftColumn, passwordField, passwordPlaceholder);
-            leftColumn.row().padTop(5);
+                    addFieldWithPlaceholder(leftColumn, usernameField, usernamePlaceholder);
+        leftColumn.row().padTop(5);
+        
+        // Password field with random password button
+        Table passwordRow = new Table();
+        passwordRow.defaults().pad(2);
+        
+        // Password field takes most of the width
+        passwordRow.add(passwordField).width(w * 0.7f).height(h);
+        
+        // Random password button
+        TextButton randomPasswordButton = new TextButton("🎲", skin);
+        randomPasswordButton.setColor(Color.BLUE);
+        randomPasswordButton.setWidth(h * 0.8f);
+        randomPasswordButton.setHeight(h * 0.8f);
+        
+        // Add tooltip for better UX
+        randomPasswordButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                String randomPassword = generateRandomPassword();
+                passwordField.setText(randomPassword);
+                showMessage(true, "Random password generated: " + randomPassword);
+                
+                // Show the copy button after generating a password
+                copyPasswordButton.setVisible(true);
+            }
+            
+            @Override
+            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                // Show tooltip on hover
+                showMessage(true, "Click to generate a secure random password");
+            }
+            
+            @Override
+            public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
+                // Hide tooltip when not hovering
+                messageLabel.setVisible(false);
+            }
+        });
+        
+        // Copy password button (appears after password is generated)
+        copyPasswordButton = new TextButton("📋", skin);
+        copyPasswordButton.setColor(Color.GREEN);
+        copyPasswordButton.setWidth(h * 0.8f);
+        copyPasswordButton.setHeight(h * 0.8f);
+        copyPasswordButton.setVisible(false); // Hidden by default
+        
+        copyPasswordButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                String password = passwordField.getText();
+                if (!password.isEmpty()) {
+                    // Copy to clipboard (platform-specific)
+                    try {
+                        java.awt.Toolkit.getDefaultToolkit()
+                            .getSystemClipboard()
+                            .setContents(
+                                new java.awt.datatransfer.StringSelection(password),
+                                null
+                            );
+                        showMessage(true, "Password copied to clipboard!");
+                    } catch (Exception e) {
+                        showMessage(false, "Could not copy to clipboard: " + e.getMessage());
+                    }
+                } else {
+                    showMessage(false, "No password to copy!");
+                }
+            }
+            
+            @Override
+            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                showMessage(true, "Click to copy password to clipboard");
+            }
+            
+            @Override
+            public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
+                messageLabel.setVisible(false);
+            }
+        });
+        
+        passwordRow.add(randomPasswordButton).width(h * 0.8f).height(h * 0.8f);
+        passwordRow.add(copyPasswordButton).width(h * 0.8f).height(h * 0.8f);
+        
+        // Add password placeholder
+        passwordPlaceholder.setPosition(passwordField.getX(), passwordField.getY());
+        stage.addActor(passwordPlaceholder);
+        
+        leftColumn.add(passwordRow).left();
+        leftColumn.row().padTop(2);
+        
+        // Password strength indicator
+        Label passwordStrengthLabel = new Label("", skin);
+        passwordStrengthLabel.setColor(Color.WHITE);
+        passwordStrengthLabel.setFontScale(0.7f);
+        leftColumn.add(passwordStrengthLabel).left();
+        leftColumn.row().padTop(3);
+        
+        // Add real-time password strength checking
+        passwordField.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                String password = passwordField.getText();
+                String strengthMessage = getPasswordStrengthMessage(password);
+                passwordStrengthLabel.setText(strengthMessage);
+                
+                // Update color based on strength
+                if (strengthMessage.contains("Strong")) {
+                    passwordStrengthLabel.setColor(Color.GREEN);
+                } else if (strengthMessage.contains("Medium")) {
+                    passwordStrengthLabel.setColor(Color.YELLOW);
+                } else if (strengthMessage.contains("Weak")) {
+                    passwordStrengthLabel.setColor(Color.RED);
+                } else {
+                    passwordStrengthLabel.setColor(Color.WHITE);
+                }
+            }
+        });
             addFieldWithPlaceholder(leftColumn, emailField, emailPlaceholder);
             leftColumn.row().padTop(5);
 
@@ -173,7 +286,6 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
             buttonTable.add(backButton);
 
             rootTable.add(buttonTable).left();
-            rootTable.add(guestButton).left().width(w * 0.95f).height(h * 0.9f).padLeft(50);
 
             rootTable.row().padTop(10);
             rootTable.add(messageLabel).width(w * 2 + 50).center(); // Span both columns
@@ -245,7 +357,6 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
             addHoverEffect(signUpButton);
             addHoverEffect(backButton);
-            addHoverEffect(guestButton);
         }
         public void showMessage(boolean success, String message) {
             messageLabel.clearActions();
@@ -293,5 +404,73 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
         public SelectBox<String> getSelectBox() { return selectBox; }
         public TextButton getSignUpMenu() { return signUpButton; }
         public TextButton getBackButton() { return backButton; }
-        public TextButton getGuestButton() { return guestButton; }
+        
+        /**
+         * Generates a secure random password that meets the requirements
+         */
+        private String generateRandomPassword() {
+            // Password requirements: 8+ characters with uppercase, digit, and symbol
+            String uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            String lowercase = "abcdefghijklmnopqrstuvwxyz";
+            String digits = "0123456789";
+            String symbols = "@_()*&%$#";
+            
+            StringBuilder password = new StringBuilder();
+            java.util.Random random = new java.util.Random();
+            
+            // Ensure at least one character from each required category
+            password.append(uppercase.charAt(random.nextInt(uppercase.length()))); // Uppercase
+            password.append(digits.charAt(random.nextInt(digits.length())));       // Digit
+            password.append(symbols.charAt(random.nextInt(symbols.length())));    // Symbol
+            password.append(lowercase.charAt(random.nextInt(lowercase.length()))); // Lowercase
+            
+            // Fill the rest with random characters (total length: 12-16 characters)
+            int remainingLength = 8 + random.nextInt(5); // 8-12 additional characters
+            String allChars = uppercase + lowercase + digits + symbols;
+            
+            for (int i = 0; i < remainingLength; i++) {
+                password.append(allChars.charAt(random.nextInt(allChars.length())));
+            }
+            
+            // Shuffle the password to make it more random
+            char[] passwordArray = password.toString().toCharArray();
+            for (int i = passwordArray.length - 1; i > 0; i--) {
+                int j = random.nextInt(i + 1);
+                char temp = passwordArray[i];
+                passwordArray[i] = passwordArray[j];
+                passwordArray[j] = temp;
+            }
+            
+            return new String(passwordArray);
+        }
+        
+        /**
+         * Checks password strength and returns a descriptive message
+         */
+        private String getPasswordStrengthMessage(String password) {
+            if (password.isEmpty()) {
+                return "";
+            }
+            
+            boolean hasUppercase = password.matches(".*[A-Z].*");
+            boolean hasLowercase = password.matches(".*[a-z].*");
+            boolean hasDigit = password.matches(".*\\d.*");
+            boolean hasSymbol = password.matches(".*[@_()*&%$#].*");
+            boolean hasMinLength = password.length() >= 8;
+            
+            int strength = 0;
+            if (hasUppercase) strength++;
+            if (hasLowercase) strength++;
+            if (hasDigit) strength++;
+            if (hasSymbol) strength++;
+            if (hasMinLength) strength++;
+            
+            if (strength == 5) {
+                return "Strong password ✓";
+            } else if (strength >= 3) {
+                return "Medium strength password";
+            } else {
+                return "Weak password - needs improvement";
+            }
+        }
     }
